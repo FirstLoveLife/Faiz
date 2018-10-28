@@ -31,220 +31,6 @@ namespace rider
         using false_type = integral_constant<bool, false>;
 
 
-        /******************** is_function *********************/
-
-        // primary template
-        template<class>
-        struct is_function : false_type
-        {
-        };
-
-        // specialization for regular functions
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...)> : true_type
-        {
-        };
-
-        // specialization for variadic functions such as printf
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......)> : true_type
-        {
-        };
-
-        // specialization for function types that have cv-qualifiers
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) volatile> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const volatile> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args..., ...) const> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) volatile> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args..., ...) const volatile> : true_type
-        {
-        };
-
-        // specialization for function types that have ref-qualifiers
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...)&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) volatile&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const volatile&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......)&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) volatile&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const volatile&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) &&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const&&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) volatile&&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const volatile&&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) &&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const&&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) volatile&&> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const volatile&&> : true_type
-        {
-        };
-
-        // specializations for noexcept versions of all the above (C++17 and
-        // later)
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) volatile noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const volatile noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args..., ...) volatile noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const volatile noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) & noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) volatile& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const volatile& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) & noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) volatile& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const volatile& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) && noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const&& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) volatile&& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args...) const volatile&& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) && noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const&& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) volatile&& noexcept> : true_type
-        {
-        };
-        template<class Ret, class... Args>
-        struct is_function<Ret(Args......) const volatile&& noexcept> : true_type
-        {
-        };
-
-        template<class T>
-        inline constexpr bool is_function_v = is_function<T>::value;
-
         /******************** remove *********************/
 
 
@@ -400,6 +186,163 @@ namespace rider
         };
 
         template<typename T>
+        struct is_function : public false_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...)> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...)&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) &&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...)> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...)&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) &&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) const> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) const&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) const&&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) const> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) const&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) const&&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) volatile> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) volatile&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) volatile&&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) volatile> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) volatile&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) volatile&&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) const volatile> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) const volatile&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args...) const volatile&&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) const volatile> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) const volatile&> : public true_type
+        {
+        };
+        template<typename R, typename... Args>
+        struct is_function<R(Args..., ...) const volatile&&> : public true_type
+        {
+        };
+
+        // Checks whether T is a floating-point type. Provides the member constant value which is equal to true, if T is
+        // the type float, double, long double, including any cv-qualified variants. Otherwise, value is equal to false.
+        template<class T>
+        struct is_floating_point : integral_constant<bool,
+                                       is_same<float, typename remove_cv<T>::type>::value
+                                           || is_same<double, typename remove_cv<T>::type>::value
+                                           || is_same<long double, typename remove_cv<T>::type>::value>
+        {
+        };
+        template<class T>
+        inline constexpr bool is_floating_point_v = is_floating_point<T>::value;
+
+        // Checks whether T is an integral type. Provides the member constant value which is equal to true, if T is the
+        // type bool, char, char16_t, char32_t, wchar_t, short, int, long, long long, or any implementation-defined
+        // extended integer types, including any signed, unsigned, and cv-qualified variants. Otherwise, value is equal
+        // to false.
+        template<class T>
+        struct is_integral
+            : integral_constant<bool,
+                  is_same<bool, typename remove_cv<T>::type>::value || is_same<char, typename remove_cv<T>::type>::value
+                      || is_same<char16_t, typename remove_cv<T>::type>::value
+                      || is_same<char32_t, typename remove_cv<T>::type>::value
+                      || is_same<wchar_t, typename remove_cv<T>::type>::value
+                      || is_same<short, typename remove_cv<T>::type>::value
+                      || is_same<int, typename remove_cv<T>::type>::value
+                      || is_same<signed, typename remove_cv<T>::type>::value
+                      || is_same<long, typename remove_cv<T>::type>::value
+                      || is_same<long int, typename remove_cv<T>::type>::value
+                      || is_same<unsigned short, typename remove_cv<T>::type>::value
+                      || is_same<unsigned short int, typename remove_cv<T>::type>::value
+                      || is_same<unsigned char, typename remove_cv<T>::type>::value
+                      || is_same<unsigned, typename remove_cv<T>::type>::value
+                      || is_same<unsigned int, typename remove_cv<T>::type>::value
+                      || is_same<unsigned long, typename remove_cv<T>::type>::value
+                      || is_same<unsigned long long, typename remove_cv<T>::type>::value
+                      || is_same<unsigned long int, typename remove_cv<T>::type>::value
+                      || is_same<unsigned long long int, typename remove_cv<T>::type>::value
+                      || is_same<signed char, typename remove_cv<T>::type>::value
+                      || is_same<signed short, typename remove_cv<T>::type>::value
+                      || is_same<signed short int, typename remove_cv<T>::type>::value
+                      || is_same<signed int, typename remove_cv<T>::type>::value
+                      || is_same<signed long, typename remove_cv<T>::type>::value
+                      || is_same<signed long long, typename remove_cv<T>::type>::value
+                      || is_same<signed long long int, typename remove_cv<T>::type>::value
+                      || is_same<long long int, typename remove_cv<T>::type>::value
+                      || is_same<long long, typename remove_cv<T>::type>::value>
+        {
+        };
+
+        // If T is an arithmetic type (that is, an integral type or a floating-point type) or a cv-qualified version
+        // thereof, provides the member constant value equal true. For any other type, value is false.
+        template<class T>
+        struct is_arithmetic : integral_constant<bool, is_integral<T>::value || is_floating_point<T>::value>
+        {
+        };
+
+        template<typename T>
         struct is_pointer_helper : public false_type
         {
         };
@@ -412,6 +355,11 @@ namespace rider
         // Otherwise, value is equal to false.
         template<typename T>
         struct is_pointer : public is_pointer_helper<remove_cv_t<T>>
+        {
+        };
+
+        template<typename T>
+        struct is_empty : public integral_constant<bool, __is_empty(T)>
         {
         };
 
@@ -680,11 +628,11 @@ namespace rider
         // #include <type_traits>
         // template <typename T, typename U>
         // struct decay_equiv :
-        //     is_same<typename std::decay<T>::type, U>::type
+        //     is_same<typename decay<T>::type, U>::type
         // {};
         // int main()
         // {
-        //     std::cout << std::boolalpha
+        //     faiz::cout << faiz::boolalpha
         //               << decay_equiv<int, int>::value << '\n'
         //               << decay_equiv<int&, int>::value << '\n'
         //               << decay_equiv<int&&, int>::value << '\n'
