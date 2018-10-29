@@ -207,73 +207,11 @@ namespace rider
             }
 
             // Returns the deleter object which would be used for destruction of the managed object.
-            // ```cpp
-            // #include <iostream>
-            // #include <memory>
-            // struct Foo
-            // {
-            //     Foo() { std::cout << "Foo...\n"; }
-            //     ~Foo() { std::cout << "~Foo...\n"; }
-            // };
-            // struct D
-            // {
-            //     void bar() { std::cout << "Call deleter D::bar()...\n"; }
-            //     void operator()(Foo* p) const
-            //     {
-            //         std::cout << "Call delete for Foo object...\n";
-            //         delete p;
-            //     }
-            // };
-            // int main()
-            // {
-            //     std::unique_ptr<Foo, D> up(new Foo(), D());
-            //     D& del = up.get_deleter();
-            //     del.bar();
-            // }
-            // ```
-            // Output:
-            // ```
-            // Foo...
-            // Call deleter D::bar()...
-            // Call delete for Foo object...
-            // ~Foo...
-            // ```
             deleter_type& get_deleter() noexcept
             {
                 return pair.second();
             }
             // Returns the deleter object which would be used for destruction of the managed object.
-            // ```cpp
-            // #include <iostream>
-            // #include <memory>
-            // struct Foo
-            // {
-            //     Foo() { std::cout << "Foo...\n"; }
-            //     ~Foo() { std::cout << "~Foo...\n"; }
-            // };
-            // struct D
-            // {
-            //     void bar() { std::cout << "Call deleter D::bar()...\n"; }
-            //     void operator()(Foo* p) const
-            //     {
-            //         std::cout << "Call delete for Foo object...\n";
-            //         delete p;
-            //     }
-            // };
-            // int main()
-            // {
-            //     std::unique_ptr<Foo, D> up(new Foo(), D());
-            //     D& del = up.get_deleter();
-            //     del.bar();
-            // }
-            // ```
-            // Output:
-            // ```
-            // Foo...
-            // Call deleter D::bar()...
-            // Call delete for Foo object...
-            // ~Foo...
-            // ```
             const Deleter& get_deleter() const noexcept
             {
                 return pair.second();
@@ -301,6 +239,14 @@ namespace rider
                     pair.first() = pValue;
                 }
             }
+
+            // Swaps the managed objects and associated deleters of *this and another unique_ptr object other.
+            template<class U, class E>
+            void swap(unique_ptr<U, E>& x) noexcept
+            {
+                pair.swap(x.pair);
+            }
+
 
         }; // class unique_ptr
     } // namespace faiz
