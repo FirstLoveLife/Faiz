@@ -75,7 +75,7 @@ namespace rider
             using first_reference = typename call_traits<first_type>::reference;
             using second_reference = typename call_traits<second_type>::reference;
             using first_const_reference = typename call_traits<first_type>::const_reference;
-            using second_const_reference = typename call_traits<second_type>::const_reference;
+            using second_const_reference = typename call_traits<first_type>::const_reference;
 
 
             compressed_pair_imp()
@@ -471,7 +471,7 @@ namespace rider
         };
 
 
-        // Partial specialisation for case that T1 and T2 is the same type
+        // Partial specialisation for case where T1 == T2:
         template<typename T>
         class compressed_pair<T, T> : private compressed_pair_imp<T,
                                           T,

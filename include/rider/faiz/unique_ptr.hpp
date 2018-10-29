@@ -1,5 +1,7 @@
 #ifndef UNIQUE_PTR
 #define UNIQUE_PTR
+#include "rider/faiz/compressed_pair.hpp"
+#include "rider/faiz/utility.hpp"
 #include "type_traits.hpp"
 namespace rider
 {
@@ -60,6 +62,7 @@ namespace rider
             struct EnableIfConvertible : enable_if<is_convertible<U (*)[], T (*)[]>::value>
             {
             };
+
 
         public:
             // Constructs a default_delete object.
@@ -180,31 +183,123 @@ namespace rider
             static_assert(!is_rvalue_reference<deleter_type>::value, "Come on, rvalue_reference is not what I want");
 
         protected:
-            pointer ptr;
+            faiz::compressed_pair<pointer, deleter_type> pair;
 
         public:
-            constexpr unique_ptr() noexcept : ptr{pointer{}}
+            constexpr unique_ptr() noexcept : pair{pointer{}}
             {
                 static_assert(!is_pointer<deleter_type>::value, "WTF, you give me a pointer type? Please not!");
             }
 
-            constexpr unique_ptr(std::nullptr_t) noexcept : ptr{}
+            constexpr unique_ptr(std::nullptr_t) noexcept : pair{}
             {
                 static_assert(!is_pointer<deleter_type>::value, "WTF, you give me a pointer type? Please not!");
             }
 
-            explicit unique_ptr(pointer ptr) noexcept : ptr{ptr}
+            explicit unique_ptr(pointer ptr) noexcept : pair{ptr}
             {
                 static_assert(!is_pointer<deleter_type>::value, "WTF, you give me a pointer type? Please not!");
             }
             template<class U, class E>
-            unique_ptr(unique_ptr<U, E>&& u) noexcept
+            unique_ptr(unique_ptr<U, E>&& up) noexcept
+                : pair(up.release(), rider::faiz::forward<deleter_type>(up.get_deleter()))
             {
             }
-            Deleter& get_deleter() noexcept;
+
+            // Returns the deleter object which would be used for destruction of the managed object.
+            // ```cpp
+            // #include <iostream>
+            // #include <memory>
+            // struct Foo
+            // {
+            //     Foo() { std::cout << "Foo...\n"; }
+            //     ~Foo() { std::cout << "~Foo...\n"; }
+            // };
+            // struct D
+            // {
+            //     void bar() { std::cout << "Call deleter D::bar()...\n"; }
+            //     void operator()(Foo* p) const
+            //     {
+            //         std::cout << "Call delete for Foo object...\n";
+            //         delete p;
+            //     }
+            // };
+            // int main()
+            // {
+            //     std::unique_ptr<Foo, D> up(new Foo(), D());
+            //     D& del = up.get_deleter();
+            //     del.bar();
+            // }
+            // ```
+            // Output:
+            // ```
+            // Foo...
+            // Call deleter D::bar()...
+            // Call delete for Foo object...
+            // ~Foo...
+            // ```
+            deleter_type& get_deleter() noexcept
+            {
+                return pair.second();
+            }
+            // Returns the deleter object which would be used for destruction of the managed object.
+            // ```cpp
+            // #include <iostream>
+            // #include <memory>
+            // struct Foo
+            // {
+            //     Foo() { std::cout << "Foo...\n"; }
+            //     ~Foo() { std::cout << "~Foo...\n"; }
+            // };
+            // struct D
+            // {
+            //     void bar() { std::cout << "Call deleter D::bar()...\n"; }
+            //     void operator()(Foo* p) const
+            //     {
+            //         std::cout << "Call delete for Foo object...\n";
+            //         delete p;
+            //     }
+            // };
+            // int main()
+            // {
+            //     std::unique_ptr<Foo, D> up(new Foo(), D());
+            //     D& del = up.get_deleter();
+            //     del.bar();
+            // }
+            // ```
+            // Output:
+            // ```
+            // Foo...
+            // Call deleter D::bar()...
+            // Call delete for Foo object...
+            // ~Foo...
+            // ```
             const Deleter& get_deleter() const noexcept
             {
-                return Deleter();
+                return pair.second();
+            }
+
+            // Releases the ownership of the managed object if any. **get()** returns nullptr after the call.
+            pointer release() noexcept
+            {
+                pointer const pTemp = pair.first();
+                pair.first() = pointer();
+                return pTemp;
+            }
+
+            // Returns a pointer to the managed object or **nullptr** if no object is owned.
+            pointer get() const noexcept
+            {
+                return pair.first();
+            }
+
+            void reset(pointer pValue = pointer()) noexcept
+            {
+                if (pValue != pair.first())
+                {
+                    get_deleter()(pair.first());
+                    pair.first() = pValue;
+                }
             }
 
         }; // class unique_ptr
