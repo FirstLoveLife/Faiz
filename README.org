@@ -1,0 +1,5 @@
+* Assumptions:
+- many intrinsics like ~__is_union~ available
+* TODO
+http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduced-in-c11/
+implement list with pointer traits
