@@ -582,6 +582,31 @@ namespace rider::faiz
     template<typename T>
     add_rvalue_reference_t<T> declval() noexcept;
 
+    template<class T>
+    struct add_cv
+    {
+        using type = const volatile T;
+    };
+
+    template<class T>
+    struct add_const
+    {
+        using type = const T;
+    };
+
+    template<class T>
+    struct add_volatile
+    {
+        using type = volatile T;
+    };
+
+    template<class T>
+    using add_cv_t = typename add_cv<T>::type;
+    template<class T>
+    using add_const_t = typename add_const<T>::type;
+    template<class T>
+    using add_volatile_t = typename add_volatile<T>::type;
+
     template<bool B, class T = void>
     struct enable_if
     {
@@ -637,6 +662,25 @@ namespace rider::faiz
     template<typename F, typename T>
     inline constexpr bool is_convertible_v = is_convertible<F, T>::value;
 
+
+    // If T is an object or reference type and the variable definition T
+    // obj(std::declval<Args>()...); is well-formed, provides the member
+    // constant value equal to true. In all other cases, value is false.
+    template<class Tp, class... Args>
+    struct is_constructible
+        : public integral_constant<bool, __is_constructible(Tp, Args...)>
+    {
+    };
+
+    template<class T, class... Args>
+    inline constexpr bool is_constructible_v =
+        is_constructible<T, Args...>::value;
+
+    template<class Tp>
+    struct is_copy_constructible
+        : public is_constructible<Tp, add_lvalue_reference_t<add_const_t<Tp>>>
+    {
+    };
 
     // Provides member typedef type, which is defined as T if B is true at
     // compile time, or as F if B is false.
@@ -1081,6 +1125,35 @@ namespace rider::faiz
     };
     template<class Base, class Derived>
     inline constexpr bool is_derived_of_v = is_base_of<Base, Derived>::value;
+
+    template<class _Tp>
+    struct is_final : public integral_constant<bool, __is_final(_Tp)>
+    {
+    };
+
+    template<class _Tp>
+    constexpr bool is_final_v = is_final<_Tp>::value;
+
+
+    struct two
+    {
+        char lx[2];
+    };
+
+    template<typename _Tp>
+    char& __is_polymorphic_impl(
+        typename enable_if<sizeof((_Tp*)dynamic_cast<const volatile void*>(
+                               declval<_Tp*>())) != 0,
+            int>::type);
+    template<typename _Tp>
+    two& __is_polymorphic_impl(...);
+
+    template<class _Tp>
+    struct is_polymorphic : public integral_constant<bool,
+                                sizeof(__is_polymorphic_impl<_Tp>(0)) == 1>
+    {
+    };
+
 
 #pragma clang diagnostic pop
 } // namespace rider::faiz

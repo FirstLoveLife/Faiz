@@ -785,7 +785,7 @@ namespace rider::faiz
         using Unknown_bound = unique_ptr<T[]>;
     };
 
-    template<class T, size_t N>
+    template<class T, faiz::size_t N>
     struct Unique_if<T[N]>
     {
         using Known_bound = void;
