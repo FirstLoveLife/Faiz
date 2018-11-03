@@ -1,5 +1,6 @@
 #ifndef FUNCTIONAL
 #define FUNCTIONAL
+#include "rider/faiz/exception.hpp"
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/utility.hpp"
 namespace rider::faiz
@@ -471,5 +472,15 @@ namespace rider::faiz
             return ~faiz::forward<T>(t);
         }
     };
+
+
+    class bad_function_call : public exception
+    {
+        const char* what() const noexcept
+        {
+            return "std::bad_function_call";
+        }
+    };
+
 } // namespace rider::faiz
 #endif

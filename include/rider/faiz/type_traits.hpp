@@ -477,6 +477,8 @@ namespace rider::faiz
               sizeof(detail::test<T>(0)) == 1 && !faiz::is_union<T>::value>
     {
     };
+    template<class T>
+    inline constexpr bool is_class_v = is_class<T>::value;
 
     // If T is an object type (that is any possibly cv-qualified type other
     // than function, reference, or void types), provides the member
@@ -681,6 +683,11 @@ namespace rider::faiz
         : public is_constructible<Tp, add_lvalue_reference_t<add_const_t<Tp>>>
     {
     };
+
+    template<typename Tp>
+    inline constexpr bool is_copy_constructible_v =
+        is_copy_constructible<Tp>::value;
+
 
     // Provides member typedef type, which is defined as T if B is true at
     // compile time, or as F if B is false.
@@ -1126,13 +1133,13 @@ namespace rider::faiz
     template<class Base, class Derived>
     inline constexpr bool is_derived_of_v = is_base_of<Base, Derived>::value;
 
-    template<class _Tp>
-    struct is_final : public integral_constant<bool, __is_final(_Tp)>
+    template<class T>
+    struct is_final : public integral_constant<bool, __is_final(T)>
     {
     };
 
-    template<class _Tp>
-    constexpr bool is_final_v = is_final<_Tp>::value;
+    template<class T>
+    constexpr bool is_final_v = is_final<T>::value;
 
 
     struct two
@@ -1140,19 +1147,22 @@ namespace rider::faiz
         char lx[2];
     };
 
-    template<typename _Tp>
-    char& __is_polymorphic_impl(
-        typename enable_if<sizeof((_Tp*)dynamic_cast<const volatile void*>(
-                               declval<_Tp*>())) != 0,
+    template<typename T>
+    char& is_polymorphic_impl_aux(
+        typename enable_if<sizeof((T*)dynamic_cast<const volatile void*>(
+                               declval<T*>())) != 0,
             int>::type);
-    template<typename _Tp>
-    two& __is_polymorphic_impl(...);
+    template<typename T>
+    two& is_polymorphic_impl_aux(...);
 
-    template<class _Tp>
+    template<class T>
     struct is_polymorphic : public integral_constant<bool,
-                                sizeof(__is_polymorphic_impl<_Tp>(0)) == 1>
+                                sizeof(is_polymorphic_impl_aux<T>(0)) == 1>
     {
     };
+
+    template<class T>
+    constexpr bool is_polymorphic_v = is_final<T>::value;
 
 
 #pragma clang diagnostic pop
