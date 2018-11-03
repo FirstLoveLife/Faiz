@@ -476,6 +476,10 @@ namespace rider::faiz
 
     class bad_function_call : public exception
     {
+        ~bad_function_call() noexcept
+        {
+        }
+
         const char* what() const noexcept
         {
             return "std::bad_function_call";
