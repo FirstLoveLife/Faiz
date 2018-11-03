@@ -474,6 +474,10 @@ namespace rider::faiz
     };
 
 
+    // std::bad_function_call is the type of the exception thrown by
+    // std::function::operator() if the function wrapper has no
+    // target.std::bad_function_call is the type of the exception thrown by
+    // std::function::operator() if the function wrapper has no target.
     class bad_function_call : public exception
     {
         ~bad_function_call() noexcept
