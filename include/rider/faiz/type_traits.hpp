@@ -1,12 +1,13 @@
 #ifndef TYPE_TRAITS
 #define TYPE_TRAITS
-
 #include "rider/faiz/cstddef.hpp"
+
+/*
+Don't implement:
+ */
+
 namespace rider::faiz
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wambiguous-ellipsis"
-
     template<class T, T v>
     struct integral_constant
     {
@@ -1165,7 +1166,69 @@ namespace rider::faiz
     constexpr bool is_polymorphic_v = is_final<T>::value;
 
 
-#pragma clang diagnostic pop
+    template<class T>
+    struct is_copy_assignable
+        : faiz::is_assignable<typename faiz::add_lvalue_reference<T>::type,
+              typename faiz::add_lvalue_reference<const T>::type>
+    {
+    };
+
+    template<typename T, typename _Up>
+    struct is_trivially_assignable
+        : public integral_constant<bool, __is_trivially_assignable(T, _Up)>
+    {
+    };
+
+    template<class T, class U>
+    inline constexpr bool is_trivially_assignable_v =
+        is_trivially_assignable<T, U>::value;
+
+    template<class T>
+    struct is_trivially_copy_assignable
+        : faiz::is_trivially_assignable<
+              typename faiz::add_lvalue_reference<T>::type,
+              typename faiz::add_lvalue_reference<const T>::type>
+    {
+    };
+
+    template<bool, class T, class A>
+    struct is_nothrow_assignable_aux;
+
+    template<class T, class A>
+    struct is_nothrow_assignable_aux<false, T, A> : public false_type
+    {
+    };
+
+    template<class T, class A>
+    struct is_nothrow_assignable_aux<true, T, A>
+        : public integral_constant<bool,
+              noexcept(faiz::declval<T>() = faiz::declval<A>())>
+    {
+    };
+
+    template<class T, class A>
+    struct is_nothrow_assignable
+        : public is_nothrow_assignable_aux<is_assignable<T, A>::value, T, A>
+    {
+    };
+
+    template<class T, class U>
+    inline constexpr bool is_nothrow_assignable_v =
+        is_nothrow_assignable<T, U>::value;
+
+    template<class T>
+    struct is_nothrow_copy_assignable
+        : faiz::is_nothrow_assignable<
+              typename faiz::add_lvalue_reference<T>::type,
+              typename faiz::add_lvalue_reference<const T>::type>
+    {
+    };
+
+    template<class T>
+    inline constexpr bool is_nothrow_copy_assignable_v =
+        is_nothrow_copy_assignable<T>::value;
+
+
 } // namespace rider::faiz
 
 #endif

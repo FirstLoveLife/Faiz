@@ -1,8 +1,14 @@
 #ifndef FUNCTIONAL
 #define FUNCTIONAL
+/*
+Don't implement myself: not_fn, invoke
+ */
+
 #include "rider/faiz/exception.hpp"
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/utility.hpp"
+
+#include <functional>
 namespace rider::faiz
 {
     // both call_traits::param_type and this conditional check are ok, but

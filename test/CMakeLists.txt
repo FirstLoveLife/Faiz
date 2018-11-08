@@ -19,7 +19,7 @@ if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/catch.hpp)
 endif()
 
 set(tests
-  unique_ptr.cpp)
+  cmp_nullptr.pass.cpp)
 
 add_executable(faiz_test
                 ${tests})
