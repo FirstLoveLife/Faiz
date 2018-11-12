@@ -1,9 +1,12 @@
+# BasedOnStyle: None
 Language: Cpp
-Standard: Auto
+Standard: Auto # Cpp11 is preferred in general.
 AccessModifierOffset: -4
-AlignAfterOpenBracket: DontAlign
+# AlignAfterOpenBracket: true
+AlignAfterOpenBracket: DontAlign # Requires Clang > 3.8.
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
+# AlignEscapedNewlinesLeft: false
 AlignEscapedNewlines: DontAlign
 AlignOperands: false
 AlignTrailingComments: false
@@ -13,12 +16,14 @@ AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine:  false
-AlwaysBreakAfterReturnType: None
+# AlwaysBreakAfterDefinitionReturnType: All # Deprecated.
+AlwaysBreakAfterReturnType: All # http://reviews.llvm.org/D10774
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: true
 BinPackArguments: false
 BinPackParameters: false
-BreakBeforeBinaryOperators: None
+# BreakAfterJavaFieldAnnotations: true
+BreakBeforeBinaryOperators: All
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterClass: true
@@ -32,6 +37,9 @@ BraceWrapping:
   BeforeCatch: true
   BeforeElse: true
   IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: false
 ColumnLimit: 80
@@ -43,13 +51,15 @@ ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 DisableFormat: false
+# ExperimentalAutoDetectBinPacking: true # Warning: This is an experimental flag, that might go away or be renamed.
 ForEachMacros: [ 'BOOST_FOREACH' ]
-IncludeBlocks: Regroup
+# IncludeCategories: # Unused.
 IndentCaseLabels: false
 IndentPPDirectives: AfterHash
 IndentWidth: 4
 IndentWrappedFunctionNames: false
-KeepEmptyLinesAtTheStartOfBlocks: true
+KeepEmptyLinesAtTheStartOfBlocks: true # This seems to also apply to namespaces.
+#MacroBlockBegin: '^\t*(Decl|Def|Impl|PDefH|Try|YInterface|YB_LibDefect_CMath_builtin)'
 MacroBlockBegin: '^\t*YInterface'
 MacroBlockEnd: '^\t*EndDecl'
 MaxEmptyLinesToKeep: 2
@@ -58,7 +68,7 @@ ObjCBlockIndentWidth: 4
 ObjCSpaceAfterProperty: false
 ObjCSpaceBeforeProtocolList: false
 PenaltyBreakBeforeFirstCallParameter: 80
-PenaltyBreakComment: 100
+PenaltyBreakComment: 40
 PenaltyBreakFirstLessLess: 2
 PenaltyBreakString: 160
 PenaltyExcessCharacter: 320
@@ -66,15 +76,17 @@ PenaltyReturnTypeOnItsOwnLine: 0
 PointerAlignment: Left
 SortUsingDeclarations: false
 SpaceAfterCStyleCast: false
-SpaceAfterTemplateKeyword: false
+SpaceAfterTemplateKeyword: false # Requires > r278121.
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: ControlStatements
+SpaceBeforeParens: Never
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
 SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInContainerLiterals: false
 SpacesInParentheses: false
+# turn it off until clang-format 8
+# StatementMacros: ["YB_Impl_DeclIntTDe", "YB_Impl_DeclIntTDe"]
 SpacesInSquareBrackets: false
 TabWidth: 4
-UseTab: Never
+UseTab: Always

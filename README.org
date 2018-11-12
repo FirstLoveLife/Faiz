@@ -3,3 +3,42 @@
 * TODO
 http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduced-in-c11/
 implement list with pointer traits
+* COMMENT Conversion
+
+#+BEGIN_SRC cpp
+template<class _type, class _tOpt = use_constfn>
+struct incrementable
+{
+	friend _type operator++(_type& x, int)
+		constexpr(noexcept(_type(x))
+					&& noexcept(++x)
+					&& noexcept(_type(faiz::declval<_type>())))
+	{
+		_type t(x);
+		++x;
+		return t;
+	}
+};
+
+
+#+END_SRC
+
+#+BEGIN_SRC cpp
+ImplOperatorsFlatAlias2_de(
+	totally_ordered, less_than_comparable, equality_comparable)
+
+
+#define ImplOperators_Compare(_name, _bseq, _bseq_s) \
+	ImplOperators_H2_Alias_de(less_than_comparable, \
+		_t<details::ops_seq<_type, \
+			_type2, \
+			_tOpt, \
+			cond_t<is_same<_type, _type2>, \
+				index_sequence<2 COMMA 4 COMMA 1>, \
+				index_sequence<0 COMMA 1 COMMA 2 COMMA 3 COMMA 4 COMMA 5>>>>)
+
+
+	ImplOperators_Compare(less_than_comparable,
+		0 COMMA 1 COMMA 2 COMMA 3 COMMA 4 COMMA 5,
+		2 COMMA 4 COMMA 1)
+#+END_SRC

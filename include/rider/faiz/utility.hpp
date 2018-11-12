@@ -1,5 +1,6 @@
 #ifndef UTILITY
 #define UTILITY
+#include "rider/faiz/integer_sequence.hpp" // for integer_sequence
 #include "rider/faiz/type_traits.hpp"
 namespace rider::faiz
 {
@@ -112,7 +113,7 @@ namespace rider::faiz
     // **faiz::string**&, and **faiz::forward** ensures that a non-const
     // lvalue reference is passed to foo.
     template<class T>
-    inline constexpr T&& forward(faiz::remove_reference_t<T>&& t) noexcept
+    constexpr T&& forward(faiz::remove_reference_t<T>&& t) noexcept
     {
         static_assert(!faiz::is_lvalue_reference_v<T>,
             "can not forward an rvalue as an lvalue");
@@ -122,9 +123,10 @@ namespace rider::faiz
     // Obtains the actual address of the object or function arg, even in
     // presence of overloaded operator&
     template<typename T>
-    inline constexpr T* addressof(T& r) noexcept
+    constexpr T* AddressOf(T& v) noexcept
     {
-        return __builtin_addressof(r);
+        return reinterpret_cast<T*>(
+            const_cast<char*>(reinterpret_cast<const volatile char(&)[1]>(v)));
     }
 
     // Rvalue overload is deleted to prevent taking the address of const

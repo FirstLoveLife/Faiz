@@ -39,5 +39,10 @@ namespace rider::faiz
     struct make_index_sequence<1> : index_sequence<0>
     {
     };
+
+    // A helper alias template std::index_sequence_for is defined to convert any
+    // type parameter pack into an index sequence of the same length
+    template<class... T>
+    using index_sequence_for = make_index_sequence<sizeof...(T)>;
 } // namespace rider::faiz
 #endif
