@@ -46,7 +46,7 @@ namespace rider::faiz
 		constexpr basic_string_view(const basic_string_view&) noexcept
 			= default;
 
-		basic_string_view&
+		constexpr basic_string_view&
 		operator=(const basic_string_view&) noexcept
 			= default;
 
@@ -154,19 +154,19 @@ namespace rider::faiz
 			return data_;
 		}
 
-		void
+		constexpr void
 		remove_prefix(size_type n) noexcept
 		{
 			yconstraint(n <= size_), yunseq(data_ += n, size_ -= n);
 		}
 
-		void
+		constexpr void
 		remove_suffix(size_type n) noexcept
 		{
 			yconstraint(n <= size_), size_ -= n;
 		}
 
-		void
+		constexpr void
 		swap(basic_string_view& s) noexcept
 		{
 			std::swap(data_, s.data_), std::swap(size_, s.size_);
@@ -247,7 +247,7 @@ namespace rider::faiz
 
 	public:
 #define Impl_StringView_search_fn_head(_n, _attr, _spec, ...) \
-	_attr size_type _n(__VA_ARGS__) const _spec \
+	constexpr _attr size_type _n(__VA_ARGS__) const _spec \
 	{
 #define Impl_StringView_search1(_n, _arg) \
 	Impl_StringView_search_fn_head(_n, \
@@ -290,21 +290,19 @@ namespace rider::faiz
 	} \
 	Impl_StringView_search34(_n, _arg)
 
-		// TODO: update constexpr for this functions:
-		// https://en.cppreference.com/w/cpp/string/basic_string_view/find_first_not_of
-		// clang-format off
 		Impl_StringView_search_mf(find, 0)
 
-		Impl_StringView_search_mf(rfind, npos)
+			Impl_StringView_search_mf(rfind, npos)
 
-		Impl_StringView_search_mf2(find_first_of, 0, find)
+				Impl_StringView_search_mf2(find_first_of, 0, find)
 
-		Impl_StringView_search_mf2(find_last_of, npos, rfind)
+					Impl_StringView_search_mf2(find_last_of, npos, rfind)
 
-		Impl_StringView_search_mf(find_first_not_of, 0)
+						Impl_StringView_search_mf(find_first_not_of, 0)
 
-		Impl_StringView_search_mf(find_last_not_of, npos)
-//size_type find_last_not_of(basic_string_view s, size_type pos = npos) const noexcept
+							Impl_StringView_search_mf(find_last_not_of, npos)
+// size_type find_last_not_of(basic_string_view s, size_type pos = npos) const
+// noexcept
 // {
 //     return faiz::
 //         str_find_last_not_of<value_type, size_type, traits_type, npos>(
