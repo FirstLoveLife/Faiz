@@ -364,12 +364,7 @@ namespace rider::faiz::dep_ops
 // using totally_ordered =
 //     details::flat_ops<_type, _type2, _tOpt, less_than_comparable, equality_comparable>
 
-ImplOperatorsFlatAlias2_de(totally_ordered,
-						   less_than_comparable,
-						   equality_comparable)
-
-ImplOperatorsFlatAlias2_de(additive,
-						   addable,
+				   addable,
 						   subtractable)
 
 ImplOperatorsFlatAlias2_de(multiplicative,
@@ -465,12 +460,12 @@ ImplOperatorsFlatAlias2_de(operators,
 						   integer_arithmetic,
 						   bitwise)
 
-// clang-format on
-} // namespace dep_ops;
+				   // clang-format on
+				   } // namespace dep_ops;
 
-namespace rider::faiz
-{
-	using namespace dep_ops;
+				   namespace rider::faiz
+				   {
+					   using namespace dep_ops;
 #	undef ImplOperators_H3
 #	undef ImplOperators_H2_Alias_de
 #	undef ImplOperators_H2_Alias
@@ -478,7 +473,7 @@ namespace rider::faiz
 #	undef ImplOperators_H1
 #	undef ImplOperators_H_n
 #	undef ImplOperatorsDeOpt
-} // namespace rider::faiz
+				   } // namespace rider::faiz
 #endif
 
-// clang-format off
+				   // clang-format off

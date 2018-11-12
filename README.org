@@ -26,19 +26,43 @@ struct incrementable
 #+BEGIN_SRC cpp
 ImplOperatorsFlatAlias2_de(
 	totally_ordered, less_than_comparable, equality_comparable)
+#define Impl_StringView_search_fn_head(_n, _attr, _spec, ...) \
 
+size_type find_last_not_of(basic_string_view s, size_type pos = npos) const noexcept
+{
 
-#define ImplOperators_Compare(_name, _bseq, _bseq_s) \
-	ImplOperators_H2_Alias_de(less_than_comparable, \
-		_t<details::ops_seq<_type, \
-			_type2, \
-			_tOpt, \
-			cond_t<is_same<_type, _type2>, \
-				index_sequence<2 COMMA 4 COMMA 1>, \
-				index_sequence<0 COMMA 1 COMMA 2 COMMA 3 COMMA 4 COMMA 5>>>>)
+    return ystdex::
+        str_find_last_not_of<value_type, size_type, traits_type, npos>(
+                data_, size_, s.data_, pos, s.size_);
+}
 
+size_type find_last_not_of(_tChar c, size_type pos = npos) const noexcept
+{
+    return ystdex::
+		str_find_last_not_of<value_type, size_type, traits_type, npos>(
+			data_, size_, c, pos);
+}
 
-	ImplOperators_Compare(less_than_comparable,
-		0 COMMA 1 COMMA 2 COMMA 3 COMMA 4 COMMA 5,
-		2 COMMA 4 COMMA 1)
+size_type find_last_not_of(const _tChar* s,
+		size_type pos, \
+		size_type n) const
+{
+    return yconstraint(s),
+		_n(basic_string_view(s, n), pos);
+}
+
+size_type find_last_not_of(const _tChar* s, size_type pos = _arg) const
+{
+    return _n(s, pos, traits_type::length(s));
+}
+
+#define Impl_StringView_search_mf(find_last_not_of, npos) \
+	Impl_StringView_search1(find_last_not_of, npos) Impl_StringView_search_fn_head( \
+		find_last_not_of, , noexcept, _tChar c, size_type pos = npos) return ystdex:: \
+		str_##find_last_not_of<value_type, size_type, traits_type, npos>( \
+			data_, size_, c, pos); \
+	} \
+	Impl_StringView_search34(find_last_not_of, npos)
+
+Impl_StringView_search_mf(find_last_not_of, npos)
 #+END_SRC

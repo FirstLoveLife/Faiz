@@ -254,10 +254,15 @@ namespace rider::faiz
 		, \
 		noexcept, \
 		basic_string_view s, \
-		size_type pos = _arg) return ystdex:: \
+		size_type pos = _arg) return faiz:: \
 		str_##_n<value_type, size_type, traits_type, npos>( \
 			data_, size_, s.data_, pos, s.size_); \
 	}
+
+		// The sequence of preprocessing tokens bounded by the outside-most
+		// matching parentheses forms the list of arguments for the
+		// function-like macro. The individual arguments within the list are
+		// separated by comma preprocessing tokens.
 #define Impl_StringView_search34(_n, _arg) \
 	Impl_StringView_search_fn_head(_n, \
 		, \
@@ -274,7 +279,7 @@ namespace rider::faiz
 	}
 #define Impl_StringView_search_mf(_n, _arg) \
 	Impl_StringView_search1(_n, _arg) Impl_StringView_search_fn_head( \
-		_n, , noexcept, _tChar c, size_type pos = _arg) return ystdex:: \
+		_n, , noexcept, _tChar c, size_type pos = _arg) return faiz:: \
 		str_##_n<value_type, size_type, traits_type, npos>( \
 			data_, size_, c, pos); \
 	} \
@@ -285,18 +290,47 @@ namespace rider::faiz
 	} \
 	Impl_StringView_search34(_n, _arg)
 
+		// TODO: update constexpr for this functions:
+		// https://en.cppreference.com/w/cpp/string/basic_string_view/find_first_not_of
 		// clang-format off
 		Impl_StringView_search_mf(find, 0)
 
-			Impl_StringView_search_mf(rfind, npos)
+		Impl_StringView_search_mf(rfind, npos)
 
-				Impl_StringView_search_mf2(find_first_of, 0, find)
+		Impl_StringView_search_mf2(find_first_of, 0, find)
 
-					Impl_StringView_search_mf2(find_last_of, npos, rfind)
+		Impl_StringView_search_mf2(find_last_of, npos, rfind)
 
-						Impl_StringView_search_mf(find_first_not_of, 0)
+		Impl_StringView_search_mf(find_first_not_of, 0)
 
-							Impl_StringView_search_mf(find_last_not_of, npos)
+		Impl_StringView_search_mf(find_last_not_of, npos)
+//size_type find_last_not_of(basic_string_view s, size_type pos = npos) const noexcept
+// {
+//     return faiz::
+//         str_find_last_not_of<value_type, size_type, traits_type, npos>(
+//                 data_, size_, s.data_, pos, s.size_);
+// }
+
+// size_type find_last_not_of(_tChar c, size_type pos = npos) const noexcept
+// {
+//     return faiz::
+// 		str_find_last_not_of<value_type, size_type, traits_type, npos>(
+// 			data_, size_, c, pos);
+// }
+
+// size_type find_last_not_of(const _tChar* s,
+// 		size_type pos, \
+// 		size_type n) const
+// {
+//     return yconstraint(s),
+// 		_n(basic_string_view(s, n), pos);
+// }
+
+// size_type find_last_not_of(const _tChar* s, size_type pos = _arg) const
+// {
+//     return _n(s, pos, traits_type::length(s));
+// }
+
 
 // clang-format on
 #undef Impl_StringView_search_mf
