@@ -9,18 +9,18 @@
 
 namespace rider::faiz
 {
-	template<typename _tChar, class _tTraits = std::char_traits<_tChar>>
+	template<typename Char, class Traits = std::char_traits<Char>>
 	class basic_string_view
-		: private totally_ordered<basic_string_view<_tChar, _tTraits>>
+		: private totally_ordered<basic_string_view<Char, Traits>>
 	{
 	public:
-		using traits_type = _tTraits;
-		using value_type = _tChar;
-		using pointer = _tChar*;
-		using const_pointer = const _tChar*;
-		using reference = _tChar&;
-		using const_reference = const _tChar&;
-		using const_iterator = IMPL(const _tChar*);
+		using traits_type = Traits;
+		using value_type = Char;
+		using pointer = Char*;
+		using const_pointer = const Char*;
+		using reference = Char&;
+		using const_reference = const Char&;
+		using const_iterator = IMPL(const Char*);
 		using iterator = const_iterator;
 		using const_reverse_iterator = faiz::reverse_iterator<const_iterator>;
 		using reverse_iterator = const_reverse_iterator;
@@ -36,11 +36,11 @@ namespace rider::faiz
 		constexpr basic_string_view() noexcept : data_(), size_()
 		{}
 
-		constexpr basic_string_view(const _tChar* str)
+		constexpr basic_string_view(const Char* str)
 			: data_(str), size_(traits_type::length(str))
 		{}
 
-		constexpr basic_string_view(const _tChar* str, size_type len)
+		constexpr basic_string_view(const Char* str, size_type len)
 			: data_(str), size_(len)
 		{}
 		constexpr basic_string_view(const basic_string_view&) noexcept
@@ -174,7 +174,7 @@ namespace rider::faiz
 
 
 		size_type
-		copy(_tChar* s, size_type n, size_type pos = 0) const
+		copy(Char* s, size_type n, size_type pos = 0) const
 		{
 			yconstraint(s);
 			if(pos <= size_)
@@ -200,7 +200,7 @@ namespace rider::faiz
 		compare(basic_string_view s) const noexcept
 		{
 			return compare_remained(s,
-				_tTraits::compare(
+				Traits::compare(
 					data(), s.data(), std::min<size_type>(size(), s.size())));
 		}
 		constexpr int
@@ -218,20 +218,19 @@ namespace rider::faiz
 			return substr(pos1, n1).compare(s.substr(pos2, n2));
 		}
 		constexpr int
-		compare(const _tChar* s) const
+		compare(const Char* s) const
 		{
 			return compare(basic_string_view(s));
 		}
 
 		constexpr int
-		compare(size_type pos1, size_type n1, const _tChar* s) const
+		compare(size_type pos1, size_type n1, const Char* s) const
 		{
 			return substr(pos1, n1).compare(basic_string_view(s));
 		}
 
 		constexpr int
-		compare(
-			size_type pos1, size_type n1, const _tChar* s, size_type n2) const
+		compare(size_type pos1, size_type n1, const Char* s, size_type n2) const
 		{
 			return substr(pos1, n1).compare(basic_string_view(s, n2));
 		}
@@ -246,6 +245,44 @@ namespace rider::faiz
 		}
 
 	public:
+		constexpr bool
+		starts_with(basic_string_view __s) const noexcept
+		{
+			return size() >= __s.size() && compare(0, __s.size(), __s) == 0;
+		}
+
+		constexpr bool
+		starts_with(value_type __c) const noexcept
+		{
+			return !empty() && Traits::eq(front(), __c);
+		}
+
+		constexpr bool
+		starts_with(const value_type* __s) const noexcept
+		{
+			return starts_with(basic_string_view(__s));
+		}
+
+		constexpr bool
+		ends_with(basic_string_view __s) const noexcept
+		{
+			return size() >= __s.size()
+				&& compare(size() - __s.size(), npos, __s) == 0;
+		}
+
+		constexpr bool
+		ends_with(value_type __c) const noexcept
+		{
+			return !empty() && Traits::eq(back(), __c);
+		}
+
+		constexpr bool
+		ends_with(const value_type* __s) const noexcept
+		{
+			return ends_with(basic_string_view(__s));
+		}
+
+
 #define Impl_StringView_search_fn_head(_n, _attr, _spec, ...) \
 	constexpr _attr size_type _n(__VA_ARGS__) const _spec \
 	{
@@ -267,40 +304,43 @@ namespace rider::faiz
 	Impl_StringView_search_fn_head(_n, \
 		, \
 		, \
-		const _tChar* s, \
+		const Char* s, \
 		size_type pos, \
 		size_type n) return yconstraint(s), \
 		_n(basic_string_view(s, n), pos); \
 	} \
 	Impl_StringView_search_fn_head( \
-		_n, , , const _tChar* s, size_type pos = _arg) return _n(s, \
+		_n, , , const Char* s, size_type pos = _arg) return _n(s, \
 		pos, \
 		traits_type::length(s)); \
 	}
 #define Impl_StringView_search_mf(_n, _arg) \
 	Impl_StringView_search1(_n, _arg) Impl_StringView_search_fn_head( \
-		_n, , noexcept, _tChar c, size_type pos = _arg) return faiz:: \
+		_n, , noexcept, Char c, size_type pos = _arg) return faiz:: \
 		str_##_n<value_type, size_type, traits_type, npos>( \
 			data_, size_, c, pos); \
 	} \
 	Impl_StringView_search34(_n, _arg)
 #define Impl_StringView_search_mf2(_n, _arg, _n2) \
 	Impl_StringView_search1(_n, _arg) Impl_StringView_search_fn_head( \
-		_n, , noexcept, _tChar c, size_type pos = _arg) return _n2(c, pos); \
+		_n, , noexcept, Char c, size_type pos = _arg) return _n2(c, pos); \
 	} \
 	Impl_StringView_search34(_n, _arg)
 
+
+		// clang-format off
 		Impl_StringView_search_mf(find, 0)
 
-			Impl_StringView_search_mf(rfind, npos)
+		Impl_StringView_search_mf(rfind, npos)
 
-				Impl_StringView_search_mf2(find_first_of, 0, find)
+		Impl_StringView_search_mf2(find_first_of, 0, find)
 
-					Impl_StringView_search_mf2(find_last_of, npos, rfind)
+		Impl_StringView_search_mf2(find_last_of, npos, rfind)
 
-						Impl_StringView_search_mf(find_first_not_of, 0)
+		Impl_StringView_search_mf(find_first_not_of, 0)
 
-							Impl_StringView_search_mf(find_last_not_of, npos)
+		Impl_StringView_search_mf(find_last_not_of, npos)
+
 // size_type find_last_not_of(basic_string_view s, size_type pos = npos) const
 // noexcept
 // {
@@ -309,14 +349,14 @@ namespace rider::faiz
 //                 data_, size_, s.data_, pos, s.size_);
 // }
 
-// size_type find_last_not_of(_tChar c, size_type pos = npos) const noexcept
+// size_type find_last_not_of(Char c, size_type pos = npos) const noexcept
 // {
 //     return faiz::
 // 		str_find_last_not_of<value_type, size_type, traits_type, npos>(
 // 			data_, size_, c, pos);
 // }
 
-// size_type find_last_not_of(const _tChar* s,
+// size_type find_last_not_of(const Char* s,
 // 		size_type pos, \
 // 		size_type n) const
 // {
@@ -324,7 +364,7 @@ namespace rider::faiz
 // 		_n(basic_string_view(s, n), pos);
 // }
 
-// size_type find_last_not_of(const _tChar* s, size_type pos = _arg) const
+// size_type find_last_not_of(const Char* s, size_type pos = _arg) const
 // {
 //     return _n(s, pos, traits_type::length(s));
 // }
@@ -340,61 +380,60 @@ namespace rider::faiz
 
 	//! \relates basic_string_view
 	//@{
-	template<typename _tChar, class _tTraits>
+	template<typename Char, class Traits>
 	constexpr bool
-	operator==(basic_string_view<_tChar, _tTraits> x,
-		basic_string_view<_tChar, _tTraits> y) noexcept
+	operator==(basic_string_view<Char, Traits> x,
+		basic_string_view<Char, Traits> y) noexcept
 	{
 		return x.compare(y) == 0;
 	}
-	template<typename _tChar, class _tTraits>
+	template<typename Char, class Traits>
 	constexpr bool
-	operator==(basic_string_view<_tChar, _tTraits> x,
-		IMPL(decay_t<basic_string_view<_tChar, _tTraits>>) y) noexcept
+	operator==(basic_string_view<Char, Traits> x,
+		IMPL(decay_t<basic_string_view<Char, Traits>>) y) noexcept
 	{
 		return x.compare(y) == 0;
 	}
 	//! \since build 642
-	template<typename _tChar, class _tTraits>
+	template<typename Char, class Traits>
 	constexpr bool
-	operator==(IMPL(decay_t<basic_string_view<_tChar, _tTraits>>) x,
-		basic_string_view<_tChar, _tTraits> y) noexcept
+	operator==(IMPL(decay_t<basic_string_view<Char, Traits>>) x,
+		basic_string_view<Char, Traits> y) noexcept
 	{
 		return x.compare(y) == 0;
 	}
 
-	template<typename _tChar, class _tTraits>
+	template<typename Char, class Traits>
 	constexpr bool
-	operator<(basic_string_view<_tChar, _tTraits> x,
-		basic_string_view<_tChar, _tTraits> y) noexcept
+	operator<(basic_string_view<Char, Traits> x,
+		basic_string_view<Char, Traits> y) noexcept
 	{
 		return x.compare(y) < 0;
 	}
 	//! \since build 642
-	template<typename _tChar, class _tTraits>
+	template<typename Char, class Traits>
 	constexpr bool
-	operator<(basic_string_view<_tChar, _tTraits> x,
-		IMPL(decay_t<basic_string_view<_tChar, _tTraits>>) y) noexcept
+	operator<(basic_string_view<Char, Traits> x,
+		IMPL(decay_t<basic_string_view<Char, Traits>>) y) noexcept
 	{
 		return x.compare(y) < 0;
 	}
 	//! \since build 642
-	template<typename _tChar, class _tTraits>
+	template<typename Char, class Traits>
 	constexpr bool
-	operator<(IMPL(decay_t<basic_string_view<_tChar, _tTraits>>) x,
-		basic_string_view<_tChar, _tTraits> y) noexcept
+	operator<(IMPL(decay_t<basic_string_view<Char, Traits>>) x,
+		basic_string_view<Char, Traits> y) noexcept
 	{
 		return x.compare(y) < 0;
 	}
 
-	template<typename _tChar, class _tTraits>
-	std::basic_ostream<_tChar, _tTraits>&
-	operator<<(std::basic_ostream<_tChar, _tTraits>& os,
-		basic_string_view<_tChar, _tTraits> str)
+	template<typename Char, class Traits>
+	std::basic_ostream<Char, Traits>&
+	operator<<(std::basic_ostream<Char, Traits>& os,
+		basic_string_view<Char, Traits> str)
 	{
 		// XXX: Better implementation?
-		return os
-			<< std::basic_string<_tChar, _tTraits>(str.data(), str.size());
+		return os << std::basic_string<Char, Traits>(str.data(), str.size());
 	}
 	//@}
 	//@}
@@ -403,9 +442,10 @@ namespace rider::faiz
 	using u32string_view = basic_string_view<char32_t>;
 	using wstring_view = basic_string_view<wchar_t>;
 
+	template<class _tString>
+	using string_view_t = basic_string_view<typename _tString::value_type>;
+
 } // namespace rider::faiz
 
-template<class _tString>
-using string_view_t = basic_string_view<typename _tString::value_type>;
 
 #endif
