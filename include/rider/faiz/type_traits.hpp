@@ -317,85 +317,45 @@ namespace rider::faiz
 	struct is_null_pointer
 		: faiz::is_same<faiz::nullptr_t, faiz::remove_cv_t<T>>
 	{};
-
 	template<typename T>
 	struct is_function : public false_
 	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...)> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...)&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) &&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...)> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...)&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) &&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) const> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) const&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) const&&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) const> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) const&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) const&&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) volatile> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) volatile&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) volatile&&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) volatile> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) volatile&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) volatile&&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) const volatile> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) const volatile&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args...) const volatile&&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) const volatile> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) const volatile&> : public true_
-	{};
-	template<typename R, typename... Args>
-	struct is_function<R(Args..., ...) const volatile&&> : public true_
-	{};
 
+#define ImplIsFun(QUALIFIERS)		   \
+template<typename R, typename... Args> \
+struct is_function<R(Args...) QUALIFIERS> : public true_ \
+{};\
+template<typename R, typename... Args> \
+struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
+{};
+
+// clang-format off
+	ImplIsFun()
+	ImplIsFun(const)
+	ImplIsFun(&)
+	ImplIsFun(&&)
+	ImplIsFun(volatile)
+	ImplIsFun(noexcept)
+	ImplIsFun(const volatile)
+	ImplIsFun(const &)
+	ImplIsFun(const &&)
+	ImplIsFun(const noexcept)
+	ImplIsFun(volatile &)
+	ImplIsFun(volatile &&)
+	ImplIsFun(volatile noexcept)
+	ImplIsFun(const volatile &)
+	ImplIsFun(const & noexcept)
+	ImplIsFun(const && noexcept )
+	ImplIsFun(const volatile &&)
+	ImplIsFun(const volatile noexcept)
+
+	// clang-format on
 	template<class T>
 	inline constexpr bool is_function_v = is_function<T>::value;
+
+#undef ImplIsFun
+
+
 
 	// Checks whether T is a floating-point type. Provides the member
 	// constant value which is equal to true, if T is the type float,
