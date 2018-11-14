@@ -7,6 +7,15 @@ Don't implement:
 
 namespace rider::faiz
 {
+
+	template<class T>
+	struct type_identity
+	{
+		using type = T;
+	};
+	template<class T>
+	using type_identity_t = typename type_identity<T>::type;
+
 	template<class T, T v>
 	struct integral_constant
 	{
@@ -62,17 +71,15 @@ namespace rider::faiz
 	// Provides member typedef type, which is defined as T if B is true at
 	// compile time, or as F if B is false.
 	template<bool B, class T, class F>
-	struct conditional
+	struct conditional : type_identity<T>
 	{
-		using type = T;
 	};
 
 	// Provides member typedef type, which is defined as T if B is true at
 	// compile time, or as F if B is false.
 	template<class T, class F>
-	struct conditional<false, T, F>
+	struct conditional<false, T, F> : type_identity<F>
 	{
-		using type = F;
 	};
 
 	//  Provides member typedef type, which is defined as T if B is true at
@@ -149,38 +156,27 @@ namespace rider::faiz
 	// provides the member typedef type which is the type referred to by T.
 	// Otherwise type is T.
 	template<class T>
-	struct remove_reference
-	{
-		using type = T;
-	};
+	struct remove_reference : type_identity<T>
+	{};
 	template<class T>
-	struct remove_reference<T&>
-	{
-		using type = T;
-	};
+	struct remove_reference<T&> : type_identity<T>
+	{};
 	template<class T>
-	struct remove_reference<T&&>
-	{
-		using type = T;
-	};
+	struct remove_reference<T&&> : type_identity<T>
+	{};
 	template<class T>
 	using remove_reference_t = _t<remove_reference<T>>;
 
 	template<class T>
-	struct remove_const
-	{
-		using type = T;
-	};
+	struct remove_const : type_identity<T>
+	{};
 	template<class T>
-	struct remove_const<const T>
-	{
-		using type = T;
-	};
+	struct remove_const<const T> : type_identity<T>
+	{};
 
 	template<class T>
-	struct remove_volatile
+	struct remove_volatile :type_identity<T>
 	{
-		using type = T;
 	};
 
 	template<class T>
@@ -190,40 +186,35 @@ namespace rider::faiz
 	using remove_volatile_t = _t<remove_volatile<T>>;
 
 	template<class T>
-	struct remove_volatile<volatile T>
+	struct remove_volatile<volatile T> :type_identity<T>
 	{
-		using type = T;
 	};
 
 	// If T is an array of some type X, provides the member typedef type
 	// equal to X, otherwise type is T. Note that if T is a multidimensional
 	// array, only the first dimension is removed.
 	template<class T>
-	struct remove_extent
+	struct remove_extent :type_identity<T>
 	{
-		using type = T;
 	};
 
 	template<class T>
-	struct remove_extent<T[]>
+	struct remove_extent<T[]> :type_identity<T>
 	{
 		using type = T;
 	};
 
 	template<class T, faiz::size_t N>
-	struct remove_extent<T[N]>
+	struct remove_extent<T[N]> :type_identity<T>
 	{
-		using type = T;
 	};
 	template<class T>
 	using remove_extent_t = _t<remove_extent<T>>;
 
 	template<class T>
-	struct remove_cv
+	struct remove_cv :type_identity<faiz::remove_volatile_t<remove_const_t<T>>>
 	{
-		using type = typename faiz::remove_volatile_t<remove_const_t<T>>;
 	};
-
 	template<class T>
 	using remove_cv_t = _t<remove_cv<T>>;
 
@@ -234,29 +225,24 @@ namespace rider::faiz
 	// print_is_same<int, remove_pointer<int**>::type>(); // false
 	// ```
 	template<class T>
-	struct remove_pointer
+	struct remove_pointer :type_identity<T>
 	{
-		using type = T;
 	};
 	template<class T>
-	struct remove_pointer<T*>
+	struct remove_pointer<T*> :type_identity<T>
 	{
-		using type = T;
 	};
 	template<class T>
-	struct remove_pointer<T* const>
+	struct remove_pointer<T* const> :type_identity<T>
 	{
-		using type = T;
 	};
 	template<class T>
-	struct remove_pointer<T* volatile>
+	struct remove_pointer<T* volatile> :type_identity<T>
 	{
-		using type = T;
 	};
 	template<class T>
-	struct remove_pointer<T* const volatile>
+	struct remove_pointer<T* const volatile> :type_identity<T>
 	{
-		using type = T;
 	};
 
 	template<class T>
@@ -279,9 +265,8 @@ namespace rider::faiz
 	// function types and array types to pointers.
 
 	template<class T>
-	struct remove_cvref
+	struct remove_cvref :type_identity<remove_cv_t<remove_reference_t<T>>>
 	{
-		using type = remove_cv_t<remove_reference_t<T>>;
 	};
 	template<class T>
 	using remove_cvref_t = _t<remove_cvref<T>>;
@@ -321,15 +306,15 @@ namespace rider::faiz
 	struct is_function : public false_
 	{};
 
-#define ImplIsFun(QUALIFIERS)		   \
-template<typename R, typename... Args> \
-struct is_function<R(Args...) QUALIFIERS> : public true_ \
-{};\
-template<typename R, typename... Args> \
-struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
-{};
+#define ImplIsFun(QUALIFIERS) \
+	template<typename R, typename... Args> \
+	struct is_function<R(Args...) QUALIFIERS> : public true_ \
+	{}; \
+	template<typename R, typename... Args> \
+	struct is_function<R(Args... COMMA...) QUALIFIERS> : public true_ \
+	{};
 
-// clang-format off
+	// clang-format off
 	ImplIsFun()
 	ImplIsFun(const)
 	ImplIsFun(&)
@@ -349,12 +334,11 @@ struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
 	ImplIsFun(const volatile &&)
 	ImplIsFun(const volatile noexcept)
 
-	// clang-format on
-	template<class T>
-	inline constexpr bool is_function_v = is_function<T>::value;
+		// clang-format on
+		template<class T>
+		inline constexpr bool is_function_v = is_function<T>::value;
 
 #undef ImplIsFun
-
 
 
 	// Checks whether T is a floating-point type. Provides the member
@@ -546,14 +530,12 @@ struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
 	using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
 
 	template<typename T, bool = is_referenceable_v<T>>
-	struct add_rvalue_reference
+	struct add_rvalue_reference :type_identity<T>
 	{
-		using type = T;
 	};
 	template<typename T>
-	struct add_rvalue_reference<T, true>
+	struct add_rvalue_reference<T, true> :type_identity<T&&>
 	{
-		using type = T&&;
 	};
 
 	template<typename T>
@@ -580,21 +562,18 @@ struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
 	declval() noexcept;
 
 	template<class T>
-	struct add_cv
+	struct add_cv : type_identity<const volatile T>
 	{
-		using type = const volatile T;
 	};
 
 	template<class T>
-	struct add_const
+	struct add_const : type_identity<const volatile T>
 	{
-		using type = const T;
 	};
 
 	template<class T>
-	struct add_volatile
+	struct add_volatile :type_identity<volatile T>
 	{
-		using type = volatile T;
 	};
 
 	template<class T>
@@ -609,9 +588,8 @@ struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
 	{};
 
 	template<class T>
-	struct enable_if<true, T>
+	struct enable_if<true, T> :type_identity<T>
 	{
-		using type = T;
 	};
 
 	template<bool B, class T = void>
@@ -704,27 +682,23 @@ struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
 	namespace detail
 	{
 		template<class T, bool is_function_type = false>
-		struct add_pointer
+		struct add_pointer :type_identity<remove_reference_t<T>*>
 		{
-			using type = remove_reference_t<T>*;
 		};
 
 		template<class T>
-		struct add_pointer<T, true>
+		struct add_pointer<T, true> :type_identity<T>
 		{
-			using type = T;
 		};
 
 		template<class T, class... Args>
-		struct add_pointer<T(Args...), true>
+		struct add_pointer<T(Args...), true> :type_identity<T (*)(Args...)>
 		{
-			using type = T (*)(Args...);
 		};
 
 		template<class T, class... Args>
-		struct add_pointer<T(Args..., ...), true>
+		struct add_pointer<T(Args..., ...), true> :type_identity<T (*)(Args..., ...)>
 		{
-			using type = T (*)(Args..., ...);
 		};
 
 	} // namespace detail
@@ -800,9 +774,8 @@ struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
 	// is_assignable
 
 	template<typename, typename T>
-	struct select_2nd
+	struct select_2nd :type_identity<T>
 	{
-		using type = T;
 	};
 
 	template<class T, class Arg>
@@ -833,9 +806,8 @@ struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
 	struct common_type;
 
 	template<typename T>
-	struct common_type<T>
+	struct common_type<T> :type_identity<decay_t<T>>
 	{
-		typedef decay_t<T> type;
 	};
 	// Question: Should we use T or decay_t<T> here? The C++11 Standard
 	// specifically (20.9.7.6,p3) specifies that it be without decay, but
@@ -854,9 +826,8 @@ struct is_function<R(Args... COMMA ...) QUALIFIERS> : public true_ \
 	};
 
 	template<typename T, typename U, typename... V>
-	struct common_type<T, U, V...>
+	struct common_type<T, U, V...> :type_identity<_t<common_type<_t<common_type<T, U>>, V...>>>
 	{
-		using type = _t<common_type<_t<common_type<T, U>>, V...>>;
 	};
 
 	template<typename... T>
