@@ -1,17 +1,12 @@
 #ifndef TYPE_TRAITS
 #define TYPE_TRAITS
-#include "rider/faiz/cstddef.hpp"
-
+#include "rider/faiz/cstddef.hpp" // for size_t
 /*
 Don't implement:
  */
 
 namespace rider::faiz
 {
-
-	template<class _type>
-	using _t = typename _type::type;
-
 	template<class T, T v>
 	struct integral_constant
 	{
@@ -36,27 +31,115 @@ namespace rider::faiz
 
 	// clang-format off
 
-ImplDeclIntTDe(bool)
-ImplDeclIntTDe(char)
-ImplDeclIntTDe(int)
-ImplDeclIntT(llong_, long long)
-ImplDeclIntTDe(long)
-ImplDeclIntTDe(short)
-ImplDeclIntT(ullong_, unsigned long long)
-ImplDeclIntT(ulong_, unsigned long)
-ImplDeclIntT(uint_, unsigned)
-ImplDeclIntT(ushort_, unsigned short)
-ImplDeclIntTDe(size_t)
-ImplDeclIntTDe(ptrdiff_t)
+	ImplDeclIntTDe(bool)
+	ImplDeclIntTDe(char)
+	ImplDeclIntTDe(int)
+	ImplDeclIntT(llong_, long long)
+	ImplDeclIntTDe(long)
+	ImplDeclIntTDe(short)
+	ImplDeclIntT(ullong_, unsigned long long)
+	ImplDeclIntT(ulong_, unsigned long)
+	ImplDeclIntT(uint_, unsigned)
+	ImplDeclIntT(ushort_, unsigned short)
+	ImplDeclIntTDe(size_t)
+	ImplDeclIntTDe(ptrdiff_t)
+
 #undef ImplDeclIntTDe
 #undef ImplDeclIntT
 
-using true_ = bool_<true>;
-using false_ = bool_<false>;
-template<bool B>
-using bool_constant = integral_constant<bool, B>;
-using true_type = true_;
-using false_type = false_;
+
+
+	using true_ = bool_<true>;
+	using false_ = bool_<false>;
+	template<bool B>
+	using bool_constant = integral_constant<bool, B>;
+	using true_type = true_;
+	using false_type = false_;
+
+	template<class _type>
+	using _t = typename _type::type;
+
+	// Provides member typedef type, which is defined as T if B is true at
+	// compile time, or as F if B is false.
+	template<bool B, class T, class F>
+	struct conditional
+	{
+		using type = T;
+	};
+
+	// Provides member typedef type, which is defined as T if B is true at
+	// compile time, or as F if B is false.
+	template<class T, class F>
+	struct conditional<false, T, F>
+	{
+		using type = F;
+	};
+
+	//  Provides member typedef type, which is defined as T if B is true at
+	//  compile time, or as F if B is false.
+	template<bool B, class T, class F>
+	using conditional_t = _t<conditional<B, T, F>>;
+
+} // namespace rider::faiz
+
+namespace rider::faiz::logic
+{
+	template<class...>
+	struct and_;
+
+	template<>
+	struct and_<> : true_
+	{};
+
+	template<class _b1>
+	struct and_<_b1> : _b1
+	{};
+
+	template<class _b1, class _b2, class... _bn>
+	struct and_<_b1, _b2, _bn...>
+		: faiz::conditional_t<_b1::value, and_<_b2, _bn...>, _b1>
+	{};
+
+	template<class...>
+	struct or_;
+
+	template<>
+	struct or_<> : false_
+	{};
+
+	template<class _b1>
+	struct or_<_b1> : _b1
+	{};
+
+	template<class _b1, class _b2, class... _bn>
+	struct or_<_b1, _b2, _bn...>
+		: faiz::conditional<_b1::value, _b1, or_<_b2, _bn...>>::type
+	{};
+
+
+	template<class _b>
+	struct not_ : bool_<!_b::value>
+	{};
+
+	template<class... _b>
+	using conjunction = and_<_b...>;
+	template<class... B>
+	inline constexpr bool conjunction_v = conjunction<B...>::value;
+
+	template<class... _b>
+	using disjunction = or_<_b...>;
+	template<class... B>
+	inline constexpr bool disjunction_v = disjunction<B...>::value;
+
+	template<class _b>
+	using negation = not_<_b>;
+	template<class B>
+	inline constexpr bool negation_v = negation<B>::value;
+
+} // namespace rider::faiz::logic
+
+namespace rider::faiz
+{
 
 	// clang-format on
 
@@ -81,7 +164,7 @@ using false_type = false_;
 		using type = T;
 	};
 	template<class T>
-	using remove_reference_t = typename remove_reference<T>::type;
+	using remove_reference_t = _t<remove_reference<T>>;
 
 	template<class T>
 	struct remove_const
@@ -101,10 +184,10 @@ using false_type = false_;
 	};
 
 	template<class T>
-	using remove_const_t = typename remove_const<T>::type;
+	using remove_const_t = _t<remove_const<T>>;
 
 	template<class T>
-	using remove_volatile_t = typename remove_volatile<T>::type;
+	using remove_volatile_t = _t<remove_volatile<T>>;
 
 	template<class T>
 	struct remove_volatile<volatile T>
@@ -133,7 +216,7 @@ using false_type = false_;
 		using type = T;
 	};
 	template<class T>
-	using remove_extent_t = typename remove_extent<T>::type;
+	using remove_extent_t = _t<remove_extent<T>>;
 
 	template<class T>
 	struct remove_cv
@@ -142,7 +225,7 @@ using false_type = false_;
 	};
 
 	template<class T>
-	using remove_cv_t = typename remove_cv<T>::type;
+	using remove_cv_t = _t<remove_cv<T>>;
 
 	// Provides the member typedef type which is the type pointed to by T,
 	// or, if T is not a pointer, then type is the same as T.
@@ -177,15 +260,15 @@ using false_type = false_;
 	};
 
 	template<class T>
-	using remove_cv_t = typename remove_cv<T>::type;
+	using remove_cv_t = _t<remove_cv<T>>;
 	template<class T>
-	using remove_const_t = typename remove_const<T>::type;
+	using remove_const_t = _t<remove_const<T>>;
 	template<class T>
-	using remove_volatile_t = typename remove_volatile<T>::type;
+	using remove_volatile_t = _t<remove_volatile<T>>;
 	template<class T>
-	using remove_extent_t = typename remove_extent<T>::type;
+	using remove_extent_t = _t<remove_extent<T>>;
 	template<class T>
-	using remove_pointer_t = typename remove_pointer<T>::type;
+	using remove_pointer_t = _t<remove_pointer<T>>;
 
 	// If the type **T** is a reference type, provides the member typedef
 	// type which is the type referred to by
@@ -201,7 +284,7 @@ using false_type = false_;
 		using type = remove_cv_t<remove_reference_t<T>>;
 	};
 	template<class T>
-	using remove_cvref_t = typename remove_cvref<T>::type;
+	using remove_cvref_t = _t<remove_cvref<T>>;
 
 	/******************** is *********************/
 
@@ -634,26 +717,6 @@ using false_type = false_;
 	inline constexpr bool is_copy_constructible_v
 		= is_copy_constructible<Tp>::value;
 
-	// Provides member typedef type, which is defined as T if B is true at
-	// compile time, or as F if B is false.
-	template<bool B, class T, class F>
-	struct conditional
-	{
-		using type = T;
-	};
-
-	// Provides member typedef type, which is defined as T if B is true at
-	// compile time, or as F if B is false.
-	template<class T, class F>
-	struct conditional<false, T, F>
-	{
-		using type = F;
-	};
-
-	//  Provides member typedef type, which is defined as T if B is true at
-	//  compile time, or as F if B is false.
-	template<bool B, class T, class F>
-	using conditional_t = _t<conditional<B, T, F>>;
 
 	// If T is an array type, provides the member constant value equal to
 	// the number of dimensions of the array. For any other type, value is
@@ -683,7 +746,7 @@ using false_type = false_;
 		template<class T, bool is_function_type = false>
 		struct add_pointer
 		{
-			using type = typename remove_reference<T>::type*;
+			using type = remove_reference_t<T>*;
 		};
 
 		template<class T>
@@ -783,8 +846,7 @@ using false_type = false_;
 	};
 
 	template<class T, class Arg>
-	typename select_2nd<decltype((faiz::declval<T>() = faiz::declval<Arg>())),
-		true_>::type
+	_t<select_2nd<decltype((faiz::declval<T>() = faiz::declval<Arg>())), true_>>
 	is_assignable_test(int);
 
 	template<class, class>
@@ -834,12 +896,11 @@ using false_type = false_;
 	template<typename T, typename U, typename... V>
 	struct common_type<T, U, V...>
 	{
-		using type =
-			typename common_type<typename common_type<T, U>::type, V...>::type;
+		using type = _t<common_type<_t<common_type<T, U>>, V...>>;
 	};
 
 	template<typename... T>
-	using common_type_t = typename common_type<T...>::type;
+	using common_type_t = _t<common_type<T...>>;
 
 	template<class...>
 	using void_t = void;
@@ -1068,9 +1129,9 @@ using false_type = false_;
 	};
 
 	template<typename T>
-	char& is_polymorphic_impl_aux(typename enable_if<
+	char& is_polymorphic_impl_aux(enable_if_t<
 		sizeof((T*)dynamic_cast<const volatile void*>(declval<T*>())) != 0,
-		int>::type);
+		int>);
 	template<typename T>
 	two&
 	is_polymorphic_impl_aux(...);
@@ -1086,7 +1147,7 @@ using false_type = false_;
 	template<class T>
 	struct is_copy_assignable
 		: faiz::is_assignable<_t<faiz::add_lvalue_reference<T>>,
-			  typename faiz::add_lvalue_reference<const T>::type>
+			  faiz::add_lvalue_reference_t<const T>>
 	{};
 
 	template<typename T, typename _Up>
@@ -1101,7 +1162,7 @@ using false_type = false_;
 	template<class T>
 	struct is_trivially_copy_assignable
 		: faiz::is_trivially_assignable<_t<faiz::add_lvalue_reference<T>>,
-			  typename faiz::add_lvalue_reference<const T>::type>
+			  faiz::add_lvalue_reference_t<const T>>
 	{};
 
 	template<bool, class T, class A>
