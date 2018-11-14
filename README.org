@@ -2,67 +2,8 @@
 - many intrinsics like ~__is_union~ available
 * TODO
 http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduced-in-c11/
-implement list with pointer traits
+- implement list with pointer traits
+- use gcc/clang's modules.
+** to read papers  
+- [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3465.pdf][Adding heterogeneous comparison lookup toassociative containers]]
 * COMMENT Conversion
-
-#+BEGIN_SRC cpp
-template<class _type, class _tOpt = use_constfn>
-struct incrementable
-{
-	friend _type operator++(_type& x, int)
-		constexpr(noexcept(_type(x))
-					&& noexcept(++x)
-					&& noexcept(_type(faiz::declval<_type>())))
-	{
-		_type t(x);
-		++x;
-		return t;
-	}
-};
-
-
-#+END_SRC
-
-#+BEGIN_SRC cpp
-ImplOperatorsFlatAlias2_de(
-	totally_ordered, less_than_comparable, equality_comparable)
-#define Impl_StringView_search_fn_head(_n, _attr, _spec, ...) \
-
-size_type find_last_not_of(basic_string_view s, size_type pos = npos) const noexcept
-{
-
-    return ystdex::
-        str_find_last_not_of<value_type, size_type, traits_type, npos>(
-                data_, size_, s.data_, pos, s.size_);
-}
-
-size_type find_last_not_of(_tChar c, size_type pos = npos) const noexcept
-{
-    return ystdex::
-		str_find_last_not_of<value_type, size_type, traits_type, npos>(
-			data_, size_, c, pos);
-}
-
-size_type find_last_not_of(const _tChar* s,
-		size_type pos, \
-		size_type n) const
-{
-    return yconstraint(s),
-		_n(basic_string_view(s, n), pos);
-}
-
-size_type find_last_not_of(const _tChar* s, size_type pos = _arg) const
-{
-    return _n(s, pos, traits_type::length(s));
-}
-
-#define Impl_StringView_search_mf(find_last_not_of, npos) \
-	Impl_StringView_search1(find_last_not_of, npos) Impl_StringView_search_fn_head( \
-		find_last_not_of, , noexcept, _tChar c, size_type pos = npos) return ystdex:: \
-		str_##find_last_not_of<value_type, size_type, traits_type, npos>( \
-			data_, size_, c, pos); \
-	} \
-	Impl_StringView_search34(find_last_not_of, npos)
-
-Impl_StringView_search_mf(find_last_not_of, npos)
-#+END_SRC
