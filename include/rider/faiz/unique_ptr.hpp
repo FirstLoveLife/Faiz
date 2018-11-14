@@ -7,7 +7,7 @@
 #	include "rider/faiz/utility.hpp"
 
 /*
-Good FAQ: unique_ptr with incomplete classes: https://stackoverflow.com/a/17950450/6949852
+Good FAQ: unique_ptr with incomplete classes: https://stackoverflow.com/a/17950450/6949852 https://stackoverflow.com/a/32269374/6949852
  */
 
 namespace rider::faiz
