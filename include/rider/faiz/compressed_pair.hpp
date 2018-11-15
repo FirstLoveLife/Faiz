@@ -290,6 +290,10 @@ using first_type = T1; \
 	{
 		x.swap(y);
 	}
+
+#undef ImplAlias
+#undef ImplCompressedEqIMP
+#undef ImplCompressedUeqIMP
 } // namespace rider::faiz
 
 // clang-format on
