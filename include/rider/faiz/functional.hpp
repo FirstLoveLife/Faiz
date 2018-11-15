@@ -3,8 +3,7 @@
 /*
 Don't implement myself: not_fn, invoke
  */
-
-#include "rider/faiz/exception.hpp"
+#include <exception> // for std::except
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/utility.hpp"
 
@@ -550,7 +549,7 @@ namespace rider::faiz
 	// std::function::operator() if the function wrapper has no
 	// target.std::bad_function_call is the type of the exception thrown by
 	// std::function::operator() if the function wrapper has no target.
-	class bad_function_call : public exception
+	class bad_function_call : public std::exception
 	{
 		~bad_function_call() noexcept
 		{}
