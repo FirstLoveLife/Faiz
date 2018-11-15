@@ -1,6 +1,6 @@
 #include "rider/faiz/call_traits.hpp"
-#include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/faiz.hpp"
+#include "rider/faiz/type_traits.hpp"
 
 #include <type_traits>
 
@@ -45,7 +45,6 @@ namespace rider::faiz
 		t1 = t2;
 		t2 = tTemp;
 	}
-	// clang-format on
 #define ImplAlias \
 using first_type = T1; \
 		using second_type = T2; \
@@ -292,3 +291,5 @@ using first_type = T1; \
 		x.swap(y);
 	}
 } // namespace rider::faiz
+
+// clang-format on
