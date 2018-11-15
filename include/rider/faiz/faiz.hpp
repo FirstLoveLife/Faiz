@@ -1,7 +1,5 @@
 #ifndef FAIZ
 #define FAIZ
-#include "rider/faiz/algebra.hpp"
-#include "rider/faiz/logic.hpp"
 #include "rider/faiz/type_traits.hpp"
 #include <iostream>
 namespace rider
@@ -67,6 +65,8 @@ namespace rider::faiz
 	template<typename _tCond, typename _tThen = true_, typename _tElse = false_>
 	using cond_t = conditional_t<_tCond::value, _tThen, _tElse>;
 
-
+	template<typename _type, typename... _types>
+	struct is_in_types : logic::or_<is_same<_type, _types...>>
+	{};
 } // namespace rider::faiz
 #endif

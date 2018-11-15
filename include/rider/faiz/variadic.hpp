@@ -1,14 +1,12 @@
 #ifndef VARIADIC
 #define VARIADIC
-#include "rider/faiz/algebra.hpp"
 #include "rider/faiz/faiz.hpp"
-#include "rider/faiz/logic.hpp"
 #include "rider/faiz/type_traits.hpp"
 namespace rider::faiz::fseq
 {
 
 	template<typename T, typename... Ts>
-	constexpr identity<T>
+	constexpr type_identity<T>
 	front(empty_base<T, Ts...>) noexcept
 	{
 		return {};
