@@ -4,6 +4,8 @@
 http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduced-in-c11/
 - implement list with pointer traits
 - use gcc/clang's modules.
+- simplify empty base classes once no_unique_address is available on clang.(it
+  is available on gcc now though)
 ** to read papers  
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3465.pdf][Adding heterogeneous comparison lookup toassociative containers]]
 * COMMENT Conversion
