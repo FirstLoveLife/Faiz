@@ -1,0 +1,116 @@
+* Background
+The implementation is inspired by libcxx's work. the original author is richard
+smith. I also ask a question on
+stackoverflow:https://stackoverflow.com/questions/53350706/how-to-understand-libcxxs-implementation-of-make-integer-sequence
+
+What I have done is divide the recursion into more(39) parts, which makes it as
+fast as the built-in implementation on my os(both clang and gcc)
+* Hierarchies
+#+BEGIN_SRC cpp
+using make_integer_sequence_aux_unchecked =
+		typename detail::make<Tp>::type::template convert<integer_sequence, T>;
+
+=>
+
+template<size_t Tp>
+		struct make : parity<Tp % 39>::template pmake<Tp>
+		{};
+template<>
+		struct make<0~39> : type_identity<integer_sequence_aux<size_t>>
+		{};
+template<class Tindex, Tindex... V>
+	struct integer_sequence_aux
+	{
+		template<template<class Tfrom, Tfrom...> class TtoIndexSeq, class Tto>
+		using convert = TtoIndexSeq<Tto, V...>;
+	};
+#+END_SRC
+if \[N\in (0, 38)\], specialized template ---- ~make<0> make<1> make<2> ... make<37> will be invoked directly, for example, if N = 4,
+~template<> struct make<4> { using type == integer_sequence<size_t, 0, 1, 2, 3>;
+};~. Here I use ~type_identity<integer_sequence_aux<size_t, __VA_ARGS__>>~,
+which is a altenative. see p0887r1
+
+else, \[N \geq 38\], the (~make~)primary template will be invoked, which is
+derived from ~parity<N % 39>::pmake~, ~N~ apply for ~Tp~ below. ~pmake~ is
+derived from ~repeat~.
+#+BEGIN_SRC cpp
+template<size_t Tp>
+		struct parity;
+		template<size_t Tp>
+		struct make : parity<Tp % 39>::template pmake<Tp>
+		{};
+
+template<size_t _Np> struct parity;
+template<> \
+	struct parity<Vn> \ // Vn is a intege, not non-type template parameter
+	{ \
+		template<size_t Tp> \
+		struct pmake : repeat<typename make<Tp / 39>::type, Tp - Vn, Tp - Vn - 1, ..., Tp - 1> \
+		{}; \
+	};
+#+END_SRC
+
+As for ~repeat~:
+#+BEGIN_SRC cpp
+	template<typename T, size_t... Vextra>
+		struct repeat;
+		template<typename T, T... Tp, size_t... Vextra>
+		struct repeat<integer_sequence_aux<T, Tp...>, Vextra...>
+		{
+			// clang-format off
+			using type = integer_sequence_aux<
+				T,
+				Tp...,
+				sizeof...(Tp) + Tp...,
+#define Aux(N)  N * sizeof...(Tp) + Tp...
+				Aux(  2 ),
+				Aux(  3 ),
+              ...
+              Aux( 37 ),
+				Aux( 38 ),
+				Vextra...>;
+#undef Aux
+			// clang-format on
+		};
+#+END_SRC
+
+#+BEGIN_SRC
+T...,  // The original values
+
+
+sizeof...(T) + T...,
+// sizeof...(T) is the number of integers in the sequence. This is a fold expression
+// that adds the sizeof...(T) to every integer.
+
+// So (T..., sizeof...(T) + T...) for <0, 1, 2> would be
+// (<0, 1, 2>..., <3 + 0, 3 + 1, 3 + 2>...), which is `<0, 1, 2, 3, 4, 5>`.
+
+// The rest of the lines are the same, but starting with a different
+// multiple of sizeof...(T)
+
+// `<0, 1, ..., N>` into an integer sequence of `<0, 1, ..., 8N>`.
+
+Vextra...
+// And then add `Vextra` to the end
+
+#+END_SRC
+
+For example: ~make_integer_sequence<41>~ => ~repeat<typename make<_Np / 38>::type,
+_Np - 2, _Np - 1>~:
+- Vextra is ~39, 40~
+- ~typename make<_Np / 39>::type~ => ~typename make<1>::type~ =>
+  ~integer_sequence<size_t, 0>~, ~sizeof...(_Np)~ is ~1~, so it will expand to
+  ~(0, 38)~
+
+If ~typename make<N>::type~ is not ~N~, e.g., ~make_integer_sequence<80>~:
+- Vextra is ~78, 79~
+-  ~typename make<_Np / 39>::type~ => ~typename make<2>::type~ =>
+  ~integer_sequence<size_t, 0, 1>~, ~sizeof...(_Np)~ is ~2~:
+  #+BEGIN_SRC
+  0 1
+  2 + 0, 2 + 1
+  4 + 0, 4 + 1
+  6 + 0, 6 + 1
+  ...
+  38 * 2 + 0, 38 * 2 + 1
+  #+END_SRC
