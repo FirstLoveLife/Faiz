@@ -17,15 +17,16 @@ namespace rider::faiz
 		template<template<class Tfrom, Tfrom...> class TtoIndexSeq, class Tto>
 		using convert = TtoIndexSeq<Tto, V...>;
 	};
+} // namespace rider::faiz
 
-	namespace detail
+namespace rider::faiz::detail
+{
+	template<typename T, size_t... Vextra>
+	struct repeat;
+	template<typename T, T... Tp, size_t... Vextra>
+	struct repeat<integer_sequence_aux<T, Tp...>, Vextra...>
 	{
-		template<typename T, size_t... Vextra>
-		struct repeat;
-		template<typename T, T... Tp, size_t... Vextra>
-		struct repeat<integer_sequence_aux<T, Tp...>, Vextra...>
-		{
-			// clang-format off
+		// clang-format off
 			using type = integer_sequence_aux<
 				T,
 				Tp...,
@@ -46,18 +47,18 @@ namespace rider::faiz
 				Aux( 38 ),
 				Vextra...>;
 #undef Aux
-			// clang-format on
-		};
+		// clang-format on
+	};
 
-		template<size_t Tp>
-		struct parity;
-		template<size_t Tp>
-		struct make : parity<Tp % 39>::template pmake<Tp>
-		{};
+	template<size_t Tp>
+	struct parity;
+	template<size_t Tp>
+	struct make : parity<Tp % 39>::template pmake<Tp>
+	{};
 
-		template<>
-		struct make<0> : type_identity<integer_sequence_aux<size_t>>
-		{};
+	template<>
+	struct make<0> : type_identity<integer_sequence_aux<size_t>>
+	{};
 #define MAKE(N, ...) \
 	template<> \
 	struct make<N> : type_identity<integer_sequence_aux<size_t, __VA_ARGS__>> \
@@ -84,7 +85,7 @@ namespace rider::faiz
 	PARITY(N, ImplParity(N)) \
 	MAKE(N, ImplMake(N))
 #define MultipleParityAndMake(N)
-		// clang-format off
+	// clang-format off
 		ParityAndMake(  1 ) ParityAndMake(  2 )
 		ParityAndMake(  3 ) ParityAndMake(  4 )
 		ParityAndMake(  5 ) ParityAndMake(  6 )
@@ -105,10 +106,11 @@ namespace rider::faiz
 		ParityAndMake( 35 ) ParityAndMake( 36 )
 		ParityAndMake( 37 ) ParityAndMake( 38 )
 		ParityAndMake( 39 )
-		// clang-format on
+	// clang-format on
 
-	} // namespace detail
-
+} // namespace rider::faiz::detail
+namespace rider::faiz
+{
 	template<class T, T... _Ip>
 	struct integer_sequence
 	{
