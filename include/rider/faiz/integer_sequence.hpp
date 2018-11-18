@@ -23,15 +23,15 @@ namespace rider::faiz::detail
 {
 	template<typename T, faiz::size_t... Vextra>
 	struct repeat;
-	template<typename T, T... Tp, faiz::size_t... Vextra>
-	struct repeat<integer_sequence_aux<T, Tp...>, Vextra...>
+	template<typename T, T... Vseq, faiz::size_t... Vextra>
+	struct repeat<integer_sequence_aux<T, Vseq...>, Vextra...>
 	{
 		// clang-format off
 			using type = integer_sequence_aux<
 				T,
-				Tp...,
-				sizeof...(Tp) + Tp...,
-#define Aux(N)  N * sizeof...(Tp) + Tp...
+				Vseq...,
+				sizeof...(Vseq) + Vseq...,
+#define Aux(N)  N * sizeof...(Vseq) + Vseq...
 				Aux(  2 ), Aux(  3 ), Aux(  4 ),
 				Aux(  5 ), Aux(  6 ), Aux(  7 ),
 				Aux(  8 ), Aux(  9 ), Aux( 10 ),
@@ -50,10 +50,10 @@ namespace rider::faiz::detail
 		// clang-format on
 	};
 
-	template<faiz::size_t Tp>
+	template<faiz::size_t V>
 	struct parity;
-	template<faiz::size_t Tp>
-	struct make : parity<Tp % 39>::template pmake<Tp>
+	template<faiz::size_t V>
+	struct make : parity<V % 39>::template pmake<V>
 	{};
 
 	template<>
@@ -68,15 +68,15 @@ namespace rider::faiz::detail
 	template<> \
 	struct parity<N> \
 	{ \
-		template<faiz::size_t Tp> \
-		struct pmake : repeat<typename make<Tp / 39>::type, __VA_ARGS__> \
+		template<faiz::size_t V> \
+		struct pmake : repeat<typename make<V / 39>::type, __VA_ARGS__> \
 		{}; \
 	};
-#define AppendTp(z, n, data) (Tp - n)
-#define TpSequence(n) BOOST_PP_REPEAT(n, AppendTp, )
+#define AppendV(z, n, data) (V - n)
+#define VSequence(n) BOOST_PP_REPEAT(n, AppendV, )
 #define ImplParityAux(INTEGER) \
 	BOOST_PP_SEQ_ENUM( \
-		BOOST_PP_SEQ_REVERSE(BOOST_PP_SEQ_TAIL(TpSequence(INTEGER))))
+		BOOST_PP_SEQ_REVERSE(BOOST_PP_SEQ_TAIL(VSequence(INTEGER))))
 #define ImplParity(N) ImplParityAux(BOOST_PP_INC(N))
 #define TO_SEQ_ELEM(z, n, data) (n)
 #define IntegerSequence(n) BOOST_PP_REPEAT(n, TO_SEQ_ELEM, )
@@ -112,7 +112,7 @@ namespace rider::faiz::detail
 } // namespace rider::faiz::detail
 namespace rider::faiz
 {
-	template<class T, T... _Ip>
+	template<class T, T... Vseq>
 	struct integer_sequence
 	{
 		typedef T value_type;
@@ -122,39 +122,38 @@ namespace rider::faiz
 		static constexpr faiz::size_t
 		size() noexcept
 		{
-			return sizeof...(_Ip);
+			return sizeof...(Vseq);
 		}
 	};
 
-	template<faiz::size_t... _Ip>
-	using index_sequence = integer_sequence<faiz::size_t, _Ip...>;
+	template<faiz::size_t... Vseq>
+	using index_sequence = integer_sequence<faiz::size_t, Vseq...>;
 
-	template<typename T, T Tp>
+	template<typename T, T V>
 	using make_integer_sequence_aux_unchecked =
-		typename detail::make<Tp>::type::template convert<integer_sequence, T>;
+		typename detail::make<V>::type::template convert<integer_sequence, T>;
 
-	template<class T, T _Ep>
+	template<class T, T V>
 	struct make_integer_sequence_checked
-		: type_identity<
-			  make_integer_sequence_aux_unchecked<T, 0 <= _Ep ? _Ep : 0>>
+		: type_identity<make_integer_sequence_aux_unchecked<T, 0 <= V ? V : 0>>
 	{
 		static_assert(faiz::is_integral<T>::value,
 			"faiz::make_integer_sequence can only be instantiated with an "
 			"integral type");
-		static_assert(0 <= _Ep,
+		static_assert(0 <= V,
 			"faiz::make_integer_sequence must have a non-negative sequence "
 			"length");
 	};
 
-	template<class T, T _Ep>
+	template<class T, T V>
 	using make_integer_sequence_aux =
-		typename make_integer_sequence_checked<T, _Ep>::type;
+		typename make_integer_sequence_checked<T, V>::type;
 
-	template<class T, T Tp>
-	using make_integer_sequence = make_integer_sequence_aux<T, Tp>;
+	template<class T, T V>
+	using make_integer_sequence = make_integer_sequence_aux<T, V>;
 
-	template<faiz::size_t Tp>
-	using make_index_sequence = make_integer_sequence<faiz::size_t, Tp>;
+	template<faiz::size_t V>
+	using make_index_sequence = make_integer_sequence<faiz::size_t, V>;
 
 	template<class... T>
 	using index_sequence_for = make_index_sequence<sizeof...(T)>;
