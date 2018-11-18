@@ -21,9 +21,9 @@ namespace rider::faiz
 
 namespace rider::faiz::detail
 {
-	template<typename T, size_t... Vextra>
+	template<typename T, faiz::size_t... Vextra>
 	struct repeat;
-	template<typename T, T... Tp, size_t... Vextra>
+	template<typename T, T... Tp, faiz::size_t... Vextra>
 	struct repeat<integer_sequence_aux<T, Tp...>, Vextra...>
 	{
 		// clang-format off
@@ -50,24 +50,25 @@ namespace rider::faiz::detail
 		// clang-format on
 	};
 
-	template<size_t Tp>
+	template<faiz::size_t Tp>
 	struct parity;
-	template<size_t Tp>
+	template<faiz::size_t Tp>
 	struct make : parity<Tp % 39>::template pmake<Tp>
 	{};
 
 	template<>
-	struct make<0> : type_identity<integer_sequence_aux<size_t>>
+	struct make<0> : type_identity<integer_sequence_aux<faiz::size_t>>
 	{};
 #define MAKE(N, ...) \
 	template<> \
-	struct make<N> : type_identity<integer_sequence_aux<size_t, __VA_ARGS__>> \
+	struct make<N> \
+		: type_identity<integer_sequence_aux<faiz::size_t, __VA_ARGS__>> \
 	{};
 #define PARITY(N, ...) \
 	template<> \
 	struct parity<N> \
 	{ \
-		template<size_t Tp> \
+		template<faiz::size_t Tp> \
 		struct pmake : repeat<typename make<Tp / 39>::type, __VA_ARGS__> \
 		{}; \
 	};
@@ -116,17 +117,17 @@ namespace rider::faiz
 	{
 		typedef T value_type;
 		static_assert(faiz::is_integral<T>::value,
-			"std::integer_sequence can only be instantiated with an integral "
+			"faiz::integer_sequence can only be instantiated with an integral "
 			"type");
-		static constexpr size_t
+		static constexpr faiz::size_t
 		size() noexcept
 		{
 			return sizeof...(_Ip);
 		}
 	};
 
-	template<size_t... _Ip>
-	using index_sequence = integer_sequence<size_t, _Ip...>;
+	template<faiz::size_t... _Ip>
+	using index_sequence = integer_sequence<faiz::size_t, _Ip...>;
 
 	template<typename T, T Tp>
 	using make_integer_sequence_aux_unchecked =
@@ -138,10 +139,10 @@ namespace rider::faiz
 			  make_integer_sequence_aux_unchecked<T, 0 <= _Ep ? _Ep : 0>>
 	{
 		static_assert(faiz::is_integral<T>::value,
-			"std::make_integer_sequence can only be instantiated with an "
+			"faiz::make_integer_sequence can only be instantiated with an "
 			"integral type");
 		static_assert(0 <= _Ep,
-			"std::make_integer_sequence must have a non-negative sequence "
+			"faiz::make_integer_sequence must have a non-negative sequence "
 			"length");
 	};
 
@@ -152,8 +153,8 @@ namespace rider::faiz
 	template<class T, T Tp>
 	using make_integer_sequence = make_integer_sequence_aux<T, Tp>;
 
-	template<size_t Tp>
-	using make_index_sequence = make_integer_sequence<size_t, Tp>;
+	template<faiz::size_t Tp>
+	using make_index_sequence = make_integer_sequence<faiz::size_t, Tp>;
 
 	template<class... T>
 	using index_sequence_for = make_index_sequence<sizeof...(T)>;
