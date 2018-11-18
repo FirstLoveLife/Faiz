@@ -102,7 +102,7 @@ _Np - 2, _Np - 1>~:
   ~integer_sequence<size_t, 0>~, ~sizeof...(_Np)~ is ~1~, so it will expand to
   ~(0, 38)~
 
-If ~typename make<N>::type~ is not ~N~, e.g., ~make_integer_sequence<80>~:
+If ~typename make<N>::type~ is not ~1~, e.g., ~make_integer_sequence<80>~:
 - Vextra is ~78, 79~
 -  ~typename make<_Np / 39>::type~ => ~typename make<2>::type~ =>
   ~integer_sequence<size_t, 0, 1>~, ~sizeof...(_Np)~ is ~2~:
