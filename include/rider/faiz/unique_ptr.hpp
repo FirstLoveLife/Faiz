@@ -7,7 +7,18 @@
 #	include "rider/faiz/utility.hpp"
 
 /*
-Good FAQ: unique_ptr with incomplete classes: https://stackoverflow.com/a/17950450/6949852 https://stackoverflow.com/a/32269374/6949852
+Good FAQ: unique_ptr with incomplete classes:
+https://stackoverflow.com/questions/5606750/deletion-of-pointer-to-incomplete-type-and-smart-pointers
+https://stackoverflow.com/a/1951967/6949852
+https://stackoverflow.com/a/17950450/6949852
+https://stackoverflow.com/a/32269374/6949852
+
+https://stackoverflow.com/a/6088400/6949852:
+> shared_ptr determines the correct destructor to call at run-time - it isn't
+part of the type signature. When you initialize or reset a shared_ptr to point
+to a new object, it creates a "deleter" that can be used to destroy the object.
+However, unique_ptr's destructor is part of its type, and it must be known at
+compile-time.
  */
 
 namespace rider::faiz
@@ -815,11 +826,19 @@ namespace rider::faiz
 		using Known_bound = void;
 	};
 
+	// lwg 2098
 	template<class T, class... Args>
-	typename Unique_if<T>::_Single_object
+	typename Unique_if<T>::Single_object
 	make_unique(Args&&... args)
 	{
-		return unique_ptr<T>(new T(faiz::forward<Args>(args)...));
+		if constexpr(faiz::is_constructible<T, Args...>())
+		{
+			return unique_ptr<T>(new T(faiz::forward<Args>(args)...));
+		}
+		else
+		{
+			return unique_ptr<T>(new T{faiz::forward<Args>(args)...});
+		}
 	}
 
 	template<class T>
