@@ -969,7 +969,6 @@ namespace rider::faiz
 	// std::experimental::nonesuch{}.
 	struct nonesuch
 	{
-		nonesuch() = delete;
 		~nonesuch() = delete;
 		nonesuch(nonesuch const&) = delete;
 		void
