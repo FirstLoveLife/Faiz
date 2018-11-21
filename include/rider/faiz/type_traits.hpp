@@ -175,9 +175,8 @@ namespace rider::faiz
 	{};
 
 	template<class T>
-	struct remove_volatile :type_identity<T>
-	{
-	};
+	struct remove_volatile : type_identity<T>
+	{};
 
 	template<class T>
 	using remove_const_t = _t<remove_const<T>>;
@@ -186,35 +185,31 @@ namespace rider::faiz
 	using remove_volatile_t = _t<remove_volatile<T>>;
 
 	template<class T>
-	struct remove_volatile<volatile T> :type_identity<T>
-	{
-	};
+	struct remove_volatile<volatile T> : type_identity<T>
+	{};
 
 	// If T is an array of some type X, provides the member typedef type
 	// equal to X, otherwise type is T. Note that if T is a multidimensional
 	// array, only the first dimension is removed.
 	template<class T>
-	struct remove_extent :type_identity<T>
-	{
-	};
+	struct remove_extent : type_identity<T>
+	{};
 
 	template<class T>
-	struct remove_extent<T[]> :type_identity<T>
+	struct remove_extent<T[]> : type_identity<T>
 	{
 		using type = T;
 	};
 
 	template<class T, faiz::size_t N>
-	struct remove_extent<T[N]> :type_identity<T>
-	{
-	};
+	struct remove_extent<T[N]> : type_identity<T>
+	{};
 	template<class T>
 	using remove_extent_t = _t<remove_extent<T>>;
 
 	template<class T>
-	struct remove_cv :type_identity<faiz::remove_volatile_t<remove_const_t<T>>>
-	{
-	};
+	struct remove_cv : type_identity<faiz::remove_volatile_t<remove_const_t<T>>>
+	{};
 	template<class T>
 	using remove_cv_t = _t<remove_cv<T>>;
 
@@ -225,25 +220,20 @@ namespace rider::faiz
 	// print_is_same<int, remove_pointer<int**>::type>(); // false
 	// ```
 	template<class T>
-	struct remove_pointer :type_identity<T>
-	{
-	};
+	struct remove_pointer : type_identity<T>
+	{};
 	template<class T>
-	struct remove_pointer<T*> :type_identity<T>
-	{
-	};
+	struct remove_pointer<T*> : type_identity<T>
+	{};
 	template<class T>
-	struct remove_pointer<T* const> :type_identity<T>
-	{
-	};
+	struct remove_pointer<T* const> : type_identity<T>
+	{};
 	template<class T>
-	struct remove_pointer<T* volatile> :type_identity<T>
-	{
-	};
+	struct remove_pointer<T* volatile> : type_identity<T>
+	{};
 	template<class T>
-	struct remove_pointer<T* const volatile> :type_identity<T>
-	{
-	};
+	struct remove_pointer<T* const volatile> : type_identity<T>
+	{};
 
 	template<class T>
 	using remove_cv_t = _t<remove_cv<T>>;
@@ -265,9 +255,8 @@ namespace rider::faiz
 	// function types and array types to pointers.
 
 	template<class T>
-	struct remove_cvref :type_identity<remove_cv_t<remove_reference_t<T>>>
-	{
-	};
+	struct remove_cvref : type_identity<remove_cv_t<remove_reference_t<T>>>
+	{};
 	template<class T>
 	using remove_cvref_t = _t<remove_cvref<T>>;
 
@@ -530,13 +519,11 @@ namespace rider::faiz
 	using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
 
 	template<typename T, bool = is_referenceable_v<T>>
-	struct add_rvalue_reference :type_identity<T>
-	{
-	};
+	struct add_rvalue_reference : type_identity<T>
+	{};
 	template<typename T>
-	struct add_rvalue_reference<T, true> :type_identity<T&&>
-	{
-	};
+	struct add_rvalue_reference<T, true> : type_identity<T&&>
+	{};
 
 	template<typename T>
 	using add_rvalue_reference_t = _t<add_rvalue_reference<T>>;
@@ -563,18 +550,15 @@ namespace rider::faiz
 
 	template<class T>
 	struct add_cv : type_identity<const volatile T>
-	{
-	};
+	{};
 
 	template<class T>
 	struct add_const : type_identity<const volatile T>
-	{
-	};
+	{};
 
 	template<class T>
-	struct add_volatile :type_identity<volatile T>
-	{
-	};
+	struct add_volatile : type_identity<volatile T>
+	{};
 
 	template<class T>
 	using add_cv_t = _t<add_cv<T>>;
@@ -588,9 +572,8 @@ namespace rider::faiz
 	{};
 
 	template<class T>
-	struct enable_if<true, T> :type_identity<T>
-	{
-	};
+	struct enable_if<true, T> : type_identity<T>
+	{};
 
 	template<bool B, class T = void>
 	using enable_if_t = _t<enable_if<B, T>>;
@@ -682,24 +665,21 @@ namespace rider::faiz
 	namespace detail
 	{
 		template<class T, bool is_function_type = false>
-		struct add_pointer :type_identity<remove_reference_t<T>*>
-		{
-		};
+		struct add_pointer : type_identity<remove_reference_t<T>*>
+		{};
 
 		template<class T>
-		struct add_pointer<T, true> :type_identity<T>
-		{
-		};
+		struct add_pointer<T, true> : type_identity<T>
+		{};
 
 		template<class T, class... Args>
-		struct add_pointer<T(Args...), true> :type_identity<T (*)(Args...)>
-		{
-		};
+		struct add_pointer<T(Args...), true> : type_identity<T (*)(Args...)>
+		{};
 
 		template<class T, class... Args>
-		struct add_pointer<T(Args..., ...), true> :type_identity<T (*)(Args..., ...)>
-		{
-		};
+		struct add_pointer<T(Args..., ...), true>
+			: type_identity<T (*)(Args..., ...)>
+		{};
 
 	} // namespace detail
 
@@ -774,9 +754,8 @@ namespace rider::faiz
 	// is_assignable
 
 	template<typename, typename T>
-	struct select_2nd :type_identity<T>
-	{
-	};
+	struct select_2nd : type_identity<T>
+	{};
 
 	template<class T, class Arg>
 	_t<select_2nd<decltype((faiz::declval<T>() = faiz::declval<Arg>())), true_>>
@@ -806,9 +785,8 @@ namespace rider::faiz
 	struct common_type;
 
 	template<typename T>
-	struct common_type<T> :type_identity<decay_t<T>>
-	{
-	};
+	struct common_type<T> : type_identity<decay_t<T>>
+	{};
 	// Question: Should we use T or decay_t<T> here? The C++11 Standard
 	// specifically (20.9.7.6,p3) specifies that it be without decay, but
 	// libc++ uses decay.
@@ -826,15 +804,16 @@ namespace rider::faiz
 	};
 
 	template<typename T, typename U, typename... V>
-	struct common_type<T, U, V...> :type_identity<_t<common_type<_t<common_type<T, U>>, V...>>>
-	{
-	};
+	struct common_type<T, U, V...>
+		: type_identity<_t<common_type<_t<common_type<T, U>>, V...>>>
+	{};
 
 	template<typename... T>
 	using common_type_t = _t<common_type<T...>>;
 
 	template<class...>
 	using void_t = void;
+
 
 	namespace details
 	{
@@ -1154,6 +1133,22 @@ namespace rider::faiz
 
 	template<class T>
 	inline constexpr bool is_trivial_v = is_trivial<T>::value;
+
+	// template<typename>
+	//     struct is_tuple_like_impl : false_type
+	//     { };
+
+	// template<typename... _Tps>
+	//     struct is_tuple_like_impl<tuple<_Tps...>> : true_type
+	//     { };
+
+	// template<typename _Tp>
+	//     struct is_tuple_like
+	//     : public is_tuple_like_impl<typename remove_cv<
+	//       typename remove_reference<_Tp>::type>::type>::type
+	//     { };
+	//
+
 
 } // namespace rider::faiz
 
