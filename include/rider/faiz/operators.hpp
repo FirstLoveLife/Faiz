@@ -303,19 +303,18 @@ namespace rider::faiz::dep_ops
 		// overloaded version? SFINAE?
 		// TODO: Use '_tOpt'.
 		constexpr decltype(faiz::addressof(faiz::declval<const _type2&>()))
-		operator->() const noexcept(*faiz::declval<const _type&>())
+			operator->() const noexcept(*faiz::declval<const _type&>())
 		{
 			return faiz::addressof(*static_cast<const _type&>(*this));
 		}
 	}
 ;
 
-	ImplOperators_H3 IMPL(struct) indexable{
-        // TODO: Add non-const overloaded
+	ImplOperators_H3 IMPL(struct) indexable{// TODO: Add non-const overloaded
 		// version? SFINAE?
 		// TODO: Use '_tOpt'.
 		constexpr _type3
-		operator[](_type2 n) const noexcept(*(faiz::declval<const _type&>() + n))
+			operator[](_type2 n) const noexcept(*(faiz::declval<const _type&>() + n))
 		{
 			return *(static_cast<const _type&>(*this) + n);
 		}
