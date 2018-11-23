@@ -8,6 +8,9 @@ Don't implement:
 namespace rider::faiz
 {
 
+	template<class...>
+	using void_t = void;
+
 	template<class T>
 	struct type_identity
 	{
@@ -355,23 +358,26 @@ namespace rider::faiz
 	{};
 	template<class T>
 	inline constexpr bool is_integral_v = is_integral<T>::value;
-
-	// If T is an arithmetic type (that is, an integral type or a
+	//  If T is an arithmetic type (that is, an integral type or a
 	// floating-point type) or a cv-qualified version thereof, provides the
 	// member constant value equal true. For any other type, value is false.
+	template<class T, class = void>
+	struct is_arithmetic : false_
+	{};
+
 	template<class T>
-	struct is_arithmetic
-		: integral_constant<bool, is_integral_v<T> || is_floating_point_v<T>>
+	struct is_arithmetic<T,
+		void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>>
 	{};
 
 	template<class T>
 	inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
 
 	template<typename T>
-	struct is_pointer_helper : public false_
+	struct is_pointer_helper : false_
 	{};
 	template<typename T>
-	struct is_pointer_helper<T*> : public true_
+	struct is_pointer_helper<T*> : true_
 	{};
 	// Checks whether T is **a pointer to object** or **a pointer to
 	// function** (but not a pointer to member/member function). Provides
@@ -555,9 +561,13 @@ namespace rider::faiz
 	using add_volatile_t = _t<add_volatile<T>>;
 
 	// p0007r0
+	// https://stackoverflow.com/questions/34566063/why-is-the-const-overload-of-as-const-deleted
+	// Forms lvalue reference to const type of t
 	template<class T>
 	constexpr add_const_t<T>&
 	as_const(T& t) noexcept;
+
+	//  const rvalue reference overload is deleted to disallow rvalue arguments
 	template<class T>
 	void
 	as_const(const T&&)
@@ -818,9 +828,6 @@ namespace rider::faiz
 
 	template<typename... T>
 	using common_type_t = _t<common_type<T...>>;
-
-	template<class...>
-	using void_t = void;
 
 
 	namespace details
