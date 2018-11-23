@@ -68,6 +68,7 @@ namespace rider::faiz
 	template<class _type>
 	using _t = typename _type::type;
 
+
 	// Provides member typedef type, which is defined as T if B is true at
 	// compile time, or as F if B is false.
 	template<bool B, class T, class F>
@@ -295,6 +296,10 @@ namespace rider::faiz
 	struct is_function : public false_
 	{};
 
+	// remove_cv_t is not usbale here, because cv-qualifier on your function
+	// type is not actually a cv-qualifier. If I call remove_cv and pass it one
+	// of these strange functin types... Function types cannot be cv-qualified.
+	// It's a qualifier on "this" pointer when I call a function.
 #define ImplIsFun(QUALIFIERS) \
 	template<typename R, typename... Args> \
 	struct is_function<R(Args...) QUALIFIERS> : public true_ \
@@ -544,6 +549,8 @@ namespace rider::faiz
 	// Cannot be called and thus never returns a value. The return type is
 	// T&& unless **T** is (possibly cv-qualified) void, in which case the
 	// return type is **T**.
+	//
+	// return `add_rvalue_reference_t<T>` is for reference collapsing
 	template<typename T>
 	add_rvalue_reference_t<T>
 	declval() noexcept;
@@ -592,6 +599,18 @@ namespace rider::faiz
 	template<class T>
 	inline constexpr bool is_array_v = is_array<T>::value;
 
+	// If the imaginary function definition To test() { return
+	// std::declval<From>(); } is well-formed, (that is, either
+	// std::declval<From>() can be converted to To using implicit conversions,
+	// or both From and To are possibly cv-qualified void), provides the member
+	// constant value equal to true. Otherwise value is false. For the purposes
+	// of this check, the use of std::declval in the return statement is not
+	// considered an odr-use.
+	//
+	//  Access checks are performed as if from a context unrelated to either
+	// type. Only the validity of the immediate context of the expression in the
+	// return statement (including conversions to the return type) is
+	// considered.
 	template<typename F,
 		typename T,
 		bool = is_void_v<F> || is_function_v<T> || is_array_v<T>>
@@ -946,18 +965,17 @@ namespace rider::faiz
 			template<class...>
 			class Op,
 			class... Args>
-		struct detector
+		struct detector : type_identity<Default>
 		{
 			using value_t = faiz::false_;
-			using type = Default;
 		};
 
 		template<class Default, template<class...> class Op, class... Args>
 		struct detector<Default, faiz::void_t<Op<Args...>>, Op, Args...>
+			: type_identity<Op<Args...>>
 		{
 			// Note that faiz::void_t is a C++17 feature
 			using value_t = faiz::true_;
-			using type = Op<Args...>;
 		};
 
 	} // namespace detail
@@ -976,13 +994,33 @@ namespace rider::faiz
 			= delete;
 	};
 
+
+	//  The alias template `is_detected` is equivalent to typename
+	// `detected_or<faiz::nonesuch, Op, Args...>::value_t`. It is an
+	// alias for `faiz::true_type` if the `template-id Op<Args...>` denotes a
+	// valid type; otherwise it is an alias for `faiz::false_type`.
 	template<template<class...> class Op, class... Args>
 	using is_detected =
 		typename detail::detector<nonesuch, void, Op, Args...>::value_t;
 
+
+	// The alias template `detected_t` is equivalent to typename
+	// `detected_or<faiz::nonesuch, Op, Args...>::type`. It is an
+	// alias for `Op<Args...>` if that template-id denotes a valid type;
+	// otherwise it is an alias for the class `faiz::nonesuch`.
 	template<template<class...> class Op, class... Args>
 	using detected_t = _t<detail::detector<nonesuch, void, Op, Args...>>;
 
+	// The alias template `detected_or` is an alias for an unspecified class
+	// type with two public member typedefs `value_t` and type, which are
+	// defined as follows:
+	//
+	// - If the template-id `Op<Args...>` denotes a valid type,
+	// then `value_t`
+	// is an alias for `faiz::true_type`, and type is an alias for
+	// `Op<Args...>`;
+	// - Otherwise, `value_t` is an alias for `faiz::false_type` and type is
+	// an alias for `Default`.
 	template<class Default, template<class...> class Op, class... Args>
 	using detected_or = detail::detector<Default, void, Op, Args...>;
 
@@ -991,16 +1029,22 @@ namespace rider::faiz
 	template<class Default, template<class...> class Op, class... Args>
 	using detected_or_t = _t<detected_or<Default, Op, Args...>>;
 	template<class Expected, template<class...> class Op, class... Args>
+
+	//  The alias template is_detected_exact checks whether detected_t<Op,
+	// Args...> is Expected.
 	using is_detected_exact = faiz::is_same<Expected, detected_t<Op, Args...>>;
 	template<class Expected, template<class...> class Op, class... Args>
 	constexpr bool is_detected_exact_v
 		= is_detected_exact<Expected, Op, Args...>::value;
 	template<class To, template<class...> class Op, class... Args>
+	// The alias template `is_detected_convertible` checks whether
+	// `detected_t<Op, Args...>` is convertible to To.
 	using is_detected_convertible
 		= faiz::is_convertible<detected_t<Op, Args...>, To>;
 	template<class To, template<class...> class Op, class... Args>
 	constexpr bool is_detected_convertible_v
 		= is_detected_convertible<To, Op, Args...>::value;
+
 
 	// Given two (possibly identical) types Base and Derived,
 	// is_base_of<Base, Derived>::value == true if and only if Base is a
