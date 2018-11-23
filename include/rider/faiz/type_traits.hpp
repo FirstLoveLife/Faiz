@@ -292,45 +292,36 @@ namespace rider::faiz
 	struct is_null_pointer
 		: faiz::is_same<faiz::nullptr_t, faiz::remove_cv_t<T>>
 	{};
-	template<typename T>
-	struct is_function : public false_
+
+	template<class T>
+	struct is_const : false_
+	{};
+	template<class T>
+	struct is_const<const T> : true_
 	{};
 
-	// remove_cv_t is not usbale here, because cv-qualifier on your function
-	// type is not actually a cv-qualifier. If I call remove_cv and pass it one
-	// of these strange functin types... Function types cannot be cv-qualified.
-	// It's a qualifier on "this" pointer when I call a function.
-#define ImplIsFun(QUALIFIERS) \
-	template<typename R, typename... Args> \
-	struct is_function<R(Args...) QUALIFIERS> : public true_ \
-	{}; \
-	template<typename R, typename... Args> \
-	struct is_function<R(Args... COMMA...) QUALIFIERS> : public true_ \
+	template<class T>
+	inline constexpr bool is_const_v = is_const<T>::value;
+
+	template<class T>
+	struct is_reference : false_
+	{};
+	template<class T>
+	struct is_reference<T&> : true_
+	{};
+	template<class T>
+	struct is_reference<T&&> : true_
+	{};
+	template<class T>
+	inline constexpr bool is_reference_v = is_reference<T>::value;
+
+	template<class T>
+	struct is_function : logic::and_<logic::not_<is_const<T const>>,
+							 logic::not_<is_reference<T>>>
 	{};
 
-	// clang-format off
-	ImplIsFun()
-	ImplIsFun(const)
-	ImplIsFun(&)
-	ImplIsFun(&&)
-	ImplIsFun(volatile)
-	ImplIsFun(noexcept)
-	ImplIsFun(const volatile)
-	ImplIsFun(const &)
-	ImplIsFun(const &&)
-	ImplIsFun(const noexcept)
-	ImplIsFun(volatile &)
-	ImplIsFun(volatile &&)
-	ImplIsFun(volatile noexcept)
-	ImplIsFun(const volatile &)
-	ImplIsFun(const & noexcept)
-	ImplIsFun(const && noexcept )
-	ImplIsFun(const volatile &&)
-	ImplIsFun(const volatile noexcept)
-
-		// clang-format on
-		template<class T>
-		inline constexpr bool is_function_v = is_function<T>::value;
+	template<class T>
+	inline constexpr bool is_function_v = is_function<T>::value;
 
 #undef ImplIsFun
 
@@ -418,17 +409,6 @@ namespace rider::faiz
 	template<class T>
 	inline constexpr bool is_rvalue_reference_v = is_rvalue_reference<T>::value;
 
-	template<class T>
-	struct is_reference : false_
-	{};
-	template<class T>
-	struct is_reference<T&> : true_
-	{};
-	template<class T>
-	struct is_reference<T&&> : true_
-	{};
-	template<class T>
-	inline constexpr bool is_reference_v = is_reference<T>::value;
 
 	template<class T>
 	struct is_union : public integral_constant<bool, __is_union(T)>
@@ -573,6 +553,15 @@ namespace rider::faiz
 	using add_const_t = _t<add_const<T>>;
 	template<class T>
 	using add_volatile_t = _t<add_volatile<T>>;
+
+	// p0007r0
+	template<class T>
+	constexpr add_const_t<T>&
+	as_const(T& t) noexcept;
+	template<class T>
+	void
+	as_const(const T&&)
+		= delete;
 
 	template<bool B, class T = void>
 	struct enable_if
