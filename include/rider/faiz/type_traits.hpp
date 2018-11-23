@@ -349,25 +349,28 @@ namespace rider::faiz
 	// implementation-defined extended integer types, including any signed,
 	// unsigned, and cv-qualified variants. Otherwise, value is equal to
 	// false.
-	template<class T>
-	struct is_integral
-		: integral_constant<bool,
-			  is_same_v<bool,
-				  faiz::remove_cv_t<
-					  T>> || is_same_v<char, faiz::remove_cv_t<T>> || is_same_v<char16_t, faiz::remove_cv_t<T>> || is_same_v<char32_t, faiz::remove_cv_t<T>> || is_same_v<wchar_t, faiz::remove_cv_t<T>> || is_same_v<short, faiz::remove_cv_t<T>> || is_same_v<int, faiz::remove_cv_t<T>> || is_same_v<signed, faiz::remove_cv_t<T>> || is_same_v<long, faiz::remove_cv_t<T>> || is_same_v<long int, faiz::remove_cv_t<T>> || is_same_v<unsigned short, faiz::remove_cv_t<T>> || is_same_v<unsigned short int, faiz::remove_cv_t<T>> || is_same_v<unsigned char, faiz::remove_cv_t<T>> || is_same_v<unsigned, faiz::remove_cv_t<T>> || is_same_v<unsigned int, faiz::remove_cv_t<T>> || is_same_v<unsigned long, faiz::remove_cv_t<T>> || is_same_v<unsigned long long, faiz::remove_cv_t<T>> || is_same_v<unsigned long int, faiz::remove_cv_t<T>> || is_same_v<unsigned long long int, faiz::remove_cv_t<T>> || is_same_v<signed char, faiz::remove_cv_t<T>> || is_same_v<signed short, faiz::remove_cv_t<T>> || is_same_v<signed short int, faiz::remove_cv_t<T>> || is_same_v<signed int, faiz::remove_cv_t<T>> || is_same_v<signed long, faiz::remove_cv_t<T>> || is_same_v<signed long long, faiz::remove_cv_t<T>> || is_same_v<signed long long int, faiz::remove_cv_t<T>> || is_same_v<long long int, faiz::remove_cv_t<T>> || is_same_v<long long, faiz::remove_cv_t<T>>>
+
+	template<typename T, class = void>
+	struct is_integral : false_
+	{};
+	template<typename T>
+	struct is_integral<T,
+		void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>> : true_
 	{};
 	template<class T>
 	inline constexpr bool is_integral_v = is_integral<T>::value;
 	//  If T is an arithmetic type (that is, an integral type or a
 	// floating-point type) or a cv-qualified version thereof, provides the
 	// member constant value equal true. For any other type, value is false.
+	//
+	// gcc may complains, latest msvc/clang compiles happily
 	template<class T, class = void>
 	struct is_arithmetic : false_
 	{};
 
 	template<class T>
-	struct is_arithmetic<T,
-		void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>>
+	struct is_arithmetic<T, void_t<decltype(T{} * T{}), decltype(+T{})&>>
+		: true_
 	{};
 
 	template<class T>
