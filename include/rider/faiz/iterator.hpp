@@ -41,7 +41,7 @@ namespace rider::faiz
 		test(typename U::iterator_category* = 0);
 
 	public:
-		static const bool value = sizeof(test<T>(0)) == 1;
+		static constexpr bool value = sizeof(test<T>(0)) == 1;
 	};
 
 	template<class Iter, bool>
@@ -1129,6 +1129,13 @@ namespace rider::faiz
 		return move_iterator<Iter>(i);
 	}
 
+	// In addition to being included in <iterator>, std::begin and std::cbegin
+	// are guaranteed to become available if any of the following headers are
+	// included: <array>, <deque>, <forward_list>, <list>, <map>, <regex>,
+	// <set>, <span> (since C++20), <string>, <string_view> (since C++17),
+	// <unordered_map>, <unordered_set>, and <vector>.
+
+
 	template<class T, size_t Np>
 	constexpr T* begin(T (&array)[Np])
 	{
@@ -1136,7 +1143,7 @@ namespace rider::faiz
 	}
 
 	template<class T, size_t Np>
-	constexpr T* end(T (&array)[Np])
+	constexpr T* end(T (&array)[Np]) noexcept
 	{
 		return array + Np;
 	}
@@ -1197,16 +1204,21 @@ namespace rider::faiz
 		return reverse_iterator<const Ep*>(il.begin());
 	}
 
+	// Returns exactly faiz::begin(c), with c always treated as const-qualified.
+	// If Cp is a standard Container, this always returns C::const_iterator.
 	template<class Cp>
 	constexpr auto
-	cbegin(const Cp& c) -> decltype(faiz::begin(c))
+	cbegin(const Cp& c) noexcept(noexcept(faiz::begin(c)))
+		-> decltype(faiz::begin(c))
+
 	{
 		return faiz::begin(c);
 	}
-
+	// Returns exactly faiz::end(c), with c always treated as const-qualified.
+	// If Cp is a standard Container, this always returns a C::const_iterator.
 	template<class Cp>
 	constexpr auto
-	cend(const Cp& c) -> decltype(faiz::end(c))
+	cend(const Cp& c) noexcept(noexcept(faiz::end(c))) -> decltype(faiz::end(c))
 	{
 		return faiz::end(c);
 	}
