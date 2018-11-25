@@ -1,6 +1,8 @@
 #ifndef TYPE_TRAITS
 #define TYPE_TRAITS
 #include "rider/faiz/cstddef.hpp" // for size_t
+#include <experimental/type_traits>
+#include <type_traits>
 /*
 Don't implement:
  */
@@ -974,6 +976,9 @@ namespace rider::faiz
 	inline constexpr bool is_member_object_pointer_v
 		= is_member_object_pointer<T>::value;
 
+	template<typename...>
+	using void_t = void;
+
 	namespace detail
 	{
 		template<class Default,
@@ -988,10 +993,15 @@ namespace rider::faiz
 
 		template<class Default, template<class...> class Op, class... Args>
 		struct detector<Default, faiz::void_t<Op<Args...>>, Op, Args...>
+#ifndef __clang__
+
 			: type_identity<Op<Args...>>
+#endif
 		{
-			// Note that faiz::void_t is a C++17 feature
 			using value_t = faiz::true_;
+#if __clang__
+			using type = Op<Args...>;
+#endif
 		};
 
 	} // namespace detail
@@ -1067,7 +1077,6 @@ namespace rider::faiz
 	template<class To, template<class...> class Op, class... Args>
 	constexpr bool is_detected_convertible_v
 		= is_detected_convertible<To, Op, Args...>::value;
-
 
 	// Given two (possibly identical) types Base and Derived,
 	// is_base_of<Base, Derived>::value == true if and only if Base is a
@@ -1193,6 +1202,15 @@ namespace rider::faiz
 	template<class T>
 	inline constexpr bool is_standard_layout_v = is_standard_layout<T>::value;
 
+	template<class _Tp>
+	struct is_trivially_copyable : bool_<is_scalar_v<remove_all_extents_t<_Tp>>>
+	{};
+
+	template<class _Tp>
+	inline constexpr bool is_trivially_copyable_v
+		= is_trivially_copyable<_Tp>::value;
+
+
 	template<class Tp>
 	struct is_trivial : public integral_constant<bool, __is_trivial(Tp)>
 	{};
@@ -1202,28 +1220,84 @@ namespace rider::faiz
 
 
 	template<class T>
-	struct is_unknown_bound_array : faiz::false_type
+	struct is_unknown_bound_array : false_
 	{};
 	template<class T>
-	struct is_unknown_bound_array<T[]> : faiz::true_type
+	struct is_unknown_bound_array<T[]> : true_
 	{};
 
+	template<class T>
+	inline constexpr bool is_unknown_bound_array_v
+		= is_unknown_bound_array<T>::value;
+
 	template<typename T, typename U = faiz::remove_all_extents_t<T>>
-	using has_dtor = decltype(faiz::declval<U&>().~U());
+	using has_dtor = decltype(declval<U>().~U());
 
 	// clang-format off
-	// gcc has bug here, I post a thread here: https://stackoverflow.com/questions/53456848/implement-is-destructible-with-detected-idiomhttps://stackoverflow.com/questions/53456848/implement-is-destructible-with-detected-idiom
+	// FIXME  gcc has bug here, I post a thread here: https://stackoverflow.com/questions/53456848/implement-is-destructible-with-detected-idiomhttps://stackoverflow.com/questions/53456848/implement-is-destructible-with-detected-idiom
+	// template<typename T>
+	// constexpr bool is_destructible_v =
+	// 	is_reference_v<T> || (!(is_void_v<T> || is_function_v<T> || is_unknown_bound_array_v<T>) and is_object_v<T> and is_detected_v<has_dtor, T>);
+#if __clang__
 	template<typename T>
 	constexpr bool is_destructible_v =
 		(faiz::is_detected_v<has_dtor,
-			   T>
-		   or faiz::is_reference_v<T>)
-		and not is_unknown_bound_array<T>::value
+		   T>
+	   or faiz::is_reference_v<T>)
+	and not is_unknown_bound_array<T>::value
 		and not faiz::is_function_v<T>;
+
+#elif __GNUC__
+	template<class T>
+	constexpr bool
+	my_is_destructible()
+	{
+		if constexpr(is_reference_v<T>)
+		{
+			return true;
+		}
+		else if constexpr(
+			is_same_v<remove_cv_t<T>,
+				void> || is_function_v<T> || is_unknown_bound_array<T>::value)
+		{
+			return false;
+		}
+		else if constexpr(is_object_v<T>)
+		{
+			return is_detected_v<has_dtor, T>;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	template<typename T>
+	constexpr bool is_destructible_v = my_is_destructible<T>();
+#endif
 	// clang-format on
 	template<typename T>
 	struct is_destructible : bool_<is_destructible_v<T>>
 	{};
+
+	template<class _Tp>
+	struct __libcpp_trivial_destructor
+		: public integral_constant<bool,
+			  is_scalar<_Tp>::value || is_reference<_Tp>::value>
+	{};
+
+	template<class _Tp>
+	struct is_trivially_destructible
+		: public __libcpp_trivial_destructor<
+			  typename remove_all_extents<_Tp>::type>
+	{};
+
+	template<class _Tp>
+	struct is_trivially_destructible<_Tp[]> : public false_
+	{};
+
+	template<class _Tp>
+	inline constexpr bool is_trivially_destructible_v
+		= is_trivially_destructible<_Tp>::value;
 
 } // namespace rider::faiz
 
