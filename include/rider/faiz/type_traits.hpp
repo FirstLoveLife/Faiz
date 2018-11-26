@@ -11,6 +11,14 @@ Don't implement:
 
 namespace rider::faiz
 {
+
+	// FIXME: declval depends on my implementation of add_rvalue_reference while
+	// add_rvalue_reference. So sad, detection idiom doesn't work here because
+	// type dependencies. depends on declval because of is_referenceable_aux.
+	template<typename _Tp>
+	auto
+	declval() noexcept -> decltype(std::__declval<_Tp>(0));
+
 	template<class _type>
 	using _t = typename _type::type;
 	template<class...>
@@ -209,20 +217,34 @@ namespace rider::faiz
 	// don't think this is a good solution. So, TODO: remove dependency of
 	// declval.
 	template<typename T>
-	using is_referenceable_aux = decltype(std::declval<T>());
+	using is_referenceable_aux = decltype(declval<T>());
 	template<typename T>
 	// constexpr bool is_referenceable_v = is_detected_v<is_referenceable_aux,
 	// T>;
-	constexpr bool is_referenceable_v = true;
+	constexpr bool is_referenceable_v = is_detected_v<is_referenceable_aux, T>;
 
+	// If `T` is an object type or a function type that has no `cv-` or `ref-
+	// qualifier` (since C++17), provides a member typedef type which is `T&&`,
+	// otherwise type is `T`.
 	template<class T>
 	struct add_rvalue_reference;
 	template<class T>
 	using add_rvalue_reference_t = typename add_rvalue_reference<T>::type;
 
+	// If `T` is an object type or a function type that has no `cv-` or `ref-
+	// qualifier` (since C++17), provides a member typedef type which is `T&`.
+	// If `T` is an **rvalue reference** to some type `U`, then type is `U&`.
+	// Otherwise, type is `T`.
+	template<class T>
+	struct add_lvalue_reference;
+
+	template<typename T>
+	using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
+
 	template<class T>
 	typename add_rvalue_reference<T>::type
 	declval() noexcept;
+
 
 } // namespace rider::faiz
 
@@ -642,16 +664,10 @@ namespace rider::faiz
 	template<class T, unsigned N = 0>
 	inline constexpr faiz::size_t extent_v = extent<T, N>::value;
 
-	template<typename T, bool = is_referenceable_v<T>>
-	struct add_lvalue_reference : type_identity<T>
-	{};
-
-	template<typename T>
-	struct add_lvalue_reference<T, true> : type_identity<T&>
-	{};
-
-	template<typename T>
-	using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
+	//  If T is an object type or a function type that has no cv- or ref-
+	//  qualifier (since C++17), provides a member typedef type which is T&. If
+	//  T is an rvalue reference to some type U, then type is U&. Otherwise,
+	//  type is T.
 
 	namespace detail
 	{
@@ -665,6 +681,17 @@ namespace rider::faiz
 		{
 			using type = T;
 		};
+
+		template<typename T, bool = is_referenceable_v<T>>
+		struct add_lvalue_reference_impl
+		{
+			using type = T&;
+		};
+		template<typename T>
+		struct add_lvalue_reference_impl<T, false>
+		{
+			using type = T;
+		};
 	} // namespace detail
 
 	// FIXME: add_rvalue_reference_impl is a workaround here, otherwise forward
@@ -674,7 +701,9 @@ namespace rider::faiz
 	{};
 
 	template<typename T>
-	using add_rvalue_reference_t = _t<add_rvalue_reference<T>>;
+	struct add_lvalue_reference : detail::add_lvalue_reference_impl<T>
+	{};
+
 
 	// Converts any type **T** to a reference type, making it possible to
 	// use member functions in *decltype* expressions without the need to go
@@ -801,9 +830,9 @@ namespace rider::faiz
 	struct is_convertible : std::bool_constant<is_convertible_v<From, To>>
 	{};
 
-	static_assert(std::experimental::
-			is_detected<is_convertible_helper, int(int), int (*)(int)>::value);
-	static_assert(is_function<int(int)>(), "");
+	// static_assert(std::experimental::
+	// 		is_detected<is_convertible_helper, int(int), int (*)(int)>::value);
+	// static_assert(is_function<int(int)>(), "");
 	// template<typename F,
 	// 	typename T,
 	// 	bool = is_void<F>::value || is_function<T>::value ||
