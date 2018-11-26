@@ -83,7 +83,7 @@ namespace rider::faiz
 								using true_ = bool_<true>;
 	using false_ = bool_<false>;
 	template<bool B>
-	using bool_constant = integral_constant<bool, B>;
+	using bool_constant = bool_<B>;
 	using true_type = true_;
 	using false_type = false_;
 
@@ -248,6 +248,11 @@ namespace rider::faiz
 	template<class T>
 	using add_rvalue_reference_t = typename add_rvalue_reference<T>::type;
 
+	template<class T>
+	struct remove_reference;
+	template<class T>
+	using remove_reference_t = typename remove_reference<T>::type;
+
 	// If `T` is an object type or a function type that has no `cv-` or `ref-
 	// qualifier` (since C++17), provides a member typedef type which is `T&`.
 	// If `T` is an **rvalue reference** to some type `U`, then type is `U&`.
@@ -283,7 +288,7 @@ namespace rider::faiz
 	inline constexpr bool is_object_v = is_object<T>();
 
 	template<class T>
-	struct is_enum : public integral_constant<bool, __is_enum(T)>
+	struct is_enum : public bool_<__is_enum(T)>
 	{};
 
 	template<class T>
@@ -382,6 +387,65 @@ namespace rider::faiz::detail
 	template<class T>
 	struct is_arithmetic_aux<T, true> : true_
 	{};
+
+	template<typename T, bool = is_referenceable_v<T>>
+	struct add_rvalue_reference_impl
+	{
+		using type = T&&;
+	};
+	template<typename T>
+	struct add_rvalue_reference_impl<T, false>
+	{
+		using type = T;
+	};
+
+	template<typename T, bool = is_referenceable_v<T>>
+	struct add_lvalue_reference_impl
+	{
+		using type = T&;
+	};
+	template<typename T>
+	struct add_lvalue_reference_impl<T, false>
+	{
+		using type = T;
+	};
+
+	template<class T>
+	char
+	test(int T::*);
+	struct two
+	{
+		char c[2];
+	};
+	template<class T>
+	two
+	test(...);
+
+	template<typename T>
+	struct is_pointer_helper : false_
+	{};
+	template<typename T>
+	struct is_pointer_helper<T*> : true_
+	{};
+
+
+	template<class T, bool is_function_type = false>
+	struct add_pointer : type_identity<remove_reference_t<T>*>
+	{};
+
+	template<class T>
+	struct add_pointer<T, true> : type_identity<T>
+	{};
+
+	template<class T, class... Args>
+	struct add_pointer<T(Args...), true> : type_identity<T (*)(Args...)>
+	{};
+
+	template<class T, class... Args>
+	struct add_pointer<T(Args..., ...), true>
+		: type_identity<T (*)(Args..., ...)>
+	{};
+
 
 } // namespace rider::faiz::detail
 
@@ -627,25 +691,20 @@ namespace rider::faiz
 	template<class T>
 	inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
 
-	template<typename T>
-	struct is_pointer_helper : false_
-	{};
-	template<typename T>
-	struct is_pointer_helper<T*> : true_
-	{};
+
 	// Checks whether T is **a pointer to object** or **a pointer to
 	// function** (but not a pointer to member/member function). Provides
 	// the member constant value which is equal to true, if T is a
 	// object/function pointer type. Otherwise, value is equal to false.
 	template<typename T>
-	struct is_pointer : public is_pointer_helper<remove_cv_t<T>>
+	struct is_pointer : public detail::is_pointer_helper<remove_cv_t<T>>
 	{};
 
 	template<class T>
 	inline constexpr bool is_pointer_v = is_pointer<T>::value;
 
 	template<typename T>
-	struct is_empty : public integral_constant<bool, __is_empty(T)>
+	struct is_empty : public bool_<__is_empty(T)>
 	{};
 
 	template<class T>
@@ -669,28 +728,16 @@ namespace rider::faiz
 
 
 	template<class T>
-	struct is_union : public integral_constant<bool, __is_union(T)>
+	struct is_union : public bool_<__is_union(T)>
 	{};
+	template<typename T>
+	constexpr bool is_union_v = is_union<T>::value;
 
-
-	namespace detail
-	{
-		template<class T>
-		char
-		test(int T::*);
-		struct two
-		{
-			char c[2];
-		};
-		template<class T>
-		two
-		test(...);
-	} // namespace detail
-
+	// TODO: implement is_class without ugly sizeof
 	template<class T>
 	struct is_class
-		: faiz::integral_constant<bool,
-			  sizeof(detail::test<T>(0)) == 1 and !faiz::is_union<T>::value>
+		: bool_<sizeof(detail::test<T>(0)) == 1 and !faiz::is_union<T>::value
+			  and !faiz::is_null_pointer<T>::value>
 	{};
 	template<class T>
 	inline constexpr bool is_class_v = is_class<T>::value;
@@ -698,17 +745,16 @@ namespace rider::faiz
 
 	template<typename T>
 	struct is_object
-		: integral_constant<bool,
-			  !is_reference_v<T> and !is_void_v<T> and !is_function_v<T>>
+		: bool_<!is_reference_v<T> and !is_void_v<T> and !is_function_v<T>>
 	{};
 
 
 	template<class T, unsigned N = 0>
-	struct extent : integral_constant<faiz::size_t, 0>
+	struct extent : size_t_<0>
 	{};
 
 	template<class T>
-	struct extent<T[], 0> : integral_constant<faiz::size_t, 0>
+	struct extent<T[], 0> : size_t_<0>
 	{};
 
 	template<class T, unsigned N>
@@ -716,7 +762,7 @@ namespace rider::faiz
 	{};
 
 	template<class T, faiz::size_t I>
-	struct extent<T[I], 0> : integral_constant<faiz::size_t, I>
+	struct extent<T[I], 0> : size_t_<I>
 	{};
 
 	template<class T, faiz::size_t I, unsigned N>
@@ -730,30 +776,6 @@ namespace rider::faiz
 	//  T is an rvalue reference to some type U, then type is U&. Otherwise,
 	//  type is T.
 
-	namespace detail
-	{
-		template<typename T, bool = is_referenceable_v<T>>
-		struct add_rvalue_reference_impl
-		{
-			using type = T&&;
-		};
-		template<typename T>
-		struct add_rvalue_reference_impl<T, false>
-		{
-			using type = T;
-		};
-
-		template<typename T, bool = is_referenceable_v<T>>
-		struct add_lvalue_reference_impl
-		{
-			using type = T&;
-		};
-		template<typename T>
-		struct add_lvalue_reference_impl<T, false>
-		{
-			using type = T;
-		};
-	} // namespace detail
 
 	// FIXME: add_rvalue_reference_impl is a workaround here, otherwise forward
 	// declaration can also not solve type dependency.
@@ -920,13 +942,12 @@ namespace rider::faiz
 	// struct is_convertible : public is_convertible_aux<F, T>::type
 	// {};
 
-
+	// TODO: use detection idiom implement is_convertible
 	// If T is an object or reference type and the variable definition T
 	// obj(std::declval<Args>()...); is well-formed, provides the member
 	// constant value equal to true. In all other cases, value is false.
 	template<class Tp, class... Args>
-	struct is_constructible
-		: public integral_constant<bool, __is_constructible(Tp, Args...)>
+	struct is_constructible : public bool_<__is_constructible(Tp, Args...)>
 	{};
 
 	template<class T, class... Args>
@@ -947,45 +968,23 @@ namespace rider::faiz
 	// the number of dimensions of the array. For any other type, value is
 	// 0.
 	template<class T>
-	struct rank : public integral_constant<faiz::size_t, 0>
+	struct rank : public size_t_<0>
 	{};
 	// If T is an array type, provides the member constant value equal to
 	// the number of dimensions of the array. For any other type, value is
 	// 0.
 	template<class T>
-	struct rank<T[]>
-		: public integral_constant<faiz::size_t, rank<T>::value + 1>
+	struct rank<T[]> : public size_t_<rank<T>::value + 1>
 	{};
 	// If T is an array type, provides the member constant value equal to
 	// the number of dimensions of the array. For any other type, value is
 	// 0.
 	template<class T, faiz::size_t N>
-	struct rank<T[N]>
-		: public integral_constant<faiz::size_t, rank<T>::value + 1>
+	struct rank<T[N]> : public size_t_<rank<T>::value + 1>
 	{};
 	template<class T>
 	inline constexpr faiz::size_t rank_v = rank<T>::value;
 
-	namespace detail
-	{
-		template<class T, bool is_function_type = false>
-		struct add_pointer : type_identity<remove_reference_t<T>*>
-		{};
-
-		template<class T>
-		struct add_pointer<T, true> : type_identity<T>
-		{};
-
-		template<class T, class... Args>
-		struct add_pointer<T(Args...), true> : type_identity<T (*)(Args...)>
-		{};
-
-		template<class T, class... Args>
-		struct add_pointer<T(Args..., ...), true>
-			: type_identity<T (*)(Args..., ...)>
-		{};
-
-	} // namespace detail
 
 	// If **T** is a reference type, then provides the member typedef type
 	// which is a pointer to the referred type. Otherwise, if **T** names an
@@ -1230,9 +1229,8 @@ namespace rider::faiz
 	// type. Otherwise, value is equal to false.
 	template<class T>
 	struct is_member_object_pointer
-		: faiz::integral_constant<bool,
-			  faiz::is_member_pointer<T>::value
-				  && !faiz::is_member_function_pointer<T>::value>
+		: bool_<faiz::is_member_pointer<T>::value
+			  && !faiz::is_member_function_pointer<T>::value>
 	{};
 	template<class T>
 	inline constexpr bool is_member_object_pointer_v
@@ -1255,7 +1253,7 @@ namespace rider::faiz
 	//     is_derived<Child, Parent>::value        => false
 	template<typename Base, typename Derived>
 	struct is_derived
-		: public faiz::integral_constant<bool,
+		: public bool_<
 			  faiz::is_base_of_v<Base,
 				  Derived> && !faiz::is_same_v<faiz::remove_cv_t<Base>, faiz::remove_cv_t<Derived>>>
 	{};
@@ -1263,7 +1261,7 @@ namespace rider::faiz
 	inline constexpr bool is_derived_of_v = is_base_of<Base, Derived>::value;
 
 	template<class T>
-	struct is_final : public integral_constant<bool, __is_final(T)>
+	struct is_final : public bool_<__is_final(T)>
 	{};
 
 	template<class T>
@@ -1283,8 +1281,8 @@ namespace rider::faiz
 	is_polymorphic_impl_aux(...);
 
 	template<class T>
-	struct is_polymorphic : public integral_constant<bool,
-								sizeof(is_polymorphic_impl_aux<T>(0)) == 1>
+	struct is_polymorphic
+		: public bool_<sizeof(is_polymorphic_impl_aux<T>(0)) == 1>
 	{};
 
 	template<class T>
@@ -1298,7 +1296,7 @@ namespace rider::faiz
 
 	template<typename T, typename _Up>
 	struct is_trivially_assignable
-		: public integral_constant<bool, __is_trivially_assignable(T, _Up)>
+		: public bool_<__is_trivially_assignable(T, _Up)>
 	{};
 
 	template<class T, class U>
@@ -1320,8 +1318,7 @@ namespace rider::faiz
 
 	template<class T, class A>
 	struct is_nothrow_assignable_aux<true, T, A>
-		: public integral_constant<bool,
-			  noexcept(faiz::declval<T>() = faiz::declval<A>())>
+		: public bool_<noexcept(faiz::declval<T>() = faiz::declval<A>())>
 	{};
 
 	template<class T, class A>
@@ -1356,8 +1353,7 @@ namespace rider::faiz
 	// The behavior is undefined if std::remove_all_extents_t<T> is an
 	// incomplete type and not (possibly cv-qualified) void.
 	template<typename Tp>
-	struct is_standard_layout
-		: public integral_constant<bool, __is_standard_layout(Tp)>
+	struct is_standard_layout : public bool_<__is_standard_layout(Tp)>
 	{};
 
 	template<class T>
@@ -1373,7 +1369,7 @@ namespace rider::faiz
 
 
 	template<class Tp>
-	struct is_trivial : public integral_constant<bool, __is_trivial(Tp)>
+	struct is_trivial : public bool_<__is_trivial(Tp)>
 	{};
 
 	template<class T>
@@ -1442,8 +1438,7 @@ namespace rider::faiz
 
 	template<class _Tp>
 	struct __libcpp_trivial_destructor
-		: public integral_constant<bool,
-			  is_scalar<_Tp>::value || is_reference<_Tp>::value>
+		: public bool_<is_scalar<_Tp>::value || is_reference<_Tp>::value>
 	{};
 
 	template<class _Tp>
