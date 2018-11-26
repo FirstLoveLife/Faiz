@@ -1,6 +1,8 @@
 #ifndef TYPE_TRAITS
 #define TYPE_TRAITS
+#include "../../../test/testsuite_tr1.h"
 #include "rider/faiz/cstddef.hpp" // for size_t
+#include <boost/predef.h>
 #include <experimental/type_traits>
 #include <type_traits>
 /*
@@ -9,7 +11,6 @@ Don't implement:
 
 namespace rider::faiz
 {
-
 	template<class _type>
 	using _t = typename _type::type;
 	template<class...>
@@ -60,12 +61,12 @@ namespace rider::faiz
 	ImplDeclIntTDe(size_t)
 	ImplDeclIntTDe(ptrdiff_t)
 
+	// clang-format on
 #undef ImplDeclIntTDe
 #undef ImplDeclIntT
 
 
-
-	using true_ = bool_<true>;
+								using true_ = bool_<true>;
 	using false_ = bool_<false>;
 	template<bool B>
 	using bool_constant = integral_constant<bool, B>;
@@ -73,25 +74,155 @@ namespace rider::faiz
 	using false_type = false_;
 
 
-
 	// Provides member typedef type, which is defined as T if B is true at
 	// compile time, or as F if B is false.
 	template<bool B, class T, class F>
 	struct conditional : type_identity<T>
-	{
-	};
+	{};
 
 	// Provides member typedef type, which is defined as T if B is true at
 	// compile time, or as F if B is false.
 	template<class T, class F>
 	struct conditional<false, T, F> : type_identity<F>
-	{
-	};
+	{};
 
 	//  Provides member typedef type, which is defined as T if B is true at
 	//  compile time, or as F if B is false.
 	template<bool B, class T, class F>
 	using conditional_t = _t<conditional<B, T, F>>;
+
+
+	template<typename...>
+	using void_t = void;
+
+	// forward declaration
+	template<class From, class To>
+	struct is_convertible;
+
+	template<class T, class U>
+	struct is_same;
+
+	namespace detail
+	{
+		template<class Default,
+			class AlwaysVoid,
+			template<class...>
+			class Op,
+			class... Args>
+		struct detector : type_identity<Default>
+		{
+			using value_t = faiz::false_;
+		};
+
+		template<class Default, template<class...> class Op, class... Args>
+		struct detector<Default, faiz::void_t<Op<Args...>>, Op, Args...>
+#if BOOST_COMP_GNUC
+			: type_identity<Op<Args...>>
+#endif
+		{
+			using value_t = faiz::true_;
+#if BOOST_COMP_CLANG
+			using type = Op<Args...>;
+#endif
+		};
+
+	} // namespace detail
+
+	// nonesuch cannot be constructed, destroyed, or copied in the usual way.
+	// However, it is an aggregate and therefore can be constructed (presumably
+	// unintentionally) via aggregate initialization in contexts where the
+	// destructor's availability is not an issue, such as a new-expression: new
+	// std::experimental::nonesuch{}.
+	//
+	// This type was inspired by, and patterned after, the internal type __nat
+	// (which we believe is an acronym for “not a type”) found in libc++.
+	struct nonesuch
+	{
+		~nonesuch() = delete;
+		nonesuch(nonesuch const&) = delete;
+		void
+		operator=(nonesuch const&)
+			= delete;
+	};
+
+
+	// The alias template `is_detected` is equivalent to typename
+	// `detected_or<faiz::nonesuch, Op, Args...>::value_t`. It is an
+	// alias for `faiz::true_type` if the `template-id Op<Args...>` denotes a
+	// valid type; otherwise it is an alias for `faiz::false_type`.
+	template<template<class...> class Op, class... Args>
+	using is_detected =
+		typename detail::detector<nonesuch, void, Op, Args...>::value_t;
+
+
+	// The alias template `detected_t` is equivalent to typename
+	// `detected_or<faiz::nonesuch, Op, Args...>::type`. It is an
+	// alias for `Op<Args...>` if that template-id denotes a valid type;
+	// otherwise it is an alias for the class `faiz::nonesuch`.
+	template<template<class...> class Op, class... Args>
+	using detected_t = _t<detail::detector<nonesuch, void, Op, Args...>>;
+
+	// The alias template `detected_or` is an alias for an unspecified class
+	// type with two public member typedefs `value_t` and type, which are
+	// defined as follows:
+	//
+	// - If the template-id `Op<Args...>` denotes a valid type,
+	// then `value_t`
+	// is an alias for `faiz::true_type`, and type is an alias for
+	// `Op<Args...>`;
+	// - Otherwise, `value_t` is an alias for `faiz::false_type` and type is
+	// an alias for `Default`.
+	template<class Default, template<class...> class Op, class... Args>
+	using detected_or = detail::detector<Default, void, Op, Args...>;
+
+	template<template<class...> class Op, class... Args>
+	constexpr bool is_detected_v = is_detected<Op, Args...>::value;
+
+	template<class Default, template<class...> class Op, class... Args>
+	using detected_or_t = _t<detected_or<Default, Op, Args...>>;
+	//
+	// The alias template is_detected_exact checks whether `detected_t<Op,
+	// Args...>` is Expected.
+	template<class Expected, template<class...> class Op, class... Args>
+	using is_detected_exact = faiz::is_same<Expected, detected_t<Op, Args...>>;
+
+	template<class Expected, template<class...> class Op, class... Args>
+	constexpr bool is_detected_exact_v
+		= is_detected_exact<Expected, Op, Args...>::value;
+	//
+	//  The alias template `is_detected_convertible` checks whether
+	// `detected_t<Op, Args...>` is convertible to To.
+	template<class To, template<class...> class Op, class... Args>
+	using is_detected_convertible
+		= faiz::is_convertible<detected_t<Op, Args...>, To>;
+
+	template<class To, template<class...> class Op, class... Args>
+	constexpr bool is_detected_convertible_v
+		= is_detected_convertible<To, Op, Args...>::value;
+
+
+	// FIXME: is_referenceable_aux depends on declval, while declval depends on
+	// add_rvalue_reference, add_rvalue_reference depends on declval. So I have
+	// to std::declval here as workaround, what a pity!
+	//
+	// declval<T> is enough here, because declval will check previous. But I
+	// don't think this is a good solution. So, TODO: remove dependency of
+	// declval.
+	template<typename T>
+	using is_referenceable_aux = decltype(std::declval<T>());
+	template<typename T>
+	// constexpr bool is_referenceable_v = is_detected_v<is_referenceable_aux,
+	// T>;
+	constexpr bool is_referenceable_v = true;
+
+	template<class T>
+	struct add_rvalue_reference;
+	template<class T>
+	using add_rvalue_reference_t = typename add_rvalue_reference<T>::type;
+
+	template<class T>
+	typename add_rvalue_reference<T>::type
+	declval() noexcept;
 
 } // namespace rider::faiz
 
@@ -204,9 +335,7 @@ namespace rider::faiz
 
 	template<class T>
 	struct remove_extent<T[]> : type_identity<T>
-	{
-		using type = T;
-	};
+	{};
 
 	template<class T, faiz::size_t N>
 	struct remove_extent<T[N]> : type_identity<T>
@@ -490,12 +619,6 @@ namespace rider::faiz
 	template<class T>
 	inline constexpr bool is_object_v = is_object<T>::value;
 
-	template<typename T>
-	struct is_referenceable
-		: integral_constant<bool, is_reference_v<T> || is_object_v<T>>
-	{};
-	template<class T>
-	inline constexpr bool is_referenceable_v = is_referenceable<T>::value;
 
 	template<class T, unsigned N = 0>
 	struct extent : integral_constant<faiz::size_t, 0>
@@ -520,24 +643,34 @@ namespace rider::faiz
 	inline constexpr faiz::size_t extent_v = extent<T, N>::value;
 
 	template<typename T, bool = is_referenceable_v<T>>
-	struct add_lvalue_reference
-	{
-		using type = T;
-	};
+	struct add_lvalue_reference : type_identity<T>
+	{};
+
 	template<typename T>
-	struct add_lvalue_reference<T, true>
-	{
-		using type = T&;
-	};
+	struct add_lvalue_reference<T, true> : type_identity<T&>
+	{};
 
 	template<typename T>
 	using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
 
-	template<typename T, bool = is_referenceable_v<T>>
-	struct add_rvalue_reference : type_identity<T>
-	{};
+	namespace detail
+	{
+		template<typename T, bool = is_referenceable_v<T>>
+		struct add_rvalue_reference_impl
+		{
+			using type = T&&;
+		};
+		template<typename T>
+		struct add_rvalue_reference_impl<T, false>
+		{
+			using type = T;
+		};
+	} // namespace detail
+
+	// FIXME: add_rvalue_reference_impl is a workaround here, otherwise forward
+	// declaration can also not solve type dependency.
 	template<typename T>
-	struct add_rvalue_reference<T, true> : type_identity<T&&>
+	struct add_rvalue_reference : detail::add_rvalue_reference_impl<T>
 	{};
 
 	template<typename T>
@@ -561,9 +694,6 @@ namespace rider::faiz
 	// return type is **T**.
 	//
 	// return `add_rvalue_reference_t<T>` is for reference collapsing
-	template<typename T>
-	add_rvalue_reference_t<T>
-	declval() noexcept;
 
 	template<class T>
 	struct add_cv : type_identity<const volatile T>
@@ -634,30 +764,74 @@ namespace rider::faiz
 	// type. Only the validity of the immediate context of the expression in the
 	// return statement (including conversions to the return type) is
 	// considered.
-	template<typename F,
-		typename T,
-		bool = is_void_v<F> || is_function_v<T> || is_array_v<T>>
-	class is_convertible : public integral_constant<bool, is_void_v<T>>
-	{};
-	template<typename F, typename T>
-	class is_convertible<F, T, false>
-	{
-		template<typename TT>
-		static void test_aux(TT);
-		template<typename FF,
-			typename TT,
-			typename = decltype(test_aux<TT>(declval<FF>()))>
-		static true_
-		test(int);
-		template<typename FF, typename TT>
-		static false_
-		test(...);
+	// // using namespace logic;
+	// template<typename From, typename To>
+	// constexpr bool is_convertible_v = or_<
+	// 	and_<or_<is_void<From>, is_function<To>, is_array<To>>, is_void<To>>,
+	// 	is_detected<is_convertible_helper, From, To>>::value;
+	//
+	template<typename To1>
+	static void test_aux(To1) noexcept;
 
-	public:
-		using type = decltype(test<F, T>(0));
-	};
-	template<typename F, typename T>
-	inline constexpr bool is_convertible_v = is_convertible<F, T>::value;
+
+	template<typename From, typename To>
+	using is_convertible_helper = decltype(test_aux<To>(declval<From>()));
+
+
+	template<typename From, typename To>
+	constexpr bool
+	my_is_convertible()
+	{
+		if constexpr(std::disjunction<std::is_void<From>,
+						 std::is_function<To>,
+						 std::is_array<To>>::value)
+		{
+			return std::is_void_v<To>;
+		}
+		else
+		{
+			return std::experimental::
+				is_detected<is_convertible_helper, From, To>::value;
+		}
+	}
+	template<typename From, typename To>
+	constexpr bool is_convertible_v = my_is_convertible<From, To>();
+
+	template<typename From, typename To>
+	struct is_convertible : std::bool_constant<is_convertible_v<From, To>>
+	{};
+
+	static_assert(std::experimental::
+			is_detected<is_convertible_helper, int(int), int (*)(int)>::value);
+	static_assert(is_function<int(int)>(), "");
+	// template<typename F,
+	// 	typename T,
+	// 	bool = is_void<F>::value || is_function<T>::value ||
+	// is_array<T>::value> class is_convertible_aux : public
+	// integral_constant<bool, is_void<T>::value>
+	// {};
+
+	// template<typename F, typename T>
+	// class is_convertible_aux<F, T, false>
+	// {
+	// 	template<typename TT>
+	// 	static void __test_aux(TT);
+	// 	template<typename FF,
+	// 		typename TT,
+	// 		typename = decltype(__test_aux<TT>(declval<FF>()))>
+	// 	static true_type
+	// 	__test(int);
+	// 	template<typename FF, typename TT>
+	// 	static false_type
+	// 	__test(...);
+
+	// public:
+	// 	using type = decltype(__test<F, T>(0));
+	// };
+	// template<typename F, typename T>
+	// struct is_convertible : public is_convertible_aux<F, T>::type
+	// {};
+
 
 	// If T is an object or reference type and the variable definition T
 	// obj(std::declval<Args>()...); is well-formed, provides the member
@@ -976,107 +1150,6 @@ namespace rider::faiz
 	inline constexpr bool is_member_object_pointer_v
 		= is_member_object_pointer<T>::value;
 
-	template<typename...>
-	using void_t = void;
-
-	namespace detail
-	{
-		template<class Default,
-			class AlwaysVoid,
-			template<class...>
-			class Op,
-			class... Args>
-		struct detector : type_identity<Default>
-		{
-			using value_t = faiz::false_;
-		};
-
-		template<class Default, template<class...> class Op, class... Args>
-		struct detector<Default, faiz::void_t<Op<Args...>>, Op, Args...>
-#ifndef __clang__
-
-			: type_identity<Op<Args...>>
-#endif
-		{
-			using value_t = faiz::true_;
-#if __clang__
-			using type = Op<Args...>;
-#endif
-		};
-
-	} // namespace detail
-
-	// nonesuch cannot be constructed, destroyed, or copied in the usual way.
-	// However, it is an aggregate and therefore can be constructed (presumably
-	// unintentionally) via aggregate initialization in contexts where the
-	// destructor's availability is not an issue, such as a new-expression: new
-	// std::experimental::nonesuch{}.
-	//
-	// This type was inspired by, and patterned after, the internal type __nat
-	// (which we believe is an acronym for “not a type”) found in libc++.
-	struct nonesuch
-	{
-		~nonesuch() = delete;
-		nonesuch(nonesuch const&) = delete;
-		void
-		operator=(nonesuch const&)
-			= delete;
-	};
-
-
-	// The alias template `is_detected` is equivalent to typename
-	// `detected_or<faiz::nonesuch, Op, Args...>::value_t`. It is an
-	// alias for `faiz::true_type` if the `template-id Op<Args...>` denotes a
-	// valid type; otherwise it is an alias for `faiz::false_type`.
-	template<template<class...> class Op, class... Args>
-	using is_detected =
-		typename detail::detector<nonesuch, void, Op, Args...>::value_t;
-
-
-	// The alias template `detected_t` is equivalent to typename
-	// `detected_or<faiz::nonesuch, Op, Args...>::type`. It is an
-	// alias for `Op<Args...>` if that template-id denotes a valid type;
-	// otherwise it is an alias for the class `faiz::nonesuch`.
-	template<template<class...> class Op, class... Args>
-	using detected_t = _t<detail::detector<nonesuch, void, Op, Args...>>;
-
-	// The alias template `detected_or` is an alias for an unspecified class
-	// type with two public member typedefs `value_t` and type, which are
-	// defined as follows:
-	//
-	// - If the template-id `Op<Args...>` denotes a valid type,
-	// then `value_t`
-	// is an alias for `faiz::true_type`, and type is an alias for
-	// `Op<Args...>`;
-	// - Otherwise, `value_t` is an alias for `faiz::false_type` and type is
-	// an alias for `Default`.
-	template<class Default, template<class...> class Op, class... Args>
-	using detected_or = detail::detector<Default, void, Op, Args...>;
-
-	template<template<class...> class Op, class... Args>
-	constexpr bool is_detected_v = is_detected<Op, Args...>::value;
-
-	template<class Default, template<class...> class Op, class... Args>
-	using detected_or_t = _t<detected_or<Default, Op, Args...>>;
-	//
-	// The alias template is_detected_exact checks whether `detected_t<Op,
-	// Args...>` is Expected.
-	template<class Expected, template<class...> class Op, class... Args>
-	using is_detected_exact = faiz::is_same<Expected, detected_t<Op, Args...>>;
-
-	template<class Expected, template<class...> class Op, class... Args>
-	constexpr bool is_detected_exact_v
-		= is_detected_exact<Expected, Op, Args...>::value;
-	//
-	//  The alias template `is_detected_convertible` checks whether
-	// `detected_t<Op, Args...>` is convertible to To.
-	template<class To, template<class...> class Op, class... Args>
-	using is_detected_convertible
-		= faiz::is_convertible<detected_t<Op, Args...>, To>;
-
-	template<class To, template<class...> class Op, class... Args>
-	constexpr bool is_detected_convertible_v
-		= is_detected_convertible<To, Op, Args...>::value;
 
 	// Given two (possibly identical) types Base and Derived,
 	// is_base_of<Base, Derived>::value == true if and only if Base is a
@@ -1234,11 +1307,11 @@ namespace rider::faiz
 	using has_dtor = decltype(declval<U>().~U());
 
 	// clang-format off
-	// FIXME  gcc has bug here, I post a thread here: https://stackoverflow.com/questions/53456848/implement-is-destructible-with-detected-idiomhttps://stackoverflow.com/questions/53456848/implement-is-destructible-with-detected-idiom
+	// FIXME \\\ fix compiler.....  gcc has bug here, I post a thread here: https://stackoverflow.com/questions/53456848/implement-is-destructible-with-detected-idiomhttps://stackoverflow.com/questions/53456848/implement-is-destructible-with-detected-idiom
 	// template<typename T>
 	// constexpr bool is_destructible_v =
 	// 	is_reference_v<T> || (!(is_void_v<T> || is_function_v<T> || is_unknown_bound_array_v<T>) and is_object_v<T> and is_detected_v<has_dtor, T>);
-#if __clang__
+#if BOOST_COMP_CLANG
 	template<typename T>
 	constexpr bool is_destructible_v =
 		(faiz::is_detected_v<has_dtor,
@@ -1247,7 +1320,7 @@ namespace rider::faiz
 	and not is_unknown_bound_array<T>::value
 		and not faiz::is_function_v<T>;
 
-#elif __GNUC__
+#elif BOOST_COMP_GNUC
 	template<class T>
 	constexpr bool
 	my_is_destructible()
