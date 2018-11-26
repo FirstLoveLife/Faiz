@@ -9,6 +9,7 @@
 Don't implement:
  */
 
+// Most here are forward declaration here.
 namespace rider::faiz
 {
 
@@ -509,19 +510,18 @@ namespace rider::faiz
 	template<class T>
 	inline constexpr bool is_function_v = is_function<T>::value;
 
-#undef ImplIsFun
-
-
-	// Checks whether T is a floating-point type. Provides the member
-	// constant value which is equal to true, if T is the type float,
-	// double, long double, including any cv-qualified variants. Otherwise,
-	// value is equal to false.
-	template<class T>
-	struct is_floating_point
-		: integral_constant<bool,
-			  is_same_v<float,
-				  remove_cv_t<
-					  T>> || is_same_v<double, remove_cv_t<T>> || is_same_v<long double, faiz::remove_cv_t<T>>>
+	namespace detail
+	{
+		template<typename T, typename U = remove_cv_t<T>>
+		struct is_floating_point_aux
+			: bool_<logic::or_<is_same<float, U>,
+				  is_same<double, U>,
+				  is_same<__float128, U>, // add gcc specific
+				  is_same<long double, U>>::value>
+		{};
+	} // namespace detail
+	template<typename T>
+	struct is_floating_point : detail::is_floating_point_aux<T>
 	{};
 	template<class T>
 	inline constexpr bool is_floating_point_v = is_floating_point<T>::value;
