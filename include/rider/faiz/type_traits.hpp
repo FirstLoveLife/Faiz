@@ -17,7 +17,12 @@ namespace rider::faiz
 	// type dependencies. depends on declval because of is_referenceable_aux.
 	template<typename _Tp>
 	auto
-	declval() noexcept -> decltype(std::__declval<_Tp>(0));
+	declval() noexcept -> decltype(std::__declval<_Tp>(0))
+	{
+		static_assert(std::__declval_protector<_Tp>::__stop,
+			"declval() must not be used!");
+		return std::__declval<_Tp>(0);
+	}
 
 	template<class _type>
 	using _t = typename _type::type;
@@ -104,9 +109,20 @@ namespace rider::faiz
 	using void_t = void;
 
 	// forward declaration
+	// If the imaginary function definition To `test() { return
+	// std::declval<From>(); }` is well-formed, (that is, either
+	// `faiz::declval<From>()` can be converted to To using implicit
+	// conversions, or both From and To are possibly `cv-qualified void`),
+	// provides the member constant value equal to true. Otherwise value is
+	// false. For the purposes of this check, the use of `faiz::declval` in the
+	// return statement is not considered an odr-use. Access checks are
+	// performed as if from a context unrelated to either type. Only the
+	// validity of the immediate context of the expression in the return
+	// statement (including conversions to the return type) is considered.
 	template<class From, class To>
 	struct is_convertible;
-
+	template<class From, class To>
+	inline constexpr bool is_convertible_v = is_convertible<From, To>::value;
 	template<class T, class U>
 	struct is_same;
 
@@ -240,11 +256,6 @@ namespace rider::faiz
 
 	template<typename T>
 	using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
-
-	template<class T>
-	typename add_rvalue_reference<T>::type
-	declval() noexcept;
-
 
 } // namespace rider::faiz
 
@@ -804,7 +815,7 @@ namespace rider::faiz
 
 
 	template<typename From, typename To>
-	using is_convertible_helper = decltype(test_aux<To>(declval<From>()));
+	using is_convertible_helper = decltype(test_aux<To>(faiz::declval<From>()));
 
 
 	template<typename From, typename To>
@@ -823,11 +834,9 @@ namespace rider::faiz
 				is_detected<is_convertible_helper, From, To>::value;
 		}
 	}
-	template<typename From, typename To>
-	constexpr bool is_convertible_v = my_is_convertible<From, To>();
 
 	template<typename From, typename To>
-	struct is_convertible : std::bool_constant<is_convertible_v<From, To>>
+	struct is_convertible : std::bool_constant<my_is_convertible<From, To>()>
 	{};
 
 	// static_assert(std::experimental::
