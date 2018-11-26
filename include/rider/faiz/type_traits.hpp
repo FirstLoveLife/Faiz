@@ -258,6 +258,42 @@ namespace rider::faiz
 	template<typename T>
 	using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
 
+	template<class T>
+	struct remove_cv;
+
+	template<class T>
+	using remove_cv_t = _t<remove_cv<T>>;
+
+	//  If T is an object type (that is any possibly cv-qualified type other
+	// than function, reference, or void types), provides the member
+	// constant value equal true. For any other type, value is false.
+	// ```cpp
+	// !is_reference<T>::value and !is_void<T>::value and
+	// !is_function<T>::value
+	// ```
+	// OR
+	// ```cpp
+	// is_scalar<T>::value || is_array<T>::value  || is_union<T>::value  ||
+	// is_class<T>::value>
+	// ```
+	template<class T>
+	struct is_object;
+
+	template<class T>
+	inline constexpr bool is_object_v = is_object<T>();
+
+	template<class T>
+	struct is_enum : public integral_constant<bool, __is_enum(T)>
+	{};
+
+	template<class T>
+	inline constexpr bool is_enum_v = is_enum<T>();
+
+	template<class T>
+	struct is_rvalue_reference;
+	template<class T>
+	inline constexpr bool is_rvalue_reference_v = is_rvalue_reference<T>::value;
+
 } // namespace rider::faiz
 
 namespace rider::faiz::logic
@@ -301,6 +337,53 @@ namespace rider::faiz::logic
 
 
 } // namespace rider::faiz::logic
+
+namespace rider::faiz::detail
+{
+	using namespace logic;
+	template<typename T, typename U = remove_cv_t<T>>
+	struct is_floating_point_aux
+		: bool_<or_<is_same<float, U>,
+			  is_same<double, U>,
+			  is_same<__float128, U>, // add gcc specific
+			  is_same<long double, U>>::value>
+	{};
+
+	template<typename T>
+	constexpr bool not_enum_rvalue_reference_v
+		= and_<not_<is_enum<T>>, not_<std::is_rvalue_reference<T>>>::value;
+
+	template<typename T>
+	using is_integral_arith
+		= void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>;
+	template<typename T>
+	constexpr bool is_integral_impl = and_<is_detected<is_integral_arith, T>,
+		bool_<not_enum_rvalue_reference_v<T>>>::value;
+
+	template<typename T, bool = is_integral_impl<T>>
+	struct is_integral_aux : false_
+	{};
+	template<typename T>
+	struct is_integral_aux<T, true> : true_
+	{};
+
+	template<typename T>
+	using is_arithmetic_arith = void_t<decltype(T{} * T{}), decltype(+T{})&>;
+
+	template<typename T>
+	constexpr bool is_arithmetic_impl
+		= and_<is_detected<is_arithmetic_arith, T>,
+			bool_<not_enum_rvalue_reference_v<T>>>::value;
+
+	template<typename T, bool = is_arithmetic_impl<T>>
+	struct is_arithmetic_aux : false_
+	{};
+
+	template<class T>
+	struct is_arithmetic_aux<T, true> : true_
+	{};
+
+} // namespace rider::faiz::detail
 
 namespace rider::faiz
 {
@@ -472,15 +555,17 @@ namespace rider::faiz
 	template<class T>
 	struct is_void : is_same<void, faiz::remove_cv_t<T>>
 	{};
-	template<class T>
+	template<typename T>
 	inline constexpr bool is_void_v = is_void<T>::value;
 
-	template<class T>
+	template<typename T>
 	struct is_null_pointer
 		: faiz::is_same<faiz::nullptr_t, faiz::remove_cv_t<T>>
 	{};
+	template<typename T>
+	constexpr bool is_null_pointer_v = is_null_pointer<T>::value;
 
-	template<class T>
+	template<typename T>
 	struct is_const : false_
 	{};
 	template<class T>
@@ -510,19 +595,10 @@ namespace rider::faiz
 	template<class T>
 	inline constexpr bool is_function_v = is_function<T>::value;
 
-	namespace detail
-	{
-		template<typename T, typename U = remove_cv_t<T>>
-		struct is_floating_point_aux
-			: bool_<logic::or_<is_same<float, U>,
-				  is_same<double, U>,
-				  is_same<__float128, U>, // add gcc specific
-				  is_same<long double, U>>::value>
-		{};
-	} // namespace detail
 	template<typename T>
 	struct is_floating_point : detail::is_floating_point_aux<T>
 	{};
+
 	template<class T>
 	inline constexpr bool is_floating_point_v = is_floating_point<T>::value;
 
@@ -533,13 +609,10 @@ namespace rider::faiz
 	// unsigned, and cv-qualified variants. Otherwise, value is equal to
 	// false.
 
-	template<typename T, class = void>
-	struct is_integral : false_
-	{};
 	template<typename T>
-	struct is_integral<T,
-		void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>> : true_
+	struct is_integral : detail::is_integral_aux<T>
 	{};
+
 	template<class T>
 	inline constexpr bool is_integral_v = is_integral<T>::value;
 	//  If T is an arithmetic type (that is, an integral type or a
@@ -547,13 +620,8 @@ namespace rider::faiz
 	// member constant value equal true. For any other type, value is false.
 	//
 	// gcc may complains, latest msvc/clang compiles happily
-	template<class T, class = void>
-	struct is_arithmetic : false_
-	{};
-
 	template<class T>
-	struct is_arithmetic<T, void_t<decltype(T{} * T{}), decltype(+T{})&>>
-		: true_
+	struct is_arithmetic : detail::is_arithmetic_aux<T>
 	{};
 
 	template<class T>
@@ -598,17 +666,12 @@ namespace rider::faiz
 	template<class T>
 	struct is_rvalue_reference<T&&> : true_
 	{};
-	template<class T>
-	inline constexpr bool is_rvalue_reference_v = is_rvalue_reference<T>::value;
 
 
 	template<class T>
 	struct is_union : public integral_constant<bool, __is_union(T)>
 	{};
 
-	template<class T>
-	struct is_enum : public integral_constant<bool, __is_enum(T)>
-	{};
 
 	namespace detail
 	{
@@ -632,25 +695,12 @@ namespace rider::faiz
 	template<class T>
 	inline constexpr bool is_class_v = is_class<T>::value;
 
-	// If T is an object type (that is any possibly cv-qualified type other
-	// than function, reference, or void types), provides the member
-	// constant value equal true. For any other type, value is false.
-	// ```cpp
-	// !is_reference<T>::value and !is_void<T>::value and
-	// !is_function<T>::value
-	// ```
-	// OR
-	// ```cpp
-	// is_scalar<T>::value || is_array<T>::value  || is_union<T>::value  ||
-	// is_class<T>::value>
-	// ```
+
 	template<typename T>
 	struct is_object
 		: integral_constant<bool,
 			  !is_reference_v<T> and !is_void_v<T> and !is_function_v<T>>
 	{};
-	template<class T>
-	inline constexpr bool is_object_v = is_object<T>::value;
 
 
 	template<class T, unsigned N = 0>
