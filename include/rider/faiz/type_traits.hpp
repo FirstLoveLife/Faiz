@@ -266,45 +266,6 @@
 
  } // namespace rider::faiz
 
- namespace rider::faiz::logic
- {
-     template<typename...>
-     struct and_;
-
-     template<>
-     struct and_<> : true_
-     {};
-
-     template<typename _b1>
-     struct and_<_b1> : _b1
-     {};
-
-     template<typename _b1, class _b2, class... _bn>
-     struct and_<_b1, _b2, _bn...> : meta::if_<_b1, and_<_b2, _bn...>, _b1>
-     {};
-
-     template<typename...>
-     struct or_;
-
-     template<>
-     struct or_<> : false_
-     {};
-
-     template<typename _b1>
-     struct or_<_b1> : _b1
-     {};
-
-     template<typename _b1, class _b2, class... _bn>
-     struct or_<_b1, _b2, _bn...> : meta::if_<_b1, _b1, or_<_b2, _bn...>>
-     {};
-
-
-     template<typename _b>
-     struct not_ : bool_<!_b::value>
-     {};
-
-
- } // namespace rider::faiz::logic
 
  namespace rider::faiz::detail
  {
@@ -368,10 +329,9 @@
      struct is_unsigned_impl<false, T> : false_
      {};
 
-     using namespace logic;
      template<typename T, typename U = remove_cv_t<T>>
      struct is_floating_point_aux
-         : bool_<or_<is_same<float, U>,
+         : bool_<logic::or_<is_same<float, U>,
                is_same<double, U>,
                is_same<__float128, U>, // add gcc specific
                is_same<long double, U>>::value>
@@ -379,14 +339,16 @@
 
      template<typename T>
      constexpr bool not_enum_rvalue_reference_v
-         = and_<not_<is_enum<T>>, not_<std::is_rvalue_reference<T>>>::value;
+         = logic::and_<logic::not_<is_enum<T>>,
+             logic::not_<is_rvalue_reference<T>>>::value;
 
      template<typename T>
      using is_integral_arith
          = void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>;
      template<typename T>
-     constexpr bool is_integral_impl = and_<is_detected<is_integral_arith, T>,
-         bool_<not_enum_rvalue_reference_v<T>>>::value;
+     constexpr bool is_integral_impl
+         = logic::and_<is_detected<is_integral_arith, T>,
+             bool_<not_enum_rvalue_reference_v<T>>>::value;
 
      template<typename T, bool = is_integral_impl<T>>
      struct is_integral_aux : false_
@@ -400,7 +362,7 @@
 
      template<typename T>
      constexpr bool is_arithmetic_impl
-         = and_<is_detected<is_arithmetic_arith, T>,
+         = logic::and_<is_detected<is_arithmetic_arith, T>,
              bool_<not_enum_rvalue_reference_v<T>>>::value;
 
      template<typename T, bool = is_arithmetic_impl<T>>
@@ -608,8 +570,6 @@
      template<typename T>
      struct remove_cvref : type_identity<remove_cv_t<remove_reference_t<T>>>
      {};
-     template<typename T>
-     using remove_cvref_t = _t<remove_cvref<T>>;
 
      /******************** is *********************/
 
@@ -870,14 +830,15 @@
      template<class T>
      struct is_signed : detail::is_signed_impl<is_arithmetic_v<T>, T>
      {};
-     template<class T>
-     struct is_unsigned : detail::is_unsigned_impl<is_arithmetic_v<T>, T>
-     {};
 
      template<typename T>
      constexpr bool is_signed_v = is_signed<T>::value;
      template<typename T>
-     constexpr bool is_unsigned_v = is_unsigned<T>::value;
+     constexpr bool is_unsigned_v
+         = not is_signed<T>::value and is_arithmetic_v<T>;
+     template<class T>
+     struct is_unsigned : bool_<is_unsigned_v<T>>
+     {};
 
      // TODO: add support for compiler extension larger signed.
      template<typename T>
@@ -933,9 +894,69 @@
      };
 
      template<class T>
+     struct make_unsigned
+     {
+     private:
+         static_assert((is_integral<T>::value || is_enum<T>::value),
+             "The template argument to make_unsigned must be an integer or enum "
+             "type.");
+         static_assert((!is_same<typename remove_cv<T>::type, bool>::value),
+             "The template argument to make_unsigned must not be the type bool");
+
+         typedef typename remove_cv<T>::type t_no_cv;
+         typedef typename conditional<(is_unsigned<T>::value
+                                          && is_integral<T>::value
+                                          && !is_same<t_no_cv, char>::value
+                                          && !is_same<t_no_cv, wchar_t>::value
+                                          && !is_same<t_no_cv, bool>::value),
+             T,
+             typename conditional<(is_integral<T>::value
+                                      && !is_same<t_no_cv, char>::value
+                                      && !is_same<t_no_cv, wchar_t>::value
+                                      && !is_same<t_no_cv, bool>::value),
+                 typename conditional<is_same<t_no_cv, signed char>::value,
+                     unsigned char,
+                     typename conditional<is_same<t_no_cv, short>::value,
+                         unsigned short,
+                         typename conditional<is_same<t_no_cv, int>::value,
+                             unsigned int,
+                             typename conditional<is_same<t_no_cv, long>::value,
+                                 unsigned long,
+                                 unsigned long long>::type>::type>::type>::type,
+                 // Not a regular integer type:
+                 typename conditional<sizeof(t_no_cv) == sizeof(unsigned char),
+                     unsigned char,
+                     typename conditional<sizeof(t_no_cv)
+                             == sizeof(unsigned short),
+                         unsigned short,
+                         typename conditional<sizeof(t_no_cv)
+                                 == sizeof(unsigned int),
+                             unsigned int,
+                             typename conditional<sizeof(t_no_cv)
+                                     == sizeof(unsigned long),
+                                 unsigned long,
+                                 unsigned long long>::type>::type>::type>::
+                     type>::type>::type base_integer_type;
+
+         // Add back any const qualifier:
+         typedef typename conditional<is_const<T>::value,
+             typename add_const<base_integer_type>::type,
+             base_integer_type>::type const_base_integer_type;
+
+     public:
+         // Add back any volatile qualifier:
+         typedef typename conditional<is_volatile<T>::value,
+             typename add_volatile<const_base_integer_type>::type,
+             const_base_integer_type>::type type;
+     };
+
+     template<class T>
+     using make_unsigned_t = typename make_unsigned<T>::type;
+
+     template<class T>
      using make_signed_t = typename make_signed<T>::type;
 
-     template<bool B, typename T = void>
+     template<bool B, typename T>
      struct enable_if
      {};
 
