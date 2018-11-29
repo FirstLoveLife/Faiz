@@ -1,7 +1,7 @@
 #ifndef INTEGER_SEQUENCE
 #define INTEGER_SEQUENCE
 #include "rider/faiz/cstddef.hpp"
-#include "rider/faiz/type_traits.hpp"
+#include "rider/faiz/faiz_fwd.hpp"
 #include <boost/preprocessor.hpp>
 /*
 39 level loop-unrolling is fastest on my os. nearly as fast as built_in

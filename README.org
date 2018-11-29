@@ -3,14 +3,17 @@
 * TODO
 http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduced-in-c11/
 - implement list with pointer traits
+- import gsl's Expects(preconditions) and Ensures(postconditions)
 - use gcc/clang's modules.
 - simplify empty base classes once no_unique_address is available on clang.(it
   is available on gcc now though)
 - use [[http://open-std.org/JTC1/SC22/WG21/docs/papers/2018/p0892r2.html][explicit(bool)]] for pair/tuple once it is available.(gcc 9 has this
   feature, but I'm too lazy to compile it myself, clang doesn't work on it yet).
-** to read papers  
+**  papers to read
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3465.pdf][Adding heterogeneous comparison lookup toassociative containers]]
-* COMMENT Conversion
+* Conversion
+- faiz::index for all container indexes/subscripts/sizes, IOW, Don't use unsigned for subscripts, prefer gsl::index
+, see also https://github.com/isocpp/CppCoreGuidelines/pull/1115
 * ThirdParty Package
 - boost.pp
 - [[https://www.boost.org/doc/libs/1_68_0/doc/html/predef/using_the_predefs.html][boost.predef]]

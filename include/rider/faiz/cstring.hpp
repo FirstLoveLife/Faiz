@@ -105,7 +105,7 @@ namespace rider::faiz
 	constexpr Size
 	str_find(const Char* p, Size sz, Char c, Size pos) noexcept
 	{
-		Debug::assertWithLog(p || sz == 0, "string should not be null");
+		Expects(p || sz == 0);
 		if(pos < sz)
 			if(const Char* ret = Traits::find(p + pos, sz - pos, c))
 				return Size(ret - p);
@@ -118,8 +118,7 @@ namespace rider::faiz
 	constexpr Size
 	str_find(const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
-		Debug::assertWithLog(
-			(p || sz == 0) && (s || n == 0), "string should not be null");
+		Expects((p || sz == 0) && (s || n == 0));
 		if(n == 0)
 			return pos <= sz ? pos : NPos;
 		if(n <= sz)
@@ -137,7 +136,7 @@ namespace rider::faiz
 	constexpr Size
 	str_rfind(const Char* p, Size sz, Char c, Size pos) noexcept
 	{
-		Debug::assertWithLog(p || sz == 0, "string should not be null");
+		Expects(p || sz == 0);
 		if(0 < sz)
 		{
 			if(pos < --sz)
@@ -155,8 +154,7 @@ namespace rider::faiz
 	constexpr Size
 	str_rfind(const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
-		Debug::assertWithLog(
-			(p || sz == 0) && (s || n == 0), "string should not be null");
+		Expects((p || sz == 0) && (s || n == 0));
 		if(n <= sz)
 		{
 			pos = faiz::min(Size(sz - n), pos);
@@ -176,8 +174,7 @@ namespace rider::faiz
 	str_find_first_of(
 		const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
-		Debug::assertWithLog(
-			(p || sz == 0) && (s || n == 0), "string should not be null");
+		Expects((p || sz == 0) && (s || n == 0));
 		if(n != 0)
 		{
 			for(; pos < sz; ++pos)

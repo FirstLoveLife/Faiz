@@ -423,7 +423,7 @@ namespace rider::faiz
 		// nullptr.
 		operator bool() const noexcept
 		{
-			return pair.get() != faiz::nullptr;
+			return pair.get() != nullptr;
 		}
 
 		// may throw, e.g. if pointer defines a throwing operator*
@@ -604,10 +604,10 @@ namespace rider::faiz
 			reset();
 		}
 
-		void reset(nullptr_t = faiz::nullptr) noexcept
+		void reset(nullptr_t = nullptr) noexcept
 		{
 			pointer tmp = pair.first();
-			pair.first() = faiz::nullptr;
+			pair.first() = nullptr;
 			if(tmp)
 				pair.second()(tmp);
 		}

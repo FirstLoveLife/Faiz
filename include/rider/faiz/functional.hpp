@@ -3,9 +3,9 @@
 /*
 Don't implement myself: not_fn, invoke
  */
-#include <exception> // for std::except
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/utility.hpp"
+#include <exception> // for std::except
 
 #include <functional>
 namespace rider::faiz

@@ -70,6 +70,8 @@
      template<typename T>
      struct remove_cvref;
      template<typename T>
+     using remove_cvref_t = remove_cvref<T>;
+     template<typename T>
      struct is_integral;
      template<bool B, typename T = void>
      struct enable_if;

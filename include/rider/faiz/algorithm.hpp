@@ -3,7 +3,33 @@
 #include <iostream>
 namespace rider::faiz
 {
-	// Copies exactly count values from the range beginning at first to the
+	template<class T>
+	constexpr const T&
+	min(const T& a, const T& b)
+	{
+		return (b < a) ? b : a;
+	}
+	template<class T>
+	constexpr const T&
+	max(const T& a, const T& b)
+	{
+		return (b < a) ? a : b;
+	}
+
+	template<class T, class Cmp>
+	constexpr const T&
+	min(const T& a, const T& b, Cmp less)
+	{
+		return less(b, a) ? b : a;
+	}
+	template<class T, class Cmp>
+	constexpr const T&
+	max(const T& a, const T& b, Cmp less)
+	{
+		return less(b, a) ? a : b;
+	}
+
+	//  Copies exactly count values from the range beginning at first to the
 	// range beginning at result. Formally, for each non-negative integer i < n,
 	// performs *(result + i) = *(first + i). Overlap of ranges is not
 	// permitted.

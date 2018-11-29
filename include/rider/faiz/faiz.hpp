@@ -35,10 +35,8 @@ namespace rider::faiz
 	{
 	private:
 		template<typename...>
-		struct impl
-		{
-			using type = _type;
-		};
+		struct impl : type_identity<_type>
+		{};
 
 	public:
 		template<typename... _types>
@@ -213,11 +211,10 @@ namespace rider::faiz::meta
 	} // namespace lazy
 
 	template<typename T>
-	struct id
+	struct id : type_identity<T>
 	{
 		template<typename...>
 		using invoke = T;
-		using type = T;
 	};
 
 	template<typename T>
@@ -232,28 +229,21 @@ namespace rider::faiz::meta
 	namespace detail
 	{
 		template<typename, typename = void>
-		struct is_trait_
-		{
-			using type = false_;
-		};
+		struct is_trait_ : type_identity<false_>
+		{};
 
 		template<typename T>
-		struct is_trait_<T, void_t<typename T::type>>
-		{
-			using type = true_;
-		};
+		struct is_trait_<T, void_t<typename T::type>> : type_identity<true_>
+		{};
 
 		template<typename, typename = void>
-		struct is_callable_
-		{
-			using type = false_;
-		};
+		struct is_callable_ : type_identity<false_>
+		{};
 
 		template<typename T>
 		struct is_callable_<T, void_t<quote<T::template invoke>>>
-		{
-			using type = true_;
-		};
+			: type_identity<true_>
+		{};
 
 		template<template<typename...> class C,
 			typename... Ts,
@@ -572,17 +562,27 @@ namespace rider::faiz::meta
 	template<typename Bool_>
 	using not_ = not_c<Bool_::type::value>;
 
-	template<bool... Bools>
-	using and_c = is_same<integer_sequence<bool, Bools...>,
-		integer_sequence<bool, (Bools || true)...>>;
+	// template<bool... Bools>
+	// using and_c = is_same<integer_sequence<bool, Bools...>,
+	// 	integer_sequence<bool, (Bools || true)...>>;
+	template<bool... B>
+	using and_c = bool_<(B && ...)>;
+	template<bool... B>
+	inline constexpr bool and_t = bool_<(B && ...)>::value;
 
 	template<typename... Bools>
 	using strict_and = and_c<Bools::type::value...>;
+	template<typename... Bools>
+	inline constexpr bool strict_and_v = and_c<Bools::type::value...>::value;
 
 	template<typename... Bools>
 	using and_ = _t<
 		defer<detail::_and_<0 == sizeof...(Bools)>::template invoke, Bools...>>;
 
+
+	template<bool... B>
+	struct fold_and : bool_<(B && ...)>
+	{};
 
 	template<bool... Bools>
 	using or_c = not_<is_same<integer_sequence<bool, Bools...>,
@@ -706,10 +706,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename State, typename Fun>
-		struct reverse_fold_<list<>, State, Fun>
-		{
-			using type = State;
-		};
+		struct reverse_fold_<list<>, State, Fun> : type_identity<State>
+		{};
 
 		template<typename Head, typename... List, typename State, typename Fun>
 		struct reverse_fold_<list<Head, List...>, State, Fun>
@@ -779,16 +777,12 @@ namespace rider::faiz::meta
 		{};
 
 		template<>
-		struct concat_<>
-		{
-			using type = list<>;
-		};
+		struct concat_<> : type_identity<list<>>
+		{};
 
 		template<typename... List1>
-		struct concat_<list<List1...>>
-		{
-			using type = list<List1...>;
-		};
+		struct concat_<list<List1...>> : type_identity<list<List1...>>
+		{};
 
 		template<typename... List1, typename... List2, typename... Rest>
 		struct concat_<list<List1...>, list<List2...>, Rest...>
@@ -856,16 +850,14 @@ namespace rider::faiz::meta
 
 		template<typename... Ts, typename Fun>
 		struct transform_<list<list<Ts...>, Fun>, void_t<invoke<Fun, Ts>...>>
-		{
-			using type = list<invoke<Fun, Ts>...>;
-		};
+			: type_identity<list<invoke<Fun, Ts>...>>
+		{};
 
 		template<typename... Ts0, typename... Ts1, typename Fun>
 		struct transform_<list<list<Ts0...>, list<Ts1...>, Fun>,
 			void_t<invoke<Fun, Ts0, Ts1>...>>
-		{
-			using type = list<invoke<Fun, Ts0, Ts1>...>;
-		};
+			: type_identity<list<invoke<Fun, Ts0, Ts1>...>>
+		{};
 	} // namespace detail
 
 	template<typename... Args>
@@ -888,9 +880,8 @@ namespace rider::faiz::meta
 
 		template<typename T, faiz::size_t... Is>
 		struct repeat_n_c_<T, index_sequence<Is...>>
-		{
-			using type = list<first_<T, Is>...>;
-		};
+			: type_identity<list<first_<T, Is>...>>
+		{};
 	} // namespace detail
 
 	template<faiz::size_t N, typename T = void>
@@ -1005,10 +996,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename Head, typename... List>
-		struct front_<list<Head, List...>>
-		{
-			using type = Head;
-		};
+		struct front_<list<Head, List...>> : type_identity<Head>
+		{};
 	} // namespace detail
 
 	template<typename List>
@@ -1028,9 +1017,8 @@ namespace rider::faiz::meta
 
 		template<typename Head, typename... List>
 		struct back_<list<Head, List...>>
-		{
-			using type = at_c<list<Head, List...>, sizeof...(List)>;
-		};
+			: type_identity<at_c<list<Head, List...>, sizeof...(List)>>
+		{};
 	} // namespace detail
 
 	template<typename List>
@@ -1049,10 +1037,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename... List, typename T>
-		struct push_front_<list<List...>, T>
-		{
-			using type = list<T, List...>;
-		};
+		struct push_front_<list<List...>, T> : type_identity<list<T, List...>>
+		{};
 	} // namespace detail
 
 	template<typename List, typename T>
@@ -1071,10 +1057,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename Head, typename... List>
-		struct pop_front_<list<Head, List...>>
-		{
-			using type = list<List...>;
-		};
+		struct pop_front_<list<Head, List...>> : type_identity<list<List...>>
+		{};
 	} // namespace detail
 
 	template<typename List>
@@ -1093,10 +1077,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename... List, typename T>
-		struct push_back_<list<List...>, T>
-		{
-			using type = list<List..., T>;
-		};
+		struct push_back_<list<List...>, T> : type_identity<list<List..., T>>
+		{};
 	} // namespace detail
 
 	template<typename List, typename T>
@@ -1177,10 +1159,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename V>
-		struct find_index_<list<>, V>
-		{
-			using type = npos;
-		};
+		struct find_index_<list<>, V> : type_identity<npos>
+		{};
 
 		template<typename... T, typename V>
 		struct find_index_<list<T...>, V>
@@ -1216,10 +1196,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename V>
-		struct reverse_find_index_<list<>, V>
-		{
-			using type = npos;
-		};
+		struct reverse_find_index_<list<>, V> : type_identity<npos>
+		{};
 
 		template<typename... T, typename V>
 		struct reverse_find_index_<list<T...>, V>
@@ -1271,10 +1249,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename Fun>
-		struct find_if_<list<>, Fun>
-		{
-			using type = list<>;
-		};
+		struct find_if_<list<>, Fun> : type_identity<list<>>
+		{};
 
 		template<typename... List, typename Fun>
 		struct find_if_<list<List...>,
@@ -1314,10 +1290,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename Fun>
-		struct reverse_find_if_<list<>, Fun>
-		{
-			using type = list<>;
-		};
+		struct reverse_find_if_<list<>, Fun> : type_identity<list<>>
+		{};
 
 		template<typename... List, typename Fun>
 		struct reverse_find_if_<list<List...>,
@@ -1350,9 +1324,8 @@ namespace rider::faiz::meta
 
 		template<typename... List, typename T, typename U>
 		struct replace_<list<List...>, T, U>
-		{
-			using type = list<if_<is_same<T, List>, U, List>...>;
-		};
+			: type_identity<list<if_<is_same<T, List>, U, List>...>>
+		{};
 	} // namespace detail
 
 	template<typename List, typename T, typename U>
@@ -1404,10 +1377,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename T>
-		struct count_<list<>, T>
-		{
-			using type = size_t_<0>;
-		};
+		struct count_<list<>, T> : type_identity<size_t_<0>>
+		{};
 
 		template<typename... List, typename T>
 		struct count_<list<List...>, T>
@@ -1434,10 +1405,8 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename Fn>
-		struct count_if_<list<>, Fn>
-		{
-			using type = size_t_<0>;
-		};
+		struct count_if_<list<>, Fn> : type_identity<size_t_<0>>
+		{};
 
 		template<typename... List, typename Fn>
 		struct count_if_<list<List...>,
@@ -1734,16 +1703,12 @@ namespace rider::faiz::meta
 		{};
 
 		template<typename Pred>
-		struct sort_<list<>, Pred>
-		{
-			using type = list<>;
-		};
+		struct sort_<list<>, Pred> : type_identity<list<>>
+		{};
 
 		template<typename A, typename Pred>
-		struct sort_<list<A>, Pred>
-		{
-			using type = list<A>;
-		};
+		struct sort_<list<A>, Pred> : type_identity<list<A>>
+		{};
 
 		template<typename A, typename B, typename... List, typename Pred>
 		struct sort_<list<A, B, List...>,
@@ -1784,20 +1749,14 @@ namespace rider::faiz::meta
 		using lazy_if_ = lazy::_t<defer<_if_, list<If, protect_<Ts>...>>>;
 
 		template<typename A, typename T, typename F, typename Ts>
-		struct subst1_
-		{
-			using type = list<list<T>>;
-		};
+		struct subst1_ : type_identity<list<list<T>>>
+		{};
 		template<typename T, typename F, typename Ts>
-		struct subst1_<F, T, F, Ts>
-		{
-			using type = list<>;
-		};
+		struct subst1_<F, T, F, Ts> : type_identity<list<>>
+		{};
 		template<typename A, typename T, typename F, typename Ts>
-		struct subst1_<vararg_<A>, T, F, Ts>
-		{
-			using type = list<Ts>;
-		};
+		struct subst1_<vararg_<A>, T, F, Ts> : type_identity<list<Ts>>
+		{};
 
 		template<typename As, typename Ts>
 		using substitutions_ = push_back<
@@ -1851,29 +1810,24 @@ namespace rider::faiz::meta
 			struct subst_<defer<C, Ts...>,
 				Args,
 				void_t<C<_t<impl<Ts, Args>>...>>>
-			{
-				using type = C<_t<impl<Ts, Args>>...>;
-			};
+				: type_identity<C<_t<impl<Ts, Args>>...>>
+			{};
 			template<typename T, template<T...> class C, T... Is, typename Args>
 			struct subst_<defer_i<T, C, Is...>, Args, void_t<C<Is...>>>
-			{
-				using type = C<Is...>;
-			};
+				: type_identity<C<Is...>>
+			{};
 			template<typename T, typename Args>
 			struct impl : if_c<(reverse_find_index<Tags, T>() != npos()),
 							  lazy::at<Args, reverse_find_index<Tags, T>>,
 							  id<T>>
 			{};
 			template<typename T, typename Args>
-			struct impl<protect_<T>, Args>
-			{
-				using type = T;
-			};
+			struct impl<protect_<T>, Args> : type_identity<T>
+			{};
 			template<typename T, typename Args>
 			struct impl<is_valid_<T>, Args>
-			{
-				using type = is_trait<impl<T, Args>>;
-			};
+				: type_identity<is_trait<impl<T, Args>>>
+			{};
 			template<typename If, typename... Ts, typename Args>
 			struct impl<defer<if_, If, Ts...>, Args> // Short-circuit if_
 				: impl<lazy_impl_<lazy_if_<If, Ts...>, Args>, Args>
@@ -1955,29 +1909,24 @@ namespace rider::faiz::meta
 			struct subst_<defer<C, Ts...>,
 				Args,
 				void_t<try_subst_<C, Args, list<Ts...>>>>
-			{
-				using type = list<try_subst_<C, Args, list<Ts...>>>;
-			};
+				: type_identity<list<try_subst_<C, Args, list<Ts...>>>>
+			{};
 			template<typename T, template<T...> class C, T... Is, typename Args>
 			struct subst_<defer_i<T, C, Is...>, Args, void_t<C<Is...>>>
-			{
-				using type = list<C<Is...>>;
-			};
+				: type_identity<list<C<Is...>>>
+			{};
 			template<typename T, typename Args>
 			struct impl : if_c<(reverse_find_index<Tags, T>() != npos()),
 							  lazy::at<Args, reverse_find_index<Tags, T>>,
 							  id<list<T>>>
 			{};
 			template<typename T, typename Args>
-			struct impl<protect_<T>, Args>
-			{
-				using type = list<T>;
-			};
+			struct impl<protect_<T>, Args> : type_identity<list<T>>
+			{};
 			template<typename T, typename Args>
 			struct impl<is_valid_<T>, Args>
-			{
-				using type = list<is_trait<impl<T, Args>>>;
-			};
+				: type_identity<list<is_trait<impl<T, Args>>>>
+			{};
 			template<typename If, typename... Ts, typename Args>
 			struct impl<defer<if_, If, Ts...>, Args> // Short-circuit if_
 				: impl<lazy_impl_<lazy_if_<If, Ts...>, Args>, Args>
@@ -2052,15 +2001,12 @@ namespace rider::faiz::meta
 		struct let_
 		{};
 		template<typename Fn>
-		struct let_<Fn>
-		{
-			using type = lazy::invoke<lambda<Fn>>;
-		};
+		struct let_<Fn> : type_identity<lazy::invoke<lambda<Fn>>>
+		{};
 		template<typename Tag, typename Value, typename... Rest>
 		struct let_<var<Tag, Value>, Rest...>
-		{
-			using type = lazy::invoke<lambda<Tag, _t<let_<Rest...>>>, Value>;
-		};
+			: type_identity<lazy::invoke<lambda<Tag, _t<let_<Rest...>>>, Value>>
+		{};
 	} // namespace detail
 
 	template<typename... As>
@@ -2169,6 +2115,45 @@ namespace rider::faiz::meta
 
 } // namespace rider::faiz::meta
 
+namespace rider::faiz::logic
+{
+	template<typename...>
+	struct and_;
+
+	template<>
+	struct and_<> : true_
+	{};
+
+	template<typename _b1>
+	struct and_<_b1> : _b1
+	{};
+
+	template<typename _b1, class _b2, class... _bn>
+	struct and_<_b1, _b2, _bn...> : meta::if_<_b1, and_<_b2, _bn...>, _b1>
+	{};
+
+	template<typename...>
+	struct or_;
+
+	template<>
+	struct or_<> : false_
+	{};
+
+	template<typename _b1>
+	struct or_<_b1> : _b1
+	{};
+
+	template<typename _b1, class _b2, class... _bn>
+	struct or_<_b1, _b2, _bn...> : meta::if_<_b1, _b1, or_<_b2, _bn...>>
+	{};
+
+
+	template<typename _b>
+	struct not_ : bool_<!_b::value>
+	{};
+
+
+} // namespace rider::faiz::logic
 
 namespace rider::faiz
 {
@@ -2178,7 +2163,7 @@ namespace rider::faiz
 
 	//! \brief 判断第一个参数在之后参数指定的类型中出现。
 	template<typename _type, typename... _types>
-	struct is_in_types : or_<is_same<_type, _types...>>
+	struct is_in_types : logic::or_<is_same<_type, _types...>>
 	{};
 } // namespace rider::faiz
 
