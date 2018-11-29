@@ -212,25 +212,6 @@
      template<typename T>
      using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
 
-
-     //  If T is an object type (that is any possibly cv-qualified type other
-     // than function, reference, or void types), provides the member
-     // constant value equal true. For any other type, value is false.
-     // ```cpp
-     // !is_reference<T>::value and !is_void<T>::value and
-     // !is_function<T>::value
-     // ```
-     // OR
-     // ```cpp
-     // is_scalar<T>::value || is_array<T>::value  || is_union<T>::value  ||
-     // is_class<T>::value>
-     // ```
-     template<typename T>
-     struct is_object;
-
-     template<typename T>
-     inline constexpr bool is_object_v = is_object<T>();
-
      template<typename T>
      struct is_enum : public bool_<__is_enum(T)>
      {};
@@ -461,8 +442,6 @@
      template<typename T>
      struct remove_reference<T&&> : type_identity<T>
      {};
-     template<typename T>
-     using remove_reference_t = _t<remove_reference<T>>;
 
      template<typename T>
      struct remove_const : type_identity<T>
@@ -474,12 +453,6 @@
      template<typename T>
      struct remove_volatile : type_identity<T>
      {};
-
-     template<typename T>
-     using remove_const_t = _t<remove_const<T>>;
-
-     template<typename T>
-     using remove_volatile_t = _t<remove_volatile<T>>;
 
      template<typename T>
      struct remove_volatile<volatile T> : type_identity<T>
@@ -701,8 +674,6 @@
      struct is_lvalue_reference<T&> : true_
      {};
 
-     template<typename T>
-     inline constexpr bool is_lvalue_reference_v = is_lvalue_reference<T>::value;
      template<typename T>
      struct is_rvalue_reference : false_
      {};
@@ -962,9 +933,6 @@
      struct enable_if<true, T> : type_identity<T>
      {};
 
-     template<bool B, class T = void>
-     using enable_if_t = _t<enable_if<B, T>>;
-
      template<typename T>
      struct is_array : false_
      {};
@@ -1173,10 +1141,6 @@
      struct is_assignable : public detail::is_assignable_imp<T, Arg>
      {};
 
-     template<typename T, typename Arg>
-     inline constexpr bool is_assignable_v = is_assignable<T, Arg>::value;
-
-
      // If Derived is derived from Base or if both are the same non-union class
      // (in both cases ignoring cv-qualification), provides the member constant
      // value equal to true. Otherwise value is false.
@@ -1333,10 +1297,6 @@
          : public bool_<__is_trivially_assignable(T, _Up)>
      {};
 
-     template<typename T, class U>
-     inline constexpr bool is_trivially_assignable_v
-         = is_trivially_assignable<T, U>::value;
-
      template<typename T>
      struct is_trivially_copy_assignable
          : faiz::is_trivially_assignable<_t<faiz::add_lvalue_reference<T>>,
@@ -1359,10 +1319,6 @@
      struct is_nothrow_assignable
          : public is_nothrow_assignable_aux<is_assignable<T, A>::value, T, A>
      {};
-
-     template<typename T, class U>
-     inline constexpr bool is_nothrow_assignable_v
-         = is_nothrow_assignable<T, U>::value;
 
      template<typename T>
      struct is_nothrow_copy_assignable
