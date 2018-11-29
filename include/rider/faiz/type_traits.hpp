@@ -897,64 +897,62 @@
      struct make_unsigned
      {
      private:
-         static_assert((is_integral<T>::value || is_enum<T>::value),
+         static_assert(disjunction_v<is_integral<T>, is_enum<T>>,
              "The template argument to make_unsigned must be an integer or enum "
              "type.");
-         static_assert((!is_same<typename remove_cv<T>::type, bool>::value),
-             "The template argument to make_unsigned must not be the type bool");
+         static_assert(negation_v<is_same<remove_cv_t<T>, bool>>,
+             "The template argument to make_unsigned must not be the type "
+             "bool");
 
-         typedef typename remove_cv<T>::type t_no_cv;
-         typedef typename conditional<(is_unsigned<T>::value
-                                          && is_integral<T>::value
-                                          && !is_same<t_no_cv, char>::value
-                                          && !is_same<t_no_cv, wchar_t>::value
-                                          && !is_same<t_no_cv, bool>::value),
+         using t_no_cv = remove_cv_t<T>;
+         using base_integer_type = meta::if_<
+             meta::strict_and<is_unsigned<T>,
+                 is_integral<T>,
+                 meta::not_<is_same<t_no_cv, char>>,
+                 meta::not_<is_same<t_no_cv, wchar_t>>,
+                 meta::not_<is_same<t_no_cv, bool>>>,
              T,
-             typename conditional<(is_integral<T>::value
-                                      && !is_same<t_no_cv, char>::value
-                                      && !is_same<t_no_cv, wchar_t>::value
-                                      && !is_same<t_no_cv, bool>::value),
-                 typename conditional<is_same<t_no_cv, signed char>::value,
+             meta::if_<meta::strict_and<is_integral<T>,
+                           meta::not_<is_same<t_no_cv, char>>,
+                           meta::not_<is_same<t_no_cv, wchar_t>>,
+                           meta::not_<is_same<t_no_cv, bool>>>,
+                 meta::if_<is_same<t_no_cv, signed char>,
                      unsigned char,
-                     typename conditional<is_same<t_no_cv, short>::value,
+                     meta::if_<is_same<t_no_cv, short>,
                          unsigned short,
-                         typename conditional<is_same<t_no_cv, int>::value,
+                         meta::if_<is_same<t_no_cv, int>,
                              unsigned int,
-                             typename conditional<is_same<t_no_cv, long>::value,
+                             meta::if_<is_same<t_no_cv, long>,
                                  unsigned long,
-                                 unsigned long long>::type>::type>::type>::type,
+                                 unsigned long long>>>>,
                  // Not a regular integer type:
-                 typename conditional<sizeof(t_no_cv) == sizeof(unsigned char),
+                 meta::if_c<sizeof(t_no_cv) == sizeof(unsigned char),
                      unsigned char,
-                     typename conditional<sizeof(t_no_cv)
-                             == sizeof(unsigned short),
+                     meta::if_c<sizeof(t_no_cv) == sizeof(unsigned short),
                          unsigned short,
-                         typename conditional<sizeof(t_no_cv)
-                                 == sizeof(unsigned int),
+                         meta::if_c<sizeof(t_no_cv) == sizeof(unsigned int),
                              unsigned int,
-                             typename conditional<sizeof(t_no_cv)
-                                     == sizeof(unsigned long),
+                             meta::if_c<sizeof(t_no_cv) == sizeof(unsigned long),
                                  unsigned long,
-                                 unsigned long long>::type>::type>::type>::
-                     type>::type>::type base_integer_type;
+                                 unsigned long long>>>>>>;
 
          // Add back any const qualifier:
-         typedef typename conditional<is_const<T>::value,
-             typename add_const<base_integer_type>::type,
-             base_integer_type>::type const_base_integer_type;
+         using const_base_integer_type = _t<meta::if_<is_const<T>,
+             add_const_t<base_integer_type>,
+             base_integer_type>>;
 
      public:
          // Add back any volatile qualifier:
-         typedef typename conditional<is_volatile<T>::value,
-             typename add_volatile<const_base_integer_type>::type,
-             const_base_integer_type>::type type;
+         using type = _t<meta::if_<is_volatile<T>,
+             add_volatile_t<const_base_integer_type>,
+             const_base_integer_type>>;
      };
 
      template<class T>
-     using make_unsigned_t = typename make_unsigned<T>::type;
+     using make_unsigned_t = _t<make_unsigned<T>>;
 
      template<class T>
-     using make_signed_t = typename make_signed<T>::type;
+     using make_signed_t = _t<make_signed<T>>;
 
      template<bool B, typename T>
      struct enable_if
@@ -1011,11 +1009,10 @@
      constexpr bool
      my_is_convertible()
      {
-         if constexpr(std::disjunction<std::is_void<From>,
-                          std::is_function<To>,
-                          std::is_array<To>>::value)
+         if constexpr(disjunction<is_void<From>, is_function<To>, is_array<To>>::
+                          value)
          {
-             return std::is_void_v<To>;
+             return is_void_v<To>;
          }
          else
          {
@@ -1024,7 +1021,7 @@
      }
 
      template<typename From, typename To>
-     struct is_convertible : std::bool_constant<my_is_convertible<From, To>()>
+     struct is_convertible : bool_<my_is_convertible<From, To>()>
      {};
 
      // static_assert(std::experimental::
