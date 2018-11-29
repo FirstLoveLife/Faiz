@@ -75,6 +75,9 @@
      using add_lvalue_reference_t = typename add_lvalue_reference<T>::type;
      template<class T>
      using add_rvalue_reference_t = typename add_rvalue_reference<T>::type;
+     template<class T>
+     typename std::add_rvalue_reference<T>::type
+     declval() noexcept;
 
      //  If T is an object type (that is any possibly cv-qualified type other
      // than function, reference, or void types), provides the member
@@ -136,7 +139,9 @@
 
      template<typename T, class U>
      struct is_same;
+     template<class T, class U>
 
+     inline constexpr bool is_same_v = is_same<T, U>::value;
      template<typename T, T v>
      struct integral_constant;
      template<typename T, T v>
@@ -3162,7 +3167,8 @@
      {};
 
      template<typename _b1, class _b2, class... _bn>
-     struct or_<_b1, _b2, _bn...> : meta::if_<_b1, _b1, or_<_b2, _bn...>>
+     struct or_<_b1, _b2, _bn...>
+         : conditional<_b1::value, _b1, or_<_b2, _bn...>>::type
      {};
 
 
@@ -3175,14 +3181,24 @@
 
  namespace rider::faiz
  {
-     template<typename _type, typename... _types>
-     struct are_same : logic::and_<is_same<_type, _types>...>
+     template<typename...>
+     struct empty_base
      {};
 
-     //! \brief 判断第一个参数在之后参数指定的类型中出现。
-     template<typename _type, typename... _types>
-     struct is_in_types : logic::or_<is_same<_type, _types...>>
+     template<class T, class... Rest>
+     inline constexpr bool are_same_v = (is_same_v<T, Rest> && ...);
+
+     template<typename T, typename... Rest>
+     struct are_same : bool_<are_same_v<T, Rest...>>
      {};
+
+     template<class T, class... Rest>
+     inline constexpr bool is_any_v = (is_same_v<T, Rest> || ...);
+
+     template<typename T, typename... Rest>
+     struct is_any : bool_<is_any_v<T, Rest...>>
+     {};
+
  } // namespace rider::faiz
 
  #endif
