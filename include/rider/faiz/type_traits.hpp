@@ -410,19 +410,18 @@
  namespace rider::faiz
  {
 
-     using namespace logic;
      template<typename... _b>
-     using conjunction = and_<_b...>;
+     using conjunction = logic::and_<_b...>;
      template<typename... B>
      inline constexpr bool conjunction_v = conjunction<B...>::value;
 
      template<typename... _b>
-     using disjunction = or_<_b...>;
+     using disjunction = logic::or_<_b...>;
      template<typename... B>
      inline constexpr bool disjunction_v = disjunction<B...>::value;
 
      template<typename _b>
-     using negation = not_<_b>;
+     using negation = logic::not_<_b>;
      template<typename B>
      inline constexpr bool negation_v = negation<B>::value;
 
