@@ -1,7 +1,6 @@
 #ifndef OPERATOR
 #	define OPERATOR
 #	include "rider/faiz/faiz.hpp"
-#	include "rider/faiz/integer_sequence.hpp"
 #	include "rider/faiz/type_traits.hpp"
 #	include "rider/faiz/utility.hpp"
 #	include "rider/faiz/variadic.hpp"
@@ -206,7 +205,7 @@ namespace rider::faiz::dep_ops
 		_t<details::ops_seq<_type, \
 			_type2, \
 			_tOpt, \
-			cond_t<is_same<_type, _type2>, \
+							  meta::if_<is_same<_type, _type2>,	\
 				index_sequence<_bseq_s>, \
 				index_sequence<_bseq>>>>)
 
@@ -239,7 +238,7 @@ namespace rider::faiz::dep_ops
 		_t<details::ops_seq<_type, \
 			_type2, \
 			_tOpt, \
-			cond_t<is_same<_type, _type2>, \
+							  meta::if_<is_same<_type, _type2>,	\
 				details::ops_bin_id_seq<_id, 0 COMMA 1>, \
 				details::ops_bin_id_seq<_id, 0 COMMA 1 COMMA 2 COMMA 3>>>>)
 
@@ -331,7 +330,7 @@ namespace rider::faiz::dep_ops
 //     _t<details::ops_seq<_type,
 //                         _type2,
 //                         _tOpt,
-//                         cond_t<is_same<_type, _type2>,
+//                         meta::if_<is_same<_type, _type2>,
 //                                index_sequence<2, 4, 1>,
 //                                index_sequence<0, 1, 2, 3, 4, 5>>>>;
 
@@ -340,7 +339,7 @@ namespace rider::faiz::dep_ops
 //     _t<details::ops_seq<_type,
 //                         _type2,
 //                         _tOpt,
-//                         cond_t<is_same<_type, _type2>,
+//                         meta::if_<is_same<_type, _type2>,
 //                                index_sequence<7>,
 //                                index_sequence<6, 7, 8>>>>;
 

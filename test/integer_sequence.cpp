@@ -1,4 +1,5 @@
-#include "rider/faiz/integer_sequence.hpp"
+#include "rider/faiz/faiz_fwd.hpp"
+#include "rider/faiz/type_traits.hpp"
 #include <iostream>
 using namespace rider;
 template<int... N>

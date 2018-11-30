@@ -14,17 +14,6 @@
  namespace rider::faiz
  {
 
-     // FIXME: declval depends on my implementation of add_rvalue_reference while
-     // add_rvalue_reference. So sad, detection idiom doesn't work here because
-     // type dependencies. depends on declval because of is_referenceable_aux.
-     template<typename T>
-     auto
-     declval() noexcept -> decltype(std::__declval<T>(0))
-     {
-         static_assert(
-             std::__declval_protector<T>::__stop, "declval() must not be used!");
-         return std::__declval<T>(0);
-     }
 
      template<typename _type>
      using _t = typename _type::type;
@@ -183,17 +172,8 @@
      inline constexpr bool is_void_v = is_void<T>::value;
 
 
-     // FIXME: is_referenceable_aux depends on declval, while declval depends on
-     // add_rvalue_reference, add_rvalue_reference depends on declval. So I have
-     // to std::declval here as workaround, what a pity!
-     //
-     // declval<T> is enough here, because declval will check previous. But I
-     // don't think this is a good solution. So, TODO: remove dependency of
-     // declval.
-     // TODO: check is void referenceable. libcxx's test hold that void is not
-     // referenceable.
      template<typename T>
-     using is_referenceable_aux = decltype(declval<T>());
+     using is_referenceable_aux = is_void<T&>;
      template<typename T>
      constexpr bool is_referenceable_v
          = is_detected_v<is_referenceable_aux, T> && !is_void_v<T>;
@@ -311,11 +291,11 @@
      {};
 
      template<typename T, typename U = remove_cv_t<T>>
-     struct is_floating_point_aux
-         : bool_<logic::or_<is_same<float, U>,
-               is_same<double, U>,
-               is_same<__float128, U>, // add gcc specific
-               is_same<long double, U>>::value>
+     struct is_floating_point_aux : is_any<U,
+                                        float,
+                                        double,
+                                        __float128, // add gcc specific
+                                        long double>
      {};
 
      template<typename T>
@@ -558,8 +538,6 @@
      template<typename T>
      struct is_same<T, T> : true_
      {};
-     template<typename T, class U>
-     inline constexpr bool is_same_v = is_same<T, U>::value;
 
 
      template<typename T>
@@ -822,16 +800,22 @@
              "The template argument to make_signed must not be the type bool.");
 
          using t_no_cv = remove_cv_t<T>;
-         using base_integer_type = meta::if_<and_<is_signed<T>,
-                                                 is_integral<T>,
-                                                 not_<is_same<t_no_cv, char>>,
-                                                 not_<is_same<t_no_cv, wchar_t>>,
-                                                 not_<is_same<t_no_cv, bool>>>,
+         using base_integer_type = meta::if_<
+             // if
+             logic::and_<is_signed<T>,
+                 is_integral<T>,
+                 logic::not_<is_same<t_no_cv, char>>,
+                 logic::not_<is_same<t_no_cv, wchar_t>>,
+                 logic::not_<is_same<t_no_cv, bool>>>,
+             // then
              T,
-             meta::if_<and_<is_integral<T>,
-                           not_<is_same<t_no_cv, char>>,
-                           not_<is_same<t_no_cv, wchar_t>>,
-                           not_<is_same<t_no_cv, bool>>>,
+             // else
+             //    if
+             meta::if_<logic::and_<is_integral<T>,
+                           logic::not_<is_same<t_no_cv, char>>,
+                           logic::not_<is_same<t_no_cv, wchar_t>>,
+                           logic::not_<is_same<t_no_cv, bool>>>,
+                 // then
                  meta::if_<is_same<t_no_cv, unsigned char>,
                      signed char,
                      meta::if_<is_same<t_no_cv, unsigned short>,
@@ -841,6 +825,7 @@
                              meta::if_<is_same<t_no_cv, unsigned long>,
                                  long,
                                  long long>>>>,
+                 //  else
                  // Not a regular integer type:
                  meta::if_c<sizeof(t_no_cv) == sizeof(unsigned char),
                      signed char,
@@ -1159,7 +1144,7 @@
      // models.
      template<typename Base, typename Derived>
      struct is_base_of
-         : public meta::if_<and_<is_class<Base>, is_class<Derived>>,
+         : public meta::if_<logic::and_<is_class<Base>, is_class<Derived>>,
                detail::pre_is_base_of2<Base, Derived>,
                false_>
      {};
@@ -1391,7 +1376,7 @@
         (faiz::is_detected_v<has_dtor,
            T>
        or faiz::is_reference_v<T>)
-    and not is_unknown_bound_array<T>::value
+    and not is_unknown_bound_array_v<T>
         and not faiz::is_function_v<T>;
 
  #elif BOOST_COMP_GNUC

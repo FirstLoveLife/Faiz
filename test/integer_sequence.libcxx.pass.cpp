@@ -19,7 +19,6 @@
 // };
 
 #include "rider/faiz/cstddef.hpp"
-#include "rider/faiz/integer_sequence.hpp"
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/utility.hpp"
 int

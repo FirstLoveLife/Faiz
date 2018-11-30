@@ -1,7 +1,6 @@
 #ifndef VARIADIC
 #define VARIADIC
 #include "rider/faiz/faiz.hpp"
-#include "rider/faiz/type_traits.hpp"
 namespace rider::faiz::fseq
 {
 
@@ -95,7 +94,7 @@ namespace rider::faiz::vseq
 			 template<typename...>
 			 class _gSeq,
 			 typename... Ts>
-	struct defer<_gOp, _gSeq<Ts...>, when_valid<_gOp<Ts...>>>
+	struct defer<_gOp, _gSeq<Ts...>,  when_valid<_gOp<Ts...>>>
 	{
 		using type = _gOp<Ts...>;
 	};
@@ -199,7 +198,7 @@ namespace rider::faiz::vseq
 
 	template<class Seq>
 	struct is_instance<Seq,
-		enable_if_t<is_same<Seq,
+		 enable_if_t<is_same<Seq,
 			_t<vdefer<instance_apply_t, Seq, params_of_t<Seq>>>>::value>>
 		: true_
 	{};
@@ -210,7 +209,7 @@ namespace rider::faiz::vseq
 
 
 	template<typename... Seqs>
-	using enable_for_instances = enable_when<
+	using enable_for_instances =  enable_when<
 		logic::and_<is_instance<Seqs>...,
 					same_instance<Seqs...>>::value>;
 

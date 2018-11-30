@@ -24,6 +24,7 @@
  #define INLINE_VARIABLE(type, name) inline constexpr type name{};
  #define DEPRECATED(MSG) __attribute__((deprecated(MSG)))
  #define IMPL(...) __VA_ARGS__
+ #define SEMICOLON ;
  #define COMMA ,
  #define AUTO_RETURN_NOEXCEPT(...) \
      noexcept(noexcept(decltype(__VA_ARGS__)(__VA_ARGS__))) \
@@ -56,27 +57,42 @@
  namespace rider::faiz
  {
      template<class T>
+     struct add_cv;
+     template<class T>
+     struct add_const;
+     template<class T>
+     struct add_volatile;
+
+     template<class T>
+     using add_cv_t = _t<add_cv<T>>;
+     template<class T>
+     using add_const_t = _t<add_const<T>>;
+     template<class T>
+     using add_volatile_t = _t<add_volatile<T>>;
+
+     template<class T>
      struct remove_cv;
      template<class T>
      struct remove_const;
      template<class T>
      struct remove_volatile;
      template<class T>
-     using remove_cv_t = typename remove_cv<T>::type;
+     using remove_cv_t = _t<remove_cv<T>>;
      template<class T>
-     using remove_const_t = typename remove_const<T>::type;
+     using remove_const_t = _t<remove_const<T>>;
      template<class T>
-     using remove_volatile_t = typename remove_volatile<T>::type;
+     using remove_volatile_t = _t<remove_volatile<T>>;
      template<class T>
      struct add_lvalue_reference;
      template<class T>
      struct add_rvalue_reference;
      template<class T>
-     using add_lvalue_reference_t = typename add_lvalue_reference<T>::type;
+     using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
      template<class T>
-     using add_rvalue_reference_t = typename add_rvalue_reference<T>::type;
+     using add_rvalue_reference_t = _t<add_rvalue_reference<T>>;
+
      template<class T>
-     typename std::add_rvalue_reference<T>::type
+     add_rvalue_reference_t<T>
      declval() noexcept;
 
      //  If T is an object type (that is any possibly cv-qualified type other
@@ -115,7 +131,7 @@
      template<typename T>
      struct remove_reference;
      template<typename T>
-     using remove_reference_t = typename remove_reference<T>::type;
+     using remove_reference_t = _t<remove_reference<T>>;
 
      template<class T>
      struct is_lvalue_reference;
@@ -133,7 +149,7 @@
      template<bool B, typename T = void>
      struct enable_if;
      template<bool B, class T = void>
-     using enable_if_t = typename enable_if<B, T>::type;
+     using enable_if_t = _t<enable_if<B, T>>;
      template<bool B, typename T, typename F>
      struct conditional;
 
@@ -266,7 +282,7 @@
      struct parity<N> \
      { \
          template<faiz::size_t V> \
-         struct pmake : repeat<typename make<V / 39>::type, __VA_ARGS__> \
+         struct pmake : repeat<_t<make<V / 39>>, __VA_ARGS__> \
          {}; \
      };
  #define AppendV(z, n, data) (V - n)
@@ -342,8 +358,7 @@
      };
 
      template<class T, T V>
-     using make_integer_sequence_aux =
-         typename make_integer_sequence_checked<T, V>::type;
+     using make_integer_sequence_aux = _t<make_integer_sequence_checked<T, V>>;
 
      template<class T, T V>
      using make_integer_sequence = make_integer_sequence_aux<T, V>;
@@ -387,697 +402,6 @@
 
  } // namespace rider::faiz::meta
 
- namespace rider::faiz
- {
-     inline namespace CPOs
-     {}
-
-     /// \cond
-     namespace _end_
-     {
-         struct fn;
-     }
-     using end_fn = _end_::fn;
-
-     namespace _size_
-     {
-         struct fn;
-     }
-     /// \endcond
-
-     template<typename...>
-     struct variant;
-
-     template<typename I = void>
-     struct dangling;
-
-     template<typename... Ts>
-     struct common_type;
-
-     template<typename... Ts>
-     using common_type_t = _t<common_type<Ts...>>;
-
-     template<typename T, typename U, typename TQual, typename UQual>
-     struct basic_common_reference;
-
-     template<typename... Ts>
-     struct common_reference;
-
-     template<typename... Ts>
-     using common_reference_t = _t<common_reference<Ts...>>;
-
-     template<typename>
-     struct result_of;
-
-     template<typename Sig>
-     using result_of_t = _t<result_of<Sig>>;
-
-     struct make_pipeable_fn;
-
-     template<typename Derived>
-     struct pipeable;
-
-     template<typename First, typename Second>
-     struct composed;
-
-     template<typename... Fns>
-     struct overloaded;
-
-     namespace action
-     {
-         template<typename Action>
-         struct action;
-     }
-
-     namespace view
-     {
-         template<typename View>
-         struct view;
-     }
-
-     namespace adl_advance_detail
-     {
-         struct advance_fn;
-     }
-     using adl_advance_detail::advance_fn;
-
-     struct advance_to_fn;
-
-     struct advance_bounded_fn;
-
-     struct next_fn;
-
-     struct prev_fn;
-
-     struct distance_fn;
-
-     struct iter_size_fn;
-
-     template<typename T>
-     struct difference_type;
-
-     template<typename T>
-     struct value_type;
-
-     template<typename T>
-     struct iterator_category;
-
-     template<typename T>
-     struct size_type;
-
-     struct view_base
-     {};
-
-     /// \cond
-     namespace detail
-     {
-         template<typename T = void>
-         struct any_
-         {
-             any_() = default;
-             any_(T&&)
-             {}
-         };
-
-         template<>
-         struct any_<void>
-         {
-             any_() = default;
-             template<typename T>
-             any_(T&&)
-             {}
-         };
-
-         using any = any_<>;
-
-         struct value_init
-         {
-             template<typename T>
-             operator T() const
-             {
-                 return T{};
-             }
-         };
-
-         struct make_compressed_pair_fn;
-
-         template<typename T>
-         constexpr T&&
-         forward(_t<std::remove_reference<T>>& t) noexcept
-         {
-             return static_cast<T&&>(t);
-         }
-
-         template<typename T>
-         constexpr T&&
-         forward(_t<std::remove_reference<T>>&& t) noexcept
-         {
-             // This is to catch way sketchy stuff like: forward<int const &>(42)
-             static_assert(!std::is_lvalue_reference<T>::value,
-                 "You didn't just do that!");
-             return static_cast<T&&>(t);
-         }
-
-         template<typename T>
-         constexpr _t<std::remove_reference<T>>&&
-         move(T&& t) noexcept
-         {
-             return static_cast<_t<std::remove_reference<T>>&&>(t);
-         }
-
-         template<typename T>
-         constexpr T const&
-         as_const(T& t) noexcept
-         {
-             return t;
-         }
-         template<typename T>
-         void
-         as_const(T const&&)
-             = delete;
-
-
-         template<typename T, typename R = _t<remove_reference<T>>>
-         using as_ref_t = _t<add_lvalue_reference<_t<remove_const<R>>>>;
-
-         template<typename T, typename R = _t<std::remove_reference<T>>>
-         using as_cref_t = _t<std::add_lvalue_reference<_t<std::add_const<R>>>>;
-
-         struct get_first;
-         struct get_second;
-
-         template<typename Val1, typename Val2>
-         struct replacer_fn;
-
-         template<typename Pred, typename Val>
-         struct replacer_if_fn;
-
-         template<typename I>
-         struct move_into_cursor;
-
-         template<typename Int>
-         struct from_end_;
-
-         template<typename... Ts>
-         constexpr int
-         ignore_unused(Ts&&...)
-         {
-             return 42;
-         }
-
-         template<int I>
-         struct priority_tag : priority_tag<I - 1>
-         {};
-
-         template<>
-         struct priority_tag<0>
-         {};
-
- #if defined(__clang__) && !defined(_LIBCPP_VERSION)
-         template<typename T, typename... Args>
-         using is_trivially_constructible
-             = bool_<__is_trivially_constructible(T, Args...)>;
-         template<typename T>
-         using is_trivially_default_constructible
-             = is_trivially_constructible<T>;
-         template<typename T>
-         using is_trivially_copy_constructible
-             = is_trivially_constructible<T, T const&>;
-         template<typename T>
-         using is_trivially_move_constructible
-             = is_trivially_constructible<T, T>;
-         template<typename T, typename U>
-         using is_trivially_assignable = bool_<__is_trivially_assignable(T, U)>;
-         template<typename T>
-         using is_trivially_copy_assignable
-             = is_trivially_assignable<T&, T const&>;
-         template<typename T>
-         using is_trivially_move_assignable = is_trivially_assignable<T&, T>;
-         template<typename T>
-         using is_trivially_copyable = bool_<__is_trivially_copyable(T)>;
- #elif defined(__GNUC__) && !defined(__clang__) && __GNUC__ < 5
-         template<typename T>
-         using is_trivially_default_constructible = std::is_trivial<T>;
-         template<typename T>
-         using is_trivially_copy_constructible = std::is_trivial<T>;
-         template<typename T>
-         using is_trivially_move_constructible = std::is_trivial<T>;
-         template<typename T>
-         using is_trivially_copy_assignable = std::is_trivial<T>;
-         template<typename T>
-         using is_trivially_move_assignable = std::is_trivial<T>;
-         template<typename T>
-         using is_trivially_copyable = std::is_trivial<T>;
- #else
-         template<typename T>
-         using is_trivially_default_constructible
-             = std::is_trivially_constructible<T>;
-         using std::is_trivially_copy_constructible;
-         using std::is_trivially_move_constructible;
-         using std::is_trivially_copy_assignable;
-         using std::is_trivially_move_assignable;
-         using std::is_trivially_copyable;
- #endif
-
- #if RANGES_CXX_LIB_IS_FINAL > 0
- #	if defined(__clang__) && !defined(_LIBCPP_VERSION)
-         template<typename T>
-         using is_final = bool_<__is_final(T)>;
- #	else
-         using std::is_final;
- #	endif
- #else
-         template<typename T>
-         using is_final = std::false_type;
- #endif
-
-
-         template<typename T>
-         struct remove_rvalue_reference : type_identity<T>
-         {};
-
-         template<typename T>
-         struct remove_rvalue_reference<T&&> : type_identity<T>
-         {};
-
-         template<typename T>
-         using remove_rvalue_reference_t = _t<remove_rvalue_reference<T>>;
-     } // namespace detail
-     /// \endcond
-
-     namespace concepts
-     {
-         template<typename Concept, typename... Ts>
-         struct models;
-     }
-
-     struct begin_tag
-     {};
-     struct end_tag
-     {};
-     struct copy_tag
-     {};
-     struct move_tag
-     {};
-
-     struct not_equal_to;
-     struct equal_to;
-     struct less;
-     struct ordered_less;
-     struct ident;
-
-     enum cardinality : std::ptrdiff_t
-     {
-         infinite = -3,
-         unknown = -2,
-         finite = -1
-     };
-
-     template<typename Rng, typename Void = void>
-     struct range_cardinality;
-
-     template<typename Rng>
-     using is_finite = bool_<range_cardinality<Rng>::value >= finite>;
-
-     template<typename Rng>
-     using is_infinite = bool_<range_cardinality<Rng>::value == infinite>;
-
-     template<typename T>
-     struct enable_view;
-
-     template<typename R>
-     struct disable_sized_range;
-
-     template<typename S, typename I>
-     struct disable_sized_sentinel;
-
-     template<typename Cur>
-     struct basic_mixin;
-
-     template<typename Cur>
-     struct basic_iterator;
-
-     template<cardinality>
-     struct basic_view : view_base
-     {};
-
-     template<typename Derived, cardinality C = finite>
-     struct view_facade;
-
-     template<typename Derived,
-         typename BaseRng,
-         cardinality C = range_cardinality<BaseRng>::value>
-     struct view_adaptor;
-
-     template<typename I, typename S>
-     struct common_iterator;
-
-
-     template<typename First, typename Second>
-     struct compressed_pair;
-
-     template<typename T>
-     struct bind_element;
-
-     template<typename T>
-     using bind_element_t = _t<bind_element<T>>;
-
-     template<typename Derived, cardinality = finite>
-     struct view_interface;
-
-     template<typename T>
-     struct istream_range;
-
- #if !RANGES_CXX_VARIABLE_TEMPLATES
-     template<typename T>
-     istream_range<T>
-     istream(std::istream& sin);
- #endif
-
-     template<typename I, typename S = I>
-     struct iterator_range;
-
-     template<typename I, typename S = I>
-     struct sized_iterator_range;
-
-     template<typename T>
-     struct reference_wrapper;
-
-     template<typename>
-     struct is_reference_wrapper;
-
-     // Views
-     //
-     template<typename Rng, typename Pred>
-     struct adjacent_filter_view;
-
-     namespace view
-     {
-         struct adjacent_filter_fn;
-     }
-
-     template<typename Rng, typename Pred>
-     struct adjacent_remove_if_view;
-
-     namespace view
-     {
-         struct adjacent_remove_if_fn;
-     }
-
-     namespace view
-     {
-         struct all_fn;
-     }
-
-     template<typename Rng>
-     struct const_view;
-
-     namespace view
-     {
-         struct const_fn;
-     }
-
-     template<typename I>
-     struct counted_view;
-
-     namespace view
-     {
-         struct counted_fn;
-     }
-
-     struct default_sentinel
-     {};
-
-     template<typename I>
-     struct move_iterator;
-
-     template<typename I>
-     using move_into_iterator = basic_iterator<detail::move_into_cursor<I>>;
-
-     template<typename Rng, bool = (bool)is_infinite<Rng>()>
-     struct cycled_view;
-
-     namespace view
-     {
-         struct cycle_fn;
-     }
-
-     /// \cond
-     namespace detail
-     {
-         template<typename I>
-         struct reverse_cursor;
-     }
-     /// \endcond
-
-     template<typename I>
-     using reverse_iterator = basic_iterator<detail::reverse_cursor<I>>;
-
-     template<typename T>
-     struct empty_view;
-
-     namespace view
-     {
-         struct empty_fn;
-     }
-
-     template<typename Rng, typename Pred>
-     struct filter_view;
-
-     namespace view
-     {
-         struct filter_fn;
-     }
-
-     template<typename Rng, typename Fun>
-     struct group_by_view;
-
-     namespace view
-     {
-         struct group_by_fn;
-     }
-
-     template<typename Rng>
-     struct indirect_view;
-
-     namespace view
-     {
-         struct indirect_fn;
-     }
-
-     template<typename From, typename To = void>
-     struct iota_view;
-
-     template<typename From, typename To = void>
-     struct closed_iota_view;
-
-     namespace view
-     {
-         struct iota_fn;
-         struct closed_iota_fn;
-     } // namespace view
-
-     template<typename Rng, typename ValRng = void>
-     struct join_view;
-
-     namespace view
-     {
-         struct join_fn;
-     }
-
-     template<typename... Rngs>
-     struct concat_view;
-
-     namespace view
-     {
-         struct concat_fn;
-     }
-
-     template<typename Rng, typename Fun>
-     struct partial_sum_view;
-
-     namespace view
-     {
-         struct partial_sum_fn;
-     }
-
-     template<typename Rng>
-     struct move_view;
-
-     namespace view
-     {
-         struct move_fn;
-     }
-
-     template<typename Val>
-     struct repeat_view;
-
-     namespace view
-     {
-         struct repeat_fn;
-     }
-
-     template<typename Rng>
-     struct reverse_view;
-
-     namespace view
-     {
-         struct reverse_fn;
-     }
-
-     template<typename Rng>
-     struct slice_view;
-
-     namespace view
-     {
-         struct slice_fn;
-     }
-
-     template<typename Rng, typename Fun>
-     struct split_view;
-
-     namespace view
-     {
-         struct split_fn;
-     }
-
-     template<typename Rng>
-     struct single_view;
-
-     namespace view
-     {
-         struct single_fn;
-     }
-
-     template<typename Rng>
-     struct stride_view;
-
-     namespace view
-     {
-         struct stride_fn;
-     }
-
-     template<typename Rng>
-     struct take_view;
-
-     namespace view
-     {
-         struct take_fn;
-     }
-
-     /// \cond
-     namespace detail
-     {
-         template<typename Rng>
-         struct is_random_access_bounded_;
-
-         template<typename Rng,
-             bool IsRandomAccessBounded = is_random_access_bounded_<Rng>::value>
-         struct take_exactly_view_;
-     } // namespace detail
-     /// \endcond
-
-     template<typename Rng>
-     using take_exactly_view = detail::take_exactly_view_<Rng>;
-
-     namespace view
-     {
-         struct take_exactly_fn;
-     }
-
-     template<typename Rng, typename Pred>
-     struct iter_take_while_view;
-
-     template<typename Rng, typename Pred>
-     struct take_while_view;
-
-     namespace view
-     {
-         struct iter_take_while_fn;
-         struct take_while_fn;
-     } // namespace view
-
-     template<typename Rng, typename Regex, typename SubMatchRange>
-     struct tokenize_view;
-
-     namespace view
-     {
-         struct tokenize_fn;
-     }
-
-     template<typename Rng, typename Fun>
-     struct iter_transform_view;
-
-     template<typename Rng, typename Fun>
-     struct transform_view;
-
-     namespace view
-     {
-         struct transform_fn;
-     }
-
-     template<typename Rng, typename Val1, typename Val2>
-     using replace_view
-         = iter_transform_view<Rng, detail::replacer_fn<Val1, Val2>>;
-
-     template<typename Rng, typename Pred, typename Val>
-     using replace_if_view
-         = iter_transform_view<Rng, detail::replacer_if_fn<Pred, Val>>;
-
-     namespace view
-     {
-         struct replace_fn;
-
-         struct replace_if_fn;
-     } // namespace view
-
-     template<typename I>
-     struct unbounded_view;
-
-     namespace view
-     {
-         struct unbounded_fn;
-     }
-
-     template<typename Rng>
-     using unique_view = adjacent_filter_view<Rng, not_equal_to>;
-
-     namespace view
-     {
-         struct unique_fn;
-     }
-
-     template<typename Rng>
-     using keys_range_view = transform_view<Rng, detail::get_first>;
-
-     template<typename Rng>
-     using values_view = transform_view<Rng, detail::get_second>;
-
-     namespace view
-     {
-         struct keys_fn;
-
-         struct values_fn;
-     } // namespace view
-
-     template<typename Fun, typename... Rngs>
-     struct iter_zip_with_view;
-
-     template<typename Fun, typename... Rngs>
-     struct zip_with_view;
-
-     template<typename... Rngs>
-     struct zip_view;
-
-     namespace view
-     {
-         struct iter_zip_with_fn;
-
-         struct zip_with_fn;
-
-         struct zip_fn;
-     } // namespace view
- } // namespace rider::faiz
 
  namespace rider::faiz::meta
  {
@@ -3138,6 +2462,700 @@
 
  } // namespace rider::faiz::meta
 
+
+ namespace rider::faiz
+ {
+     inline namespace CPOs
+     {}
+
+     /// \cond
+     namespace _end_
+     {
+         struct fn;
+     }
+     using end_fn = _end_::fn;
+
+     namespace _size_
+     {
+         struct fn;
+     }
+     /// \endcond
+
+     template<typename...>
+     struct variant;
+
+     template<typename I = void>
+     struct dangling;
+
+     template<typename... Ts>
+     struct common_type;
+
+     template<typename... Ts>
+     using common_type_t = _t<common_type<Ts...>>;
+
+     template<typename T, typename U, typename TQual, typename UQual>
+     struct basic_common_reference;
+
+     template<typename... Ts>
+     struct common_reference;
+
+     template<typename... Ts>
+     using common_reference_t = _t<common_reference<Ts...>>;
+
+     template<typename>
+     struct result_of;
+
+     template<typename Sig>
+     using result_of_t = _t<result_of<Sig>>;
+
+     struct make_pipeable_fn;
+
+     template<typename Derived>
+     struct pipeable;
+
+     template<typename First, typename Second>
+     struct composed;
+
+     template<typename... Fns>
+     struct overloaded;
+
+     namespace action
+     {
+         template<typename Action>
+         struct action;
+     }
+
+     namespace view
+     {
+         template<typename View>
+         struct view;
+     }
+
+     namespace adl_advance_detail
+     {
+         struct advance_fn;
+     }
+     using adl_advance_detail::advance_fn;
+
+     struct advance_to_fn;
+
+     struct advance_bounded_fn;
+
+     struct next_fn;
+
+     struct prev_fn;
+
+     struct distance_fn;
+
+     struct iter_size_fn;
+
+     template<typename T>
+     struct difference_type;
+
+     template<typename T>
+     struct value_type;
+
+     template<typename T>
+     struct iterator_category;
+
+     template<typename T>
+     struct size_type;
+
+     struct view_base
+     {};
+
+     /// \cond
+     namespace detail
+     {
+         template<typename T = void>
+         struct any_
+         {
+             any_() = default;
+             any_(T&&)
+             {}
+         };
+
+         template<>
+         struct any_<void>
+         {
+             any_() = default;
+             template<typename T>
+             any_(T&&)
+             {}
+         };
+
+         using any = any_<>;
+
+         struct value_init
+         {
+             template<typename T>
+             operator T() const
+             {
+                 return T{};
+             }
+         };
+
+         struct make_compressed_pair_fn;
+
+         template<typename T>
+         constexpr T&&
+         forward(_t<remove_reference<T>>& t) noexcept
+         {
+             return static_cast<T&&>(t);
+         }
+
+         template<typename T>
+         constexpr T&&
+         forward(_t<remove_reference<T>>&& t) noexcept
+         {
+             // This is to catch way sketchy stuff like: forward<int const &>(42)
+             static_assert(
+                 !is_lvalue_reference<T>::value, "You didn't just do that!");
+             return static_cast<T&&>(t);
+         }
+
+         template<typename T>
+         constexpr _t<remove_reference<T>>&&
+         move(T&& t) noexcept
+         {
+             return static_cast<_t<remove_reference<T>>&&>(t);
+         }
+
+         template<typename T>
+         constexpr T const&
+         as_const(T& t) noexcept
+         {
+             return t;
+         }
+         template<typename T>
+         void
+         as_const(T const&&)
+             = delete;
+
+
+         template<typename T, typename R = _t<remove_reference<T>>>
+         using as_ref_t = _t<add_lvalue_reference<_t<remove_const<R>>>>;
+
+         template<typename T, typename R = _t<remove_reference<T>>>
+         using as_cref_t = _t<add_lvalue_reference<_t<add_const<R>>>>;
+
+         struct get_first;
+         struct get_second;
+
+         template<typename Val1, typename Val2>
+         struct replacer_fn;
+
+         template<typename Pred, typename Val>
+         struct replacer_if_fn;
+
+         template<typename I>
+         struct move_into_cursor;
+
+         template<typename Int>
+         struct from_end_;
+
+         template<typename... Ts>
+         constexpr int
+         ignore_unused(Ts&&...)
+         {
+             return 42;
+         }
+
+         template<int I>
+         struct priority_tag : priority_tag<I - 1>
+         {};
+
+         template<>
+         struct priority_tag<0>
+         {};
+
+ #if defined(__clang__) && !defined(_LIBCPP_VERSION)
+         template<typename T, typename... Args>
+         using is_trivially_constructible
+             = bool_<__is_trivially_constructible(T, Args...)>;
+         template<typename T>
+         using is_trivially_default_constructible
+             = is_trivially_constructible<T>;
+         template<typename T>
+         using is_trivially_copy_constructible
+             = is_trivially_constructible<T, T const&>;
+         template<typename T>
+         using is_trivially_move_constructible
+             = is_trivially_constructible<T, T>;
+         template<typename T, typename U>
+         using is_trivially_assignable = bool_<__is_trivially_assignable(T, U)>;
+         template<typename T>
+         using is_trivially_copy_assignable
+             = is_trivially_assignable<T&, T const&>;
+         template<typename T>
+         using is_trivially_move_assignable = is_trivially_assignable<T&, T>;
+         template<typename T>
+         using is_trivially_copyable = bool_<__is_trivially_copyable(T)>;
+ #elif defined(__GNUC__) && !defined(__clang__) && __GNUC__ < 5
+         template<typename T>
+         using is_trivially_default_constructible = std::is_trivial<T>;
+         template<typename T>
+         using is_trivially_copy_constructible = std::is_trivial<T>;
+         template<typename T>
+         using is_trivially_move_constructible = std::is_trivial<T>;
+         template<typename T>
+         using is_trivially_copy_assignable = std::is_trivial<T>;
+         template<typename T>
+         using is_trivially_move_assignable = std::is_trivial<T>;
+         template<typename T>
+         using is_trivially_copyable = std::is_trivial<T>;
+ #else
+         template<typename T>
+         using is_trivially_default_constructible
+             = std::is_trivially_constructible<T>;
+         using std::is_trivially_copy_constructible;
+         using std::is_trivially_move_constructible;
+         using std::is_trivially_copy_assignable;
+         using std::is_trivially_move_assignable;
+         using std::is_trivially_copyable;
+ #endif
+
+ #if RANGES_CXX_LIB_IS_FINAL > 0
+ #	if defined(__clang__) && !defined(_LIBCPP_VERSION)
+         template<typename T>
+         using is_final = bool_<__is_final(T)>;
+ #	else
+         using std::is_final;
+ #	endif
+ #else
+         template<typename T>
+         using is_final = false_;
+ #endif
+
+
+         template<typename T>
+         struct remove_rvalue_reference : type_identity<T>
+         {};
+
+         template<typename T>
+         struct remove_rvalue_reference<T&&> : type_identity<T>
+         {};
+
+         template<typename T>
+         using remove_rvalue_reference_t = _t<remove_rvalue_reference<T>>;
+     } // namespace detail
+     /// \endcond
+
+     namespace concepts
+     {
+         template<typename Concept, typename... Ts>
+         struct models;
+     }
+
+     struct begin_tag
+     {};
+     struct end_tag
+     {};
+     struct copy_tag
+     {};
+     struct move_tag
+     {};
+
+     struct not_equal_to;
+     struct equal_to;
+     struct less;
+     struct ordered_less;
+     struct ident;
+
+     enum cardinality : std::ptrdiff_t
+     {
+         infinite = -3,
+         unknown = -2,
+         finite = -1
+     };
+
+     template<typename Rng, typename Void = void>
+     struct range_cardinality;
+
+     template<typename Rng>
+     using is_finite = bool_<range_cardinality<Rng>::value >= finite>;
+
+     template<typename Rng>
+     using is_infinite = bool_<range_cardinality<Rng>::value == infinite>;
+
+     template<typename T>
+     struct enable_view;
+
+     template<typename R>
+     struct disable_sized_range;
+
+     template<typename S, typename I>
+     struct disable_sized_sentinel;
+
+     template<typename Cur>
+     struct basic_mixin;
+
+     template<typename Cur>
+     struct basic_iterator;
+
+     template<cardinality>
+     struct basic_view : view_base
+     {};
+
+     template<typename Derived, cardinality C = finite>
+     struct view_facade;
+
+     template<typename Derived,
+         typename BaseRng,
+         cardinality C = range_cardinality<BaseRng>::value>
+     struct view_adaptor;
+
+     template<typename I, typename S>
+     struct common_iterator;
+
+
+     template<typename First, typename Second>
+     struct compressed_pair;
+
+     template<typename T>
+     struct bind_element;
+
+     template<typename T>
+     using bind_element_t = _t<bind_element<T>>;
+
+     template<typename Derived, cardinality = finite>
+     struct view_interface;
+
+     template<typename T>
+     struct istream_range;
+
+ #if !RANGES_CXX_VARIABLE_TEMPLATES
+     template<typename T>
+     istream_range<T>
+     istream(std::istream& sin);
+ #endif
+
+     template<typename I, typename S = I>
+     struct iterator_range;
+
+     template<typename I, typename S = I>
+     struct sized_iterator_range;
+
+     template<typename T>
+     struct reference_wrapper;
+
+     template<typename>
+     struct is_reference_wrapper;
+
+     // Views
+     //
+     template<typename Rng, typename Pred>
+     struct adjacent_filter_view;
+
+     namespace view
+     {
+         struct adjacent_filter_fn;
+     }
+
+     template<typename Rng, typename Pred>
+     struct adjacent_remove_if_view;
+
+     namespace view
+     {
+         struct adjacent_remove_if_fn;
+     }
+
+     namespace view
+     {
+         struct all_fn;
+     }
+
+     template<typename Rng>
+     struct const_view;
+
+     namespace view
+     {
+         struct const_fn;
+     }
+
+     template<typename I>
+     struct counted_view;
+
+     namespace view
+     {
+         struct counted_fn;
+     }
+
+     struct default_sentinel
+     {};
+
+     template<typename I>
+     struct move_iterator;
+
+     template<typename I>
+     using move_into_iterator = basic_iterator<detail::move_into_cursor<I>>;
+
+     template<typename Rng, bool = (bool)is_infinite<Rng>()>
+     struct cycled_view;
+
+     namespace view
+     {
+         struct cycle_fn;
+     }
+
+     /// \cond
+     namespace detail
+     {
+         template<typename I>
+         struct reverse_cursor;
+     }
+     /// \endcond
+
+     template<typename I>
+     using reverse_iterator = basic_iterator<detail::reverse_cursor<I>>;
+
+     template<typename T>
+     struct empty_view;
+
+     namespace view
+     {
+         struct empty_fn;
+     }
+
+     template<typename Rng, typename Pred>
+     struct filter_view;
+
+     namespace view
+     {
+         struct filter_fn;
+     }
+
+     template<typename Rng, typename Fun>
+     struct group_by_view;
+
+     namespace view
+     {
+         struct group_by_fn;
+     }
+
+     template<typename Rng>
+     struct indirect_view;
+
+     namespace view
+     {
+         struct indirect_fn;
+     }
+
+     template<typename From, typename To = void>
+     struct iota_view;
+
+     template<typename From, typename To = void>
+     struct closed_iota_view;
+
+     namespace view
+     {
+         struct iota_fn;
+         struct closed_iota_fn;
+     } // namespace view
+
+     template<typename Rng, typename ValRng = void>
+     struct join_view;
+
+     namespace view
+     {
+         struct join_fn;
+     }
+
+     template<typename... Rngs>
+     struct concat_view;
+
+     namespace view
+     {
+         struct concat_fn;
+     }
+
+     template<typename Rng, typename Fun>
+     struct partial_sum_view;
+
+     namespace view
+     {
+         struct partial_sum_fn;
+     }
+
+     template<typename Rng>
+     struct move_view;
+
+     namespace view
+     {
+         struct move_fn;
+     }
+
+     template<typename Val>
+     struct repeat_view;
+
+     namespace view
+     {
+         struct repeat_fn;
+     }
+
+     template<typename Rng>
+     struct reverse_view;
+
+     namespace view
+     {
+         struct reverse_fn;
+     }
+
+     template<typename Rng>
+     struct slice_view;
+
+     namespace view
+     {
+         struct slice_fn;
+     }
+
+     template<typename Rng, typename Fun>
+     struct split_view;
+
+     namespace view
+     {
+         struct split_fn;
+     }
+
+     template<typename Rng>
+     struct single_view;
+
+     namespace view
+     {
+         struct single_fn;
+     }
+
+     template<typename Rng>
+     struct stride_view;
+
+     namespace view
+     {
+         struct stride_fn;
+     }
+
+     template<typename Rng>
+     struct take_view;
+
+     namespace view
+     {
+         struct take_fn;
+     }
+
+     /// \cond
+     namespace detail
+     {
+         template<typename Rng>
+         struct is_random_access_bounded_;
+
+         template<typename Rng,
+             bool IsRandomAccessBounded = is_random_access_bounded_<Rng>::value>
+         struct take_exactly_view_;
+     } // namespace detail
+     /// \endcond
+
+     template<typename Rng>
+     using take_exactly_view = detail::take_exactly_view_<Rng>;
+
+     namespace view
+     {
+         struct take_exactly_fn;
+     }
+
+     template<typename Rng, typename Pred>
+     struct iter_take_while_view;
+
+     template<typename Rng, typename Pred>
+     struct take_while_view;
+
+     namespace view
+     {
+         struct iter_take_while_fn;
+         struct take_while_fn;
+     } // namespace view
+
+     template<typename Rng, typename Regex, typename SubMatchRange>
+     struct tokenize_view;
+
+     namespace view
+     {
+         struct tokenize_fn;
+     }
+
+     template<typename Rng, typename Fun>
+     struct iter_transform_view;
+
+     template<typename Rng, typename Fun>
+     struct transform_view;
+
+     namespace view
+     {
+         struct transform_fn;
+     }
+
+     template<typename Rng, typename Val1, typename Val2>
+     using replace_view
+         = iter_transform_view<Rng, detail::replacer_fn<Val1, Val2>>;
+
+     template<typename Rng, typename Pred, typename Val>
+     using replace_if_view
+         = iter_transform_view<Rng, detail::replacer_if_fn<Pred, Val>>;
+
+     namespace view
+     {
+         struct replace_fn;
+
+         struct replace_if_fn;
+     } // namespace view
+
+     template<typename I>
+     struct unbounded_view;
+
+     namespace view
+     {
+         struct unbounded_fn;
+     }
+
+     template<typename Rng>
+     using unique_view = adjacent_filter_view<Rng, not_equal_to>;
+
+     namespace view
+     {
+         struct unique_fn;
+     }
+
+     template<typename Rng>
+     using keys_range_view = transform_view<Rng, detail::get_first>;
+
+     template<typename Rng>
+     using values_view = transform_view<Rng, detail::get_second>;
+
+     namespace view
+     {
+         struct keys_fn;
+
+         struct values_fn;
+     } // namespace view
+
+     template<typename Fun, typename... Rngs>
+     struct iter_zip_with_view;
+
+     template<typename Fun, typename... Rngs>
+     struct zip_with_view;
+
+     template<typename... Rngs>
+     struct zip_view;
+
+     namespace view
+     {
+         struct iter_zip_with_fn;
+
+         struct zip_with_fn;
+
+         struct zip_fn;
+     } // namespace view
+ } // namespace rider::faiz
+
+
  namespace rider::faiz::logic
  {
      template<typename...>
@@ -3167,8 +3185,7 @@
      {};
 
      template<typename _b1, class _b2, class... _bn>
-     struct or_<_b1, _b2, _bn...>
-         : conditional<_b1::value, _b1, or_<_b2, _bn...>>::type
+     struct or_<_b1, _b2, _bn...> : meta::if_<_b1, _b1, or_<_b2, _bn...>>
      {};
 
 
@@ -3184,6 +3201,37 @@
      template<typename...>
      struct empty_base
      {};
+
+     template<bool _bCond>
+     struct when;
+
+     template<typename _type>
+     struct always
+     {
+     private:
+         template<typename...>
+         struct impl : type_identity<_type>
+         {};
+
+     public:
+         template<typename... _types>
+         using apply = impl<_types...>;
+     };
+
+
+     template<typename _type, typename...>
+     using well_formed_t = _type;
+
+     template<typename... _types>
+     using when_valid = well_formed_t<when<true>, _types...>;
+
+     template<bool _bCond>
+     using enable_when = enable_if_t<_bCond, when<true>>;
+
+     struct any_constructible
+     {
+         any_constructible(...);
+     };
 
      template<class T, class... Rest>
      inline constexpr bool are_same_v = (is_same_v<T, Rest> && ...);
