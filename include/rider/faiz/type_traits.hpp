@@ -233,7 +233,7 @@
      // with <experimental/type_traits>:
      // template <typename Base, typename Derived>
      // using pre_is_base_of2 =
-     // faiz::experimental::detected_or_t<faiz::true_, pre_is_base_of,
+     // detected_or_t<faiz::true_, pre_is_base_of,
      // Base, Derived>;
      template<typename Base, typename Derived, typename = void>
      struct pre_is_base_of2 : public faiz::true_
@@ -244,24 +244,16 @@
          : public pre_is_base_of<Base, Derived>
      {};
 
-     template<typename, typename T>
-     struct select_2nd : type_identity<T>
+     // NOTE: !rider::faiz::is_assignable<bool &, std::nullptr_t>::value'
+     // "Error", clang++ has a bug here.
+     template<typename T, typename Arg, typename>
+     struct is_assignable_imp : false_
      {};
-
      template<typename T, typename Arg>
-     _t<select_2nd<decltype((faiz::declval<T>() = faiz::declval<Arg>())), true_>>
-     is_assignable_test(int);
-
-     template<typename, class>
-     false_
-     is_assignable_test(...);
-
-     template<typename T, typename Arg, bool = is_void_v<T> || is_void_v<Arg>>
-     struct is_assignable_imp : public decltype((is_assignable_test<T, Arg>(0)))
-     {};
-
-     template<typename T, typename Arg>
-     struct is_assignable_imp<T, Arg, true> : public false_
+     struct is_assignable_imp<T,
+         Arg,
+         void_t<decltype(declval<T>() = declval<Arg>())>>
+         : bool_<!is_void_v<Arg>>
      {};
 
      template<bool IsArithmetic, typename T>
@@ -296,7 +288,7 @@
          = void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>;
      template<typename T>
      constexpr bool is_integral_impl
-         = logic::and_<is_detected<is_integral_arith, T>,
+         = meta::and_<is_detected<is_integral_arith, T>,
              bool_<not_enum_rvalue_reference_v<T>>>::value;
 
      template<typename T, bool = is_integral_impl<T>>
@@ -1110,7 +1102,7 @@
 
 
      template<typename T, typename Arg>
-     struct is_assignable : public detail::is_assignable_imp<T, Arg>
+     struct is_assignable : public detail::is_assignable_imp<T, Arg, void>
      {};
 
      // If Derived is derived from Base or if both are the same non-union class
