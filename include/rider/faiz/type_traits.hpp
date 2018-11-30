@@ -13,12 +13,6 @@
 
  namespace rider::faiz
  {
-
-
-     template<typename _type>
-     using _t = typename _type::type;
-
-
      // Provides member typedef type, which is defined as T if B is true at
      // compile time, or as F if B is false.
      template<bool B, typename T, typename F>
@@ -35,10 +29,6 @@
      //  compile time, or as F if B is false.
      template<bool B, class T, typename F>
      using conditional_t = _t<conditional<B, T, F>>;
-
-
-     template<typename...>
-     using void_t = void;
 
      // forward declaration
      // If the imaginary function definition To `test() { return
@@ -70,7 +60,7 @@
          };
 
          template<typename Default, template<typename...> class Op, class... Args>
-         struct detector<Default, faiz::void_t<Op<Args...>>, Op, Args...>
+         struct detector<Default, void_t<Op<Args...>>, Op, Args...>
  #if BOOST_COMP_GNUC
              : type_identity<Op<Args...>>
  #endif
@@ -250,9 +240,7 @@
      {};
      // note faiz::void_t is a C++17 feature
      template<typename Base, typename Derived>
-     struct pre_is_base_of2<Base,
-         Derived,
-         faiz::void_t<pre_is_base_of<Base, Derived>>>
+     struct pre_is_base_of2<Base, Derived, void_t<pre_is_base_of<Base, Derived>>>
          : public pre_is_base_of<Base, Derived>
      {};
 
