@@ -244,6 +244,15 @@
          : public pre_is_base_of<Base, Derived>
      {};
 
+     template<typename T, typename>
+     struct is_polymorphic_impl : false_
+     {};
+     template<typename T>
+     struct is_polymorphic_impl<T,
+         decltype(dynamic_cast<void*>(declval<remove_cv_t<T>*>()))> : true_
+     {};
+
+
      // NOTE: !rider::faiz::is_assignable<bool &, std::nullptr_t>::value'
      // "Error", clang++ has a bug here.
      template<typename T, typename Arg, typename>
@@ -897,19 +906,17 @@
      struct enable_if<true, T> : type_identity<T>
      {};
 
-     template<typename T>
-     struct is_array : false_
-     {};
 
      template<typename T>
-     struct is_array<T[]> : true_
-     {};
-
-     template<typename T, faiz::size_t N>
-     struct is_array<T[N]> : true_
-     {};
+     inline constexpr bool is_array_v = false;
      template<typename T>
-     inline constexpr bool is_array_v = is_array<T>::value;
+     inline constexpr bool is_array_v<T[]> = true;
+     template<typename T, size_t N>
+     inline constexpr bool is_array_v<T[N]> = true;
+
+     template<typename T>
+     struct is_array : bool_<is_array_v<T>>
+     {};
 
      // If the imaginary function definition To test() { return
      // std::declval<From>(); } is well-formed, (that is, either
@@ -956,43 +963,24 @@
      struct is_convertible : bool_<my_is_convertible<From, To>()>
      {};
 
-     // static_assert(std::experimental::
-     // 		is_detected<is_convertible_helper, int(int), int (*)(int)>::value);
-     // static_assert(is_function<int(int)>(), "");
-     // template<typename F,
-     // 	typename T,
-     // 	bool = is_void<F>::value || is_function<T>::value ||
-     // is_array<T>::value> class is_convertible_aux : public
-     // integral_constant<bool, is_void<T>::value>
-     // {};
-
-     // template<typename F, typename T>
-     // class is_convertible_aux<F, T, false>
-     // {
-     // 	template<typename TT>
-     // 	static void __test_aux(TT);
-     // 	template<typename FF,
-     // 		typename TT,
-     // 		typename = decltype(__test_aux<TT>(declval<FF>()))>
-     // 	static true_type
-     // 	__test(int);
-     // 	template<typename FF, typename TT>
-     // 	static false_type
-     // 	__test(...);
-
-     // public:
-     // 	using type = decltype(__test<F, T>(0));
-     // };
-     // template<typename F, typename T>
-     // struct is_convertible : public is_convertible_aux<F, T>::type
-     // {};
-
      // TODO: use detection idiom implement is_convertible
      // If T is an object or reference type and the variable definition T
      // obj(std::declval<Args>()...); is well-formed, provides the member
      // constant value equal to true. In all other cases, value is false.
-     template<typename Tp, class... Args>
-     struct is_constructible : public bool_<__is_constructible(Tp, Args...)>
+     // template<typename Tp, class... Args>
+     // struct is_constructible : public bool_<__is_constructible(Tp, Args...)>
+     // {};
+
+     template<typename T, class, class...>
+     struct is_constructible_impl : false_
+     {};
+     template<typename T, class... Us>
+     struct is_constructible_impl<T,
+         decltype(void(::new(declval<void*>()) T(declval<Us>()...))),
+         Us...> : true_
+     {};
+     template<typename T, class... Us>
+     struct is_constructible : is_constructible_impl<T, void, Us...>
      {};
 
      template<typename T, class... Args>
@@ -1229,26 +1217,12 @@
      template<typename T>
      constexpr bool is_final_v = is_final<T>::value;
 
-     struct two
-     {
-         char lx[2];
-     };
-
      template<typename T>
-     char& is_polymorphic_impl_aux(enable_if_t<
-         sizeof((T*)dynamic_cast<const volatile void*>(declval<T*>())) != 0,
-         int>);
-     template<typename T>
-     two&
-     is_polymorphic_impl_aux(...);
-
-     template<typename T>
-     struct is_polymorphic
-         : public bool_<sizeof(is_polymorphic_impl_aux<T>(0)) == 1>
+     struct is_polymorphic : public detail::is_polymorphic_impl<T, void*>
      {};
 
      template<typename T>
-     constexpr bool is_polymorphic_v = is_final<T>::value;
+     constexpr bool is_polymorphic_v = is_polymorphic<T>::value;
 
      template<typename T>
      struct is_copy_assignable
