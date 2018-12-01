@@ -64,3 +64,8 @@ test01()
 	// Sanity check.
 	static_assert(test_category<is_integral, ClassType>(false), "");
 }
+int
+main()
+{
+	test01();
+}
