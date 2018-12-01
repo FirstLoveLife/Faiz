@@ -71,17 +71,22 @@
      using add_volatile_t = _t<add_volatile<T>>;
 
      template<class T>
-     struct remove_cv;
-     template<class T>
      struct remove_const;
      template<class T>
      struct remove_volatile;
-     template<class T>
-     using remove_cv_t = _t<remove_cv<T>>;
+
      template<class T>
      using remove_const_t = _t<remove_const<T>>;
+
      template<class T>
      using remove_volatile_t = _t<remove_volatile<T>>;
+
+     template<typename T>
+     using remove_cv = remove_volatile<remove_const_t<T>>;
+
+     template<typename T>
+     using remove_cv_t = _t<remove_cv<T>>;
+
      template<class T>
      struct add_lvalue_reference;
      template<class T>
@@ -138,8 +143,6 @@
      template<class T>
      inline constexpr bool is_lvalue_reference_v = is_lvalue_reference<T>::value;
 
-     template<typename T>
-     struct remove_cv;
      template<typename T>
      struct remove_cvref;
      template<typename T>

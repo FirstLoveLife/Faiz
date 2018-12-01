@@ -131,12 +131,6 @@ namespace rider::faiz
 	template<typename Expected, template<typename...> class Op, class... Args>
 	using is_detected_exact = faiz::is_same<Expected, detected_t<Op, Args...>>;
 
-	template<typename T>
-	struct remove_cv;
-
-	template<typename T>
-	using remove_cv_t = _t<remove_cv<T>>;
-
 
 	template<typename Expected, template<typename...> class Op, class... Args>
 	constexpr bool is_detected_exact_v
@@ -440,11 +434,6 @@ namespace rider::faiz
 	template<typename T>
 	using remove_extent_t = _t<remove_extent<T>>;
 
-	template<typename T>
-	struct remove_cv : type_identity<faiz::remove_volatile_t<remove_const_t<T>>>
-	{};
-	template<typename T>
-	using remove_cv_t = _t<remove_cv<T>>;
 
 	// If T is a multidimensional array of some type X, provides the member
 	// typedef type equal to X, otherwise type is T.
