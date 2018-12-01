@@ -1057,9 +1057,6 @@ namespace rider::faiz
 	template<typename T>
 	using decay_t = _t<decay<T>>;
 
-	// is_assignable
-
-
 	template<typename T, typename Arg>
 	struct is_assignable : public detail::is_assignable_imp<T, Arg, void>
 	{};
@@ -1215,19 +1212,32 @@ namespace rider::faiz
 			  faiz::add_lvalue_reference_t<const T>>
 	{};
 
-	template<bool, class T, class A>
+	template<bool, class T, typename A>
 	struct is_nothrow_assignable_aux;
 
-	template<typename T, class A>
+	template<typename T, typename A>
 	struct is_nothrow_assignable_aux<false, T, A> : public false_
 	{};
 
-	template<typename T, class A>
+	template<typename T>
+	using move_assignment_t = decltype(declval<T&>() = declval<T&&>());
+
+	template<typename T, typename A = void>
+	struct is_move_assignable : false_
+	{};
+	template<typename T>
+	struct is_move_assignable<T, void_t<move_assignment_t<T>>>
+		: is_same<move_assignment_t<T>, T&>
+	{};
+	template<typename T>
+	inline constexpr bool is_move_assignable_v = is_move_assignable<T>{}();
+
+	template<typename T, typename A>
 	struct is_nothrow_assignable_aux<true, T, A>
 		: public bool_<noexcept(faiz::declval<T>() = faiz::declval<A>())>
 	{};
 
-	template<typename T, class A>
+	template<typename T, typename A>
 	struct is_nothrow_assignable
 		: public is_nothrow_assignable_aux<is_assignable<T, A>::value, T, A>
 	{};
