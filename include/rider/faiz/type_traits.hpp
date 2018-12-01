@@ -152,12 +152,9 @@ namespace rider::faiz
 	constexpr bool is_detected_convertible_v
 		= is_detected_convertible<To, Op, Args...>::value;
 
-	// Checks whether T is a void type. Provides the member constant value
-	// that is equal to true, if T is the type void, const void, volatile
-	// void, or const volatile void. Otherwise, value is equal to false.
 	template<typename T>
-	struct is_void : is_same<void, faiz::remove_cv_t<T>>
-	{};
+	using is_void = is_same<void, remove_cv_t<T>>;
+
 	template<typename T>
 	inline constexpr bool is_void_v = is_void<T>::value;
 
