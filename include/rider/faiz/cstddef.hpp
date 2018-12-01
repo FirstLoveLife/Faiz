@@ -1,5 +1,6 @@
 #ifndef SCTDDEF
 #	define SCTDDEF
+#	include <cstddef>
 namespace rider::faiz
 {
 
@@ -17,6 +18,10 @@ namespace rider::faiz
 		{
 			int for_bool_;
 		};
+		operator std::nullptr_t()
+		{
+			return nullptr;
+		}
 
 		constexpr nullptr_t() : lx(0)
 		{}
