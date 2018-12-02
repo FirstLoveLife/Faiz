@@ -87,9 +87,6 @@ namespace rider::faiz
 		using value_type = T;
 		using reference = T&;
 		using const_reference = const T&;
-		// using param_type = typename ct_imp<T,
-		// 	faiz::is_pointer_v<T>,
-		// 	faiz::is_arithmetic_v<T>>::param_type;
 		using param_type = meta::if_<is_pointer<T>,
 			T const,
 			meta::if_<std::is_arithmetic<T>,
