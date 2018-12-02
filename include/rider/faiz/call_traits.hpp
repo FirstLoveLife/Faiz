@@ -3,25 +3,6 @@
 #include "rider/faiz/type_traits.hpp"
 namespace rider::faiz
 {
-	template<typename T, bool is_p, bool is_arith>
-	struct ct_imp
-	{
-		using param_type = const T&;
-	};
-
-	template<typename T, bool is_p>
-	struct ct_imp<T, is_p, true>
-	{
-		using param_type = meta::if_c<sizeof(T) <= sizeof(void*), T, const T&>;
-	};
-
-	template<typename T, bool is_arith>
-	struct ct_imp<T, true, is_arith>
-	{
-		using param_type = T const;
-	};
-
-
 	// use pandoc convert doc from
 	// https://www.boost.org/doc/libs/1_51_0/libs/utility/call_traits.htm
 	// The template class call_traits<T> encapsulates the "best" method to
@@ -106,11 +87,20 @@ namespace rider::faiz
 		using value_type = T;
 		using reference = T&;
 		using const_reference = const T&;
-		using param_type = typename ct_imp<T,
-			faiz::is_pointer_v<T>,
-			faiz::is_arithmetic_v<T>>::param_type;
+		// using param_type = typename ct_imp<T,
+		// 	faiz::is_pointer_v<T>,
+		// 	faiz::is_arithmetic_v<T>>::param_type;
+		using param_type = meta::if_<is_pointer<T>,
+			T const,
+			meta::if_<std::is_arithmetic<T>,
+				meta::if_c<
+					detected_or_t<size_t_<sizeof(void*) + 1>, sizeof_able, T>{}
+						// defer sizeof on incomplete type
+						<= sizeof(void*),
+					T,
+					const T&>,
+				const T&>>;
 	};
-
 
 	template<typename T>
 	struct call_traits<T&>
@@ -120,7 +110,6 @@ namespace rider::faiz
 		using const_reference = const T&;
 		using param_type = T&;
 	};
-
 
 	template<typename T, size_t N>
 	struct call_traits<T[N]>
@@ -134,7 +123,6 @@ namespace rider::faiz
 		using const_reference = const array_type&;
 		using param_type = const T* const;
 	};
-
 
 	template<typename T, size_t N>
 	struct call_traits<const T[N]>
