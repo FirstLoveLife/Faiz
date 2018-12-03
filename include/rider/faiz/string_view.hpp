@@ -2,7 +2,6 @@
 #define STRING_VIEW
 #include "rider/faiz/algorithm.hpp"
 #include "rider/faiz/char_traits.hpp"
-#include "rider/faiz/faiz.hpp" // for IMPL
 #include "rider/faiz/iterator.hpp"
 #include "rider/faiz/operators.hpp"
 #include "rider/faiz/type_traits.hpp"

@@ -1,6 +1,6 @@
 #ifndef VARIADIC
 #define VARIADIC
-#include "rider/faiz/faiz.hpp"
+#include "rider/faiz/faiz_fwd.hpp"
 namespace rider::faiz::fseq
 {
 
@@ -441,7 +441,7 @@ namespace rider::faiz::vseq
 			using sub = deduplicate_t<tail>;
 
 		public:
-			using type = conditional_t<vseq::find<tail, head>::value
+			using type = meta::if_c<vseq::find<tail, head>::value
 					== seq_size<tail>::value,
 				push_front_t<sub, head>,
 				sub>;
@@ -504,7 +504,7 @@ namespace rider::faiz::vseq
 	template<class Seq>
 	struct reverse<Seq, when<true>>
 	{
-		using type = conditional_t<seq_size<Seq>::value == 0,
+		using type = meta::if_c<seq_size<Seq>::value == 0,
 								   clear_t<Seq>,
 								   concat_t<reverse_t<pop_front_t<Seq>>,
 											front_t<Seq>>>;
@@ -528,7 +528,7 @@ namespace rider::faiz::vseq
 
 		public:
 			using type = concat_t<half,
-				cond_t<is_same<half_back, last_front>,
+								  meta::if_<is_same<half_back, last_front>,
 					   pop_front_t<last>, last>>;
 		};
 

@@ -13,6 +13,8 @@ http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduc
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3465.pdf][Adding heterogeneous comparison lookup toassociative containers]]
 * Conversion
 - faiz::index for all container indexes/subscripts/sizes, IOW, Don't use unsigned for subscripts, prefer gsl::index
+- Geneally, I prefer metafunction over free constexpr function, because the
+  formmer can do more.
 , see also https://github.com/isocpp/CppCoreGuidelines/pull/1115
 * ThirdParty Package
 - boost.pp

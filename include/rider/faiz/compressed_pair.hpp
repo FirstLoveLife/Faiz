@@ -1,6 +1,5 @@
 #include "rider/faiz/call_traits.hpp"
-#include "rider/faiz/faiz.hpp"
-#include "rider/faiz/type_traits.hpp"
+#include "rider/faiz/faiz_fwd.hpp"
 
 #include <type_traits>
 
@@ -104,7 +103,7 @@ using first_type = T1; \
 	 mFirst, mSecond,
 	 first_type mFirst,
 	 second_type mSecond,
-	 cp_swap(mFirst COMMA y.first()) SEMICOLON
+	 cp_swap(mFirst COMMA y.first())  SEMICOLON
 	 cp_swap(mSecond COMMA y.second()) SEMICOLON)
 
 	ImplCompressedUeqIMP

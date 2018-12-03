@@ -1,7 +1,6 @@
 #ifndef TYPE_TRAITS
 #define TYPE_TRAITS
 #include "rider/faiz/cstddef.hpp" // for size_t
-#include "rider/faiz/faiz.hpp"
 #include "rider/faiz/faiz_fwd.hpp"
 #include <boost/predef.h>
 #include <type_traits>
@@ -113,7 +112,7 @@ namespace rider::faiz
 	//
 	// - If the template-id `Op<Args...>` denotes a valid type,
 	// then `value_t`
-	// is an alias for `faiz::true_type`, and type is an alias for
+	//  is an alias for `faiz::true_type`, and type is an alias for
 	// `Op<Args...>`;
 	// - Otherwise, `value_t` is an alias for `faiz::false_type` and type is
 	// an alias for `Default`.
@@ -184,27 +183,6 @@ namespace rider::faiz
 	struct is_rvalue_reference;
 	template<typename T>
 	inline constexpr bool is_rvalue_reference_v = is_rvalue_reference<T>::value;
-
-} // namespace rider::faiz
-
-
-// forward declaration
-namespace rider::faiz
-{
-	template<typename... Ts>
-	struct common_type;
-
-	template<typename... Ts>
-	using common_type_t = _t<common_type<Ts...>>;
-
-	template<typename T, typename U, typename TQual, typename UQual>
-	struct basic_common_reference;
-
-	template<typename... Ts>
-	struct common_reference;
-
-	template<typename... Ts>
-	using common_reference_t = _t<common_reference<Ts...>>;
 
 } // namespace rider::faiz
 

@@ -174,23 +174,6 @@ namespace rider::faiz
 		}
 	};
 
-	template<typename T = void>
-	struct equal_to;
-
-	template<typename T = void>
-	struct not_equal_to;
-
-	template<typename T = void>
-	struct greater;
-
-	template<typename T = void>
-	struct less;
-
-	template<typename T = void>
-	struct greater_equal;
-
-	template<typename T = void>
-	struct less_equal;
 
 	template<typename T>
 	struct equal_to
@@ -562,4 +545,6 @@ namespace rider::faiz
 	};
 
 } // namespace rider::faiz
+
+
 #endif

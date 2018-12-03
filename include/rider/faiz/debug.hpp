@@ -1,5 +1,6 @@
 #ifndef CASSERT
 #define CASSERT
+#include <cassert>
 #include <iostream>
 namespace rider
 {

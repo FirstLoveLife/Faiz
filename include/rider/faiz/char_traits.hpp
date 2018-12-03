@@ -198,8 +198,7 @@ namespace rider::faiz
 		static inline char_type*
 		copy(char_type* s1, const char_type* s2, size_t n) noexcept
 		{
-			assertWithLog(
-				s2 < s1 || s2 >= s1 + n, "char_traits::copy overlapped range");
+			Expects(s2 < s1 || s2 >= s1 + n);
 			return n == 0 ? s1 : (char_type*)memcpy(s1, s2, n);
 		}
 		static inline char_type*
@@ -306,8 +305,7 @@ namespace rider::faiz
 		static inline char_type*
 		copy(char_type* s1, const char_type* s2, size_t n) noexcept
 		{
-			assertWithLog(
-				s2 < s1 || s2 >= s1 + n, "char_traits::copy overlapped range");
+			Expects(s2 < s1 || s2 >= s1 + n);
 			return n == 0 ? s1 : (char_type*)wmemcpy(s1, s2, n);
 		}
 		static inline char_type*
@@ -512,8 +510,7 @@ namespace rider::faiz
 	char_traits<char16_t>::copy(
 		char_type* s1, const char_type* s2, size_t n) noexcept
 	{
-		assertWithLog(
-			s2 < s1 || s2 >= s1 + n, "char_traits::copy overlapped range");
+		Expects(s2 < s1 || s2 >= s1 + n);
 		char_type* r = s1;
 		for(; n; --n, ++s1, ++s2)
 			assign(*s1, *s2);
@@ -657,8 +654,7 @@ namespace rider::faiz
 	char_traits<char32_t>::copy(
 		char_type* s1, const char_type* s2, size_t n) noexcept
 	{
-		faiz::Debug::assertWithLog(
-			s2 < s1 || s2 >= s1 + n, "char_traits::copy overlapped range");
+		Expects(s2 < s1 || s2 >= s1 + n);
 		char_type* r = s1;
 		for(; n; --n, ++s1, ++s2)
 			assign(*s1, *s2);

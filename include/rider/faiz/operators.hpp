@@ -1,6 +1,5 @@
 #ifndef OPERATOR
 #	define OPERATOR
-#	include "rider/faiz/faiz.hpp"
 #	include "rider/faiz/type_traits.hpp"
 #	include "rider/faiz/utility.hpp"
 #	include "rider/faiz/variadic.hpp"

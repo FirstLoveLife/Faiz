@@ -192,8 +192,7 @@ namespace rider::faiz
 	str_find_last_of(
 		const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
-		Debug::assertWithLog(
-			(p || sz == 0) && (s || n == 0), "string should not be null");
+		Expects((p || sz == 0) && (s || n == 0));
 		if(sz != 0 && n != 0)
 		{
 			if(--sz > pos)
@@ -213,7 +212,7 @@ namespace rider::faiz
 	constexpr Size
 	str_find_first_not_of(const Char* p, Size sz, Char c, Size pos) noexcept
 	{
-		Debug::assertWithLog(p || sz == 0, "string should not be null");
+		Expects(p || sz == 0);
 		for(; pos < sz; ++pos)
 			if(!Traits::eq(p[pos], c))
 				return pos;
@@ -227,8 +226,7 @@ namespace rider::faiz
 	str_find_first_not_of(
 		const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
-		Debug::assertWithLog(
-			(p || sz == 0) && (s || n == 0), "string should not be null");
+		Expects((p || sz == 0) && (s || n == 0));
 		for(; pos < sz; ++pos)
 			if(!Traits::find(s, n, p[pos]))
 				return pos;
@@ -242,7 +240,7 @@ namespace rider::faiz
 	constexpr Size
 	str_find_last_not_of(const Char* p, Size sz, Char c, Size pos) noexcept
 	{
-		Debug::assertWithLog(p || sz == 0, "string should not be null");
+		Expects(p || sz == 0);
 		if(sz != 0)
 		{
 			if(--sz > pos)
@@ -262,8 +260,7 @@ namespace rider::faiz
 	str_find_last_not_of(
 		const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
-		Debug::assertWithLog(
-			(p || sz == 0) && (s || n == 0), "string should not be null");
+		Expects((p || sz == 0) && (s || n == 0));
 		if(sz != 0)
 		{
 			if(--sz > pos)

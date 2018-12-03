@@ -56,5 +56,17 @@ namespace rider::faiz
 		}
 		return result;
 	}
+
+	template<unsigned N, class T>
+	T
+	power(T x)
+	{
+		if constexpr(N == 0u)
+			return T(1);
+		else if constexpr(N % 2u == 0u)
+			return power<N / 2>(x * x);
+		else
+			return x * power<N - 1>(x);
+	}
 } // namespace rider::faiz
 #endif
