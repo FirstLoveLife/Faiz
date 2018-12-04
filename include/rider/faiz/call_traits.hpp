@@ -89,7 +89,7 @@ namespace rider::faiz
 		using const_reference = const T&;
 		using param_type = meta::if_<is_pointer<T>,
 			T const,
-			meta::if_<std::is_arithmetic<T>,
+			meta::if_<is_arithmetic<T>,
 				meta::if_c<
 					detected_or_t<size_t_<sizeof(void*) + 1>, sizeof_able, T>{}
 						// defer sizeof on incomplete type
