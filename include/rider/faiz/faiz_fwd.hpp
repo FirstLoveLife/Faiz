@@ -79,6 +79,7 @@ namespace rider
 // forwad declare type_traits
 namespace rider::faiz
 {
+	using std::is_empty;
 	template<typename T>
 	struct reference_wrapper;
 
@@ -103,6 +104,15 @@ namespace rider::faiz
 	struct remove_const;
 	template<class T>
 	struct remove_volatile;
+
+	template<class T>
+	struct is_destructible;
+
+	using std::is_trivially_destructible;
+	using std::is_trivially_destructible_v;
+
+	template<class T>
+	struct is_nothrow_destructible;
 
 	template<class T>
 	using remove_const_t = _t<remove_const<T>>;

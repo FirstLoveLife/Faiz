@@ -591,10 +591,6 @@ namespace rider::faiz
 	inline constexpr bool is_pointer_v = is_pointer<T>::value;
 
 	template<typename T>
-	struct is_empty : public bool_<__is_empty(T)>
-	{};
-
-	template<typename T>
 	inline constexpr bool is_empty_v = is_empty<T>::value;
 
 	template<typename T>
@@ -1327,26 +1323,12 @@ namespace rider::faiz
 	struct is_destructible : bool_<is_destructible_v<T>>
 	{};
 
-	template<typename _Tp>
-	struct __libcpp_trivial_destructor
-		: public bool_<is_scalar<_Tp>::value || is_reference<_Tp>::value>
+	template<typename T>
+	inline constexpr bool is_nothrow_destructible_v
+		= is_destructible_v<T>&& noexcept(is_destructible_v<T>);
+	template<typename T>
+	struct is_nothrow_destructible : bool_<is_nothrow_destructible_v<T>>
 	{};
-
-	template<typename _Tp>
-	struct is_trivially_destructible
-		: public __libcpp_trivial_destructor<
-			  typename remove_all_extents<_Tp>::type>
-	{};
-
-	template<typename _Tp>
-	struct is_trivially_destructible<_Tp[]> : public false_
-	{};
-
-	template<typename _Tp>
-	inline constexpr bool is_trivially_destructible_v
-		= is_trivially_destructible<_Tp>::value;
-
-
 } // namespace rider::faiz
 
 #endif
