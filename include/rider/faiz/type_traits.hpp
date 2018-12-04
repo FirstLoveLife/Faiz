@@ -8,8 +8,6 @@
 Don't implement:
 */
 
-// Most here are forward declaration here.
-
 namespace rider::faiz
 {
 	// Provides member typedef type, which is defined as T if B is true at
@@ -161,23 +159,6 @@ namespace rider::faiz
 	struct is_referenceable : bool_<is_referenceable_v<T>>
 	{};
 
-
-	// If `T` is an object type or a function type that has no `cv-` or `ref-
-	// qualifier` (since C++17), provides a member typedef type which is `T&`.
-	// If `T` is an **rvalue reference** to some type `U`, then type is `U&`.
-	// Otherwise, type is `T`.
-	template<typename T>
-	struct add_lvalue_reference;
-
-	template<typename T>
-	using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
-
-	template<typename T>
-	struct is_enum : public bool_<__is_enum(T)>
-	{};
-
-	template<typename T>
-	inline constexpr bool is_enum_v = is_enum<T>();
 
 	template<typename T>
 	struct is_rvalue_reference;
@@ -591,9 +572,6 @@ namespace rider::faiz
 	inline constexpr bool is_pointer_v = is_pointer<T>::value;
 
 	template<typename T>
-	inline constexpr bool is_empty_v = is_empty<T>::value;
-
-	template<typename T>
 	struct is_lvalue_reference : false_
 	{};
 	template<typename T>
@@ -607,12 +585,6 @@ namespace rider::faiz
 	struct is_rvalue_reference<T&&> : true_
 	{};
 
-
-	template<typename T>
-	struct is_union : public bool_<__is_union(T)>
-	{};
-	template<typename T>
-	constexpr bool is_union_v = is_union<T>::value;
 
 	// TODO: implement is_class without ugly sizeof
 	template<typename T>
@@ -1153,13 +1125,6 @@ namespace rider::faiz
 	inline constexpr bool is_derived_of_v = is_base_of<Base, Derived>::value;
 
 	template<typename T>
-	struct is_final : public bool_<__is_final(T)>
-	{};
-
-	template<typename T>
-	constexpr bool is_final_v = is_final<T>::value;
-
-	template<typename T>
 	struct is_polymorphic : public detail::is_polymorphic_impl<T, void*>
 	{};
 
@@ -1175,16 +1140,14 @@ namespace rider::faiz
 	template<typename T>
 	inline constexpr bool is_copy_assignable_v = is_copy_assignable<T>::value;
 
-	template<typename T, typename _Up>
-	struct is_trivially_assignable
-		: public bool_<__is_trivially_assignable(T, _Up)>
-	{};
-
 	template<typename T>
 	struct is_trivially_copy_assignable
 		: faiz::is_trivially_assignable<_t<faiz::add_lvalue_reference<T>>,
 			  faiz::add_lvalue_reference_t<const T>>
 	{};
+	template<typename T>
+	inline constexpr bool is_trivially_copy_assignable_v
+		= is_trivially_copy_assignable<T>::value;
 
 	template<bool, class T, typename A>
 	struct is_nothrow_assignable_aux;
@@ -1225,42 +1188,6 @@ namespace rider::faiz
 	template<typename T>
 	inline constexpr bool is_nothrow_copy_assignable_v
 		= is_nothrow_copy_assignable<T>::value;
-
-	// std::is_standard_layout is not something you can implement without
-	// compiler intrinsics. As you've correctly pointed out, it needs more
-	// information than the C++ type system can express.
-	//
-	// If T is a standard layout type (that is, a scalar type, a standard-layout
-	// class, or an array of such type/class, possibly cv-qualified), provides
-	// the member constant value equal true. For any other type, value is false.
-	//
-	// A standard-layout class is a class that satisfies StandardLayoutType.
-	//
-	// The behavior is undefined if std::remove_all_extents_t<T> is an
-	// incomplete type and not (possibly cv-qualified) void.
-	template<typename Tp>
-	struct is_standard_layout : public bool_<__is_standard_layout(Tp)>
-	{};
-
-	template<typename T>
-	inline constexpr bool is_standard_layout_v = is_standard_layout<T>::value;
-
-	template<typename _Tp>
-	struct is_trivially_copyable : bool_<is_scalar_v<remove_all_extents_t<_Tp>>>
-	{};
-
-	template<typename _Tp>
-	inline constexpr bool is_trivially_copyable_v
-		= is_trivially_copyable<_Tp>::value;
-
-
-	template<typename Tp>
-	struct is_trivial : public bool_<__is_trivial(Tp)>
-	{};
-
-	template<typename T>
-	inline constexpr bool is_trivial_v = is_trivial<T>::value;
-
 
 	template<typename T>
 	struct is_unknown_bound_array : false_

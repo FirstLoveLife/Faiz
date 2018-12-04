@@ -79,7 +79,26 @@ namespace rider
 // forwad declare type_traits
 namespace rider::faiz
 {
+	using std::is_standard_layout;
+	using std::is_standard_layout_v;
+	using std::is_trivially_copyable;
+	using std::is_trivially_copyable_v;
+	using std::is_trivial;
+	using std::is_trivial_v;
 	using std::is_empty;
+	using std::is_empty_v;
+	using std::is_trivially_destructible;
+	using std::is_trivially_destructible_v;
+	using std::is_final;
+	using std::is_final_v;
+	using std::is_union;
+	using std::is_union_v;
+
+	using std::is_trivially_assignable;
+	using std::is_trivially_assignable_v;
+	using std::is_enum;
+	using std::is_enum_v;
+
 	template<typename T>
 	struct reference_wrapper;
 
@@ -108,8 +127,6 @@ namespace rider::faiz
 	template<class T>
 	struct is_destructible;
 
-	using std::is_trivially_destructible;
-	using std::is_trivially_destructible_v;
 
 	template<class T>
 	struct is_nothrow_destructible;
@@ -158,15 +175,12 @@ namespace rider::faiz
 
 	template<class T, class U>
 	struct is_assignable;
-	template<class T, class U>
-	struct is_trivially_assignable;
+
 	template<class T, class U>
 	struct is_nothrow_assignable;
 	template<class T, class U>
 	inline constexpr bool is_assignable_v = is_assignable<T, U>::value;
-	template<class T, class U>
-	inline constexpr bool is_trivially_assignable_v
-		= is_trivially_assignable<T, U>::value;
+
 	template<class T, class U>
 	inline constexpr bool is_nothrow_assignable_v
 		= is_nothrow_assignable<T, U>::value;
@@ -2622,42 +2636,6 @@ namespace rider::faiz::range
 
 		struct make_compressed_pair_fn;
 
-		template<typename T>
-		constexpr T&&
-		forward(_t<remove_reference<T>>& t) noexcept
-		{
-			return static_cast<T&&>(t);
-		}
-
-		template<typename T>
-		constexpr T&&
-		forward(_t<remove_reference<T>>&& t) noexcept
-		{
-			// This is to catch way sketchy stuff like: forward<int const &>(42)
-			static_assert(
-				!is_lvalue_reference<T>::value, "You didn't just do that!");
-			return static_cast<T&&>(t);
-		}
-
-		template<typename T>
-		constexpr _t<remove_reference<T>>&&
-		move(T&& t) noexcept
-		{
-			return static_cast<_t<remove_reference<T>>&&>(t);
-		}
-
-		template<typename T>
-		constexpr T const&
-		as_const(T& t) noexcept
-		{
-			return t;
-		}
-		template<typename T>
-		void
-		as_const(T const&&)
-			= delete;
-
-
 		template<typename T, typename R = _t<remove_reference<T>>>
 		using as_ref_t = _t<add_lvalue_reference<_t<remove_const<R>>>>;
 
@@ -2694,75 +2672,6 @@ namespace rider::faiz::range
 		struct priority_tag<0>
 		{};
 
-#if defined(__clang__) && !defined(_LIBCPP_VERSION)
-		template<typename T, typename... Args>
-		using is_trivially_constructible
-			= bool_<__is_trivially_constructible(T, Args...)>;
-		template<typename T>
-		using is_trivially_default_constructible
-			= is_trivially_constructible<T>;
-		template<typename T>
-		using is_trivially_copy_constructible
-			= is_trivially_constructible<T, T const&>;
-		template<typename T>
-		using is_trivially_move_constructible
-			= is_trivially_constructible<T, T>;
-		template<typename T, typename U>
-		using is_trivially_assignable = bool_<__is_trivially_assignable(T, U)>;
-		template<typename T>
-		using is_trivially_copy_assignable
-			= is_trivially_assignable<T&, T const&>;
-		template<typename T>
-		using is_trivially_move_assignable = is_trivially_assignable<T&, T>;
-		template<typename T>
-		using is_trivially_copyable = bool_<__is_trivially_copyable(T)>;
-#elif defined(__GNUC__) && !defined(__clang__) && __GNUC__ < 5
-		template<typename T>
-		using is_trivially_default_constructible = std::is_trivial<T>;
-		template<typename T>
-		using is_trivially_copy_constructible = std::is_trivial<T>;
-		template<typename T>
-		using is_trivially_move_constructible = std::is_trivial<T>;
-		template<typename T>
-		using is_trivially_copy_assignable = std::is_trivial<T>;
-		template<typename T>
-		using is_trivially_move_assignable = std::is_trivial<T>;
-		template<typename T>
-		using is_trivially_copyable = std::is_trivial<T>;
-#else
-		template<typename T>
-		using is_trivially_default_constructible
-			= std::is_trivially_constructible<T>;
-		using std::is_trivially_copy_constructible;
-		using std::is_trivially_move_constructible;
-		using std::is_trivially_copy_assignable;
-		using std::is_trivially_move_assignable;
-		using std::is_trivially_copyable;
-#endif
-
-#if RANGES_CXX_LIB_IS_FINAL > 0
-#	if defined(__clang__) && !defined(_LIBCPP_VERSION)
-		template<typename T>
-		using is_final = bool_<__is_final(T)>;
-#	else
-		using std::is_final;
-#	endif
-#else
-		template<typename T>
-		using is_final = false_;
-#endif
-
-
-		template<typename T>
-		struct remove_rvalue_reference : type_identity<T>
-		{};
-
-		template<typename T>
-		struct remove_rvalue_reference<T&&> : type_identity<T>
-		{};
-
-		template<typename T>
-		using remove_rvalue_reference_t = _t<remove_rvalue_reference<T>>;
 	} // namespace detail
 	/// \endcond
 
