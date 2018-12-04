@@ -53,7 +53,7 @@ namespace rider::faiz
 			class... Args>
 		struct detector : type_identity<Default>
 		{
-			using value_t = faiz::false_;
+			using value_t = false_;
 		};
 
 		template<typename Default, template<typename...> class Op, class... Args>
@@ -62,7 +62,7 @@ namespace rider::faiz
 			: type_identity<Op<Args...>>
 #endif
 		{
-			using value_t = faiz::true_;
+			using value_t = true_;
 #if BOOST_COMP_CLANG
 			using type = Op<Args...>;
 #endif
@@ -126,7 +126,7 @@ namespace rider::faiz
 	// The alias template is_detected_exact checks whether `detected_t<Op,
 	// Args...>` is Expected.
 	template<typename Expected, template<typename...> class Op, class... Args>
-	using is_detected_exact = faiz::is_same<Expected, detected_t<Op, Args...>>;
+	using is_detected_exact = is_same<Expected, detected_t<Op, Args...>>;
 
 
 	template<typename Expected, template<typename...> class Op, class... Args>
@@ -136,8 +136,7 @@ namespace rider::faiz
 	//  The alias template `is_detected_convertible` checks whether
 	// `detected_t<Op, Args...>` is convertible to To.
 	template<typename To, template<typename...> class Op, class... Args>
-	using is_detected_convertible
-		= faiz::is_convertible<detected_t<Op, Args...>, To>;
+	using is_detected_convertible = is_convertible<detected_t<Op, Args...>, To>;
 
 	template<typename To, template<typename...> class Op, class... Args>
 	constexpr bool is_detected_convertible_v
@@ -170,23 +169,31 @@ namespace rider::faiz
 
 namespace rider::faiz::detail
 {
+	template<typename T>
+	struct is_member_pointer_helper : false_
+	{};
+
+	template<typename T, class U>
+	struct is_member_pointer_helper<T U::*> : true_
+	{};
+
 	template<typename Base>
-	faiz::true_
+	true_
 	is_base_of_test_func(const volatile Base*);
 	template<typename Base>
 	faiz::false_
 	is_base_of_test_func(const volatile void*);
 	template<typename Base, typename Derived>
 	using pre_is_base_of
-		= decltype(is_base_of_test_func<Base>(faiz::declval<Derived*>()));
+		= decltype(is_base_of_test_func<Base>(declval<Derived*>()));
 
 	// with <experimental/type_traits>:
 	// template <typename Base, typename Derived>
 	// using pre_is_base_of2 =
-	// detected_or_t<faiz::true_, pre_is_base_of,
+	// detected_or_t<true_, pre_is_base_of,
 	// Base, Derived>;
 	template<typename Base, typename Derived, typename = void>
-	struct pre_is_base_of2 : public faiz::true_
+	struct pre_is_base_of2 : public true_
 	{};
 	// note faiz::void_t is a C++17 feature
 	template<typename Base, typename Derived>
@@ -346,11 +353,6 @@ namespace rider::faiz
 
 	// clang-format on
 
-	/******************** remove *********************/
-
-	// If the type T is a reference type,
-	// provides the member typedef type which is the type referred to by T.
-	// Otherwise type is T.
 	template<typename T>
 	struct remove_reference : type_identity<T>
 	{};
@@ -376,9 +378,6 @@ namespace rider::faiz
 	struct remove_volatile<volatile T> : type_identity<T>
 	{};
 
-	// If T is an array of some type X, provides the member typedef type
-	// equal to X, otherwise type is T. Note that if T is a multidimensional
-	// array, only the first dimension is removed.
 	template<typename T>
 	struct remove_extent : type_identity<T>
 	{};
@@ -393,9 +392,6 @@ namespace rider::faiz
 	template<typename T>
 	using remove_extent_t = _t<remove_extent<T>>;
 
-
-	// If T is a multidimensional array of some type X, provides the member
-	// typedef type equal to X, otherwise type is T.
 	template<typename T>
 	struct remove_all_extents;
 	template<typename T>
@@ -871,7 +867,7 @@ namespace rider::faiz
 	static void test_aux(To1) noexcept;
 
 	template<typename From, typename To>
-	using is_convertible_helper = decltype(test_aux<To>(faiz::declval<From>()));
+	using is_convertible_helper = decltype(test_aux<To>(declval<From>()));
 
 	template<typename From, typename To>
 	constexpr bool
@@ -1033,16 +1029,10 @@ namespace rider::faiz
 	template<typename Base, class Derived>
 	inline constexpr bool is_base_of_v = is_base_of<Base, Derived>::value;
 
-	template<typename T>
-	struct is_member_pointer_helper : faiz::false_
-	{};
-
-	template<typename T, class U>
-	struct is_member_pointer_helper<T U::*> : faiz::true_
-	{};
 
 	template<typename T>
-	struct is_member_pointer : is_member_pointer_helper<_t<faiz::remove_cv<T>>>
+	struct is_member_pointer
+		: detail::is_member_pointer_helper<_t<remove_cv<T>>>
 	{};
 	template<typename T>
 	inline constexpr bool is_member_pointer_v = is_member_pointer<T>::value;
@@ -1060,21 +1050,21 @@ namespace rider::faiz
 	// terms of individual scalar objects.
 	//
 	template<typename T>
-	struct is_scalar : faiz::disjunction<faiz::is_arithmetic<T>,
-						   faiz::is_enum<T>,
-						   faiz::is_pointer<T>,
-						   faiz::is_member_pointer<T>,
-						   faiz::is_null_pointer<T>>
+	struct is_scalar : disjunction<is_arithmetic<T>,
+						   is_enum<T>,
+						   is_pointer<T>,
+						   is_member_pointer<T>,
+						   is_null_pointer<T>>
 	{};
 	template<typename T>
 	inline constexpr bool is_scalar_v = is_scalar<T>::value;
 
 	template<typename T>
-	struct is_member_function_pointer_helper : faiz::false_
+	struct is_member_function_pointer_helper : false_
 	{};
 
 	template<typename T, class U>
-	struct is_member_function_pointer_helper<T U::*> : faiz::is_function<T>
+	struct is_member_function_pointer_helper<T U::*> : is_function<T>
 	{};
 	//
 	//  Checks whether T is a non-static member function pointer. Provides the
@@ -1082,7 +1072,7 @@ namespace rider::faiz
 	// function pointer type. Otherwise, value is equal to false.
 	template<typename T>
 	struct is_member_function_pointer
-		: is_member_function_pointer_helper<faiz::remove_cv_t<T>>
+		: is_member_function_pointer_helper<remove_cv_t<T>>
 	{};
 	template<typename T>
 	inline constexpr bool is_member_function_pointer_v
@@ -1093,8 +1083,8 @@ namespace rider::faiz
 	// type. Otherwise, value is equal to false.
 	template<typename T>
 	struct is_member_object_pointer
-		: bool_<faiz::is_member_pointer<T>::value
-			  && !faiz::is_member_function_pointer<T>::value>
+		: bool_<is_member_pointer<T>::value
+			  && !is_member_function_pointer<T>::value>
 	{};
 	template<typename T>
 	inline constexpr bool is_member_object_pointer_v
@@ -1118,8 +1108,8 @@ namespace rider::faiz
 	template<typename Base, typename Derived>
 	struct is_derived
 		: public bool_<
-			  faiz::is_base_of_v<Base,
-				  Derived> && !faiz::is_same_v<faiz::remove_cv_t<Base>, faiz::remove_cv_t<Derived>>>
+			  is_base_of_v<Base,
+				  Derived> && !is_same_v<remove_cv_t<Base>, remove_cv_t<Derived>>>
 	{};
 	template<typename Base, class Derived>
 	inline constexpr bool is_derived_of_v = is_base_of<Base, Derived>::value;
@@ -1132,9 +1122,8 @@ namespace rider::faiz
 	constexpr bool is_polymorphic_v = is_polymorphic<T>::value;
 
 	template<typename T>
-	struct is_copy_assignable
-		: faiz::is_assignable<_t<faiz::add_lvalue_reference<T>>,
-			  faiz::add_lvalue_reference_t<const T>>
+	struct is_copy_assignable : is_assignable<_t<add_lvalue_reference<T>>,
+									add_lvalue_reference_t<const T>>
 	{};
 
 	template<typename T>
@@ -1142,8 +1131,8 @@ namespace rider::faiz
 
 	template<typename T>
 	struct is_trivially_copy_assignable
-		: faiz::is_trivially_assignable<_t<faiz::add_lvalue_reference<T>>,
-			  faiz::add_lvalue_reference_t<const T>>
+		: is_trivially_assignable<_t<add_lvalue_reference<T>>,
+			  add_lvalue_reference_t<const T>>
 	{};
 	template<typename T>
 	inline constexpr bool is_trivially_copy_assignable_v
@@ -1171,7 +1160,7 @@ namespace rider::faiz
 
 	template<typename T, typename A>
 	struct is_nothrow_assignable_aux<true, T, A>
-		: public bool_<noexcept(faiz::declval<T>() = faiz::declval<A>())>
+		: public bool_<noexcept(declval<T>() = declval<A>())>
 	{};
 
 	template<typename T, typename A>
@@ -1181,8 +1170,8 @@ namespace rider::faiz
 
 	template<typename T>
 	struct is_nothrow_copy_assignable
-		: faiz::is_nothrow_assignable<_t<faiz::add_lvalue_reference<T>>,
-			  _t<faiz::add_lvalue_reference<const T>>>
+		: is_nothrow_assignable<_t<add_lvalue_reference<T>>,
+			  _t<add_lvalue_reference<const T>>>
 	{};
 
 	template<typename T>
@@ -1200,7 +1189,7 @@ namespace rider::faiz
 	inline constexpr bool is_unknown_bound_array_v
 		= is_unknown_bound_array<T>::value;
 
-	template<typename T, typename U = faiz::remove_all_extents_t<T>>
+	template<typename T, typename U = remove_all_extents_t<T>>
 	using has_dtor = decltype(declval<U>().~U());
 
 	// clang-format off
@@ -1212,11 +1201,11 @@ namespace rider::faiz
  #if BOOST_COMP_CLANG
     template<typename T>
     constexpr bool is_destructible_v =
-        (faiz::is_detected_v<has_dtor,
+        (is_detected_v<has_dtor,
            T>
-       or faiz::is_reference_v<T>)
+       or is_reference_v<T>)
     and not is_unknown_bound_array_v<T>
-        and not faiz::is_function_v<T>;
+        and not is_function_v<T>;
 
  #elif BOOST_COMP_GNUC
     template<typename T>
