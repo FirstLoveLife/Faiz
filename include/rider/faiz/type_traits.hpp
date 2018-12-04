@@ -386,7 +386,7 @@ namespace rider::faiz
 	struct remove_extent<T[]> : type_identity<T>
 	{};
 
-	template<typename T, faiz::size_t N>
+	template<typename T, size_t N>
 	struct remove_extent<T[N]> : type_identity<T>
 	{};
 	template<typename T>
@@ -471,8 +471,7 @@ namespace rider::faiz
 
 
 	template<typename T>
-	struct is_null_pointer
-		: faiz::is_same<faiz::nullptr_t, faiz::remove_cv_t<T>>
+	struct is_null_pointer : is_same<nullptr_t, remove_cv_t<T>>
 	{};
 	template<typename T>
 	constexpr bool is_null_pointer_v = is_null_pointer<T>::value;
@@ -580,16 +579,6 @@ namespace rider::faiz
 	template<typename T>
 	struct is_rvalue_reference<T&&> : true_
 	{};
-
-
-	// TODO: implement is_class without ugly sizeof
-	template<typename T>
-	struct is_class
-		: bool_<sizeof(detail::test<T>(0)) == 1 and !faiz::is_union<T>::value
-			  and !faiz::is_null_pointer<T>::value>
-	{};
-	template<typename T>
-	inline constexpr bool is_class_v = is_class<T>::value;
 
 
 	template<typename T>
@@ -706,6 +695,7 @@ namespace rider::faiz
 	{};
 
 	// TODO: add support for compiler extension larger signed.
+	// XXX: I don't want support non-standard extension now.
 	template<typename T>
 	struct make_signed
 	{
@@ -809,15 +799,14 @@ namespace rider::faiz
 								unsigned long long>>>>>>;
 
 		// Add back any const qualifier:
-		using const_base_integer_type = _t<meta::if_<is_const<T>,
-			add_const_t<base_integer_type>,
-			base_integer_type>>;
+		using const_base_integer_type = meta::
+			if_<is_const<T>, add_const_t<base_integer_type>, base_integer_type>;
 
 	public:
 		// Add back any volatile qualifier:
-		using type = _t<meta::if_<is_volatile<T>,
+		using type = meta::if_<is_volatile<T>,
 			add_volatile_t<const_base_integer_type>,
-			const_base_integer_type>>;
+			const_base_integer_type>;
 	};
 
 	template<class T>

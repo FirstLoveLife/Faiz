@@ -2,6 +2,7 @@
 #	define UNIQUE_PTR
 #	include "rider/faiz/compressed_pair.hpp"
 #	include "rider/faiz/functional.hpp"
+#	include "rider/faiz/common_type.hpp"
 #	include "rider/faiz/ptr_traits.hpp"
 #	include "rider/faiz/type_traits.hpp"
 #	include "rider/faiz/utility.hpp"
@@ -692,7 +693,7 @@ namespace rider::faiz
 	{
 		using P1 = typename faiz::unique_ptr<T1, D1>::pointer;
 		using P2 = typename faiz::unique_ptr<T2, D2>::pointer;
-		using PCommon = faiz::common_type_t<P1, P2>;
+		using PCommon = common_type_t<P1, P2>;
 		PCommon pT1 = a.get();
 		PCommon pT2 = b.get();
 		return faiz::less<PCommon>()(pT1, pT2);

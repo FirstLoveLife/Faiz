@@ -93,6 +93,8 @@ namespace rider::faiz
 	using std::is_final_v;
 	using std::is_union;
 	using std::is_union_v;
+	using std::is_class;
+	using std::is_class_v;
 
 	using std::is_trivially_assignable;
 	using std::is_trivially_assignable_v;

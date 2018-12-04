@@ -26,10 +26,10 @@ enum BigEnum : unsigned long long // MSVC's ABI doesn't follow the Standard
 	big = 0xFFFFFFFFFFFFFFFFULL
 };
 
-enum HugeEnum : __uint128_t
-{
-	hugezero
-};
+// enum HugeEnum : __uint128_t
+// {
+// 	hugezero
+// };
 
 template<class T, class U>
 void
@@ -64,7 +64,7 @@ main()
 			const signed char>::type>();
 	test_make_signed<BigEnum,
 		std::conditional<sizeof(long) == 4, long long, long>::type>();
-	test_make_signed<__int128_t, __int128_t>();
-	test_make_signed<__uint128_t, __int128_t>();
+	// test_make_signed<__int128_t, __int128_t>();
+	// test_make_signed<__uint128_t, __int128_t>();
 	// test_make_signed<HugeEnum, __int128_t>();
 }
