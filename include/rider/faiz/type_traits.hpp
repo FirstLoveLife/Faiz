@@ -707,42 +707,71 @@ namespace rider::faiz
 			"The template argument to make_signed must not be the type bool.");
 
 		using t_no_cv = remove_cv_t<T>;
-		using base_integer_type = meta::if_<
-			// if
-			logic::and_<is_signed<T>,
-				is_integral<T>,
-				logic::not_<is_same<t_no_cv, char>>,
-				logic::not_<is_same<t_no_cv, wchar_t>>,
-				logic::not_<is_same<t_no_cv, bool>>>,
-			// then
-			T,
-			// else
-			//    if
-			meta::if_<logic::and_<is_integral<T>,
-						  logic::not_<is_same<t_no_cv, char>>,
-						  logic::not_<is_same<t_no_cv, wchar_t>>,
-						  logic::not_<is_same<t_no_cv, bool>>>,
-				// then
-				meta::if_<is_same<t_no_cv, unsigned char>,
-					signed char,
-					meta::if_<is_same<t_no_cv, unsigned short>,
-						signed short,
-						meta::if_<is_same<t_no_cv, unsigned int>,
-							int,
-							meta::if_<is_same<t_no_cv, unsigned long>,
-								long,
-								long long>>>>,
-				//  else
-				// Not a regular integer type:
-				meta::if_c<sizeof(t_no_cv) == sizeof(unsigned char),
-					signed char,
-					meta::if_c<sizeof(t_no_cv) == sizeof(unsigned short),
-						signed short,
-						meta::if_c<sizeof(t_no_cv) == sizeof(unsigned int),
-							int,
-							meta::if_c<sizeof(t_no_cv) == sizeof(unsigned long),
-								long,
-								long long>>>>>>;
+
+		// clang-format off
+		auto constexpr static base_integer_type_impl()
+		{
+			if constexpr(is_signed_v<T> and 
+				is_integral_v<T> and 
+				not is_same_v<t_no_cv, char> and
+				not is_same_v<t_no_cv, wchar_t> and
+				not is_same_v<t_no_cv, bool>)
+			{
+				return type_identity<T>{};
+			}
+			else if constexpr (is_integral_v<T> and
+						  not is_same_v<t_no_cv, char> and
+						  not is_same_v<t_no_cv, wchar_t> and
+						  not is_same_v<t_no_cv, bool>)
+			{
+				if constexpr (is_same_v<t_no_cv, unsigned char>)
+			    {
+                    return type_identity<signed char>{};
+                }
+				else if constexpr (is_same_v<t_no_cv, unsigned short>)
+				{
+                    return  type_identity<signed short>{};
+                }
+				else if constexpr (is_same_v<t_no_cv, unsigned int>)
+				{
+                    return  type_identity<int>{};
+                }
+				else if constexpr (is_same_v<t_no_cv, unsigned long>)
+				{
+                    return  type_identity<long>{};
+                }
+				else
+				{
+					return type_identity<long long> {};
+				}
+			}
+			else
+			{
+				if constexpr (sizeof(t_no_cv) == sizeof(unsigned char))
+				{
+					return type_identity<signed char>{};
+				}
+				else if constexpr (sizeof(t_no_cv) == sizeof(unsigned short))
+				{
+					return type_identity<signed short>{};
+				}
+				else if constexpr (sizeof(t_no_cv) == sizeof(unsigned int))
+				{
+					return type_identity<int>{};
+				}
+				else if constexpr (sizeof(t_no_cv) == sizeof(unsigned long))
+				{
+					return type_identity<long>{};
+				}
+				else
+				{
+					return type_identity<long long>{};
+				}
+			}
+		}
+		using base_integer_type = _t<decltype(base_integer_type_impl())>;
+
+		// clang-format on
 
 		// Add back any const qualifier:
 		using const_base_integer_type = meta::
@@ -881,21 +910,21 @@ namespace rider::faiz
 	// If T is an object or reference type and the variable definition T
 	// obj(std::declval<Args>()...); is well-formed, provides the member
 	// constant value equal to true. In all other cases, value is false.
-	// template<typename Tp, class... Args>
-	// struct is_constructible : public bool_<__is_constructible(Tp, Args...)>
-	// {};
+	template<typename Tp, class... Args>
+	struct is_constructible : public bool_<__is_constructible(Tp, Args...)>
+	{};
 
-	template<typename T, class, class...>
-	struct is_constructible_impl : false_
-	{};
-	template<typename T, class... Us>
-	struct is_constructible_impl<T,
-		decltype(void(::new(declval<void*>()) T(declval<Us>()...))),
-		Us...> : true_
-	{};
-	template<typename T, class... Us>
-	struct is_constructible : is_constructible_impl<T, void, Us...>
-	{};
+	// template<typename T, class, class...>
+	// struct is_constructible_impl : false_
+	// {};
+	// template<typename T, class... Us>
+	// struct is_constructible_impl<T,
+	// 	decltype(::new(declval<void*>()) T(declval<Us&>()...)),
+	// 	Us...> : true_
+	// {};
+	// template<typename T, class... Us>
+	// struct is_constructible : is_constructible_impl<T, void, Us...>
+	// {};
 
 	template<typename T, class... Args>
 	inline constexpr bool is_constructible_v

@@ -83,3 +83,7 @@
  #	endif
  #endif
  }
+
+ int
+ main()
+ {}
