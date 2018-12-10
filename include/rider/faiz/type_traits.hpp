@@ -796,38 +796,73 @@ namespace rider::faiz
 			"bool");
 
 		using t_no_cv = remove_cv_t<T>;
-		using base_integer_type = meta::if_<
-			meta::strict_and<is_unsigned<T>,
-				is_integral<T>,
-				meta::not_<is_same<t_no_cv, char>>,
-				meta::not_<is_same<t_no_cv, wchar_t>>,
-				meta::not_<is_same<t_no_cv, bool>>>,
-			T,
-			meta::if_<meta::strict_and<is_integral<T>,
-						  meta::not_<is_same<t_no_cv, char>>,
-						  meta::not_<is_same<t_no_cv, wchar_t>>,
-						  meta::not_<is_same<t_no_cv, bool>>>,
-				meta::if_<is_same<t_no_cv, signed char>,
-					unsigned char,
-					meta::if_<is_same<t_no_cv, short>,
-						unsigned short,
-						meta::if_<is_same<t_no_cv, int>,
-							unsigned int,
-							meta::if_<is_same<t_no_cv, long>,
-								unsigned long,
-								unsigned long long>>>>,
-				// Not a regular integer type:
-				meta::if_c<sizeof(t_no_cv) == sizeof(unsigned char),
-					unsigned char,
-					meta::if_c<sizeof(t_no_cv) == sizeof(unsigned short),
-						unsigned short,
-						meta::if_c<sizeof(t_no_cv) == sizeof(unsigned int),
-							unsigned int,
-							meta::if_c<sizeof(t_no_cv) == sizeof(unsigned long),
-								unsigned long,
-								unsigned long long>>>>>>;
 
-		// Add back any const qualifier:
+		// clang-format off
+		auto constexpr static base_integer_type_impl()
+		{
+			if constexpr(is_unsigned_v<T> and
+						 is_integral_v<T> and
+						 not is_same_v<t_no_cv, char> and
+						 not is_same_v<t_no_cv, wchar_t> and
+						 not is_same_v<t_no_cv, bool>)
+			{
+				return type_identity<T>{};
+			}
+			else if constexpr(is_integral_v<T> and
+							  not is_same_v<t_no_cv, char> and
+							  not is_same_v<t_no_cv, wchar_t> and
+							  not is_same_v<t_no_cv, bool>)
+			{
+				if constexpr(is_same_v<t_no_cv, signed char>)
+				{
+					return type_identity<unsigned char>{};
+				}
+				else if constexpr(is_same_v<t_no_cv, short>)
+				{
+					return type_identity<unsigned short>{};
+				}
+				else if constexpr(is_same_v<t_no_cv, int>)
+				{
+					return type_identity<unsigned int>{};
+				}
+				else if constexpr(is_same_v<t_no_cv, long>)
+				{
+					return type_identity<unsigned long>{};
+				}
+				else
+				{
+					return type_identity<unsigned long long>{};
+				}
+			}
+			else
+			{
+				if constexpr(sizeof(t_no_cv) == sizeof(unsigned char))
+				{
+					return type_identity<unsigned char>{};
+				}
+				else if constexpr(sizeof(t_no_cv) == sizeof(unsigned short))
+				{
+					return type_identity<unsigned short>{};
+				}
+				else if constexpr(sizeof(t_no_cv) == sizeof(unsigned int))
+				{
+					return type_identity<unsigned int>{};
+				}
+				else if constexpr(sizeof(t_no_cv) == sizeof(unsigned long))
+				{
+					return type_identity<unsigned long>{};
+				}
+				else
+				{
+					return type_identity<unsigned long long>{};
+				}
+		}
+		}
+
+		// clang-format on
+
+		using base_integer_type = _t<decltype(base_integer_type_impl())>;
+
 		using const_base_integer_type = meta::
 			if_<is_const<T>, add_const_t<base_integer_type>, base_integer_type>;
 
