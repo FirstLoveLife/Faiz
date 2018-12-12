@@ -20,11 +20,11 @@
 #include "../testsuite_hooks.h"
 #include "../testsuite_tr1.h"
 #include "rider/faiz/type_traits.hpp"
-// librider::faizc++/24808
+// libRider::Faizc++/24808
 void
 test01()
 {
-	using rider::faiz::is_object;
+	using Rider::Faiz::is_object;
 	using namespace __gnu_test;
 
 	VERIFY((test_category<is_object, IncompleteClass>(true)));

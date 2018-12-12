@@ -17,28 +17,28 @@ template<class T>
 void
 test_is_polymorphic()
 {
-	static_assert(rider::faiz::is_polymorphic<T>::value, "");
-	static_assert(rider::faiz::is_polymorphic<const T>::value, "");
-	static_assert(rider::faiz::is_polymorphic<volatile T>::value, "");
-	static_assert(rider::faiz::is_polymorphic<const volatile T>::value, "");
-	static_assert(rider::faiz::is_polymorphic_v<T>, "");
-	static_assert(rider::faiz::is_polymorphic_v<const T>, "");
-	static_assert(rider::faiz::is_polymorphic_v<volatile T>, "");
-	static_assert(rider::faiz::is_polymorphic_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_polymorphic<T>::value, "");
+	static_assert(Rider::Faiz::is_polymorphic<const T>::value, "");
+	static_assert(Rider::Faiz::is_polymorphic<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_polymorphic<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_polymorphic_v<T>, "");
+	static_assert(Rider::Faiz::is_polymorphic_v<const T>, "");
+	static_assert(Rider::Faiz::is_polymorphic_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_polymorphic_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_polymorphic()
 {
-	static_assert(!rider::faiz::is_polymorphic<T>::value, "");
-	static_assert(!rider::faiz::is_polymorphic<const T>::value, "");
-	static_assert(!rider::faiz::is_polymorphic<volatile T>::value, "");
-	static_assert(!rider::faiz::is_polymorphic<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_polymorphic_v<T>, "");
-	static_assert(!rider::faiz::is_polymorphic_v<const T>, "");
-	static_assert(!rider::faiz::is_polymorphic_v<volatile T>, "");
-	static_assert(!rider::faiz::is_polymorphic_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_polymorphic<T>::value, "");
+	static_assert(!Rider::Faiz::is_polymorphic<const T>::value, "");
+	static_assert(!Rider::Faiz::is_polymorphic<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_polymorphic<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_polymorphic_v<T>, "");
+	static_assert(!Rider::Faiz::is_polymorphic_v<const T>, "");
+	static_assert(!Rider::Faiz::is_polymorphic_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_polymorphic_v<const volatile T>, "");
 }
 
 class Empty

@@ -18,7 +18,7 @@
 #include "rider/faiz/faiz_fwd.hpp"
 #include "rider/faiz/utility.hpp"
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	namespace aux
 	{
@@ -115,7 +115,7 @@ namespace rider::faiz
 	{
 		template<typename I, typename O>
 		using is_indirectly_movable_
-			= bool_<is_constructible<_t<faiz::value_type<I>>,
+			= bool_<is_constructible<_t<Faiz::value_type<I>>,
 						decltype(iter_move(declval<I&>()))>::value
 				&& is_assignable<_t<value_type<I>>&,
 					   decltype(iter_move(declval<I&>()))>::value
@@ -128,11 +128,11 @@ namespace rider::faiz
 			= bool_<noexcept(iter_move(declval<I&>()))
 				&& std::is_nothrow_constructible<_t<value_type<I>>,
 					   decltype(iter_move(declval<I&>()))>::value
-				&& std::is_nothrow_assignable<_t<value_type<I>>&,
+				&& Rider::Faiz::is_nothrow_assignable<_t<value_type<I>>&,
 					   decltype(iter_move(declval<I&>()))>::value
-				&& std::is_nothrow_assignable<reference_t<O>,
+				&& Rider::Faiz::is_nothrow_assignable<reference_t<O>,
 					   _t<value_type<I>>>::value
-				&& std::is_nothrow_assignable<reference_t<O>,
+				&& Rider::Faiz::is_nothrow_assignable<reference_t<O>,
 					   decltype(iter_move(declval<I&>()))>::value>;
 	} // namespace detail
 	/// \endcond
@@ -153,6 +153,6 @@ namespace rider::faiz
 			  meta::defer<detail::is_nothrow_indirectly_movable_, I, O>,
 			  false_>>
 	{};
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #endif

@@ -5,28 +5,28 @@ template<class T>
 void
 test_is_object()
 {
-	static_assert(rider::faiz::is_object<T>::value, "");
-	static_assert(rider::faiz::is_object<const T>::value, "");
-	static_assert(rider::faiz::is_object<volatile T>::value, "");
-	static_assert(rider::faiz::is_object<const volatile T>::value, "");
-	static_assert(rider::faiz::is_object_v<T>, "");
-	static_assert(rider::faiz::is_object_v<const T>, "");
-	static_assert(rider::faiz::is_object_v<volatile T>, "");
-	static_assert(rider::faiz::is_object_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_object<T>::value, "");
+	static_assert(Rider::Faiz::is_object<const T>::value, "");
+	static_assert(Rider::Faiz::is_object<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_object<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_object_v<T>, "");
+	static_assert(Rider::Faiz::is_object_v<const T>, "");
+	static_assert(Rider::Faiz::is_object_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_object_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_object()
 {
-	static_assert(!rider::faiz::is_object<T>::value, "");
-	static_assert(!rider::faiz::is_object<const T>::value, "");
-	static_assert(!rider::faiz::is_object<volatile T>::value, "");
-	static_assert(!rider::faiz::is_object<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_object_v<T>, "");
-	static_assert(!rider::faiz::is_object_v<const T>, "");
-	static_assert(!rider::faiz::is_object_v<volatile T>, "");
-	static_assert(!rider::faiz::is_object_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_object<T>::value, "");
+	static_assert(!Rider::Faiz::is_object<const T>::value, "");
+	static_assert(!Rider::Faiz::is_object<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_object<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_object_v<T>, "");
+	static_assert(!Rider::Faiz::is_object_v<const T>, "");
+	static_assert(!Rider::Faiz::is_object_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_object_v<const volatile T>, "");
 }
 
 class incomplete_type;
@@ -67,7 +67,7 @@ main()
 	// An object type is a (possibly cv-qualified) type that is not a function
 	// type, not a reference type, and not a void type.
 
-	test_is_object<rider::faiz::nullptr_t>();
+	test_is_object<Rider::Faiz::nullptr_t>();
 	test_is_object<void*>();
 	test_is_object<char[3]>();
 	test_is_object<char[]>();

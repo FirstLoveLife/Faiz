@@ -25,7 +25,7 @@
 void
 test01()
 {
-	using rider::faiz::is_integral;
+	using Rider::Faiz::is_integral;
 	using namespace __gnu_test;
 
 	static_assert(test_category<is_integral, void>(false), "");

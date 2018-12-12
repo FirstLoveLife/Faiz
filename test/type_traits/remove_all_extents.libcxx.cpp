@@ -26,11 +26,11 @@ void
 test_remove_all_extents()
 {
 	static_assert(
-		(rider::faiz::is_same<typename rider::faiz::remove_all_extents<T>::type,
+		(Rider::Faiz::is_same<typename Rider::Faiz::remove_all_extents<T>::type,
 			U>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::remove_all_extents_t<T>, U>::value),
+		(Rider::Faiz::is_same<Rider::Faiz::remove_all_extents_t<T>, U>::value),
 		"");
 }
 

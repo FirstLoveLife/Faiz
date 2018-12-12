@@ -1,6 +1,6 @@
 #ifndef TUPLEE
 #define TUPLEE
-namespace rider::faiz
+namespace Rider::Faiz
 {
     struct ignore_t
     {
@@ -15,6 +15,6 @@ namespace rider::faiz
         }
     };
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #endif

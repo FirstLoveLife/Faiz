@@ -1,7 +1,7 @@
 #ifndef TYPES
 #define TYPES
 // steal from libcxx
-namespace rider::faiz
+namespace Rider::Faiz
 {
     typedef unsigned char __u_char;
     typedef unsigned short int __u_short;
@@ -192,5 +192,5 @@ namespace rider::faiz
 
 #undef __STD_TYPE
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

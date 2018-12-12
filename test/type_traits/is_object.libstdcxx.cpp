@@ -23,7 +23,7 @@
 void
 test01()
 {
-	using rider::faiz::is_object;
+	using Rider::Faiz::is_object;
 	using namespace __gnu_test;
 
 	static_assert(test_category<is_object, int(int)>(false), "");

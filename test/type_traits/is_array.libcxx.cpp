@@ -19,28 +19,28 @@
  void
  test_is_array()
  {
-     static_assert(rider::faiz::is_array<T>::value, "");
-     static_assert(rider::faiz::is_array<const T>::value, "");
-     static_assert(rider::faiz::is_array<volatile T>::value, "");
-     static_assert(rider::faiz::is_array<const volatile T>::value, "");
-     static_assert(rider::faiz::is_array_v<T>, "");
-     static_assert(rider::faiz::is_array_v<const T>, "");
-     static_assert(rider::faiz::is_array_v<volatile T>, "");
-     static_assert(rider::faiz::is_array_v<const volatile T>, "");
+     static_assert(Rider::Faiz::is_array<T>::value, "");
+     static_assert(Rider::Faiz::is_array<const T>::value, "");
+     static_assert(Rider::Faiz::is_array<volatile T>::value, "");
+     static_assert(Rider::Faiz::is_array<const volatile T>::value, "");
+     static_assert(Rider::Faiz::is_array_v<T>, "");
+     static_assert(Rider::Faiz::is_array_v<const T>, "");
+     static_assert(Rider::Faiz::is_array_v<volatile T>, "");
+     static_assert(Rider::Faiz::is_array_v<const volatile T>, "");
  }
 
  template<class T>
  void
  test_is_not_array()
  {
-     static_assert(!rider::faiz::is_array<T>::value, "");
-     static_assert(!rider::faiz::is_array<const T>::value, "");
-     static_assert(!rider::faiz::is_array<volatile T>::value, "");
-     static_assert(!rider::faiz::is_array<const volatile T>::value, "");
-     static_assert(!rider::faiz::is_array_v<T>, "");
-     static_assert(!rider::faiz::is_array_v<const T>, "");
-     static_assert(!rider::faiz::is_array_v<volatile T>, "");
-     static_assert(!rider::faiz::is_array_v<const volatile T>, "");
+     static_assert(!Rider::Faiz::is_array<T>::value, "");
+     static_assert(!Rider::Faiz::is_array<const T>::value, "");
+     static_assert(!Rider::Faiz::is_array<volatile T>::value, "");
+     static_assert(!Rider::Faiz::is_array<const volatile T>::value, "");
+     static_assert(!Rider::Faiz::is_array_v<T>, "");
+     static_assert(!Rider::Faiz::is_array_v<const T>, "");
+     static_assert(!Rider::Faiz::is_array_v<volatile T>, "");
+     static_assert(!Rider::Faiz::is_array_v<const volatile T>, "");
  }
 
  class Empty

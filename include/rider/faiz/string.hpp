@@ -1,7 +1,7 @@
 #ifndef STRING
 #define STRING
 #include "rider/faiz/iosfwd.hpp"
-namespace rider::faiz
+namespace Rider::Faiz
 {
     template<class StateT>
     class fpos
@@ -53,5 +53,5 @@ namespace rider::faiz
         }
     };
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

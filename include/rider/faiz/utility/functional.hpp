@@ -22,7 +22,7 @@
 #include "rider/faiz/utility/invoke.hpp"
 #include <functional>
 
-namespace rider::faiz::range
+namespace Rider::Faiz::range
 {
 	struct equal_to
 	{
@@ -882,6 +882,6 @@ namespace rider::faiz::range
 		}
 	};
 	/// @}
-} // namespace rider::faiz::range
+} // namespace Rider::Faiz::range
 
 #endif

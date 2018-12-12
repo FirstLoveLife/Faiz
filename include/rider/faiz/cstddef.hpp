@@ -1,13 +1,13 @@
 #ifndef SCTDDEF
 #define SCTDDEF
 #include <cstddef>
-namespace rider::faiz
+namespace Rider::Faiz
 {
 
 	using size_t = __SIZE_TYPE__;
 	using std::nullptr_t;
 
-	// faiz::ptrdiff_t is the signed integer type of the result of subtracting
+	// Faiz::ptrdiff_t is the signed integer type of the result of subtracting
 	// two pointers.
 	// 	using ptrdiff_t = __PTRDIFF_TYPE__;
 	// #	if __cplusplus >= 201103L
@@ -58,13 +58,13 @@ namespace rider::faiz
 	// 	using nullptr_t = decltype(nullptr);
 	// #	endif
 
-	// 	}; // namespace rider::faiz
+	// 	}; // namespace Rider::Faiz
 
 	// 	inline constexpr nullptr_t
 	// 	get_nullptr_t()
 	// 	{
 	// 		return nullptr_t(0);
 	// 	}
-	// #	define nullptr rider::faiz::get_nullptr_t()
-} // namespace rider::faiz
+	// #	define nullptr Rider::Faiz::get_nullptr_t()
+} // namespace Rider::Faiz
 #endif

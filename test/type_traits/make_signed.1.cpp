@@ -28,10 +28,10 @@
  void
  test01()
  {
-     using rider::faiz::make_signed;
-     using rider::faiz::is_same;
-     using rider::faiz::is_signed;
-     using rider::faiz::is_volatile;
+     using Rider::Faiz::make_signed;
+     using Rider::Faiz::is_same;
+     using Rider::Faiz::is_signed;
+     using Rider::Faiz::is_volatile;
 
      // Positive tests.
      typedef make_signed<const int>::type test2_type;

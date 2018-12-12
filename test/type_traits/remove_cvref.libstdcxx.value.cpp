@@ -24,8 +24,8 @@
 void
 test01()
 {
-	using rider::faiz::remove_cvref;
-	using rider::faiz::is_same;
+	using Rider::Faiz::remove_cvref;
+	using Rider::Faiz::is_same;
 	using namespace __gnu_test;
 
 	static_assert(

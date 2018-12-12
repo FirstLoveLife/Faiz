@@ -20,10 +20,10 @@ void
 test_decay()
 {
 	static_assert(
-		(rider::faiz::is_same<typename rider::faiz::decay<T>::type, U>::value),
+		(Rider::Faiz::is_same<typename Rider::Faiz::decay<T>::type, U>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::decay_t<T>, U>::value), "");
+		(Rider::Faiz::is_same<Rider::Faiz::decay_t<T>, U>::value), "");
 }
 
 int

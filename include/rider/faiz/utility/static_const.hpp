@@ -13,7 +13,7 @@
 #define STATIC_CONST
 
 #include "rider/faiz/faiz_fwd.hpp"
-namespace rider::faiz
+namespace Rider::Faiz
 {
 
 	template<typename T>
@@ -24,6 +24,6 @@ namespace rider::faiz
 
 	template<typename T>
 	constexpr T static_const<T>::value;
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #endif

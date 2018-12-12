@@ -16,7 +16,7 @@
 
 struct A
 {
-	A(rider::faiz::nullptr_t)
+	A(Rider::Faiz::nullptr_t)
 	{}
 };
 
@@ -90,11 +90,11 @@ test_nullptr_conversions()
 int
 main()
 {
-	static_assert(sizeof(rider::faiz::nullptr_t) == sizeof(void*),
-		"sizeof(rider::faiz::nullptr_t) == sizeof(void*)");
+	static_assert(sizeof(Rider::Faiz::nullptr_t) == sizeof(void*),
+		"sizeof(Rider::Faiz::nullptr_t) == sizeof(void*)");
 
 	{
-		test_conversions<rider::faiz::nullptr_t>();
+		test_conversions<Rider::Faiz::nullptr_t>();
 		test_conversions<void*>();
 		test_conversions<A*>();
 		test_conversions<void (*)()>();
@@ -103,15 +103,15 @@ main()
 	}
 	{
 #ifdef _LIBCPP_HAS_NO_NULLPTR
-		static_assert(!has_less<rider::faiz::nullptr_t>::value, "");
+		static_assert(!has_less<Rider::Faiz::nullptr_t>::value, "");
 		// FIXME: our C++03 nullptr emulation still allows for comparisons
 		// with other pointer types by way of the conversion operator.
 		// static_assert(!has_less<void*>::value, "");
 #else
 		// TODO Enable this assertion when all compilers implement core DR 583.
-		// static_assert(!has_less<rider::faiz::nullptr_t>::value, "");
+		// static_assert(!has_less<Rider::Faiz::nullptr_t>::value, "");
 #endif
-		test_comparisons<rider::faiz::nullptr_t>();
+		test_comparisons<Rider::Faiz::nullptr_t>();
 		test_comparisons<void*>();
 		test_comparisons<A*>();
 		test_comparisons<void (*)()>();

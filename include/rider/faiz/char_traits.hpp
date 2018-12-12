@@ -6,7 +6,7 @@
 #include "rider/faiz/debug.hpp"
 
 #include <ios>
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	template<class CharT>
 	struct char_traits
@@ -669,5 +669,5 @@ namespace rider::faiz
 			assign(*s, a);
 		return r;
 	}
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

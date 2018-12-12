@@ -5,7 +5,7 @@
 #	include "rider/faiz/initializer_list.hpp"
 #	include "rider/faiz/type_traits.hpp"
 #	include "rider/faiz/utility.hpp"
-namespace rider::faiz
+namespace Rider::Faiz
 {
 
 

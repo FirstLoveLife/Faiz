@@ -6,7 +6,7 @@
 #include "rider/faiz/utility.hpp" // for forward
 #include <system_error> // for hash
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 
 	// TODO: smartptr
@@ -14,25 +14,25 @@ namespace rider::faiz
 	class not_null
 	{
 	public:
-		static_assert(faiz::is_assignable<T&, faiz::nullptr_t>::value,
+		static_assert(Faiz::is_assignable<T&, Faiz::nullptr_t>::value,
 			"T cannot be assigned nullptr.");
 
 		template<typename U,
-			typename = faiz::enable_if_t<faiz::is_convertible<U, T>::value>>
-		constexpr explicit not_null(U&& u) : ptr_(faiz::forward<U>(u))
+			typename = Faiz::enable_if_t<Faiz::is_convertible<U, T>::value>>
+		constexpr explicit not_null(U&& u) : ptr_(Faiz::forward<U>(u))
 		{
 			static_assert(ptr_ != nullptr, "ptr should not be null!");
 		}
 
 		template<typename
-			= faiz::enable_if_t<!faiz::is_same<faiz::nullptr_t, T>::value>>
+			= Faiz::enable_if_t<!Faiz::is_same<Faiz::nullptr_t, T>::value>>
 		constexpr explicit not_null(T u) : ptr_(u)
 		{
 			static_assert(ptr_ != nullptr, "ptr should not be null!");
 		}
 
 		template<typename U,
-			typename = faiz::enable_if_t<faiz::is_convertible<U, T>::value>>
+			typename = Faiz::enable_if_t<Faiz::is_convertible<U, T>::value>>
 		constexpr not_null(const not_null<U>& other) : not_null(other.get())
 		{}
 
@@ -64,8 +64,8 @@ namespace rider::faiz
 
 		// prevents compilation when someone attempts to assign a null pointer
 		// constant
-		not_null(faiz::nullptr_t) = delete;
-		not_null& operator=(faiz::nullptr_t) = delete;
+		not_null(Faiz::nullptr_t) = delete;
+		not_null& operator=(Faiz::nullptr_t) = delete;
 
 		// unwanted operators...pointers only point to single objects!
 		not_null&
@@ -80,9 +80,9 @@ namespace rider::faiz
 		not_null
 		operator--(int)
 			= delete;
-		not_null& operator+=(faiz::ptrdiff_t) = delete;
-		not_null& operator-=(faiz::ptrdiff_t) = delete;
-		void operator[](faiz::ptrdiff_t) const = delete;
+		not_null& operator+=(Faiz::ptrdiff_t) = delete;
+		not_null& operator-=(Faiz::ptrdiff_t) = delete;
+		void operator[](Faiz::ptrdiff_t) const = delete;
 
 	private:
 		T ptr_;
@@ -92,8 +92,8 @@ namespace rider::faiz
 	auto
 	make_not_null(T&& t)
 	{
-		return faiz::not_null<faiz::remove_cv_t<faiz::remove_reference_t<T>>>{
-			faiz::forward<T>(t)};
+		return Faiz::not_null<Faiz::remove_cv_t<Faiz::remove_reference_t<T>>>{
+			Faiz::forward<T>(t)};
 	}
 
 	template<class T>
@@ -154,28 +154,28 @@ namespace rider::faiz
 
 	// more unwanted operators
 	template<class T, class U>
-	faiz::ptrdiff_t
+	Faiz::ptrdiff_t
 	operator-(const not_null<T>&, const not_null<U>&)
 		= delete;
 	template<class T>
 	not_null<T>
-	operator-(const not_null<T>&, faiz::ptrdiff_t) = delete;
+	operator-(const not_null<T>&, Faiz::ptrdiff_t) = delete;
 	template<class T>
 	not_null<T>
-	operator+(const not_null<T>&, faiz::ptrdiff_t) = delete;
+	operator+(const not_null<T>&, Faiz::ptrdiff_t) = delete;
 	template<class T>
 	not_null<T>
-	operator+(faiz::ptrdiff_t, const not_null<T>&) = delete;
+	operator+(Faiz::ptrdiff_t, const not_null<T>&) = delete;
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 namespace std
 {
 	template<class T>
-	struct hash<rider::faiz::not_null<T>>
+	struct hash<Rider::Faiz::not_null<T>>
 	{
-		rider::faiz::size_t
-		operator()(const rider::faiz::not_null<T>& value) const
+		Rider::Faiz::size_t
+		operator()(const Rider::Faiz::not_null<T>& value) const
 		{
 			return hash<T>{}(value);
 		}

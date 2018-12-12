@@ -19,11 +19,11 @@ template<class T, class U>
 void
 test_add_cv_imp()
 {
-	static_assert((rider::faiz::is_same<typename rider::faiz::add_cv<T>::type,
+	static_assert((Rider::Faiz::is_same<typename Rider::Faiz::add_cv<T>::type,
 					  const volatile U>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::add_cv_t<T>, U>::value), "");
+		(Rider::Faiz::is_same<Rider::Faiz::add_cv_t<T>, U>::value), "");
 }
 
 template<class T>

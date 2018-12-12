@@ -2,7 +2,7 @@
 #define STDINT
 #include "rider/faiz/types.hpp"
 // steal from libcxx
-namespace rider::faiz
+namespace Rider::Faiz
 {
     typedef __int_least8_t int_least8_t;
     typedef __int_least16_t int_least16_t;
@@ -279,5 +279,5 @@ namespace rider::faiz
 #endif
 
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

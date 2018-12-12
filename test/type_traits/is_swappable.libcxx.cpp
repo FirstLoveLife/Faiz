@@ -102,27 +102,27 @@ main()
 	using namespace MyNS;
 	{
 		// 	// Test that is_swappable applies an lvalue reference to the type.
-		// static_assert(rider::faiz::is_swappable<A>::value, "");
-		// static_assert(rider::faiz::is_swappable<A&>::value, "");
-		// static_assert(!rider::faiz::is_swappable<M>::value, "");
-		// static_assert(!rider::faiz::is_swappable<M&&>::value, "");
-	} // static_assert(!rider::faiz::is_swappable<B>::value, "");
-	// static_assert(rider::faiz::is_swappable<C>::value, "");
+		// static_assert(Rider::Faiz::is_swappable<A>::value, "");
+		// static_assert(Rider::Faiz::is_swappable<A&>::value, "");
+		// static_assert(!Rider::Faiz::is_swappable<M>::value, "");
+		// static_assert(!Rider::Faiz::is_swappable<M&&>::value, "");
+	} // static_assert(!Rider::Faiz::is_swappable<B>::value, "");
+	// static_assert(Rider::Faiz::is_swappable<C>::value, "");
 	{
 		// test non-referencable types
-		static_assert(!rider::faiz::is_swappable<void>::value, "");
-		static_assert(!rider::faiz::is_swappable<int() const>::value, "");
-		static_assert(!rider::faiz::is_swappable<int>::value, "");
-		static_assert(!rider::faiz::is_swappable<int()&>::value, "");
+		static_assert(!Rider::Faiz::is_swappable<void>::value, "");
+		static_assert(!Rider::Faiz::is_swappable<int() const>::value, "");
+		static_assert(!Rider::Faiz::is_swappable<int>::value, "");
+		static_assert(!Rider::Faiz::is_swappable<int()&>::value, "");
 	}
 	{
 		// test that a deleted swap is correctly handled.
-		static_assert(!rider::faiz::is_swappable<DeletedSwap>::value, "");
+		static_assert(!Rider::Faiz::is_swappable<DeletedSwap>::value, "");
 	}
 	{
 		// test that a swap with ambiguous overloads is handled correctly.
 		static_assert(
-			!rider::faiz::is_swappable<MyNS2::AmbiguousSwap>::value, "");
+			!Rider::Faiz::is_swappable<MyNS2::AmbiguousSwap>::value, "");
 	} // __swappable
 
 	namespace __detail
@@ -235,7 +235,7 @@ main()
 
 	{
 		// test for presence of is_swappable_v
-		static_assert(rider::faiz::is_swappable_v<int>, "");
-		static_assert(!rider::faiz::is_swappable_v<M>, "");
+		static_assert(Rider::Faiz::is_swappable_v<int>, "");
+		static_assert(!Rider::Faiz::is_swappable_v<M>, "");
 	}
 }

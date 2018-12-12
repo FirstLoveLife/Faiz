@@ -79,20 +79,20 @@ template<class T>
 void
 test_is_constructible()
 {
-	static_assert((rider::faiz::is_constructible<T>::value), "");
-	LIBCPP11_STATIC_ASSERT((rider::faiz::is_constructible<T>::type::value), "");
-	static_assert(rider::faiz::is_constructible_v<T>, "");
+	static_assert((Rider::Faiz::is_constructible<T>::value), "");
+	LIBCPP11_STATIC_ASSERT((Rider::Faiz::is_constructible<T>::type::value), "");
+	static_assert(Rider::Faiz::is_constructible_v<T>, "");
 }
 
 template<class T, class A0>
 void
 test_is_constructible()
 {
-	static_assert((rider::faiz::is_constructible<T, A0>::value), "");
+	static_assert((Rider::Faiz::is_constructible<T, A0>::value), "");
 	LIBCPP11_STATIC_ASSERT(
-		(rider::faiz::is_constructible<T, A0>::type::value), "");
+		(Rider::Faiz::is_constructible<T, A0>::type::value), "");
 #if TEST_STD_VER > 14
-	static_assert((rider::faiz::is_constructible_v<T, A0>), "");
+	static_assert((Rider::Faiz::is_constructible_v<T, A0>), "");
 #endif
 }
 
@@ -100,11 +100,11 @@ template<class T, class A0, class A1>
 void
 test_is_constructible()
 {
-	static_assert((rider::faiz::is_constructible<T, A0, A1>::value), "");
+	static_assert((Rider::Faiz::is_constructible<T, A0, A1>::value), "");
 	LIBCPP11_STATIC_ASSERT(
-		(rider::faiz::is_constructible<T, A0, A1>::type::value), "");
+		(Rider::Faiz::is_constructible<T, A0, A1>::type::value), "");
 #if TEST_STD_VER > 14
-	static_assert((rider::faiz::is_constructible_v<T, A0, A1>), "");
+	static_assert((Rider::Faiz::is_constructible_v<T, A0, A1>), "");
 #endif
 }
 
@@ -112,11 +112,11 @@ template<class T, class A0, class A1, class A2>
 void
 test_is_constructible()
 {
-	static_assert((rider::faiz::is_constructible<T, A0, A1, A2>::value), "");
+	static_assert((Rider::Faiz::is_constructible<T, A0, A1, A2>::value), "");
 	LIBCPP11_STATIC_ASSERT(
-		(rider::faiz::is_constructible<T, A0, A1, A2>::type::value), "");
+		(Rider::Faiz::is_constructible<T, A0, A1, A2>::type::value), "");
 #if TEST_STD_VER > 14
-	static_assert((rider::faiz::is_constructible_v<T, A0, A1, A2>), "");
+	static_assert((Rider::Faiz::is_constructible_v<T, A0, A1, A2>), "");
 #endif
 }
 
@@ -124,11 +124,11 @@ template<class T>
 void
 test_is_not_constructible()
 {
-	static_assert((!rider::faiz::is_constructible<T>::value), "");
+	static_assert((!Rider::Faiz::is_constructible<T>::value), "");
 	LIBCPP11_STATIC_ASSERT(
-		(!rider::faiz::is_constructible<T>::type::value), "");
+		(!Rider::Faiz::is_constructible<T>::type::value), "");
 #if TEST_STD_VER > 14
-	static_assert((!rider::faiz::is_constructible_v<T>), "");
+	static_assert((!Rider::Faiz::is_constructible_v<T>), "");
 #endif
 }
 
@@ -136,10 +136,10 @@ template<class T, class A0>
 void
 test_is_not_constructible()
 {
-	static_assert((!rider::faiz::is_constructible<T, A0>::value), "");
+	static_assert((!Rider::Faiz::is_constructible<T, A0>::value), "");
 	LIBCPP11_STATIC_ASSERT(
-		(!rider::faiz::is_constructible<T, A0>::type::value), "");
-	static_assert((!rider::faiz::is_constructible_v<T, A0>), "");
+		(!Rider::Faiz::is_constructible<T, A0>::type::value), "");
+	static_assert((!Rider::Faiz::is_constructible_v<T, A0>), "");
 }
 
 #if TEST_STD_VER >= 11
@@ -196,16 +196,16 @@ main()
 	test_is_constructible<int, S>();
 	test_is_not_constructible<int&, S>();
 
-	// test_is_constructible<void (&)(), void (&)()>();
-	// test_is_constructible<void (&)(), void()>();
-	// test_is_constructible<void(&&)(), void(&&)()>();
-	// test_is_constructible<void(&&)(), void()>();
-	// test_is_constructible<void(&&)(), void (&)()>();
-	// test_is_constructible<int const&, int>();
-	// test_is_constructible<int const&, int&&>();
+	test_is_constructible<void (&)(), void (&)()>();
+	test_is_constructible<void (&)(), void()>();
+	test_is_constructible<void(&&)(), void(&&)()>();
+	test_is_constructible<void(&&)(), void()>();
+	test_is_constructible<void(&&)(), void (&)()>();
+	test_is_constructible<int const&, int>();
+	test_is_constructible<int const&, int&&>();
 
-	// test_is_constructible<int&&, double&>();
-	// test_is_constructible<void (&)(), void(&&)()>();
+	test_is_constructible<int&&, double&>();
+	test_is_constructible<void (&)(), void(&&)()>();
 
 	test_is_not_constructible<int&, int>();
 	test_is_not_constructible<int&, int const&>();
@@ -261,7 +261,7 @@ main()
 	test_is_constructible<const int&, ExplicitTo<int&&>>();
 
 	static_assert(
-		rider::faiz::is_constructible<int&&, ExplicitTo<int&&>>::value, "");
+		Rider::Faiz::is_constructible<int&&, ExplicitTo<int&&>>::value, "");
 #ifdef __clang__
 #	if defined(CLANG_TEST_VER) && CLANG_TEST_VER < 400
 	static_assert(clang_disallows_valid_static_cast_bug, "bug still exists");
@@ -269,22 +269,22 @@ main()
 	// FIXME Clang disallows this construction because it thinks that
 	// 'static_cast<int&&>(declval<ExplicitTo<int&&>>())' is ill-formed.
 	LIBCPP_STATIC_ASSERT(clang_disallows_valid_static_cast_bug
-			!= rider::faiz::is_constructible<int&&, ExplicitTo<int&&>>::value,
+			!= Rider::Faiz::is_constructible<int&&, ExplicitTo<int&&>>::value,
 		"");
 	((void)clang_disallows_valid_static_cast_bug); // Prevent unused warning
 #else
 	static_assert(clang_disallows_valid_static_cast_bug == false, "");
 	LIBCPP_STATIC_ASSERT(
-		rider::faiz::is_constructible<int&&, ExplicitTo<int&&>>::value, "");
+		Rider::Faiz::is_constructible<int&&, ExplicitTo<int&&>>::value, "");
 #endif
 
 #ifdef __clang__
 	// FIXME Clang and GCC disagree on the validity of this expression.
 	test_is_constructible<const int&, ExplicitTo<int>>();
 	static_assert(
-		rider::faiz::is_constructible<int&&, ExplicitTo<int>>::value, "");
+		Rider::Faiz::is_constructible<int&&, ExplicitTo<int>>::value, "");
 	LIBCPP_STATIC_ASSERT(clang_disallows_valid_static_cast_bug
-			!= rider::faiz::is_constructible<int&&, ExplicitTo<int>>::value,
+			!= Rider::Faiz::is_constructible<int&&, ExplicitTo<int>>::value,
 		"");
 #else
 	test_is_not_constructible<const int&, ExplicitTo<int>>();
@@ -294,21 +294,3 @@ main()
 	// Binding through temporary behaves like copy-initialization,
 	// see [dcl.init.ref] p. 5, very last sub-bullet:
 	test_is_not_constructible<const int&, ExplicitTo<double&&>>();
-	test_is_not_constructible<int&&, ExplicitTo<double&&>>();
-
-
-// TODO: Remove this workaround once Clang <= 3.7 are no longer used regularly.
-// In those compiler versions the __is_constructible builtin gives the wrong
-// results for abominable function types.
-#if(defined(TEST_APPLE_CLANG_VER) && TEST_APPLE_CLANG_VER < 703) \
-	|| (defined(TEST_CLANG_VER) && TEST_CLANG_VER < 308)
-#	define WORKAROUND_CLANG_BUG
-#endif
-#if !defined(WORKAROUND_CLANG_BUG)
-	test_is_not_constructible<void()>();
-	test_is_not_constructible<void() const>();
-	test_is_not_constructible<void() volatile>();
-	test_is_not_constructible<void()&>();
-	test_is_not_constructible<void() &&>();
-#endif
-}

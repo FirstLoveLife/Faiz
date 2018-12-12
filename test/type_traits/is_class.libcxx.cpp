@@ -13,33 +13,33 @@
 
 #include "../test_macros.h"
 #include "rider/faiz/type_traits.hpp"
-#include <cstddef> // for rider::faiz::nullptr_t
+#include <cstddef> // for Rider::Faiz::nullptr_t
 template<class T>
 void
 test_is_class()
 {
-	static_assert(rider::faiz::is_class<T>::value, "");
-	static_assert(rider::faiz::is_class<const T>::value, "");
-	static_assert(rider::faiz::is_class<volatile T>::value, "");
-	static_assert(rider::faiz::is_class<const volatile T>::value, "");
-	static_assert(rider::faiz::is_class_v<T>, "");
-	static_assert(rider::faiz::is_class_v<const T>, "");
-	static_assert(rider::faiz::is_class_v<volatile T>, "");
-	static_assert(rider::faiz::is_class_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_class<T>::value, "");
+	static_assert(Rider::Faiz::is_class<const T>::value, "");
+	static_assert(Rider::Faiz::is_class<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_class<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_class_v<T>, "");
+	static_assert(Rider::Faiz::is_class_v<const T>, "");
+	static_assert(Rider::Faiz::is_class_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_class_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_class()
 {
-	static_assert(!rider::faiz::is_class<T>::value, "");
-	static_assert(!rider::faiz::is_class<const T>::value, "");
-	static_assert(!rider::faiz::is_class<volatile T>::value, "");
-	static_assert(!rider::faiz::is_class<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_class_v<T>, "");
-	static_assert(!rider::faiz::is_class_v<const T>, "");
-	static_assert(!rider::faiz::is_class_v<volatile T>, "");
-	static_assert(!rider::faiz::is_class_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_class<T>::value, "");
+	static_assert(!Rider::Faiz::is_class<const T>::value, "");
+	static_assert(!Rider::Faiz::is_class<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_class<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_class_v<T>, "");
+	static_assert(!Rider::Faiz::is_class_v<const T>, "");
+	static_assert(!Rider::Faiz::is_class_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_class_v<const volatile T>, "");
 }
 
 class Empty
@@ -81,7 +81,7 @@ main()
 	test_is_class<Abstract>();
 	test_is_class<incomplete_type>();
 
-	test_is_not_class<rider::faiz::nullptr_t>();
+	test_is_not_class<Rider::Faiz::nullptr_t>();
 	test_is_not_class<void>();
 	test_is_not_class<int>();
 	test_is_not_class<int&>();

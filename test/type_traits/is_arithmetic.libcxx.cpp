@@ -13,34 +13,35 @@
 
 #include "../test_macros.h"
 #include "rider/faiz/type_traits.hpp"
+#include <complex>
 #include <cstddef> // for std::nullptr_t
 
 template<class T>
 void
 test_is_arithmetic()
 {
-	static_assert(rider::faiz::is_arithmetic<T>::value, "");
-	static_assert(rider::faiz::is_arithmetic<const T>::value, "");
-	static_assert(rider::faiz::is_arithmetic<volatile T>::value, "");
-	static_assert(rider::faiz::is_arithmetic<const volatile T>::value, "");
-	static_assert(rider::faiz::is_arithmetic_v<T>, "");
-	static_assert(rider::faiz::is_arithmetic_v<const T>, "");
-	static_assert(rider::faiz::is_arithmetic_v<volatile T>, "");
-	static_assert(rider::faiz::is_arithmetic_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_arithmetic<T>::value, "");
+	static_assert(Rider::Faiz::is_arithmetic<const T>::value, "");
+	static_assert(Rider::Faiz::is_arithmetic<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_arithmetic<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_arithmetic_v<T>, "");
+	static_assert(Rider::Faiz::is_arithmetic_v<const T>, "");
+	static_assert(Rider::Faiz::is_arithmetic_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_arithmetic_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_arithmetic()
 {
-	static_assert(!rider::faiz::is_arithmetic<T>::value, "");
-	static_assert(!rider::faiz::is_arithmetic<const T>::value, "");
-	static_assert(!rider::faiz::is_arithmetic<volatile T>::value, "");
-	static_assert(!rider::faiz::is_arithmetic<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_arithmetic_v<T>, "");
-	static_assert(!rider::faiz::is_arithmetic_v<const T>, "");
-	static_assert(!rider::faiz::is_arithmetic_v<volatile T>, "");
-	static_assert(!rider::faiz::is_arithmetic_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_arithmetic<T>::value, "");
+	static_assert(!Rider::Faiz::is_arithmetic<const T>::value, "");
+	static_assert(!Rider::Faiz::is_arithmetic<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_arithmetic<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_arithmetic_v<T>, "");
+	static_assert(!Rider::Faiz::is_arithmetic_v<const T>, "");
+	static_assert(!Rider::Faiz::is_arithmetic_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_arithmetic_v<const volatile T>, "");
 }
 
 class incomplete_type;
@@ -91,12 +92,13 @@ main()
 	test_is_arithmetic<wchar_t>();
 	test_is_arithmetic<double>();
 
-	test_is_not_arithmetic<rider::faiz::nullptr_t>();
+	test_is_not_arithmetic<Rider::Faiz::nullptr_t>();
 	test_is_not_arithmetic<void>();
 	test_is_not_arithmetic<int&>();
 	test_is_not_arithmetic<int&&>();
 	test_is_not_arithmetic<int*>();
 	test_is_not_arithmetic<const int*>();
+	test_is_not_arithmetic<std::complex<double>>();
 	test_is_not_arithmetic<char[3]>();
 	test_is_not_arithmetic<char[]>();
 	test_is_not_arithmetic<Union>();

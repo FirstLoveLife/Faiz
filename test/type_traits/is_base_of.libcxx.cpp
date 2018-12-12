@@ -19,21 +19,21 @@ template<class T, class U>
 void
 test_is_base_of()
 {
-	static_assert((rider::faiz::is_base_of<T, U>::value), "");
-	static_assert((rider::faiz::is_base_of<const T, U>::value), "");
-	static_assert((rider::faiz::is_base_of<T, const U>::value), "");
-	static_assert((rider::faiz::is_base_of<const T, const U>::value), "");
-	static_assert((rider::faiz::is_base_of_v<T, U>), "");
-	static_assert((rider::faiz::is_base_of_v<const T, U>), "");
-	static_assert((rider::faiz::is_base_of_v<T, const U>), "");
-	static_assert((rider::faiz::is_base_of_v<const T, const U>), "");
+	static_assert((Rider::Faiz::is_base_of<T, U>::value), "");
+	static_assert((Rider::Faiz::is_base_of<const T, U>::value), "");
+	static_assert((Rider::Faiz::is_base_of<T, const U>::value), "");
+	static_assert((Rider::Faiz::is_base_of<const T, const U>::value), "");
+	static_assert((Rider::Faiz::is_base_of_v<T, U>), "");
+	static_assert((Rider::Faiz::is_base_of_v<const T, U>), "");
+	static_assert((Rider::Faiz::is_base_of_v<T, const U>), "");
+	static_assert((Rider::Faiz::is_base_of_v<const T, const U>), "");
 }
 
 template<class T, class U>
 void
 test_is_not_base_of()
 {
-	static_assert((!rider::faiz::is_base_of<T, U>::value), "");
+	static_assert((!Rider::Faiz::is_base_of<T, U>::value), "");
 }
 
 struct B

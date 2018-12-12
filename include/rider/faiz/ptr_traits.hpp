@@ -3,7 +3,7 @@
 #include "rider/faiz/cstddef.hpp"
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/utility.hpp"
-namespace rider::faiz
+namespace Rider::Faiz
 {
     class undefined;
 
@@ -43,7 +43,7 @@ namespace rider::faiz
 
     template<typename T>
     using make_not_void =
-        typename faiz::conditional<is_void<T>::value, undefined, T>::type;
+        typename Faiz::conditional<is_void<T>::value, undefined, T>::type;
 
     /**
      * @brief  Uniform interface to all pointer-like types
@@ -76,11 +76,11 @@ namespace rider::faiz
 
         /// The type pointed to.
         using elementtype =
-            faiz::detected_or_t<get_first_arg_t<_Ptr>, elementtype_aux, _Ptr>;
+            Faiz::detected_or_t<get_first_arg_t<_Ptr>, elementtype_aux, _Ptr>;
 
         /// The type used to represent the difference between two pointers.
         using differencetype =
-            faiz::detected_or_t<ptrdiff_t, differencetype_aux, _Ptr>;
+            Faiz::detected_or_t<ptrdiff_t, differencetype_aux, _Ptr>;
 
         /// A pointer to a different type.
         template<typename U>
@@ -120,7 +120,7 @@ namespace rider::faiz
          */
         static pointer pointer_to(make_not_void<elementtype>& r) noexcept
         {
-            return faiz::addressof(r);
+            return Faiz::addressof(r);
         }
     };
 
@@ -128,26 +128,26 @@ namespace rider::faiz
     template<typename Ptr>
     constexpr decltype(auto) to_address_aux(const Ptr& ptr) noexcept
     {
-        return faiz::pointer_traits<Ptr>::to_address(ptr);
+        return Faiz::pointer_traits<Ptr>::to_address(ptr);
     }
 
     template<typename Ptr, typename... None>
     constexpr auto to_address_aux(const Ptr& ptr, None...) noexcept
     {
-        return faiz::to_address_aux(ptr.operator->());
+        return Faiz::to_address_aux(ptr.operator->());
     }
 
     template<typename Tp>
     constexpr Tp* to_address(Tp* ptr) noexcept
     {
-        return faiz::to_address_aux(ptr);
+        return Faiz::to_address_aux(ptr);
     }
 
     template<typename Ptr>
     constexpr auto to_address(const Ptr& ptr) noexcept
     {
-        return faiz::to_address_aux(ptr);
+        return Faiz::to_address_aux(ptr);
     }
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

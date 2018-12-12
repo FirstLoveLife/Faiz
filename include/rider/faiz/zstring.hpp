@@ -1,7 +1,7 @@
 #ifndef ZSTRING
 #define ZSTRING
 #include "rider/faiz/string_view.hpp"
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	template<typename charT, typename traits = std::char_traits<charT>>
 	class basic_zstring_view : private basic_string_view<charT, traits>
@@ -97,5 +97,5 @@ namespace rider::faiz
 		using base_view_type::operator!=;
 		using base_view_type::compare;
 	};
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

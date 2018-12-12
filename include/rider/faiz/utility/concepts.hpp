@@ -24,7 +24,7 @@
 #include "rider/faiz/utility/swap.hpp"
 
 
-namespace rider::faiz::range
+namespace Rider::Faiz::range
 {
 	namespace detail
 	{
@@ -344,7 +344,7 @@ namespace rider::faiz::range
 			template<typename T>
 			auto
 			requires_(T&& t) -> decltype(concepts::valid_expr(
-				((void)faiz::swap((T &&) t, (T &&) t), 42)));
+				((void)range::swap((T &&) t, (T &&) t), 42)));
 
 			template<typename T, typename U>
 			auto
@@ -354,8 +354,8 @@ namespace rider::faiz::range
 					concepts::model_of<CommonReference,
 						range::detail::as_cref_t<T>,
 						range::detail::as_cref_t<U>>(),
-					((void)faiz::swap((T &&) t, (U &&) u), 42),
-					((void)faiz::swap((U &&) u, (T &&) t), 42)));
+					((void)range::swap((T &&) t, (U &&) u), 42),
+					((void)range::swap((U &&) u, (T &&) t), 42)));
 		};
 
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -617,7 +617,7 @@ namespace rider::faiz::range
 
 	template<typename T, typename U = T>
 	using Swappable = concepts::models<concepts::Swappable, T, U>;
-} // namespace rider::faiz::range
+} // namespace Rider::Faiz::range
 
 #define CONCEPT_PP_CAT_(X, Y) X##Y
 #define CONCEPT_PP_CAT(X, Y) CONCEPT_PP_CAT_(X, Y)

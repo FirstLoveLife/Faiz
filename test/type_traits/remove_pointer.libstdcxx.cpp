@@ -23,8 +23,8 @@
 void
 test01()
 {
-	using rider::faiz::remove_pointer;
-	using rider::faiz::is_same;
+	using Rider::Faiz::remove_pointer;
+	using Rider::Faiz::is_same;
 	using namespace __gnu_test;
 
 	static_assert(is_same<remove_pointer<int*>::type, int>::value, "");

@@ -1,6 +1,6 @@
 #ifndef CHECKD_DELETER
 #define CHECKD_DELETER
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	// std::shared_ptr alternative: https://stackoverflow.com/a/22091803/6949852
 	// https://stackoverflow.com/a/6802060/6949852:
@@ -49,7 +49,7 @@ namespace rider::faiz
 		operator()(T* x) const
 		{
 			// adl is shit.
-			faiz::checked_delete(x);
+			Faiz::checked_delete(x);
 		}
 	};
 
@@ -62,9 +62,9 @@ namespace rider::faiz
 		void
 		operator()(T* x) const
 		{
-			faiz::checked_array_delete(x);
+			Faiz::checked_array_delete(x);
 		}
 	};
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

@@ -1,7 +1,7 @@
 #include "../testsuite_tr1.h"
 #include "rider/faiz/type_traits.hpp"
 using namespace __gnu_test;
-using namespace rider::faiz;
+using namespace Rider::Faiz;
 void
 test01()
 {

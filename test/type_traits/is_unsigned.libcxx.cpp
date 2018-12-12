@@ -18,28 +18,28 @@ template<class T>
 void
 test_is_unsigned()
 {
-	static_assert(rider::faiz::is_unsigned<T>::value, "");
-	static_assert(rider::faiz::is_unsigned<const T>::value, "");
-	static_assert(rider::faiz::is_unsigned<volatile T>::value, "");
-	static_assert(rider::faiz::is_unsigned<const volatile T>::value, "");
-	static_assert(rider::faiz::is_unsigned_v<T>, "");
-	static_assert(rider::faiz::is_unsigned_v<const T>, "");
-	static_assert(rider::faiz::is_unsigned_v<volatile T>, "");
-	static_assert(rider::faiz::is_unsigned_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_unsigned<T>::value, "");
+	static_assert(Rider::Faiz::is_unsigned<const T>::value, "");
+	static_assert(Rider::Faiz::is_unsigned<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_unsigned<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_unsigned_v<T>, "");
+	static_assert(Rider::Faiz::is_unsigned_v<const T>, "");
+	static_assert(Rider::Faiz::is_unsigned_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_unsigned_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_unsigned()
 {
-	static_assert(!rider::faiz::is_unsigned<T>::value, "");
-	static_assert(!rider::faiz::is_unsigned<const T>::value, "");
-	static_assert(!rider::faiz::is_unsigned<volatile T>::value, "");
-	static_assert(!rider::faiz::is_unsigned<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_unsigned_v<T>, "");
-	static_assert(!rider::faiz::is_unsigned_v<const T>, "");
-	static_assert(!rider::faiz::is_unsigned_v<volatile T>, "");
-	static_assert(!rider::faiz::is_unsigned_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_unsigned<T>::value, "");
+	static_assert(!Rider::Faiz::is_unsigned<const T>::value, "");
+	static_assert(!Rider::Faiz::is_unsigned<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_unsigned<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_unsigned_v<T>, "");
+	static_assert(!Rider::Faiz::is_unsigned_v<const T>, "");
+	static_assert(!Rider::Faiz::is_unsigned_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_unsigned_v<const volatile T>, "");
 }
 
 class Class

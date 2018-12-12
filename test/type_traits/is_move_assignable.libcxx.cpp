@@ -18,16 +18,16 @@ template<class T>
 void
 test_is_move_assignable()
 {
-	static_assert((rider::faiz::is_move_assignable<T>::value), "");
-	static_assert((rider::faiz::is_move_assignable_v<T>), "");
+	static_assert((Rider::Faiz::is_move_assignable<T>::value), "");
+	static_assert((Rider::Faiz::is_move_assignable_v<T>), "");
 }
 
 template<class T>
 void
 test_is_not_move_assignable()
 {
-	static_assert((!rider::faiz::is_move_assignable<T>::value), "");
-	static_assert((!rider::faiz::is_move_assignable_v<T>), "");
+	static_assert((!Rider::Faiz::is_move_assignable<T>::value), "");
+	static_assert((!Rider::Faiz::is_move_assignable_v<T>), "");
 }
 
 class Empty

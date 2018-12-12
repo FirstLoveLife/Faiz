@@ -19,7 +19,7 @@
 #include <boost/preprocessor.hpp>
 #include <iostream>
 #include <type_traits>
-namespace rider
+namespace Rider
 {
 
 	template<typename T>
@@ -49,12 +49,6 @@ namespace rider
 	} \
 	/**/
 
-#define AUTO_RETURN_NOEXCEPT(...) \
-	noexcept(noexcept(decltype(__VA_ARGS__)(__VA_ARGS__))) \
-	{ \
-		return (__VA_ARGS__); \
-	} \
-	/**/
 #define DECLTYPE_AUTO_RETURN_NOEXCEPT(...) \
 	noexcept(noexcept(decltype(__VA_ARGS__)(__VA_ARGS__))) \
 		->decltype(__VA_ARGS__) \
@@ -74,11 +68,26 @@ namespace rider
 	noexcept(noexcept(decltype(__VA_ARGS__)(__VA_ARGS__))) \
 		->decltype(__VA_ARGS__) /**/
 
-} // namespace rider
+} // namespace Rider
 
 // forwad declare type_traits
-namespace rider::faiz
+namespace Rider::Faiz
 {
+	// FIXME: below is traits that I am not able to implement yet.
+	using std::is_constructible;
+	using std::is_constructible_v;
+	using std::is_trivially_constructible;
+	using std::is_trivially_constructible_v;
+	using std::is_default_constructible;
+	using std::is_default_constructible_v;
+	using std::is_trivially_default_constructible;
+	using std::is_trivially_default_constructible_v;
+	using std::is_nothrow_default_constructible;
+	using std::is_nothrow_default_constructible_v;
+	using std::is_nothrow_constructible;
+	using std::is_nothrow_constructible_v;
+	// using std::is_nothrow_copy_assignable;
+	// using std::is_nothrow_copy_assignable_v;
 	using std::is_standard_layout;
 	using std::is_standard_layout_v;
 	using std::is_trivially_copyable;
@@ -271,7 +280,7 @@ namespace rider::faiz
 	using sizeof_able = size_t_<sizeof(T)>;
 
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 
 // implement integer_sequence here
@@ -279,7 +288,7 @@ namespace rider::faiz
 // 39 level loop-unrolling is fastest on my os. nearly as fast as built_in
 // integer_sequence
 // https://stackoverflow.com/questions/53350706/how-to-understand-libcxxs-implementation-of-make-integer-sequence
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	// implement make_integer_sequence. Recursively dividing
 	// make_integer_sequence<N> into repeat_39_times<make_integer_sequence<N /
@@ -296,9 +305,9 @@ namespace rider::faiz
 			using convert = TtoIndexSeq<Tto, V...>;
 		};
 
-		template<typename T, faiz::size_t... Vextra>
+		template<typename T, Faiz::size_t... Vextra>
 		struct repeat;
-		template<typename T, T... Vseq, faiz::size_t... Vextra>
+		template<typename T, T... Vseq, Faiz::size_t... Vextra>
 		struct repeat<integer_sequence_aux<T, Vseq...>, Vextra...>
 		{
 			// clang-format off
@@ -325,25 +334,25 @@ namespace rider::faiz
 			// clang-format on
 		};
 
-		template<faiz::size_t V>
+		template<Faiz::size_t V>
 		struct parity;
-		template<faiz::size_t V>
+		template<Faiz::size_t V>
 		struct make : parity<V % 39>::template pmake<V>
 		{};
 
 		template<>
-		struct make<0> : type_identity<integer_sequence_aux<faiz::size_t>>
+		struct make<0> : type_identity<integer_sequence_aux<Faiz::size_t>>
 		{};
 #define MAKE(N, ...) \
 	template<> \
 	struct make<N> \
-		: type_identity<integer_sequence_aux<faiz::size_t, __VA_ARGS__>> \
+		: type_identity<integer_sequence_aux<Faiz::size_t, __VA_ARGS__>> \
 	{};
 #define PARITY(N, ...) \
 	template<> \
 	struct parity<N> \
 	{ \
-		template<faiz::size_t V> \
+		template<Faiz::size_t V> \
 		struct pmake : repeat<_t<make<V / 39>>, __VA_ARGS__> \
 		{}; \
 	};
@@ -390,18 +399,18 @@ namespace rider::faiz
 	struct integer_sequence
 	{
 		typedef T value_type;
-		static_assert(faiz::is_integral<T>::value,
-			"faiz::integer_sequence can only be instantiated with an integral "
+		static_assert(Faiz::is_integral<T>::value,
+			"Faiz::integer_sequence can only be instantiated with an integral "
 			"type");
-		static constexpr faiz::size_t
+		static constexpr Faiz::size_t
 		size() noexcept
 		{
 			return sizeof...(Vseq);
 		}
 	};
 
-	template<faiz::size_t... Vseq>
-	using index_sequence = integer_sequence<faiz::size_t, Vseq...>;
+	template<Faiz::size_t... Vseq>
+	using index_sequence = integer_sequence<Faiz::size_t, Vseq...>;
 
 	template<typename T, T V>
 	using make_integer_sequence_aux_unchecked =
@@ -412,10 +421,10 @@ namespace rider::faiz
 		: type_identity<make_integer_sequence_aux_unchecked<T, 0 <= V ? V : 0>>
 	{
 		static_assert(std::is_integral<T>::value,
-			"faiz::make_integer_sequence can only be instantiated with an "
+			"Faiz::make_integer_sequence can only be instantiated with an "
 			"integral type");
 		static_assert(0 <= V,
-			"faiz::make_integer_sequence must have a non-negative sequence "
+			"Faiz::make_integer_sequence must have a non-negative sequence "
 			"length");
 	};
 
@@ -425,15 +434,15 @@ namespace rider::faiz
 	template<class T, T V>
 	using make_integer_sequence = make_integer_sequence_aux<T, V>;
 
-	template<faiz::size_t V>
-	using make_index_sequence = make_integer_sequence<faiz::size_t, V>;
+	template<Faiz::size_t V>
+	using make_index_sequence = make_integer_sequence<Faiz::size_t, V>;
 
 	template<class... T>
 	using index_sequence_for = make_index_sequence<sizeof...(T)>;
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 // forward declare meta structs.
-namespace rider::faiz::meta
+namespace Rider::Faiz::meta
 {
 	template<typename... Ts>
 	struct list;
@@ -462,10 +471,10 @@ namespace rider::faiz::meta
 		struct apply;
 	}
 
-} // namespace rider::faiz::meta
+} // namespace Rider::Faiz::meta
 
 
-namespace rider::faiz::meta
+namespace Rider::Faiz::meta
 {
 
 	namespace detail
@@ -1158,14 +1167,14 @@ namespace rider::faiz::meta
 		using reverse_fold = defer<reverse_fold, List, State, Fun>;
 	} // namespace lazy
 
-	using npos = size_t_<faiz::size_t(-1)>;
+	using npos = size_t_<Faiz::size_t(-1)>;
 
 	template<typename... Ts>
 	struct list
 	{
 		using type = list;
 		/// \return `sizeof...(Ts)`
-		static constexpr faiz::size_t
+		static constexpr Faiz::size_t
 		size() noexcept
 		{
 			return sizeof...(Ts);
@@ -1282,20 +1291,20 @@ namespace rider::faiz::meta
 
 	namespace detail
 	{
-		template<typename T, faiz::size_t>
+		template<typename T, Faiz::size_t>
 		using first_ = T;
 
 		template<typename T, typename Ints>
 		struct repeat_n_c_
 		{};
 
-		template<typename T, faiz::size_t... Is>
+		template<typename T, Faiz::size_t... Is>
 		struct repeat_n_c_<T, index_sequence<Is...>>
 			: type_identity<list<first_<T, Is>...>>
 		{};
 	} // namespace detail
 
-	template<faiz::size_t N, typename T = void>
+	template<Faiz::size_t N, typename T = void>
 	using repeat_n_c = _t<detail::repeat_n_c_<T, make_index_sequence<N>>>;
 
 	template<typename N, typename T = void>
@@ -1306,7 +1315,7 @@ namespace rider::faiz::meta
 		template<typename N, typename T = void>
 		using repeat_n = defer<repeat_n, N, T>;
 
-		template<faiz::size_t N, typename T = void>
+		template<Faiz::size_t N, typename T = void>
 		using repeat_n_c = defer<repeat_n, size_t_<N>, T>;
 	} // namespace lazy
 
@@ -1326,18 +1335,18 @@ namespace rider::faiz::meta
 			eval(VoidPtrs..., T*, Us*...);
 		};
 
-		template<typename List, faiz::size_t N>
+		template<typename List, Faiz::size_t N>
 		struct at_
 		{};
 
-		template<typename... Ts, faiz::size_t N>
+		template<typename... Ts, Faiz::size_t N>
 		struct at_<list<Ts...>, N>
 			: decltype(at_impl_<repeat_n_c<N, void*>>::eval(
 				  static_cast<id<Ts>*>(nullptr)...))
 		{};
 	} // namespace detail
 
-	template<typename List, faiz::size_t N>
+	template<typename List, Faiz::size_t N>
 	using at_c = _t<detail::at_<List, N>>;
 
 	template<typename List, typename N>
@@ -1391,7 +1400,7 @@ namespace rider::faiz::meta
 	template<typename List, typename N>
 	using drop = _t<detail::drop_<List, N>>;
 
-	template<typename List, faiz::size_t N>
+	template<typename List, Faiz::size_t N>
 	using drop_c = _t<detail::drop_<List, size_t_<N>>>;
 
 	namespace lazy
@@ -1556,9 +1565,9 @@ namespace rider::faiz::meta
 
 	namespace detail
 	{
-		constexpr faiz::size_t
+		constexpr Faiz::size_t
 		find_index_i_(
-			bool const* const first, bool const* const last, faiz::size_t N = 0)
+			bool const* const first, bool const* const last, Faiz::size_t N = 0)
 		{
 			return first == last ?
 				npos::value :
@@ -1592,9 +1601,9 @@ namespace rider::faiz::meta
 
 	namespace detail
 	{
-		constexpr faiz::size_t
+		constexpr Faiz::size_t
 		reverse_find_index_i_(
-			bool const* const first, bool const* const last, faiz::size_t N)
+			bool const* const first, bool const* const last, Faiz::size_t N)
 		{
 			return first == last ?
 				npos::value :
@@ -1776,8 +1785,8 @@ namespace rider::faiz::meta
 
 	namespace detail
 	{
-		constexpr faiz::size_t
-		count_i_(bool const* const begin, bool const* const end, faiz::size_t n)
+		constexpr Faiz::size_t
+		count_i_(bool const* const begin, bool const* const end, Faiz::size_t n)
 		{
 			return begin == end ? n :
 								  detail::count_i_(begin + 1, end, n + *begin);
@@ -2049,7 +2058,7 @@ namespace rider::faiz::meta
 
 		template<typename... Set, typename T>
 		struct in_<list<Set...>, T>
-			: faiz::is_base_of<id<T>, inherit<list<id<Set>...>>>
+			: Faiz::is_base_of<id<T>, inherit<list<id<Set>...>>>
 		{};
 
 		template<typename Set, typename T>
@@ -2202,7 +2211,7 @@ namespace rider::faiz::meta
 		struct lambda_<list<As...>, false>
 		{
 		private:
-			static constexpr faiz::size_t arity = sizeof...(As) - 1;
+			static constexpr Faiz::size_t arity = sizeof...(As) - 1;
 			using Tags
 				= list<As...>; // Includes the lambda body as the last arg!
 			using F = back<Tags>;
@@ -2522,10 +2531,10 @@ namespace rider::faiz::meta
 		return 42;
 	}
 
-} // namespace rider::faiz::meta
+} // namespace Rider::Faiz::meta
 
 
-namespace rider::faiz::range
+namespace Rider::Faiz::range
 {
 	inline namespace CPOs
 	{}
@@ -3082,10 +3091,10 @@ namespace rider::faiz::range
 
 		struct zip_fn;
 	} // namespace view
-} // namespace rider::faiz::range
+} // namespace Rider::Faiz::range
 
 
-namespace rider::faiz::logic
+namespace Rider::Faiz::logic
 {
 	template<typename...>
 	struct and_;
@@ -3123,13 +3132,14 @@ namespace rider::faiz::logic
 	{};
 
 
-} // namespace rider::faiz::logic
+} // namespace Rider::Faiz::logic
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
-	template<typename...>
-	struct empty_base
+	template<class...>
+	struct empty_struct_template
 	{};
+	using empty_struct = empty_struct_template<>;
 
 	template<bool _bCond>
 	struct when;
@@ -3176,6 +3186,6 @@ namespace rider::faiz
 	struct is_any : bool_<is_any_v<T, Rest...>>
 	{};
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #endif

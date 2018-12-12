@@ -26,260 +26,260 @@ struct Foo
 int
 main()
 {
-	static_assert((!rider::faiz::is_referenceable<void>::value), "");
-	static_assert((rider::faiz::is_referenceable<int>::value), "");
-	static_assert((rider::faiz::is_referenceable<int[3]>::value), "");
-	static_assert((rider::faiz::is_referenceable<int[]>::value), "");
-	static_assert((rider::faiz::is_referenceable<int&>::value), "");
-	static_assert((rider::faiz::is_referenceable<const int&>::value), "");
-	static_assert((rider::faiz::is_referenceable<int*>::value), "");
-	static_assert((rider::faiz::is_referenceable<const int*>::value), "");
-	static_assert((rider::faiz::is_referenceable<Foo>::value), "");
-	static_assert((rider::faiz::is_referenceable<const Foo>::value), "");
-	static_assert((rider::faiz::is_referenceable<Foo&>::value), "");
-	static_assert((rider::faiz::is_referenceable<const Foo&>::value), "");
-	static_assert((rider::faiz::is_referenceable<Foo&&>::value), "");
-	static_assert((rider::faiz::is_referenceable<const Foo&&>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<int>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<int[3]>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<int[]>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<int&>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<const int&>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<int*>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<const int*>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<Foo>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<const Foo>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<Foo&>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<const Foo&>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<Foo&&>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<const Foo&&>::value), "");
 
-	static_assert((rider::faiz::is_referenceable<int
+	static_assert((Rider::Faiz::is_referenceable<int
 					  __attribute__((__vector_size__(8)))>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<const int
+	static_assert((Rider::Faiz::is_referenceable<const int
 					  __attribute__((__vector_size__(8)))>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<float
+	static_assert((Rider::Faiz::is_referenceable<float
 					  __attribute__((__vector_size__(16)))>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<const float
+	static_assert((Rider::Faiz::is_referenceable<const float
 					  __attribute__((__vector_size__(16)))>::value),
 		"");
 
 	// Functions without cv-qualifiers are referenceable
-	static_assert((rider::faiz::is_referenceable<void()>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void() const>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void()&>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void() const&>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void() &&>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void() const&&>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<void()>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void() const>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void()&>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void() const&>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void() &&>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void() const&&>::value), "");
 
-	static_assert((rider::faiz::is_referenceable<void(int)>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void(int) const>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void(int)&>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<void(int)>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void(int) const>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void(int)&>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int) const&>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void(int) &&>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int) const&>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void(int) &&>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int) const&&>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int) const&&>::value), "");
 
-	static_assert((rider::faiz::is_referenceable<void(int, float)>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<void(int, float)>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float) const>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int, float) const>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float)&>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int, float)&>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float) const&>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int, float) const&>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float) &&>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int, float) &&>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float) const&&>::value), "");
-
-	static_assert(
-		(rider::faiz::is_referenceable<void(int, float, Foo&)>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, Foo&) const>::value),
-		"");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, Foo&)&>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, Foo&) const&>::value),
-		"");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, Foo&) &&>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, Foo&) const&&>::value),
-		"");
-
-	static_assert((rider::faiz::is_referenceable<void(...)>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void(...) const>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void(...)&>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(...) const&>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void(...) &&>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(...) const&&>::value), "");
-
-	static_assert((rider::faiz::is_referenceable<void(int, ...)>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, ...) const>::value), "");
-	static_assert((!rider::faiz::is_referenceable<void(int, ...)&>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, ...) const&>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, ...) &&>::value), "");
-	static_assert(
-		(!rider::faiz::is_referenceable<void(int, ...) const&&>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int, float) const&&>::value), "");
 
 	static_assert(
-		(rider::faiz::is_referenceable<void(int, float, ...)>::value), "");
+		(Rider::Faiz::is_referenceable<void(int, float, Foo&)>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, ...) const>::value),
+		(!Rider::Faiz::is_referenceable<void(int, float, Foo&) const>::value),
 		"");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, ...)&>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int, float, Foo&)&>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, ...) const&>::value),
+		(!Rider::Faiz::is_referenceable<void(int, float, Foo&) const&>::value),
 		"");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, ...) &&>::value), "");
+		(!Rider::Faiz::is_referenceable<void(int, float, Foo&) &&>::value), "");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, ...) const&&>::value),
+		(!Rider::Faiz::is_referenceable<void(int, float, Foo&) const&&>::value),
+		"");
+
+	static_assert((Rider::Faiz::is_referenceable<void(...)>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void(...) const>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void(...)&>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(...) const&>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void(...) &&>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(...) const&&>::value), "");
+
+	static_assert((Rider::Faiz::is_referenceable<void(int, ...)>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, ...) const>::value), "");
+	static_assert((!Rider::Faiz::is_referenceable<void(int, ...)&>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, ...) const&>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, ...) &&>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, ...) const&&>::value), "");
+
+	static_assert(
+		(Rider::Faiz::is_referenceable<void(int, float, ...)>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, float, ...) const>::value),
+		"");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, float, ...)&>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, float, ...) const&>::value),
+		"");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, float, ...) &&>::value), "");
+	static_assert(
+		(!Rider::Faiz::is_referenceable<void(int, float, ...) const&&>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_referenceable<void(int, float, Foo&, ...)>::value),
+		(Rider::Faiz::is_referenceable<void(int, float, Foo&, ...)>::value),
 		"");
-	static_assert((!rider::faiz::is_referenceable<void(int, float, Foo&, ...)
+	static_assert((!Rider::Faiz::is_referenceable<void(int, float, Foo&, ...)
 						  const>::value),
 		"");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, Foo&, ...)&>::value),
+		(!Rider::Faiz::is_referenceable<void(int, float, Foo&, ...)&>::value),
 		"");
-	static_assert((!rider::faiz::is_referenceable<void(int, float, Foo&, ...)
+	static_assert((!Rider::Faiz::is_referenceable<void(int, float, Foo&, ...)
 						  const&>::value),
 		"");
 	static_assert(
-		(!rider::faiz::is_referenceable<void(int, float, Foo&, ...) &&>::value),
+		(!Rider::Faiz::is_referenceable<void(int, float, Foo&, ...) &&>::value),
 		"");
-	static_assert((!rider::faiz::is_referenceable<void(int, float, Foo&, ...)
+	static_assert((!Rider::Faiz::is_referenceable<void(int, float, Foo&, ...)
 						  const&&>::value),
 		"");
 
 	// member functions with or without cv-qualifiers are referenceable
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)()>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)()>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)() const>::value), "");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)()&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)() const>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)()&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)() const&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)() const&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)() &&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)() &&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)() const&&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)() const&&>::value), "");
 
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int)>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int)>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int) const>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int) const>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int)&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int)&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int) const&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int) const&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int) &&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int) &&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int) const&&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int) const&&>::value), "");
 
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, float)>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, float)>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, float) const>::value),
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, float) const>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, float)&>::value), "");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float)
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, float)&>::value), "");
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float)
 						  const&>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, float) &&>::value),
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, float) &&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float)
 						  const&&>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, float, Foo&)>::value),
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, float, Foo&)>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float, Foo&)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float, Foo&)
 						  const>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(
 						  int, float, Foo&)&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float, Foo&)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float, Foo&)
 						  const&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float, Foo&)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float, Foo&)
 					  &&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float, Foo&)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float, Foo&)
 						  const&&>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(...)>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(...)>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(...) const>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(...) const>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(...)&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(...)&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(...) const&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(...) const&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(...) &&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(...) &&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(...) const&&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(...) const&&>::value), "");
 
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, ...)>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, ...)>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, ...) const>::value),
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, ...) const>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, ...)&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, ...)&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, ...) const&>::value),
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, ...) const&>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, ...) &&>::value), "");
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, ...) &&>::value), "");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, ...) const&&>::value),
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, ...) const&&>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, float, ...)>::value),
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, float, ...)>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float, ...)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float, ...)
 						  const>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, float, ...)&>::value),
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, float, ...)&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float, ...)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float, ...)
 						  const&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float, ...)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float, ...)
 					  &&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(int, float, ...)
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(int, float, ...)
 						  const&&>::value),
 		"");
 
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(
 						  int, float, Foo&, ...)>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(
 						  int, float, Foo&, ...) const>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(
 						  int, float, Foo&, ...)&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(
 						  int, float, Foo&, ...) const&>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_referenceable<void (Foo::*)(int, float, Foo&, ...)
+		(Rider::Faiz::is_referenceable<void (Foo::*)(int, float, Foo&, ...)
 			&&>::value),
 		"");
-	static_assert((rider::faiz::is_referenceable<void (Foo::*)(
+	static_assert((Rider::Faiz::is_referenceable<void (Foo::*)(
 						  int, float, Foo&, ...) const&&>::value),
 		"");
 }

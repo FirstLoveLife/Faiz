@@ -4,11 +4,11 @@ template<class T, class U>
 void
 test_add_rvalue_reference()
 {
-	static_assert((rider::faiz::is_same<
-					  typename rider::faiz::add_rvalue_reference<T>::type,
+	static_assert((Rider::Faiz::is_same<
+					  typename Rider::Faiz::add_rvalue_reference<T>::type,
 					  U>::value),
 		"");
-	static_assert((rider::faiz::is_same<rider::faiz::add_rvalue_reference_t<T>,
+	static_assert((Rider::Faiz::is_same<Rider::Faiz::add_rvalue_reference_t<T>,
 					  U>::value),
 		"");
 }
@@ -17,11 +17,11 @@ template<class F>
 void
 test_function0()
 {
-	static_assert((rider::faiz::is_same<
-					  typename rider::faiz::add_rvalue_reference<F>::type,
+	static_assert((Rider::Faiz::is_same<
+					  typename Rider::Faiz::add_rvalue_reference<F>::type,
 					  F&&>::value),
 		"");
-	static_assert((rider::faiz::is_same<rider::faiz::add_rvalue_reference_t<F>,
+	static_assert((Rider::Faiz::is_same<Rider::Faiz::add_rvalue_reference_t<F>,
 					  F&&>::value),
 		"");
 }
@@ -30,11 +30,11 @@ template<class F>
 void
 test_function1()
 {
-	static_assert((rider::faiz::is_same<
-					  typename rider::faiz::add_rvalue_reference<F>::type,
+	static_assert((Rider::Faiz::is_same<
+					  typename Rider::Faiz::add_rvalue_reference<F>::type,
 					  F>::value),
 		"");
-	static_assert((rider::faiz::is_same<rider::faiz::add_rvalue_reference_t<F>,
+	static_assert((Rider::Faiz::is_same<Rider::Faiz::add_rvalue_reference_t<F>,
 					  F>::value),
 		"");
 }

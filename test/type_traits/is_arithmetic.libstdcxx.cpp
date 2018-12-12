@@ -23,7 +23,7 @@
 void
 test01()
 {
-	using rider::faiz::is_arithmetic;
+	using Rider::Faiz::is_arithmetic;
 	using namespace __gnu_test;
 
 	static_assert(test_category<is_arithmetic, void>(false), "");

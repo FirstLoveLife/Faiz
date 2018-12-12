@@ -26,16 +26,16 @@
  void
  test_is_assignable()
  {
-     static_assert((rider::faiz::is_assignable<T, U>::value), "");
-     static_assert(rider::faiz::is_assignable_v<T, U>, "");
+     static_assert((Rider::Faiz::is_assignable<T, U>::value), "");
+     static_assert(Rider::Faiz::is_assignable_v<T, U>, "");
  }
 
  template<class T, class U>
  void
  test_is_not_assignable()
  {
-     static_assert((!rider::faiz::is_assignable<T, U>::value), "");
-     static_assert(!rider::faiz::is_assignable_v<T, U>, "");
+     static_assert((!Rider::Faiz::is_assignable<T, U>::value), "");
+     static_assert(!Rider::Faiz::is_assignable_v<T, U>, "");
  }
 
  struct D;

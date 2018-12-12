@@ -36,9 +36,9 @@ void
 test_make_signed()
 {
 	static_assert(
-		(std::is_same<typename rider::faiz::make_signed<T>::type, U>::value),
+		(std::is_same<typename Rider::Faiz::make_signed<T>::type, U>::value),
 		"");
-	static_assert((std::is_same<rider::faiz::make_signed_t<T>, U>::value), "");
+	static_assert((std::is_same<Rider::Faiz::make_signed_t<T>, U>::value), "");
 }
 
 int

@@ -22,11 +22,11 @@ void
 test_remove_cvref()
 {
 	static_assert(
-		(rider::faiz::is_same<typename rider::faiz::remove_cvref<T>::type,
+		(Rider::Faiz::is_same<typename Rider::Faiz::remove_cvref<T>::type,
 			U>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::remove_cvref_t<T>, U>::value), "");
+		(Rider::Faiz::is_same<Rider::Faiz::remove_cvref_t<T>, U>::value), "");
 }
 
 int

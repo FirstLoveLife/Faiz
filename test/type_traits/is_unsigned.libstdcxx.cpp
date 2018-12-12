@@ -24,7 +24,7 @@
 void
 test01()
 {
-	using rider::faiz::is_unsigned;
+	using Rider::Faiz::is_unsigned;
 	using namespace __gnu_test;
 
 	static_assert(test_category<is_unsigned, void>(false), "");

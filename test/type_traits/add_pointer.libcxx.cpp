@@ -21,11 +21,11 @@ void
 test_add_pointer()
 {
 	static_assert(
-		(rider::faiz::is_same<typename rider::faiz::add_pointer<T>::type,
+		(Rider::Faiz::is_same<typename Rider::Faiz::add_pointer<T>::type,
 			U>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::add_pointer_t<T>, U>::value), "");
+		(Rider::Faiz::is_same<Rider::Faiz::add_pointer_t<T>, U>::value), "");
 }
 
 template<class F>
@@ -33,11 +33,11 @@ void
 test_function0()
 {
 	static_assert(
-		(rider::faiz::is_same<typename rider::faiz::add_pointer<F>::type,
+		(Rider::Faiz::is_same<typename Rider::Faiz::add_pointer<F>::type,
 			F*>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::add_pointer_t<F>, F*>::value), "");
+		(Rider::Faiz::is_same<Rider::Faiz::add_pointer_t<F>, F*>::value), "");
 }
 
 template<class F>
@@ -45,11 +45,11 @@ void
 test_function1()
 {
 	static_assert(
-		(rider::faiz::is_same<typename rider::faiz::add_pointer<F>::type,
+		(Rider::Faiz::is_same<typename Rider::Faiz::add_pointer<F>::type,
 			F>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::add_pointer_t<F>, F>::value), "");
+		(Rider::Faiz::is_same<Rider::Faiz::add_pointer_t<F>, F>::value), "");
 }
 
 struct Foo

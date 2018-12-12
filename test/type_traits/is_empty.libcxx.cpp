@@ -26,15 +26,15 @@ template<class T>
 void
 test_is_empty()
 {
-	static_assert(rider::faiz::is_empty<T>::value, "");
-	static_assert(rider::faiz::is_empty<const T>::value, "");
-	static_assert(rider::faiz::is_empty<volatile T>::value, "");
-	static_assert(rider::faiz::is_empty<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_empty<T>::value, "");
+	static_assert(Rider::Faiz::is_empty<const T>::value, "");
+	static_assert(Rider::Faiz::is_empty<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_empty<const volatile T>::value, "");
 #if TEST_STD_VER > 14
-	static_assert(rider::faiz::is_empty_v<T>, "");
-	static_assert(rider::faiz::is_empty_v<const T>, "");
-	static_assert(rider::faiz::is_empty_v<volatile T>, "");
-	static_assert(rider::faiz::is_empty_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_empty_v<T>, "");
+	static_assert(Rider::Faiz::is_empty_v<const T>, "");
+	static_assert(Rider::Faiz::is_empty_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_empty_v<const volatile T>, "");
 #endif
 }
 
@@ -42,15 +42,15 @@ template<class T>
 void
 test_is_not_empty()
 {
-	static_assert(!rider::faiz::is_empty<T>::value, "");
-	static_assert(!rider::faiz::is_empty<const T>::value, "");
-	static_assert(!rider::faiz::is_empty<volatile T>::value, "");
-	static_assert(!rider::faiz::is_empty<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_empty<T>::value, "");
+	static_assert(!Rider::Faiz::is_empty<const T>::value, "");
+	static_assert(!Rider::Faiz::is_empty<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_empty<const volatile T>::value, "");
 #if TEST_STD_VER > 14
-	static_assert(!rider::faiz::is_empty_v<T>, "");
-	static_assert(!rider::faiz::is_empty_v<const T>, "");
-	static_assert(!rider::faiz::is_empty_v<volatile T>, "");
-	static_assert(!rider::faiz::is_empty_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_empty_v<T>, "");
+	static_assert(!Rider::Faiz::is_empty_v<const T>, "");
+	static_assert(!Rider::Faiz::is_empty_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_empty_v<const volatile T>, "");
 #endif
 }
 

@@ -1,6 +1,6 @@
 #include "rider/faiz/initializer_list.hpp"
 #include "rider/faiz/type_traits.hpp"
-using namespace rider::faiz;
+using namespace Rider::Faiz;
 struct E
 {};
 

@@ -18,15 +18,15 @@ template<class T>
 void
 test_is_member_pointer()
 {
-	static_assert(rider::faiz::is_member_pointer<T>::value, "");
-	static_assert(rider::faiz::is_member_pointer<const T>::value, "");
-	static_assert(rider::faiz::is_member_pointer<volatile T>::value, "");
-	static_assert(rider::faiz::is_member_pointer<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_member_pointer<T>::value, "");
+	static_assert(Rider::Faiz::is_member_pointer<const T>::value, "");
+	static_assert(Rider::Faiz::is_member_pointer<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_member_pointer<const volatile T>::value, "");
 #if TEST_STD_VER > 14
-	static_assert(rider::faiz::is_member_pointer_v<T>, "");
-	static_assert(rider::faiz::is_member_pointer_v<const T>, "");
-	static_assert(rider::faiz::is_member_pointer_v<volatile T>, "");
-	static_assert(rider::faiz::is_member_pointer_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_member_pointer_v<T>, "");
+	static_assert(Rider::Faiz::is_member_pointer_v<const T>, "");
+	static_assert(Rider::Faiz::is_member_pointer_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_member_pointer_v<const volatile T>, "");
 #endif
 }
 
@@ -34,15 +34,15 @@ template<class T>
 void
 test_is_not_member_pointer()
 {
-	static_assert(!rider::faiz::is_member_pointer<T>::value, "");
-	static_assert(!rider::faiz::is_member_pointer<const T>::value, "");
-	static_assert(!rider::faiz::is_member_pointer<volatile T>::value, "");
-	static_assert(!rider::faiz::is_member_pointer<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_member_pointer<T>::value, "");
+	static_assert(!Rider::Faiz::is_member_pointer<const T>::value, "");
+	static_assert(!Rider::Faiz::is_member_pointer<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_member_pointer<const volatile T>::value, "");
 #if TEST_STD_VER > 14
-	static_assert(!rider::faiz::is_member_pointer_v<T>, "");
-	static_assert(!rider::faiz::is_member_pointer_v<const T>, "");
-	static_assert(!rider::faiz::is_member_pointer_v<volatile T>, "");
-	static_assert(!rider::faiz::is_member_pointer_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_member_pointer_v<T>, "");
+	static_assert(!Rider::Faiz::is_member_pointer_v<const T>, "");
+	static_assert(!Rider::Faiz::is_member_pointer_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_member_pointer_v<const volatile T>, "");
 #endif
 }
 
@@ -85,7 +85,7 @@ main()
 	test_is_member_pointer<FunctionPtr Empty::*>();
 	test_is_member_pointer<void (Empty::*)()>();
 
-	test_is_not_member_pointer<rider::faiz::nullptr_t>();
+	test_is_not_member_pointer<Rider::Faiz::nullptr_t>();
 	test_is_not_member_pointer<void>();
 	test_is_not_member_pointer<int>();
 	test_is_not_member_pointer<int&>();

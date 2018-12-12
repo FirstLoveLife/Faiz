@@ -19,28 +19,28 @@ void
 test_is_floating_point()
 {
 
-	static_assert(rider::faiz::is_floating_point<T>::value, "");
-	static_assert(rider::faiz::is_floating_point<const T>::value, "");
-	static_assert(rider::faiz::is_floating_point<volatile T>::value, "");
-	static_assert(rider::faiz::is_floating_point<const volatile T>::value, "");
-	static_assert(rider::faiz::is_floating_point_v<T>, "");
-	static_assert(rider::faiz::is_floating_point_v<const T>, "");
-	static_assert(rider::faiz::is_floating_point_v<volatile T>, "");
-	static_assert(rider::faiz::is_floating_point_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_floating_point<T>::value, "");
+	static_assert(Rider::Faiz::is_floating_point<const T>::value, "");
+	static_assert(Rider::Faiz::is_floating_point<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_floating_point<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_floating_point_v<T>, "");
+	static_assert(Rider::Faiz::is_floating_point_v<const T>, "");
+	static_assert(Rider::Faiz::is_floating_point_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_floating_point_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_floating_point()
 {
-	static_assert(!rider::faiz::is_floating_point<T>::value, "");
-	static_assert(!rider::faiz::is_floating_point<const T>::value, "");
-	static_assert(!rider::faiz::is_floating_point<volatile T>::value, "");
-	static_assert(!rider::faiz::is_floating_point<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_floating_point_v<T>, "");
-	static_assert(!rider::faiz::is_floating_point_v<const T>, "");
-	static_assert(!rider::faiz::is_floating_point_v<volatile T>, "");
-	static_assert(!rider::faiz::is_floating_point_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_floating_point<T>::value, "");
+	static_assert(!Rider::Faiz::is_floating_point<const T>::value, "");
+	static_assert(!Rider::Faiz::is_floating_point<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_floating_point<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_floating_point_v<T>, "");
+	static_assert(!Rider::Faiz::is_floating_point_v<const T>, "");
+	static_assert(!Rider::Faiz::is_floating_point_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_floating_point_v<const volatile T>, "");
 }
 
 class Empty
@@ -87,7 +87,7 @@ main()
 	test_is_not_floating_point<long>();
 	test_is_not_floating_point<unsigned long>();
 
-	test_is_not_floating_point<rider::faiz::nullptr_t>();
+	test_is_not_floating_point<Rider::Faiz::nullptr_t>();
 	test_is_not_floating_point<void>();
 	test_is_not_floating_point<int&>();
 	test_is_not_floating_point<int&&>();

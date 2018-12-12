@@ -25,11 +25,11 @@
 void
 test01()
 {
-	using rider::faiz::is_null_pointer;
+	using Rider::Faiz::is_null_pointer;
 	using namespace __gnu_test;
 
 	static_assert(
-		test_category<is_null_pointer, rider::faiz::nullptr_t>(true), "");
+		test_category<is_null_pointer, Rider::Faiz::nullptr_t>(true), "");
 
 	static_assert(test_category<is_null_pointer, int>(false), "");
 	static_assert(test_category<is_null_pointer, float>(false), "");

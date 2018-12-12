@@ -2,7 +2,7 @@
 #define CASSERT
 #include <cassert>
 #include <iostream>
-namespace rider
+namespace Rider
 {
 // Terminate the program if the precondition `e` evaluates
 // to false.
@@ -13,5 +13,5 @@ namespace rider
 #define Ensures(e) assert(e)
 
 
-} // namespace rider
+} // namespace Rider
 #endif

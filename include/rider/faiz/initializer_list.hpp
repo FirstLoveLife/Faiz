@@ -1,7 +1,7 @@
 #ifndef INITIALIZER_LIST
 #define INITIALIZER_LIST
 #include "rider/faiz/cstddef.hpp"
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	template<class E>
 	class initializer_list
@@ -54,5 +54,5 @@ namespace rider::faiz
 	{
 		return il.end();
 	}
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

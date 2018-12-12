@@ -29,7 +29,7 @@ enum test_enum
 void
 test01()
 {
-	using rider::faiz::make_signed;
+	using Rider::Faiz::make_signed;
 
 	// Negative tests.
 	typedef make_signed<bool>::type test1_type;

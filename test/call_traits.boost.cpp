@@ -42,12 +42,12 @@ struct contained
 {
 	// define our typedefs first, arrays are stored by value
 	// so value_type is not the same as result_type:
-	typedef typename rider::faiz::call_traits<T>::param_type param_type;
-	typedef typename rider::faiz::call_traits<T>::reference reference;
+	typedef typename Rider::Faiz::call_traits<T>::param_type param_type;
+	typedef typename Rider::Faiz::call_traits<T>::reference reference;
 	typedef
-		typename rider::faiz::call_traits<T>::const_reference const_reference;
+		typename Rider::Faiz::call_traits<T>::const_reference const_reference;
 	typedef T value_type;
-	typedef typename rider::faiz::call_traits<T>::value_type result_type;
+	typedef typename Rider::Faiz::call_traits<T>::value_type result_type;
 
 	// stored value:
 	value_type v_;
@@ -87,12 +87,12 @@ private:
 template<class T, std::size_t N>
 struct contained<T[N]>
 {
-	typedef typename rider::faiz::call_traits<T[N]>::param_type param_type;
-	typedef typename rider::faiz::call_traits<T[N]>::reference reference;
-	typedef typename rider::faiz::call_traits<T[N]>::const_reference
+	typedef typename Rider::Faiz::call_traits<T[N]>::param_type param_type;
+	typedef typename Rider::Faiz::call_traits<T[N]>::reference reference;
+	typedef typename Rider::Faiz::call_traits<T[N]>::const_reference
 		const_reference;
 	typedef T value_type[N];
-	typedef typename rider::faiz::call_traits<T[N]>::value_type result_type;
+	typedef typename Rider::Faiz::call_traits<T[N]>::value_type result_type;
 
 	value_type v_;
 
@@ -127,10 +127,10 @@ private:
 #endif
 
 template<class T>
-contained<typename rider::faiz::call_traits<T>::value_type>
+contained<typename Rider::Faiz::call_traits<T>::value_type>
 test_wrap_type(const T& t)
 {
-	typedef typename rider::faiz::call_traits<T>::value_type ct;
+	typedef typename Rider::Faiz::call_traits<T>::value_type ct;
 	return contained<ct>(t);
 }
 
@@ -138,12 +138,12 @@ namespace test
 {
 
 	template<class T1, class T2>
-	std::pair<typename rider::faiz::call_traits<T1>::value_type,
-		typename rider::faiz::call_traits<T2>::value_type>
+	std::pair<typename Rider::Faiz::call_traits<T1>::value_type,
+		typename Rider::Faiz::call_traits<T2>::value_type>
 	make_pair(const T1& t1, const T2& t2)
 	{
-		return std::pair<typename rider::faiz::call_traits<T1>::value_type,
-			typename rider::faiz::call_traits<T2>::value_type>(t1, t2);
+		return std::pair<typename Rider::Faiz::call_traits<T1>::value_type,
+			typename Rider::Faiz::call_traits<T2>::value_type>(t1, t2);
 	}
 
 } // namespace test
@@ -157,7 +157,7 @@ using namespace std;
 template<class T>
 struct call_traits_checker
 {
-	typedef typename rider::faiz::call_traits<T>::param_type param_type;
+	typedef typename Rider::Faiz::call_traits<T>::param_type param_type;
 	void operator()(param_type);
 };
 
@@ -193,7 +193,7 @@ call_traits_checker<T>::operator()(param_type p)
 template<class T, std::size_t N>
 struct call_traits_checker<T[N]>
 {
-	typedef typename rider::faiz::call_traits<T[N]>::param_type param_type;
+	typedef typename Rider::Faiz::call_traits<T[N]>::param_type param_type;
 	void
 	operator()(param_type t)
 	{
@@ -312,73 +312,73 @@ main()
 	typedef const r_type cr_type;
 
 	BOOST_CHECK_TYPE(
-		comparible_UDT, rider::faiz::call_traits<comparible_UDT>::value_type);
+		comparible_UDT, Rider::Faiz::call_traits<comparible_UDT>::value_type);
 	BOOST_CHECK_TYPE(
-		comparible_UDT&, rider::faiz::call_traits<comparible_UDT>::reference);
+		comparible_UDT&, Rider::Faiz::call_traits<comparible_UDT>::reference);
 	BOOST_CHECK_TYPE(const comparible_UDT&,
-		rider::faiz::call_traits<comparible_UDT>::const_reference);
+		Rider::Faiz::call_traits<comparible_UDT>::const_reference);
 	BOOST_CHECK_TYPE(const comparible_UDT&,
-		rider::faiz::call_traits<comparible_UDT>::param_type);
-	BOOST_CHECK_TYPE(int, rider::faiz::call_traits<int>::value_type);
-	BOOST_CHECK_TYPE(int&, rider::faiz::call_traits<int>::reference);
+		Rider::Faiz::call_traits<comparible_UDT>::param_type);
+	BOOST_CHECK_TYPE(int, Rider::Faiz::call_traits<int>::value_type);
+	BOOST_CHECK_TYPE(int&, Rider::Faiz::call_traits<int>::reference);
 	BOOST_CHECK_TYPE(
-		const int&, rider::faiz::call_traits<int>::const_reference);
-	BOOST_CHECK_TYPE(const int, rider::faiz::call_traits<int>::param_type);
-	BOOST_CHECK_TYPE(int*, rider::faiz::call_traits<int*>::value_type);
-	BOOST_CHECK_TYPE(int*&, rider::faiz::call_traits<int*>::reference);
+		const int&, Rider::Faiz::call_traits<int>::const_reference);
+	BOOST_CHECK_TYPE(const int, Rider::Faiz::call_traits<int>::param_type);
+	BOOST_CHECK_TYPE(int*, Rider::Faiz::call_traits<int*>::value_type);
+	BOOST_CHECK_TYPE(int*&, Rider::Faiz::call_traits<int*>::reference);
 	BOOST_CHECK_TYPE(
-		int* const&, rider::faiz::call_traits<int*>::const_reference);
-	BOOST_CHECK_TYPE(int* const, rider::faiz::call_traits<int*>::param_type);
+		int* const&, Rider::Faiz::call_traits<int*>::const_reference);
+	BOOST_CHECK_TYPE(int* const, Rider::Faiz::call_traits<int*>::param_type);
 #if defined(BOOST_MSVC6_MEMBER_TEMPLATES)
-	BOOST_CHECK_TYPE(int&, rider::faiz::call_traits<int&>::value_type);
-	BOOST_CHECK_TYPE(int&, rider::faiz::call_traits<int&>::reference);
+	BOOST_CHECK_TYPE(int&, Rider::Faiz::call_traits<int&>::value_type);
+	BOOST_CHECK_TYPE(int&, Rider::Faiz::call_traits<int&>::reference);
 	BOOST_CHECK_TYPE(
-		const int&, rider::faiz::call_traits<int&>::const_reference);
-	BOOST_CHECK_TYPE(int&, rider::faiz::call_traits<int&>::param_type);
+		const int&, Rider::Faiz::call_traits<int&>::const_reference);
+	BOOST_CHECK_TYPE(int&, Rider::Faiz::call_traits<int&>::param_type);
 #	if !(defined(__GNUC__) \
 		&& ((__GNUC__ < 3) || (__GNUC__ == 3) && (__GNUC_MINOR__ < 1)))
-	BOOST_CHECK_TYPE(int&, rider::faiz::call_traits<cr_type>::value_type);
-	BOOST_CHECK_TYPE(int&, rider::faiz::call_traits<cr_type>::reference);
+	BOOST_CHECK_TYPE(int&, Rider::Faiz::call_traits<cr_type>::value_type);
+	BOOST_CHECK_TYPE(int&, Rider::Faiz::call_traits<cr_type>::reference);
 	BOOST_CHECK_TYPE(
-		const int&, rider::faiz::call_traits<cr_type>::const_reference);
-	BOOST_CHECK_TYPE(int&, rider::faiz::call_traits<cr_type>::param_type);
+		const int&, Rider::Faiz::call_traits<cr_type>::const_reference);
+	BOOST_CHECK_TYPE(int&, Rider::Faiz::call_traits<cr_type>::param_type);
 #	else
 	std::cout << "Your compiler cannot instantiate call_traits<int&const>, "
 				 "skipping four tests (4 errors)"
 			  << std::endl;
 #	endif
 	BOOST_CHECK_TYPE(
-		const int&, rider::faiz::call_traits<const int&>::value_type);
+		const int&, Rider::Faiz::call_traits<const int&>::value_type);
 	BOOST_CHECK_TYPE(
-		const int&, rider::faiz::call_traits<const int&>::reference);
+		const int&, Rider::Faiz::call_traits<const int&>::reference);
 	BOOST_CHECK_TYPE(
-		const int&, rider::faiz::call_traits<const int&>::const_reference);
+		const int&, Rider::Faiz::call_traits<const int&>::const_reference);
 	BOOST_CHECK_TYPE(
-		const int&, rider::faiz::call_traits<const int&>::param_type);
+		const int&, Rider::Faiz::call_traits<const int&>::param_type);
 #	ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-	BOOST_CHECK_TYPE(const int*, rider::faiz::call_traits<int[3]>::value_type);
-	BOOST_CHECK_TYPE(int(&)[3], rider::faiz::call_traits<int[3]>::reference);
+	BOOST_CHECK_TYPE(const int*, Rider::Faiz::call_traits<int[3]>::value_type);
+	BOOST_CHECK_TYPE(int(&)[3], Rider::Faiz::call_traits<int[3]>::reference);
 	BOOST_CHECK_TYPE(
-		const int(&)[3], rider::faiz::call_traits<int[3]>::const_reference);
+		const int(&)[3], Rider::Faiz::call_traits<int[3]>::const_reference);
 	BOOST_CHECK_TYPE(
-		const int* const, rider::faiz::call_traits<int[3]>::param_type);
+		const int* const, Rider::Faiz::call_traits<int[3]>::param_type);
 	BOOST_CHECK_TYPE(
-		const int*, rider::faiz::call_traits<const int[3]>::value_type);
+		const int*, Rider::Faiz::call_traits<const int[3]>::value_type);
 	BOOST_CHECK_TYPE(
-		const int(&)[3], rider::faiz::call_traits<const int[3]>::reference);
+		const int(&)[3], Rider::Faiz::call_traits<const int[3]>::reference);
 	BOOST_CHECK_TYPE(const int(&)[3],
-		rider::faiz::call_traits<const int[3]>::const_reference);
+		Rider::Faiz::call_traits<const int[3]>::const_reference);
 	BOOST_CHECK_TYPE(
-		const int* const, rider::faiz::call_traits<const int[3]>::param_type);
+		const int* const, Rider::Faiz::call_traits<const int[3]>::param_type);
 	// test with abstract base class:
 	BOOST_CHECK_TYPE(
-		test_abc1, rider::faiz::call_traits<test_abc1>::value_type);
+		test_abc1, Rider::Faiz::call_traits<test_abc1>::value_type);
 	BOOST_CHECK_TYPE(
-		test_abc1&, rider::faiz::call_traits<test_abc1>::reference);
+		test_abc1&, Rider::Faiz::call_traits<test_abc1>::reference);
 	BOOST_CHECK_TYPE(
-		const test_abc1&, rider::faiz::call_traits<test_abc1>::const_reference);
+		const test_abc1&, Rider::Faiz::call_traits<test_abc1>::const_reference);
 	BOOST_CHECK_TYPE(
-		const test_abc1&, rider::faiz::call_traits<test_abc1>::param_type);
+		const test_abc1&, Rider::Faiz::call_traits<test_abc1>::param_type);
 #	else
 	std::cout << "You're compiler does not support partial template "
 				 "specialiation, skipping 8 tests (8 errors)"
@@ -391,20 +391,20 @@ main()
 #endif
 	// test with an incomplete type:
 	BOOST_CHECK_TYPE(
-		incomplete_type, rider::faiz::call_traits<incomplete_type>::value_type);
+		incomplete_type, Rider::Faiz::call_traits<incomplete_type>::value_type);
 	BOOST_CHECK_TYPE(
-		incomplete_type&, rider::faiz::call_traits<incomplete_type>::reference);
+		incomplete_type&, Rider::Faiz::call_traits<incomplete_type>::reference);
 	BOOST_CHECK_TYPE(const incomplete_type&,
-		rider::faiz::call_traits<incomplete_type>::const_reference);
+		Rider::Faiz::call_traits<incomplete_type>::const_reference);
 	BOOST_CHECK_TYPE(const incomplete_type&,
-		rider::faiz::call_traits<incomplete_type>::param_type);
+		Rider::Faiz::call_traits<incomplete_type>::param_type);
 	// test enum:
-	BOOST_CHECK_TYPE(enum_UDT, rider::faiz::call_traits<enum_UDT>::value_type);
-	BOOST_CHECK_TYPE(enum_UDT&, rider::faiz::call_traits<enum_UDT>::reference);
+	BOOST_CHECK_TYPE(enum_UDT, Rider::Faiz::call_traits<enum_UDT>::value_type);
+	BOOST_CHECK_TYPE(enum_UDT&, Rider::Faiz::call_traits<enum_UDT>::reference);
 	BOOST_CHECK_TYPE(
-		const enum_UDT&, rider::faiz::call_traits<enum_UDT>::const_reference);
+		const enum_UDT&, Rider::Faiz::call_traits<enum_UDT>::const_reference);
 	BOOST_CHECK_TYPE(
-		const enum_UDT, rider::faiz::call_traits<enum_UDT>::param_type);
+		const enum_UDT, Rider::Faiz::call_traits<enum_UDT>::param_type);
 	return 0;
 }
 
@@ -415,7 +415,7 @@ main()
 template<typename T, bool isarray = false>
 struct call_traits_test
 {
-	typedef ::rider::faiz::call_traits<T> ct;
+	typedef ::Rider::Faiz::call_traits<T> ct;
 	typedef typename ct::param_type param_type;
 	typedef typename ct::reference reference;
 	typedef typename ct::const_reference const_reference;
@@ -466,7 +466,7 @@ call_traits_test<T, isarray>::assert_construct(
 template<typename T>
 struct call_traits_test<T, true>
 {
-	typedef ::rider::faiz::call_traits<T> ct;
+	typedef ::Rider::Faiz::call_traits<T> ct;
 	typedef typename ct::param_type param_type;
 	typedef typename ct::reference reference;
 	typedef typename ct::const_reference const_reference;
@@ -478,7 +478,7 @@ struct call_traits_test<T, true>
 template<typename T>
 void
 call_traits_test<T, true>::assert_construct(
-	typename rider::faiz::call_traits<T>::param_type val)
+	typename Rider::Faiz::call_traits<T>::param_type val)
 {
 	//
 	// this is to check that the call_traits assertions are valid:

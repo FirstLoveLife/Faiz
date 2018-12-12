@@ -7,7 +7,7 @@
 #include "rider/faiz/utility.hpp"
 #include <iosfwd>
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	namespace detail
 	{
@@ -63,7 +63,7 @@ namespace rider::faiz
 	////////////////////////////////////////////////////////////////////////////////////////
 	template<typename T>
 	struct size_type
-		: meta::lazy::let<std::make_unsigned<meta::lazy::_t<difference_type<T>>>>
+		: meta::lazy::let<make_unsigned<meta::lazy::_t<difference_type<T>>>>
 	{};
 
 	/// \cond
@@ -73,13 +73,13 @@ namespace rider::faiz
 		// GCC does not implement CWG393
 		// per https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69316
 		template<typename T>
-		std::remove_cv<T> value_type_helper(T (*)[]);
+		remove_cv<T> value_type_helper(T (*)[]);
 #endif
-		template<typename T, std::size_t N>
-		std::remove_cv<T> value_type_helper(T (*)[N]);
+		template<typename T, size_t N>
+		remove_cv<T> value_type_helper(T (*)[N]);
 
 		template<typename T>
-		using object_remove_cv = meta::if_<is_object<T>, std::remove_cv<T>>;
+		using object_remove_cv = meta::if_<is_object<T>, remove_cv<T>>;
 
 		template<typename T>
 		object_remove_cv<T>
@@ -94,8 +94,8 @@ namespace rider::faiz
 		value_type_helper(T*);
 
 		template<typename T>
-		meta::if_<std::is_base_of<std::ios_base, T>,
-			std::remove_cv<typename T::char_type>>
+		meta::if_<is_base_of<std::ios_base, T>,
+			remove_cv<typename T::char_type>>
 		value_type_helper(T*);
 
 		template<typename T>
@@ -125,9 +125,9 @@ namespace rider::faiz
 	{};
 
 	template<typename S, typename I>
-	struct disable_sized_sentinel : std::false_type
+	struct disable_sized_sentinel : false_
 	{};
 	/// @}
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #endif

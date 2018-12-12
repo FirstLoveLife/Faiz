@@ -1,7 +1,7 @@
 #ifndef ALGORITHM
 #define ALGORITHM
 #include <iostream>
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	template<class T>
 	constexpr const T&
@@ -68,5 +68,5 @@ namespace rider::faiz
 		else
 			return x * power<N - 1>(x);
 	}
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

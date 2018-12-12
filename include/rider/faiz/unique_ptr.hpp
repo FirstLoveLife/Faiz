@@ -22,7 +22,7 @@ However, unique_ptr's destructor is part of its type, and it must be known at
 compile-time.
  */
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	// faiz is a standard library like library
 
@@ -48,7 +48,7 @@ namespace rider::faiz
 		test(...);
 
 	public:
-		using type = decltype(test<faiz::remove_reference_t<Deleter>>(0));
+		using type = decltype(test<Faiz::remove_reference_t<Deleter>>(0));
 	};
 
 
@@ -72,27 +72,27 @@ namespace rider::faiz
 
 	template<typename P1,
 		typename P2,
-		bool = faiz::is_same<typename faiz::remove_cv<typename pointer_traits<
+		bool = Faiz::is_same<typename Faiz::remove_cv<typename pointer_traits<
 								 P1>::element_type>::type,
-			typename faiz::remove_cv<
+			typename Faiz::remove_cv<
 				typename pointer_traits<P2>::element_type>::type>::value>
-	struct is_array_cv_convertible_impl : public faiz::is_convertible<P1, P2>
+	struct is_array_cv_convertible_impl : public Faiz::is_convertible<P1, P2>
 	{}; // Return true if P1 is convertible to P2.
 
 	template<typename P1, typename P2>
-	struct is_array_cv_convertible_impl<P1, P2, false> : public faiz::false_type
+	struct is_array_cv_convertible_impl<P1, P2, false> : public Faiz::false_type
 	{}; // P1's underlying type is not the same as P2's, so it can't be
 		// converted, even if P2 refers to a subclass of P1. Parent == Child,
 		// but Parent[] != Child[]
 
 	template<typename P1,
 		typename P2,
-		bool = faiz::is_scalar_v<P1> && !faiz::is_pointer_v<P1>>
+		bool = Faiz::is_scalar_v<P1> && !Faiz::is_pointer_v<P1>>
 	struct is_array_cv_convertible : public is_array_cv_convertible_impl<P1, P2>
 	{};
 
 	template<typename P1, typename P2>
-	struct is_array_cv_convertible<P1, P2, true> : public faiz::false_type
+	struct is_array_cv_convertible<P1, P2, true> : public Faiz::false_type
 	{}; // P1 is scalar not a pointer, so it can't be converted to a pointer.
 
 
@@ -112,9 +112,9 @@ namespace rider::faiz
 
 	template<typename T, typename T_pointer, typename U, typename U_pointer>
 	struct is_safe_array_conversion
-		: public faiz::integral_constant<bool,
-			  faiz::is_convertible_v<U_pointer,
-				  T_pointer> && faiz::is_array_v<U> && (!faiz::is_pointer_v<U_pointer> || !is_pointer_v<T_pointer> || !faiz::is_derived_of_v<T, faiz::remove_extent_t<U>>)>
+		: public Faiz::integral_constant<bool,
+			  Faiz::is_convertible_v<U_pointer,
+				  T_pointer> && Faiz::is_array_v<U> && (!Faiz::is_pointer_v<U_pointer> || !is_pointer_v<T_pointer> || !Faiz::is_derived_of_v<T, Faiz::remove_extent_t<U>>)>
 	{};
 
 
@@ -272,12 +272,12 @@ namespace rider::faiz
 		// A synonym for the template parameter T.
 		using element_type = T;
 		// A synonym for `Delete::pointer` if defined, otherwise `T *`.
-		// IOW, `faiz::remove_reference<Deleter>::type::pointer` if that
+		// IOW, `Faiz::remove_reference<Deleter>::type::pointer` if that
 		// type exists, otherwise `T*`. Must satisfy *NullablePointer*
-		using pointer = typename rider::faiz::unique_pointer_type<element_type,
+		using pointer = typename Rider::Faiz::unique_pointer_type<element_type,
 			deleter_type>::type;
 
-		static_assert(!rider::faiz::is_rvalue_reference_v<deleter_type>,
+		static_assert(!Rider::Faiz::is_rvalue_reference_v<deleter_type>,
 			"Come on, rvalue_reference is not what I want");
 
 		unique_ptr(unique_ptr& up) = delete;
@@ -297,7 +297,7 @@ namespace rider::faiz
 	public:
 		constexpr unique_ptr() noexcept : pair{pointer{}}
 		{
-			static_assert(!faiz::is_pointer_v<deleter_type>,
+			static_assert(!Faiz::is_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
 				"type or reference type, for the template argument D, the "
 				"program is ill-formed.");
@@ -312,9 +312,9 @@ namespace rider::faiz
 		// If this constructor is instantiated with a pointer type or
 		// reference type for the template argument D, the program is
 		// ill-formed.
-		constexpr unique_ptr(faiz::nullptr_t) noexcept : pair{}
+		constexpr unique_ptr(Faiz::nullptr_t) noexcept : pair{}
 		{
-			static_assert(!faiz::is_pointer_v<deleter_type>,
+			static_assert(!Faiz::is_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
 				"type or reference type, for the template argument D, the "
 				"program is ill-formed.");
@@ -328,7 +328,7 @@ namespace rider::faiz
 
 		explicit unique_ptr(pointer ptr) noexcept : pair{ptr}
 		{
-			static_assert(!faiz::is_pointer_v<deleter_type>,
+			static_assert(!Faiz::is_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
 				"type or reference type, for the template argument D, the "
 				"program is ill-formed.");
@@ -343,29 +343,29 @@ namespace rider::faiz
 		template<class U, class E>
 		unique_ptr(unique_ptr<U, E>&& up) noexcept
 			: pair(up.release(),
-				  rider::faiz::forward<deleter_type>(up.get_deleter()))
+				  Rider::Faiz::forward<deleter_type>(up.get_deleter()))
 		{}
 
 		unique_ptr(pointer ptr,
-			typename faiz::conditional_t<faiz::is_reference_v<deleter_type>,
+			typename Faiz::conditional_t<Faiz::is_reference_v<deleter_type>,
 				deleter_type,
-				typename faiz::add_lvalue_reference_t<const deleter_type>>
+				typename Faiz::add_lvalue_reference_t<const deleter_type>>
 				deleter) noexcept
 			: pair(ptr, deleter)
 		{}
 
 		unique_ptr(pointer ptr,
-			faiz::remove_reference_t<deleter_type>&& deleter) noexcept
-			: pair(ptr, faiz::move(deleter))
+			Faiz::remove_reference_t<deleter_type>&& deleter) noexcept
+			: pair(ptr, Faiz::move(deleter))
 		{}
 
 		template<typename U, typename E>
 		unique_ptr(unique_ptr<U, E>&& u,
-			faiz::enable_if_t<
-				!faiz::is_array_v<
-					U> && faiz::is_convertible_v<typename unique_ptr<U, E>::pointer, pointer> && faiz::is_convertible_v<E, deleter_type> && (faiz::is_same_v<deleter_type, E> || !faiz::is_reference_v<deleter_type>),
+			Faiz::enable_if_t<
+				!Faiz::is_array_v<
+					U> && Faiz::is_convertible_v<typename unique_ptr<U, E>::pointer, pointer> && Faiz::is_convertible_v<E, deleter_type> && (Faiz::is_same_v<deleter_type, E> || !Faiz::is_reference_v<deleter_type>),
 				E>* = 0) noexcept
-			: pair(u.release(), faiz::forward<E>(u.get_deleter()))
+			: pair(u.release(), Faiz::forward<E>(u.get_deleter()))
 		{}
 
 		// Returns the deleter object which would be used for destruction of
@@ -443,12 +443,12 @@ namespace rider::faiz
 		template<typename U, typename E>
 		enable_if_t<
 			!is_array_v<
-				U> && is_convertible_v<typename unique_ptr<U, E>::pointer, pointer> && faiz::is_assignable_v<deleter_type&, E&&>,
+				U> && is_convertible_v<typename unique_ptr<U, E>::pointer, pointer> && Faiz::is_assignable_v<deleter_type&, E&&>,
 			unique_ptr&>
 		operator=(unique_ptr<U, E>&& u) noexcept
 		{
 			reset(u.release());
-			pair.second() = faiz::move(faiz::forward<E>(u.get_deleter()));
+			pair.second() = Faiz::move(Faiz::forward<E>(u.get_deleter()));
 			return *this;
 		}
 
@@ -456,7 +456,7 @@ namespace rider::faiz
 		operator=(unique_ptr&& u) noexcept
 		{
 			reset(u.release());
-			pair.second() = faiz::forward<deleter_type>(u.get_deleter());
+			pair.second() = Faiz::forward<deleter_type>(u.get_deleter());
 			return *this;
 		}
 
@@ -500,20 +500,20 @@ namespace rider::faiz
 			= delete;
 
 	protected:
-		faiz::compressed_pair<pointer, deleter_type> pair;
+		Faiz::compressed_pair<pointer, deleter_type> pair;
 
 	public:
 		constexpr unique_ptr() noexcept : pair(pointer())
 		{
-			static_assert(!faiz::is_pointer_v<deleter_type>,
+			static_assert(!Faiz::is_pointer_v<deleter_type>,
 				"unique_ptr deleter default-constructed with null pointer. Use "
 				"a different constructor or "
 				"change your deleter to a class.");
 		}
 
-		constexpr unique_ptr(faiz::nullptr_t) noexcept : pair(pointer())
+		constexpr unique_ptr(Faiz::nullptr_t) noexcept : pair(pointer())
 		{
-			static_assert(!faiz::is_pointer_v<deleter_type>,
+			static_assert(!Faiz::is_pointer_v<deleter_type>,
 				"unique_ptr deleter default-constructed with null pointer. Use "
 				"a different constructor or "
 				"change your deleter to a class.");
@@ -522,11 +522,11 @@ namespace rider::faiz
 		template<typename P> // Pointers to types derived from T are rejected by
 							 // the constructors, and by reset.
 		explicit unique_ptr(P arr,
-			typename faiz::enable_if<
+			typename Faiz::enable_if<
 				is_array_cv_convertible<P, pointer>::value>::type* = 0) noexcept
 			: pair(arr)
 		{
-			static_assert(!faiz::is_pointer_v<deleter_type>,
+			static_assert(!Faiz::is_pointer_v<deleter_type>,
 				"unique_ptr deleter default-constructed with null pointer. Use "
 				"a different constructor or "
 				"change your deleter to a class.");
@@ -534,22 +534,22 @@ namespace rider::faiz
 
 		template<typename P>
 		unique_ptr(P arr,
-			typename faiz::conditional_t<faiz::is_reference_v<deleter_type>,
+			typename Faiz::conditional_t<Faiz::is_reference_v<deleter_type>,
 				deleter_type,
-				faiz::add_lvalue_reference_t<const deleter_type>> deleter,
-			typename faiz::enable_if<
+				Faiz::add_lvalue_reference_t<const deleter_type>> deleter,
+			typename Faiz::enable_if<
 				is_array_cv_convertible<P, pointer>::value>::type* = 0) noexcept
 			: pair(arr, deleter)
 		{}
 
 		template<typename P>
 		unique_ptr(P arr,
-			faiz::remove_reference_t<deleter_type>&& deleter,
-			typename faiz::enable_if<
+			Faiz::remove_reference_t<deleter_type>&& deleter,
+			typename Faiz::enable_if<
 				is_array_cv_convertible<P, pointer>::value>::type* = 0) noexcept
-			: pair(arr, faiz::move(deleter))
+			: pair(arr, Faiz::move(deleter))
 		{
-			static_assert(!faiz::is_reference_v<deleter_type>,
+			static_assert(!Faiz::is_reference_v<deleter_type>,
 				"deleter_type reference refers to an rvalue deleter. The "
 				"reference will probably become invalid before "
 				"used. Change the deleter_type to not be a reference or "
@@ -557,7 +557,7 @@ namespace rider::faiz
 		}
 
 		unique_ptr(unique_ptr&& x) noexcept
-			: pair(x.release(), faiz::forward<deleter_type>(x.get_deleter()))
+			: pair(x.release(), Faiz::forward<deleter_type>(x.get_deleter()))
 		{}
 
 		template<typename U, typename E>
@@ -566,9 +566,9 @@ namespace rider::faiz
 							pointer,
 							U,
 							typename unique_ptr<U, E>::pointer>::value
-				&& faiz::is_convertible_v<E,
-					   deleter_type> && (!faiz::is_reference_v<deleter_type> || faiz::is_same_v<E, deleter_type>)>* = 0) noexcept
-			: pair(u.release(), faiz::forward<E>(u.get_deleter()))
+				&& Faiz::is_convertible_v<E,
+					   deleter_type> && (!Faiz::is_reference_v<deleter_type> || Faiz::is_same_v<E, deleter_type>)>* = 0) noexcept
+			: pair(u.release(), Faiz::forward<E>(u.get_deleter()))
 		{}
 
 		unique_ptr&
@@ -576,7 +576,7 @@ namespace rider::faiz
 		{
 			reset(x.release());
 			pair.second()
-				= faiz::move(faiz::forward<deleter_type>(x.get_deleter()));
+				= Faiz::move(Faiz::forward<deleter_type>(x.get_deleter()));
 			return *this;
 		}
 
@@ -590,11 +590,11 @@ namespace rider::faiz
 		operator=(unique_ptr<U, E>&& u) noexcept
 		{
 			reset(u.release());
-			pair.second() = faiz::move(faiz::forward<E>(u.get_deleter()));
+			pair.second() = Faiz::move(Faiz::forward<E>(u.get_deleter()));
 			return *this;
 		}
 
-		unique_ptr& operator=(faiz::nullptr_t) noexcept
+		unique_ptr& operator=(Faiz::nullptr_t) noexcept
 		{
 			reset();
 			return *this;
@@ -635,7 +635,7 @@ namespace rider::faiz
 		// array; otherwise, the behavior is undefined.
 		add_lvalue_reference_t<T> operator[](ptrdiff_t i) const
 		{
-			static_assert(faiz::extent_v<T> == 0 || i < faiz::extent_v<T>);
+			static_assert(Faiz::extent_v<T> == 0 || i < Faiz::extent_v<T>);
 			static_assert(pair.first);
 			return pair.first()[i];
 		}
@@ -691,12 +691,12 @@ namespace rider::faiz
 	inline bool
 	operator<(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
 	{
-		using P1 = typename faiz::unique_ptr<T1, D1>::pointer;
-		using P2 = typename faiz::unique_ptr<T2, D2>::pointer;
+		using P1 = typename Faiz::unique_ptr<T1, D1>::pointer;
+		using P2 = typename Faiz::unique_ptr<T2, D2>::pointer;
 		using PCommon = common_type_t<P1, P2>;
 		PCommon pT1 = a.get();
 		PCommon pT2 = b.get();
-		return faiz::less<PCommon>()(pT1, pT2);
+		return Faiz::less<PCommon>()(pT1, pT2);
 	}
 
 	template<typename T1, typename D1, typename T2, typename D2>
@@ -723,87 +723,87 @@ namespace rider::faiz
 
 	template<typename T, typename D>
 	inline bool
-	operator==(const unique_ptr<T, D>& a, faiz::nullptr_t) noexcept
+	operator==(const unique_ptr<T, D>& a, Faiz::nullptr_t) noexcept
 	{
 		return !a;
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator==(faiz::nullptr_t, const unique_ptr<T, D>& a) noexcept
+	operator==(Faiz::nullptr_t, const unique_ptr<T, D>& a) noexcept
 	{
 		return !a;
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator!=(const unique_ptr<T, D>& a, faiz::nullptr_t) noexcept
+	operator!=(const unique_ptr<T, D>& a, Faiz::nullptr_t) noexcept
 	{
 		return static_cast<bool>(a);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator!=(faiz::nullptr_t, const unique_ptr<T, D>& a) noexcept
+	operator!=(Faiz::nullptr_t, const unique_ptr<T, D>& a) noexcept
 	{
 		return static_cast<bool>(a);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator<(const unique_ptr<T, D>& a, faiz::nullptr_t)
+	operator<(const unique_ptr<T, D>& a, Faiz::nullptr_t)
 	{
 		using pointer = typename unique_ptr<T, D>::pointer;
-		return faiz::less<pointer>()(a.get(), nullptr);
+		return Faiz::less<pointer>()(a.get(), nullptr);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator<(faiz::nullptr_t, const unique_ptr<T, D>& b)
+	operator<(Faiz::nullptr_t, const unique_ptr<T, D>& b)
 	{
 		using pointer = typename unique_ptr<T, D>::pointer;
 		pointer pT = b.get();
-		return faiz::less<pointer>()(nullptr, pT);
+		return Faiz::less<pointer>()(nullptr, pT);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator>(const unique_ptr<T, D>& a, faiz::nullptr_t)
+	operator>(const unique_ptr<T, D>& a, Faiz::nullptr_t)
 	{
 		return (nullptr < a);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator>(faiz::nullptr_t, const unique_ptr<T, D>& b)
+	operator>(Faiz::nullptr_t, const unique_ptr<T, D>& b)
 	{
 		return (b < nullptr);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator<=(const unique_ptr<T, D>& a, faiz::nullptr_t)
+	operator<=(const unique_ptr<T, D>& a, Faiz::nullptr_t)
 	{
 		return !(nullptr < a);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator<=(faiz::nullptr_t, const unique_ptr<T, D>& b)
+	operator<=(Faiz::nullptr_t, const unique_ptr<T, D>& b)
 	{
 		return !(b < nullptr);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator>=(const unique_ptr<T, D>& a, faiz::nullptr_t)
+	operator>=(const unique_ptr<T, D>& a, Faiz::nullptr_t)
 	{
 		return !(a < nullptr);
 	}
 
 	template<typename T, typename D>
 	inline bool
-	operator>=(faiz::nullptr_t, const unique_ptr<T, D>& b)
+	operator>=(Faiz::nullptr_t, const unique_ptr<T, D>& b)
 	{
 		return !(nullptr < b);
 	}
@@ -821,7 +821,7 @@ namespace rider::faiz
 		using Unknown_bound = unique_ptr<T[]>;
 	};
 
-	template<class T, faiz::size_t N>
+	template<class T, Faiz::size_t N>
 	struct Unique_if<T[N]>
 	{
 		using Known_bound = void;
@@ -832,13 +832,13 @@ namespace rider::faiz
 	typename Unique_if<T>::Single_object
 	make_unique(Args&&... args)
 	{
-		if constexpr(faiz::is_constructible<T, Args...>())
+		if constexpr(Faiz::is_constructible<T, Args...>())
 		{
-			return unique_ptr<T>(new T(faiz::forward<Args>(args)...));
+			return unique_ptr<T>(new T(Faiz::forward<Args>(args)...));
 		}
 		else
 		{
-			return unique_ptr<T>(new T{faiz::forward<Args>(args)...});
+			return unique_ptr<T>(new T{Faiz::forward<Args>(args)...});
 		}
 	}
 
@@ -856,4 +856,4 @@ namespace rider::faiz
 		= delete;
 #endif
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz

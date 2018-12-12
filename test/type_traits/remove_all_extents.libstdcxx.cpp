@@ -22,8 +22,8 @@
 void
 test01()
 {
-	using rider::faiz::remove_all_extents;
-	using rider::faiz::is_same;
+	using Rider::Faiz::remove_all_extents;
+	using Rider::Faiz::is_same;
 	using namespace __gnu_test;
 
 	static_assert(is_same<remove_all_extents<int>::type, int>::value, "");

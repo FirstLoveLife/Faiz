@@ -28,110 +28,110 @@ struct False
 int
 main()
 {
-	static_assert(!rider::faiz::disjunction<>::value, "");
-	static_assert(rider::faiz::disjunction<rider::faiz::true_type>::value, "");
+	static_assert(!Rider::Faiz::disjunction<>::value, "");
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::true_type>::value, "");
 	static_assert(
-		!rider::faiz::disjunction<rider::faiz::false_type>::value, "");
+		!Rider::Faiz::disjunction<Rider::Faiz::false_type>::value, "");
 
-	static_assert(!rider::faiz::disjunction_v<>, "");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::true_type>, "");
-	static_assert(!rider::faiz::disjunction_v<rider::faiz::false_type>, "");
+	static_assert(!Rider::Faiz::disjunction_v<>, "");
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::true_type>, "");
+	static_assert(!Rider::Faiz::disjunction_v<Rider::Faiz::false_type>, "");
 
-	static_assert(rider::faiz::disjunction<rider::faiz::true_type,
-					  rider::faiz::true_type>::value,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::true_type,
+					  Rider::Faiz::true_type>::value,
 		"");
-	static_assert(rider::faiz::disjunction<rider::faiz::true_type,
-					  rider::faiz::false_type>::value,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::true_type,
+					  Rider::Faiz::false_type>::value,
 		"");
-	static_assert(rider::faiz::disjunction<rider::faiz::false_type,
-					  rider::faiz::true_type>::value,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::false_type,
+					  Rider::Faiz::true_type>::value,
 		"");
-	static_assert(!rider::faiz::disjunction<rider::faiz::false_type,
-					  rider::faiz::false_type>::value,
-		"");
-
-	static_assert(rider::faiz::disjunction_v<rider::faiz::true_type,
-					  rider::faiz::true_type>,
-		"");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::true_type,
-					  rider::faiz::false_type>,
-		"");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::false_type,
-					  rider::faiz::true_type>,
-		"");
-	static_assert(!rider::faiz::disjunction_v<rider::faiz::false_type,
-					  rider::faiz::false_type>,
+	static_assert(!Rider::Faiz::disjunction<Rider::Faiz::false_type,
+					  Rider::Faiz::false_type>::value,
 		"");
 
-	static_assert(rider::faiz::disjunction<rider::faiz::true_type,
-					  rider::faiz::true_type,
-					  rider::faiz::true_type>::value,
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::true_type,
+					  Rider::Faiz::true_type>,
 		"");
-	static_assert(rider::faiz::disjunction<rider::faiz::true_type,
-					  rider::faiz::false_type,
-					  rider::faiz::true_type>::value,
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::true_type,
+					  Rider::Faiz::false_type>,
 		"");
-	static_assert(rider::faiz::disjunction<rider::faiz::false_type,
-					  rider::faiz::true_type,
-					  rider::faiz::true_type>::value,
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::false_type,
+					  Rider::Faiz::true_type>,
 		"");
-	static_assert(rider::faiz::disjunction<rider::faiz::false_type,
-					  rider::faiz::false_type,
-					  rider::faiz::true_type>::value,
-		"");
-	static_assert(rider::faiz::disjunction<rider::faiz::true_type,
-					  rider::faiz::true_type,
-					  rider::faiz::false_type>::value,
-		"");
-	static_assert(rider::faiz::disjunction<rider::faiz::true_type,
-					  rider::faiz::false_type,
-					  rider::faiz::false_type>::value,
-		"");
-	static_assert(rider::faiz::disjunction<rider::faiz::false_type,
-					  rider::faiz::true_type,
-					  rider::faiz::false_type>::value,
-		"");
-	static_assert(!rider::faiz::disjunction<rider::faiz::false_type,
-					  rider::faiz::false_type,
-					  rider::faiz::false_type>::value,
+	static_assert(!Rider::Faiz::disjunction_v<Rider::Faiz::false_type,
+					  Rider::Faiz::false_type>,
 		"");
 
-	static_assert(rider::faiz::disjunction_v<rider::faiz::true_type,
-					  rider::faiz::true_type,
-					  rider::faiz::true_type>,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::true_type,
+					  Rider::Faiz::true_type,
+					  Rider::Faiz::true_type>::value,
 		"");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::true_type,
-					  rider::faiz::false_type,
-					  rider::faiz::true_type>,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::true_type,
+					  Rider::Faiz::false_type,
+					  Rider::Faiz::true_type>::value,
 		"");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::false_type,
-					  rider::faiz::true_type,
-					  rider::faiz::true_type>,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::false_type,
+					  Rider::Faiz::true_type,
+					  Rider::Faiz::true_type>::value,
 		"");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::false_type,
-					  rider::faiz::false_type,
-					  rider::faiz::true_type>,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::false_type,
+					  Rider::Faiz::false_type,
+					  Rider::Faiz::true_type>::value,
 		"");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::true_type,
-					  rider::faiz::true_type,
-					  rider::faiz::false_type>,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::true_type,
+					  Rider::Faiz::true_type,
+					  Rider::Faiz::false_type>::value,
 		"");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::true_type,
-					  rider::faiz::false_type,
-					  rider::faiz::false_type>,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::true_type,
+					  Rider::Faiz::false_type,
+					  Rider::Faiz::false_type>::value,
 		"");
-	static_assert(rider::faiz::disjunction_v<rider::faiz::false_type,
-					  rider::faiz::true_type,
-					  rider::faiz::false_type>,
+	static_assert(Rider::Faiz::disjunction<Rider::Faiz::false_type,
+					  Rider::Faiz::true_type,
+					  Rider::Faiz::false_type>::value,
 		"");
-	static_assert(!rider::faiz::disjunction_v<rider::faiz::false_type,
-					  rider::faiz::false_type,
-					  rider::faiz::false_type>,
+	static_assert(!Rider::Faiz::disjunction<Rider::Faiz::false_type,
+					  Rider::Faiz::false_type,
+					  Rider::Faiz::false_type>::value,
 		"");
 
-	static_assert(rider::faiz::disjunction<True>::value, "");
-	static_assert(!rider::faiz::disjunction<False>::value, "");
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::true_type,
+					  Rider::Faiz::true_type,
+					  Rider::Faiz::true_type>,
+		"");
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::true_type,
+					  Rider::Faiz::false_type,
+					  Rider::Faiz::true_type>,
+		"");
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::false_type,
+					  Rider::Faiz::true_type,
+					  Rider::Faiz::true_type>,
+		"");
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::false_type,
+					  Rider::Faiz::false_type,
+					  Rider::Faiz::true_type>,
+		"");
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::true_type,
+					  Rider::Faiz::true_type,
+					  Rider::Faiz::false_type>,
+		"");
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::true_type,
+					  Rider::Faiz::false_type,
+					  Rider::Faiz::false_type>,
+		"");
+	static_assert(Rider::Faiz::disjunction_v<Rider::Faiz::false_type,
+					  Rider::Faiz::true_type,
+					  Rider::Faiz::false_type>,
+		"");
+	static_assert(!Rider::Faiz::disjunction_v<Rider::Faiz::false_type,
+					  Rider::Faiz::false_type,
+					  Rider::Faiz::false_type>,
+		"");
 
-	static_assert(rider::faiz::disjunction_v<True>, "");
-	static_assert(!rider::faiz::disjunction_v<False>, "");
+	static_assert(Rider::Faiz::disjunction<True>::value, "");
+	static_assert(!Rider::Faiz::disjunction<False>::value, "");
+
+	static_assert(Rider::Faiz::disjunction_v<True>, "");
+	static_assert(!Rider::Faiz::disjunction_v<False>, "");
 }

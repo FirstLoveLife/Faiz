@@ -18,35 +18,35 @@ template<class T, class U>
 void
 test_is_same()
 {
-	static_assert((rider::faiz::is_same<T, U>::value), "");
-	static_assert((!rider::faiz::is_same<const T, U>::value), "");
-	static_assert((!rider::faiz::is_same<T, const U>::value), "");
-	static_assert((rider::faiz::is_same<const T, const U>::value), "");
-	static_assert((rider::faiz::is_same_v<T, U>), "");
-	static_assert((!rider::faiz::is_same_v<const T, U>), "");
-	static_assert((!rider::faiz::is_same_v<T, const U>), "");
-	static_assert((rider::faiz::is_same_v<const T, const U>), "");
+	static_assert((Rider::Faiz::is_same<T, U>::value), "");
+	static_assert((!Rider::Faiz::is_same<const T, U>::value), "");
+	static_assert((!Rider::Faiz::is_same<T, const U>::value), "");
+	static_assert((Rider::Faiz::is_same<const T, const U>::value), "");
+	static_assert((Rider::Faiz::is_same_v<T, U>), "");
+	static_assert((!Rider::Faiz::is_same_v<const T, U>), "");
+	static_assert((!Rider::Faiz::is_same_v<T, const U>), "");
+	static_assert((Rider::Faiz::is_same_v<const T, const U>), "");
 }
 
 template<class T, class U>
 void
 test_is_same_ref()
 {
-	static_assert((rider::faiz::is_same<T, U>::value), "");
-	static_assert((rider::faiz::is_same<const T, U>::value), "");
-	static_assert((rider::faiz::is_same<T, const U>::value), "");
-	static_assert((rider::faiz::is_same<const T, const U>::value), "");
-	static_assert((rider::faiz::is_same_v<T, U>), "");
-	static_assert((rider::faiz::is_same_v<const T, U>), "");
-	static_assert((rider::faiz::is_same_v<T, const U>), "");
-	static_assert((rider::faiz::is_same_v<const T, const U>), "");
+	static_assert((Rider::Faiz::is_same<T, U>::value), "");
+	static_assert((Rider::Faiz::is_same<const T, U>::value), "");
+	static_assert((Rider::Faiz::is_same<T, const U>::value), "");
+	static_assert((Rider::Faiz::is_same<const T, const U>::value), "");
+	static_assert((Rider::Faiz::is_same_v<T, U>), "");
+	static_assert((Rider::Faiz::is_same_v<const T, U>), "");
+	static_assert((Rider::Faiz::is_same_v<T, const U>), "");
+	static_assert((Rider::Faiz::is_same_v<const T, const U>), "");
 }
 
 template<class T, class U>
 void
 test_is_not_same()
 {
-	static_assert((!rider::faiz::is_same<T, U>::value), "");
+	static_assert((!Rider::Faiz::is_same<T, U>::value), "");
 }
 
 class Class

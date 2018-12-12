@@ -11,7 +11,7 @@
 
 #include "rider/faiz/common_type.hpp"
 #include "rider/faiz/utility/concepts.hpp"
-using namespace rider::faiz;
+using namespace Rider::Faiz;
 struct B
 {};
 struct D : B
@@ -39,7 +39,7 @@ struct Y
 {};
 struct Z
 {};
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	template<>
 	struct common_type<X, Y>
@@ -51,7 +51,7 @@ namespace rider::faiz
 	{
 		using type = Z;
 	};
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 int
 main()

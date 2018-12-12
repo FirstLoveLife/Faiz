@@ -18,9 +18,9 @@ template<class T>
 void
 test_is_copy_assignable()
 {
-	static_assert((rider::faiz::is_copy_assignable<T>::value), "");
+	static_assert((Rider::Faiz::is_copy_assignable<T>::value), "");
 #if TEST_STD_VER > 14
-	static_assert((rider::faiz::is_copy_assignable_v<T>), "");
+	static_assert((Rider::Faiz::is_copy_assignable_v<T>), "");
 #endif
 }
 
@@ -28,9 +28,9 @@ template<class T>
 void
 test_is_not_copy_assignable()
 {
-	static_assert((!rider::faiz::is_copy_assignable<T>::value), "");
+	static_assert((!Rider::Faiz::is_copy_assignable<T>::value), "");
 #if TEST_STD_VER > 14
-	static_assert((!rider::faiz::is_copy_assignable_v<T>), "");
+	static_assert((!Rider::Faiz::is_copy_assignable_v<T>), "");
 #endif
 }
 

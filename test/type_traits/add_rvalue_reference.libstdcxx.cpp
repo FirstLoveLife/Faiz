@@ -4,7 +4,7 @@
 void
 test01()
 {
-	using rider::faiz::add_rvalue_reference;
+	using Rider::Faiz::add_rvalue_reference;
 	using std::is_same;
 	using namespace __gnu_test;
 

@@ -25,8 +25,8 @@
 void
 test01()
 {
-	using rider::faiz::is_trivially_destructible;
-	using rider::faiz::is_destructible;
+	using Rider::Faiz::is_trivially_destructible;
+	using Rider::Faiz::is_destructible;
 	using namespace __gnu_test;
 
 	static_assert(test_category<is_trivially_destructible, int>(true), "");

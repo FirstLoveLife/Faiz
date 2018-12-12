@@ -20,20 +20,20 @@ template<class T>
 void
 test_rvalue_ref()
 {
-	static_assert(!rider::faiz::is_void<T>::value, "");
-	static_assert(!rider::faiz::is_null_pointer<T>::value, "");
-	static_assert(!rider::faiz::is_integral<T>::value, "");
-	static_assert(!rider::faiz::is_floating_point<T>::value, "");
-	static_assert(!rider::faiz::is_array<T>::value, "");
-	static_assert(!rider::faiz::is_pointer<T>::value, "");
-	static_assert(!rider::faiz::is_lvalue_reference<T>::value, "");
-	static_assert(rider::faiz::is_rvalue_reference<T>::value, "");
-	static_assert(!rider::faiz::is_member_object_pointer<T>::value, "");
-	static_assert(!rider::faiz::is_member_function_pointer<T>::value, "");
-	static_assert(!rider::faiz::is_enum<T>::value, "");
-	static_assert(!rider::faiz::is_union<T>::value, "");
-	static_assert(!rider::faiz::is_class<T>::value, "");
-	static_assert(!rider::faiz::is_function<T>::value, "");
+	static_assert(!Rider::Faiz::is_void<T>::value, "");
+	static_assert(!Rider::Faiz::is_null_pointer<T>::value, "");
+	static_assert(!Rider::Faiz::is_integral<T>::value, "");
+	static_assert(!Rider::Faiz::is_floating_point<T>::value, "");
+	static_assert(!Rider::Faiz::is_array<T>::value, "");
+	static_assert(!Rider::Faiz::is_pointer<T>::value, "");
+	static_assert(!Rider::Faiz::is_lvalue_reference<T>::value, "");
+	static_assert(Rider::Faiz::is_rvalue_reference<T>::value, "");
+	static_assert(!Rider::Faiz::is_member_object_pointer<T>::value, "");
+	static_assert(!Rider::Faiz::is_member_function_pointer<T>::value, "");
+	static_assert(!Rider::Faiz::is_enum<T>::value, "");
+	static_assert(!Rider::Faiz::is_union<T>::value, "");
+	static_assert(!Rider::Faiz::is_class<T>::value, "");
+	static_assert(!Rider::Faiz::is_function<T>::value, "");
 }
 
 struct incomplete_type;
@@ -46,5 +46,5 @@ main()
 
 	//  LWG#2582
 	static_assert(
-		!rider::faiz::is_rvalue_reference<incomplete_type>::value, "");
+		!Rider::Faiz::is_rvalue_reference<incomplete_type>::value, "");
 }

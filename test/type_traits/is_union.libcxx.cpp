@@ -19,28 +19,28 @@ template<class T>
 void
 test_is_union()
 {
-	static_assert(rider::faiz::is_union<T>::value, "");
-	static_assert(rider::faiz::is_union<const T>::value, "");
-	static_assert(rider::faiz::is_union<volatile T>::value, "");
-	static_assert(rider::faiz::is_union<const volatile T>::value, "");
-	static_assert(rider::faiz::is_union_v<T>, "");
-	static_assert(rider::faiz::is_union_v<const T>, "");
-	static_assert(rider::faiz::is_union_v<volatile T>, "");
-	static_assert(rider::faiz::is_union_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_union<T>::value, "");
+	static_assert(Rider::Faiz::is_union<const T>::value, "");
+	static_assert(Rider::Faiz::is_union<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_union<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_union_v<T>, "");
+	static_assert(Rider::Faiz::is_union_v<const T>, "");
+	static_assert(Rider::Faiz::is_union_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_union_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_union()
 {
-	static_assert(!rider::faiz::is_union<T>::value, "");
-	static_assert(!rider::faiz::is_union<const T>::value, "");
-	static_assert(!rider::faiz::is_union<volatile T>::value, "");
-	static_assert(!rider::faiz::is_union<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_union_v<T>, "");
-	static_assert(!rider::faiz::is_union_v<const T>, "");
-	static_assert(!rider::faiz::is_union_v<volatile T>, "");
-	static_assert(!rider::faiz::is_union_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_union<T>::value, "");
+	static_assert(!Rider::Faiz::is_union<const T>::value, "");
+	static_assert(!Rider::Faiz::is_union<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_union<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_union_v<T>, "");
+	static_assert(!Rider::Faiz::is_union_v<const T>, "");
+	static_assert(!Rider::Faiz::is_union_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_union_v<const volatile T>, "");
 }
 
 class Empty
@@ -78,7 +78,7 @@ main()
 {
 	test_is_union<Union>();
 
-	test_is_not_union<rider::faiz::nullptr_t>();
+	test_is_not_union<Rider::Faiz::nullptr_t>();
 	test_is_not_union<void>();
 	test_is_not_union<int>();
 	test_is_not_union<int&>();

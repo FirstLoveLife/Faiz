@@ -18,7 +18,7 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "rider/faiz/type_traits.hpp"
-using namespace rider::faiz;
+using namespace Rider::Faiz;
 
 template<typename Trait, typename Result>
 using test = is_same<typename Trait::type, Result>;

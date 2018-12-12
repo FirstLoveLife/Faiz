@@ -23,7 +23,7 @@
 void
 test01()
 {
-	using rider::faiz::is_union;
+	using Rider::Faiz::is_union;
 	using namespace __gnu_test;
 
 	// Positive tests.

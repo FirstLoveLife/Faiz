@@ -1,6 +1,6 @@
 #include "../testsuite_tr1.h"
 #include "rider/faiz/type_traits.hpp"
-using namespace rider::faiz;
+using namespace Rider::Faiz;
 using namespace __gnu_test;
 
 void

@@ -24,30 +24,30 @@ template<class T>
 void
 test_is_trivially_copyable()
 {
-	static_assert(rider::faiz::is_trivially_copyable<T>::value, "");
-	static_assert(rider::faiz::is_trivially_copyable<const T>::value, "");
-	static_assert(rider::faiz::is_trivially_copyable<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_trivially_copyable<T>::value, "");
+	static_assert(Rider::Faiz::is_trivially_copyable<const T>::value, "");
+	static_assert(Rider::Faiz::is_trivially_copyable<volatile T>::value, "");
 	static_assert(
-		rider::faiz::is_trivially_copyable<const volatile T>::value, "");
-	static_assert(rider::faiz::is_trivially_copyable_v<T>, "");
-	static_assert(rider::faiz::is_trivially_copyable_v<const T>, "");
-	static_assert(rider::faiz::is_trivially_copyable_v<volatile T>, "");
-	static_assert(rider::faiz::is_trivially_copyable_v<const volatile T>, "");
+		Rider::Faiz::is_trivially_copyable<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_trivially_copyable_v<T>, "");
+	static_assert(Rider::Faiz::is_trivially_copyable_v<const T>, "");
+	static_assert(Rider::Faiz::is_trivially_copyable_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_trivially_copyable_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_trivially_copyable()
 {
-	static_assert(!rider::faiz::is_trivially_copyable<T>::value, "");
-	static_assert(!rider::faiz::is_trivially_copyable<const T>::value, "");
-	static_assert(!rider::faiz::is_trivially_copyable<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_trivially_copyable<T>::value, "");
+	static_assert(!Rider::Faiz::is_trivially_copyable<const T>::value, "");
+	static_assert(!Rider::Faiz::is_trivially_copyable<volatile T>::value, "");
 	static_assert(
-		!rider::faiz::is_trivially_copyable<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_trivially_copyable_v<T>, "");
-	static_assert(!rider::faiz::is_trivially_copyable_v<const T>, "");
-	static_assert(!rider::faiz::is_trivially_copyable_v<volatile T>, "");
-	static_assert(!rider::faiz::is_trivially_copyable_v<const volatile T>, "");
+		!Rider::Faiz::is_trivially_copyable<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_trivially_copyable_v<T>, "");
+	static_assert(!Rider::Faiz::is_trivially_copyable_v<const T>, "");
+	static_assert(!Rider::Faiz::is_trivially_copyable_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_trivially_copyable_v<const volatile T>, "");
 }
 
 struct A

@@ -22,7 +22,7 @@
 #include <stack>
 #include <tuple>
 #include <utility>
-using rider::faiz::is_swappable;
+using Rider::Faiz::is_swappable;
 
 namespace funny
 {

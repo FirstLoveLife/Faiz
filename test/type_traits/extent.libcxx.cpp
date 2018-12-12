@@ -19,28 +19,28 @@ template<class T, unsigned A>
 void
 test_extent()
 {
-	static_assert((rider::faiz::extent<T>::value == A), "");
-	static_assert((rider::faiz::extent<const T>::value == A), "");
-	static_assert((rider::faiz::extent<volatile T>::value == A), "");
-	static_assert((rider::faiz::extent<const volatile T>::value == A), "");
-	static_assert((rider::faiz::extent_v<T> == A), "");
-	static_assert((rider::faiz::extent_v<const T> == A), "");
-	static_assert((rider::faiz::extent_v<volatile T> == A), "");
-	static_assert((rider::faiz::extent_v<const volatile T> == A), "");
+	static_assert((Rider::Faiz::extent<T>::value == A), "");
+	static_assert((Rider::Faiz::extent<const T>::value == A), "");
+	static_assert((Rider::Faiz::extent<volatile T>::value == A), "");
+	static_assert((Rider::Faiz::extent<const volatile T>::value == A), "");
+	static_assert((Rider::Faiz::extent_v<T> == A), "");
+	static_assert((Rider::Faiz::extent_v<const T> == A), "");
+	static_assert((Rider::Faiz::extent_v<volatile T> == A), "");
+	static_assert((Rider::Faiz::extent_v<const volatile T> == A), "");
 }
 
 template<class T, unsigned A>
 void
 test_extent1()
 {
-	static_assert((rider::faiz::extent<T, 1>::value == A), "");
-	static_assert((rider::faiz::extent<const T, 1>::value == A), "");
-	static_assert((rider::faiz::extent<volatile T, 1>::value == A), "");
-	static_assert((rider::faiz::extent<const volatile T, 1>::value == A), "");
-	static_assert((rider::faiz::extent_v<T, 1> == A), "");
-	static_assert((rider::faiz::extent_v<const T, 1> == A), "");
-	static_assert((rider::faiz::extent_v<volatile T, 1> == A), "");
-	static_assert((rider::faiz::extent_v<const volatile T, 1> == A), "");
+	static_assert((Rider::Faiz::extent<T, 1>::value == A), "");
+	static_assert((Rider::Faiz::extent<const T, 1>::value == A), "");
+	static_assert((Rider::Faiz::extent<volatile T, 1>::value == A), "");
+	static_assert((Rider::Faiz::extent<const volatile T, 1>::value == A), "");
+	static_assert((Rider::Faiz::extent_v<T, 1> == A), "");
+	static_assert((Rider::Faiz::extent_v<const T, 1> == A), "");
+	static_assert((Rider::Faiz::extent_v<volatile T, 1> == A), "");
+	static_assert((Rider::Faiz::extent_v<const volatile T, 1> == A), "");
 }
 
 class Class

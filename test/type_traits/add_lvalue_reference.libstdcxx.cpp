@@ -25,7 +25,7 @@
     void
     test01()
     {
-        using rider::faiz::add_lvalue_reference;
+        using Rider::Faiz::add_lvalue_reference;
         using std::is_same;
         using namespace __gnu_test;
 

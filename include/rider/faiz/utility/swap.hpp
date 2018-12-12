@@ -19,7 +19,7 @@
 #include "rider/faiz/faiz_fwd.hpp"
 #include "rider/faiz/move.hpp"
 #include <tuple>
-namespace rider::faiz
+namespace Rider::Faiz::range
 {
 	/// \cond
 	namespace detail
@@ -34,9 +34,14 @@ namespace rider::faiz
 
 	template<typename T>
 	struct is_swappable;
+	template<typename T>
+	inline constexpr bool is_swappable_v = is_swappable<T>::value;
 
 	template<typename T>
 	struct is_nothrow_swappable;
+	template<typename T>
+	inline constexpr bool is_nothrow_swappable_v
+		= is_nothrow_swappable<T>::value;
 
 	template<typename T, typename U>
 	struct is_swappable_with;
@@ -56,7 +61,7 @@ namespace rider::faiz
 		T>
 	exchange(T& t, U&& u) noexcept(
 		std::is_nothrow_move_constructible<T>::value&&
-			std::is_nothrow_assignable<T&, U>::value)
+			is_nothrow_assignable<T&, U>::value)
 	{
 		T tmp((T &&) t);
 		t = (U &&) u;
@@ -73,13 +78,8 @@ namespace rider::faiz
 		swap(T&, T&)
 			= delete;
 
-		template<typename T, faiz::size_t N>
+		template<typename T, Faiz::size_t N>
 		void swap(T (&)[N], T (&)[N]) = delete;
-
-#ifdef RANGES_WORKAROUND_MSVC_620035
-		void
-		swap();
-#endif
 
 		template<typename T,
 			typename U,
@@ -116,14 +116,14 @@ namespace rider::faiz
 				// For arrays of instrinsicly swappable (i.e., movable)
 				// types for which a swap overload cannot be found via ADL,
 				// swap array elements by moving.
-				template<typename T, typename U, faiz::size_t N>
+				template<typename T, typename U, Faiz::size_t N>
 				constexpr meta::if_c<
 					!is_adl_swappable_<T (&)[N], U (&)[N]>::value
 					&& is_swappable_with<T&, U&>::value>
 				operator()(T (&t)[N], U (&u)[N]) const
 				noexcept(is_nothrow_swappable_with<T&, U&>::value)
 			{
-				for(faiz::size_t i = 0; i < N; ++i)
+				for(Faiz::size_t i = 0; i < N; ++i)
 					(*this)(t[i], u[i]);
 			}
 
@@ -156,7 +156,7 @@ namespace rider::faiz
 			}
 
 		private:
-			template<typename T, typename U, faiz::size_t... Is>
+			template<typename T, typename U, Faiz::size_t... Is>
 			constexpr static void
 			impl(T&& left, U&& right, index_sequence<Is...>)
 			{
@@ -173,15 +173,14 @@ namespace rider::faiz
 		template<typename T, typename U>
 		struct is_swappable_with_<T,
 			U,
-			void_t<decltype(swap_fn{}(std::declval<T>(), std::declval<U>())),
-				decltype(swap_fn{}(std::declval<U>(), std::declval<T>()))>>
-			: true_
+			void_t<decltype(swap_fn{}(declval<T>(), declval<U>())),
+				decltype(swap_fn{}(declval<U>(), declval<T>()))>> : true_
 		{};
 
 		template<typename T, typename U>
 		struct is_nothrow_swappable_with_
-			: bool_<noexcept(swap_fn{}(std::declval<T>(), std::declval<U>()))
-				  && noexcept(swap_fn{}(std::declval<U>(), std::declval<T>()))>
+			: bool_<noexcept(swap_fn{}(declval<T>(), declval<U>()))
+				  && noexcept(swap_fn{}(declval<U>(), declval<T>()))>
 		{};
 
 		// Q: Should std::reference_wrapper be considered a proxy wrt
@@ -216,8 +215,7 @@ namespace rider::faiz
 
 		template<typename T,
 			typename U,
-			typename
-			= decltype(iter_swap(std::declval<T>(), std::declval<U>()))>
+			typename = decltype(iter_swap(declval<T>(), declval<U>()))>
 		true_
 		try_adl_iter_swap_(int);
 
@@ -287,8 +285,7 @@ namespace rider::faiz
 
 		template<typename T, typename U>
 		struct is_nothrow_indirectly_swappable_
-			: bool_<noexcept(
-				  iter_swap_fn{}(std::declval<T>(), std::declval<U>()))>
+			: bool_<noexcept(iter_swap_fn{}(declval<T>(), declval<U>()))>
 		{};
 	} // namespace adl_swap_detail
 	/// \endcond
@@ -330,12 +327,8 @@ namespace rider::faiz
 
 	inline namespace CPOs
 	{
-		/// \ingroup group-utility
-		/// \relates adl_swap_detail::swap_fn
 		inline constexpr adl_swap_detail::swap_fn swap{};
 
-		/// \ingroup group-utility
-		/// \relates adl_swap_detail::iter_swap_fn
 		inline constexpr adl_swap_detail::iter_swap_fn iter_swap{};
 	} // namespace CPOs
 
@@ -353,6 +346,6 @@ namespace rider::faiz
 
 	inline constexpr indirect_swap_fn indirect_swap{};
 	/// \endcond
-} // namespace rider::faiz
+} // namespace Rider::Faiz::range
 
 #endif

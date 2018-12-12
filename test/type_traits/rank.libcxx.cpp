@@ -19,14 +19,14 @@ template<class T, unsigned A>
 void
 test_rank()
 {
-	static_assert(rider::faiz::rank<T>::value == A, "");
-	static_assert(rider::faiz::rank<const T>::value == A, "");
-	static_assert(rider::faiz::rank<volatile T>::value == A, "");
-	static_assert(rider::faiz::rank<const volatile T>::value == A, "");
-	static_assert(rider::faiz::rank_v<T> == A, "");
-	static_assert(rider::faiz::rank_v<const T> == A, "");
-	static_assert(rider::faiz::rank_v<volatile T> == A, "");
-	static_assert(rider::faiz::rank_v<const volatile T> == A, "");
+	static_assert(Rider::Faiz::rank<T>::value == A, "");
+	static_assert(Rider::Faiz::rank<const T>::value == A, "");
+	static_assert(Rider::Faiz::rank<volatile T>::value == A, "");
+	static_assert(Rider::Faiz::rank<const volatile T>::value == A, "");
+	static_assert(Rider::Faiz::rank_v<T> == A, "");
+	static_assert(Rider::Faiz::rank_v<const T> == A, "");
+	static_assert(Rider::Faiz::rank_v<volatile T> == A, "");
+	static_assert(Rider::Faiz::rank_v<const volatile T> == A, "");
 }
 
 class Class

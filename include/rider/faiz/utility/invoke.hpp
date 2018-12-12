@@ -18,7 +18,7 @@
 #include "rider/faiz/utility/concepts.hpp"
 #include "rider/faiz/utility/static_const.hpp"
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	template<typename T>
 	struct is_reference_wrapper : meta::if_<is_same<remove_cvref_t<T>, T>,
@@ -214,6 +214,6 @@ namespace rider::faiz
 	struct invoke_result : meta::defer<invoke_result_t, Fun, Args...>
 	{};
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #endif

@@ -1,9 +1,8 @@
 #ifndef OBSERVER_PTR
 #define OBSERVER_PTR
 #include "rider/faiz/debug.hpp"
-#include "rider/faiz/operators.hpp"
-#include "rider/faiz/type_traits.hpp"
-namespace rider::faiz
+#include "rider/faiz/math/RelationAlgebra.hpp"
+namespace Rider::Faiz
 {
 	template<typename T>
 	class observer_ptr : private totally_ordered<observer_ptr<T>>,
@@ -79,9 +78,9 @@ namespace rider::faiz
 		constexpr void
 		swap(observer_ptr& other) noexcept
 		{
-			// TODO: use faiz::swap
+			// TODO: use Faiz::swap
 			std::swap(ptr, other.ptr);
 		}
 	};
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

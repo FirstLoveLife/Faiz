@@ -1,6 +1,6 @@
 #ifndef CWCHAR
 #define CWCHAR
-namespace rider::faiz
+namespace Rider::Faiz
 {
 
     using wint_t = __WINT_TYPE__;

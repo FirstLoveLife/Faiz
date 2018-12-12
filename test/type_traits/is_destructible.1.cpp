@@ -1,5 +1,5 @@
 #include "rider/faiz/type_traits.hpp"
-using namespace rider::faiz;
+using namespace Rider::Faiz;
 template<class T>
 void
 test_is_destructible()

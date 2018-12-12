@@ -26,7 +26,7 @@ struct NonTrivial
 	{}
 };
 
-using R = rider::faiz::reference_wrapper<NonTrivial>;
+using R = Rider::Faiz::reference_wrapper<NonTrivial>;
 
 static_assert(std::is_copy_constructible<R>::value, "copy constructible");
 static_assert(std::is_copy_assignable<R>::value, "copy assignable");

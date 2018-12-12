@@ -19,11 +19,11 @@ void
 test_remove_cv_imp()
 {
 	static_assert(
-		(rider::faiz::is_same<typename rider::faiz::remove_cv<T>::type,
+		(Rider::Faiz::is_same<typename Rider::Faiz::remove_cv<T>::type,
 			U>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::remove_cv_t<T>, U>::value), "");
+		(Rider::Faiz::is_same<Rider::Faiz::remove_cv_t<T>, U>::value), "");
 }
 
 template<class T>

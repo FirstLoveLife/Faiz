@@ -35,7 +35,7 @@ struct S
 	{}
 };
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	template<typename T>
 	struct common_type<T, ::S<T>>
@@ -65,7 +65,7 @@ namespace rider::faiz
 	template<>
 	struct common_type<::X<double>, ::X<double>>
 	{};
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #if TEST_STD_VER >= 11
 template<class Tp>
@@ -79,7 +79,7 @@ using always_bool = typename always_bool_imp<Tp>::type;
 template<class... Args>
 constexpr auto
 no_common_type_imp(int)
-	-> always_bool<typename rider::faiz::common_type<Args...>::type>
+	-> always_bool<typename Rider::Faiz::common_type<Args...>::type>
 {
 	return false;
 }
@@ -93,21 +93,21 @@ no_common_type_imp(long)
 
 template<class... Args>
 using no_common_type
-	= rider::faiz::integral_constant<bool, no_common_type_imp<Args...>(0)>;
+	= Rider::Faiz::integral_constant<bool, no_common_type_imp<Args...>(0)>;
 
 template<class Tp>
-using Decay = typename rider::faiz::decay<Tp>::type;
+using Decay = typename Rider::Faiz::decay<Tp>::type;
 
 template<class... Args>
-using CommonType = typename rider::faiz::common_type<Args...>::type;
+using CommonType = typename Rider::Faiz::common_type<Args...>::type;
 
 template<class T1, class T2>
 struct TernaryOpImp
 {
-	static_assert(rider::faiz::is_same<Decay<T1>, T1>::value, "must be same");
-	static_assert(rider::faiz::is_same<Decay<T2>, T2>::value, "must be same");
-	using type = typename rider::faiz::decay<decltype(
-		false ? rider::faiz::declval<T1>() : rider::faiz::declval<T2>())>::type;
+	static_assert(Rider::Faiz::is_same<Decay<T1>, T1>::value, "must be same");
+	static_assert(Rider::Faiz::is_same<Decay<T2>, T2>::value, "must be same");
+	using type = typename Rider::Faiz::decay<decltype(
+		false ? Rider::Faiz::declval<T1>() : Rider::Faiz::declval<T2>())>::type;
 };
 
 template<class T1, class T2>
@@ -125,14 +125,14 @@ test_bullet_one()
 void
 test_bullet_two()
 {
-	static_assert(rider::faiz::is_same<CommonType<void>, void>::value, "");
-	static_assert(rider::faiz::is_same<CommonType<int>, int>::value, "");
-	static_assert(rider::faiz::is_same<CommonType<int const>, int>::value, "");
+	static_assert(Rider::Faiz::is_same<CommonType<void>, void>::value, "");
+	static_assert(Rider::Faiz::is_same<CommonType<int>, int>::value, "");
+	static_assert(Rider::Faiz::is_same<CommonType<int const>, int>::value, "");
 	static_assert(
-		rider::faiz::is_same<CommonType<int volatile[]>, int volatile*>::value,
+		Rider::Faiz::is_same<CommonType<int volatile[]>, int volatile*>::value,
 		"");
 	static_assert(
-		rider::faiz::is_same<CommonType<void (&)()>, void (*)()>::value, "");
+		Rider::Faiz::is_same<CommonType<void (&)()>, void (*)()>::value, "");
 
 	// FIXME WTF?
 	// static_assert(no_common_type<X<double>>::value, "");
@@ -144,13 +144,13 @@ test_bullet_three_one_imp()
 {
 	using DT = Decay<T>;
 	using DU = Decay<U>;
-	static_assert(!rider::faiz::is_same<T, DT>::value
-			|| !rider::faiz::is_same<U, DU>::value,
+	static_assert(!Rider::Faiz::is_same<T, DT>::value
+			|| !Rider::Faiz::is_same<U, DU>::value,
 		"");
-	static_assert(rider::faiz::is_same<CommonType<T, U>, Expect>::value, "");
-	static_assert(rider::faiz::is_same<CommonType<U, T>, Expect>::value, "");
+	static_assert(Rider::Faiz::is_same<CommonType<T, U>, Expect>::value, "");
+	static_assert(Rider::Faiz::is_same<CommonType<U, T>, Expect>::value, "");
 	static_assert(
-		rider::faiz::is_same<CommonType<T, U>, CommonType<DT, DU>>::value, "");
+		Rider::Faiz::is_same<CommonType<T, U>, CommonType<DT, DU>>::value, "");
 }
 
 // (3.3)
@@ -183,18 +183,18 @@ test_bullet_three_one()
 		using T1 = const void;
 		using Expect = void;
 		static_assert(
-			rider::faiz::is_same<CommonType<T1, T1>, Expect>::value, "");
+			Rider::Faiz::is_same<CommonType<T1, T1>, Expect>::value, "");
 		static_assert(
-			rider::faiz::is_same<CommonType<T1, T1>, CommonType<T1>>::value,
+			Rider::Faiz::is_same<CommonType<T1, T1>, CommonType<T1>>::value,
 			"");
 	}
 	{
 		using T1 = int const[];
 		using Expect = int const*;
 		static_assert(
-			rider::faiz::is_same<CommonType<T1, T1>, Expect>::value, "");
+			Rider::Faiz::is_same<CommonType<T1, T1>, Expect>::value, "");
 		static_assert(
-			rider::faiz::is_same<CommonType<T1, T1>, CommonType<T1>>::value,
+			Rider::Faiz::is_same<CommonType<T1, T1>, CommonType<T1>>::value,
 			"");
 	}
 }
@@ -216,9 +216,9 @@ test_bullet_three_two()
 		using T2 = int*;
 		using Expect = TernaryOp<T1, T2>;
 		static_assert(
-			rider::faiz::is_same<CommonType<T1, T2>, Expect>::value, "");
+			Rider::Faiz::is_same<CommonType<T1, T2>, Expect>::value, "");
 		static_assert(
-			rider::faiz::is_same<CommonType<T2, T1>, Expect>::value, "");
+			Rider::Faiz::is_same<CommonType<T2, T1>, Expect>::value, "");
 	}
 	// Test that there is no ::type member when the ternary op is ill-formed
 	{
@@ -239,9 +239,9 @@ test_bullet_three_two()
 		using T1 = void;
 		using Expect = void;
 		static_assert(
-			rider::faiz::is_same<CommonType<T1, T1>, Expect>::value, "");
+			Rider::Faiz::is_same<CommonType<T1, T1>, Expect>::value, "");
 		static_assert(
-			rider::faiz::is_same<CommonType<T1, T1>, CommonType<T1>>::value,
+			Rider::Faiz::is_same<CommonType<T1, T1>, CommonType<T1>>::value,
 			"");
 	}
 }
@@ -285,7 +285,7 @@ namespace note_b_example
 	using PMF = void (S::*)(long) const;
 	using PMD = char S::*;
 
-	using rider::faiz::is_same;
+	using Rider::Faiz::is_same;
 	using std::result_of;
 	using std::unique_ptr;
 
@@ -312,150 +312,150 @@ int
 main()
 {
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int>::type, int>::value),
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int>::type, int>::value),
 		"");
-	static_assert((rider::faiz::is_same<rider::faiz::common_type<char>::type,
+	static_assert((Rider::Faiz::is_same<Rider::Faiz::common_type<char>::type,
 					  char>::value),
 		"");
 #if TEST_STD_VER > 11
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type_t<int>, int>::value),
+		(Rider::Faiz::is_same<Rider::Faiz::common_type_t<int>, int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type_t<char>, char>::value),
+		(Rider::Faiz::is_same<Rider::Faiz::common_type_t<char>, char>::value),
 		"");
 #endif
 
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int>::type, int>::value),
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int>::type, int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<const int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<const int>::type,
 			int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<volatile int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<volatile int>::type,
 			int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<const volatile int>::type,
-			int>::value),
-		"");
-
-	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int, int>::type,
-			int>::value),
-		"");
-	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int, const int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<const volatile int>::type,
 			int>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<long, const int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int, int>::type,
+			int>::value),
+		"");
+	static_assert(
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int, const int>::type,
+			int>::value),
+		"");
+
+	static_assert(
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<long, const int>::type,
 			long>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<const long, int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<const long, int>::type,
 			long>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<long, volatile int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<long, volatile int>::type,
 			long>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<volatile long, int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<volatile long, int>::type,
 			long>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<const long, const int>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<const long, const int>::type,
 					  long>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<double, char>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<double, char>::type,
 			double>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<short, char>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<short, char>::type,
 			int>::value),
 		"");
 #if TEST_STD_VER > 11
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type_t<double, char>,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type_t<double, char>,
 			double>::value),
 		"");
-	static_assert((rider::faiz::is_same<rider::faiz::common_type_t<short, char>,
+	static_assert((Rider::Faiz::is_same<Rider::Faiz::common_type_t<short, char>,
 					  int>::value),
 		"");
 #endif
 
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<double, char, long long>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<double, char, long long>::type,
 					  double>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<unsigned, char, long long>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<unsigned, char, long long>::type,
 					  long long>::value),
 		"");
 #if TEST_STD_VER > 11
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type_t<double, char, long long>,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type_t<double, char, long long>,
 					  double>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type_t<unsigned, char, long long>,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type_t<unsigned, char, long long>,
 					  long long>::value),
 		"");
 #endif
 
-	static_assert((rider::faiz::is_same<rider::faiz::common_type<void>::type,
+	static_assert((Rider::Faiz::is_same<Rider::Faiz::common_type<void>::type,
 					  void>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<const void>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<const void>::type,
 			void>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<volatile void>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<volatile void>::type,
 			void>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<const volatile void>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<const volatile void>::type,
 					  void>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<void, const void>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<void, const void>::type,
 			void>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<const void, void>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<const void, void>::type,
 			void>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<void, volatile void>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<void, volatile void>::type,
 					  void>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<volatile void, void>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<volatile void, void>::type,
 					  void>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<const void, const void>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<const void, const void>::type,
 					  void>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int, S<int>>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int, S<int>>::type,
 			S<int>>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<int, S<int>, S<int>>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<int, S<int>, S<int>>::type,
 					  S<int>>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int, int, S<int>>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int, int, S<int>>::type,
 			S<int>>::value),
 		"");
 
@@ -466,44 +466,44 @@ main()
 	test_bullet_four();
 
 	//  P0548
-	static_assert((rider::faiz::is_same<rider::faiz::common_type<S<int>>::type,
+	static_assert((Rider::Faiz::is_same<Rider::Faiz::common_type<S<int>>::type,
 					  S<int>>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<S<int>, S<int>>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<S<int>, S<int>>::type,
 			S<int>>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int>::type, int>::value),
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int>::type, int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<const int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<const int>::type,
 			int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<volatile int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<volatile int>::type,
 			int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<const volatile int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<const volatile int>::type,
 			int>::value),
 		"");
 
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int, int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int, int>::type,
 			int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<const int, int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<const int, int>::type,
 			int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::common_type<int, const int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::common_type<int, const int>::type,
 			int>::value),
 		"");
-	static_assert((rider::faiz::is_same<
-					  rider::faiz::common_type<const int, const int>::type,
+	static_assert((Rider::Faiz::is_same<
+					  Rider::Faiz::common_type<const int, const int>::type,
 					  int>::value),
 		"");
 }

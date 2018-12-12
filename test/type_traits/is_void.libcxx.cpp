@@ -19,28 +19,28 @@ template<class T>
 void
 test_is_void()
 {
-	static_assert(rider::faiz::is_void<T>::value, "");
-	static_assert(rider::faiz::is_void<const T>::value, "");
-	static_assert(rider::faiz::is_void<volatile T>::value, "");
-	static_assert(rider::faiz::is_void<const volatile T>::value, "");
-	static_assert(rider::faiz::is_void_v<T>, "");
-	static_assert(rider::faiz::is_void_v<const T>, "");
-	static_assert(rider::faiz::is_void_v<volatile T>, "");
-	static_assert(rider::faiz::is_void_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_void<T>::value, "");
+	static_assert(Rider::Faiz::is_void<const T>::value, "");
+	static_assert(Rider::Faiz::is_void<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_void<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_void_v<T>, "");
+	static_assert(Rider::Faiz::is_void_v<const T>, "");
+	static_assert(Rider::Faiz::is_void_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_void_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_void()
 {
-	static_assert(!rider::faiz::is_void<T>::value, "");
-	static_assert(!rider::faiz::is_void<const T>::value, "");
-	static_assert(!rider::faiz::is_void<volatile T>::value, "");
-	static_assert(!rider::faiz::is_void<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_void_v<T>, "");
-	static_assert(!rider::faiz::is_void_v<const T>, "");
-	static_assert(!rider::faiz::is_void_v<volatile T>, "");
-	static_assert(!rider::faiz::is_void_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_void<T>::value, "");
+	static_assert(!Rider::Faiz::is_void<const T>::value, "");
+	static_assert(!Rider::Faiz::is_void<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_void<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_void_v<T>, "");
+	static_assert(!Rider::Faiz::is_void_v<const T>, "");
+	static_assert(!Rider::Faiz::is_void_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_void_v<const volatile T>, "");
 }
 
 class Empty

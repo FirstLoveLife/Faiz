@@ -3,10 +3,13 @@
 #include "rider/faiz/algorithm.hpp"
 #include "rider/faiz/char_traits.hpp"
 #include "rider/faiz/iterator.hpp"
-#include "rider/faiz/operators.hpp"
+#include "rider/faiz/math/RelationAlgebra.hpp"
 #include "rider/faiz/type_traits.hpp"
 
-namespace rider::faiz
+// TODO: conclude
+// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0903r2.pdf
+
+namespace Rider::Faiz
 {
 	template<typename Char, class Traits = std::char_traits<Char>>
 	class basic_string_view
@@ -21,7 +24,7 @@ namespace rider::faiz
 		using const_reference = const Char&;
 		using const_iterator = IMPL(const Char*);
 		using iterator = const_iterator;
-		using const_reverse_iterator = faiz::reverse_iterator<const_iterator>;
+		using const_reverse_iterator = Faiz::reverse_iterator<const_iterator>;
 		using reverse_iterator = const_reverse_iterator;
 		using size_type = size_t;
 		using difference_type = ptrdiff_t;
@@ -180,7 +183,7 @@ namespace rider::faiz
 			{
 				const auto rlen(std::min<size_type>(n, size_ - pos));
 
-				faiz::copy_n(data_ + pos, rlen, s);
+				Faiz::copy_n(data_ + pos, rlen, s);
 				return rlen;
 			}
 			throw std::out_of_range("string_view::copy");
@@ -290,7 +293,7 @@ namespace rider::faiz
 		, \
 		noexcept, \
 		basic_string_view s, \
-		size_type pos = _arg) return faiz:: \
+		size_type pos = _arg) return Faiz:: \
 		str_##_n<value_type, size_type, traits_type, npos>( \
 			data_, size_, s.data_, pos, s.size_); \
 	}
@@ -315,7 +318,7 @@ namespace rider::faiz
 	}
 #define Impl_StringView_search_mf(_n, _arg) \
 	Impl_StringView_search1(_n, _arg) Impl_StringView_search_fn_head( \
-		_n, , noexcept, Char c, size_type pos = _arg) return faiz:: \
+		_n, , noexcept, Char c, size_type pos = _arg) return Faiz:: \
 		str_##_n<value_type, size_type, traits_type, npos>( \
 			data_, size_, c, pos); \
 	} \
@@ -343,14 +346,14 @@ namespace rider::faiz
 // size_type find_last_not_of(basic_string_view s, size_type pos = npos) const
 // noexcept
 // {
-//     return faiz::
+//     return Faiz::
 //         str_find_last_not_of<value_type, size_type, traits_type, npos>(
 //                 data_, size_, s.data_, pos, s.size_);
 // }
 
 // size_type find_last_not_of(Char c, size_type pos = npos) const noexcept
 // {
-//     return faiz::
+//     return Faiz::
 // 		str_find_last_not_of<value_type, size_type, traits_type, npos>(
 // 			data_, size_, c, pos);
 // }
@@ -444,7 +447,7 @@ namespace rider::faiz
 	template<class _tString>
 	using string_view_t = basic_string_view<typename _tString::value_type>;
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 
 #endif

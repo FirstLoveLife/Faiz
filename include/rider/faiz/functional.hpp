@@ -8,12 +8,12 @@ Don't implement myself: not_fn, invoke
 #include <exception> // for std::except
 
 #include <functional>
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	// both call_traits::param_type and this conditional check are ok, but
 	// check is more simple.
 	template<typename T>
-	struct check : faiz::conditional<faiz::is_arithmetic<T>::value, T, check<T>>
+	struct check : Faiz::conditional<Faiz::is_arithmetic<T>::value, T, check<T>>
 	{};
 
 
@@ -52,9 +52,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) + faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) + Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) + faiz::forward<U>(u);
+			return Faiz::forward<T>(t) + Faiz::forward<U>(u);
 		}
 	};
 
@@ -75,9 +75,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) - faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) - Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) - faiz::forward<U>(u);
+			return Faiz::forward<T>(t) - Faiz::forward<U>(u);
 		}
 	};
 
@@ -98,9 +98,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) * faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) * Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) * faiz::forward<U>(u);
+			return Faiz::forward<T>(t) * Faiz::forward<U>(u);
 		}
 	};
 
@@ -122,9 +122,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) / faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) / Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) / faiz::forward<U>(u);
+			return Faiz::forward<T>(t) / Faiz::forward<U>(u);
 		}
 	};
 
@@ -147,7 +147,7 @@ namespace rider::faiz
 		constexpr decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
-			return faiz::forward<A>(a) % faiz::forward<B>(b);
+			return Faiz::forward<A>(a) % Faiz::forward<B>(b);
 		}
 	};
 
@@ -168,9 +168,9 @@ namespace rider::faiz
 		using is_transparent = void;
 		template<typename T>
 		constexpr decltype(auto)
-		operator()(T&& t) const noexcept(noexcept(-faiz::forward<T>(t)))
+		operator()(T&& t) const noexcept(noexcept(-Faiz::forward<T>(t)))
 		{
-			return -faiz::forward<T>(t);
+			return -Faiz::forward<T>(t);
 		}
 	};
 
@@ -193,7 +193,7 @@ namespace rider::faiz
 		constexpr decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
-			return faiz::forward<A>(a) == faiz::forward<B>(b);
+			return Faiz::forward<A>(a) == Faiz::forward<B>(b);
 		}
 	};
 
@@ -215,9 +215,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) != faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) != Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) != faiz::forward<U>(u);
+			return Faiz::forward<T>(t) != Faiz::forward<U>(u);
 		}
 	};
 
@@ -240,7 +240,7 @@ namespace rider::faiz
 		constexpr decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
-			return faiz::forward<A>(a) > faiz::forward<B>(b);
+			return Faiz::forward<A>(a) > Faiz::forward<B>(b);
 		}
 	};
 
@@ -294,7 +294,7 @@ namespace rider::faiz
 		constexpr decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
-			return faiz::forward<A>(a) < faiz::forward<B>(b);
+			return Faiz::forward<A>(a) < Faiz::forward<B>(b);
 		}
 	};
 
@@ -317,7 +317,7 @@ namespace rider::faiz
 		constexpr decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
-			return faiz::forward<A>(a) >= faiz::forward<B>(b);
+			return Faiz::forward<A>(a) >= Faiz::forward<B>(b);
 		}
 	};
 
@@ -340,7 +340,7 @@ namespace rider::faiz
 		constexpr decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
-			return faiz::forward<A>(a) <= faiz::forward<B>(b);
+			return Faiz::forward<A>(a) <= Faiz::forward<B>(b);
 		}
 	};
 
@@ -371,9 +371,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) && faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) && Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) && faiz::forward<U>(u);
+			return Faiz::forward<T>(t) && Faiz::forward<U>(u);
 		}
 	};
 
@@ -394,9 +394,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) || faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) || Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) || faiz::forward<U>(u);
+			return Faiz::forward<T>(t) || Faiz::forward<U>(u);
 		}
 	};
 
@@ -417,9 +417,9 @@ namespace rider::faiz
 		using is_transparent = void;
 		template<typename T>
 		constexpr decltype(auto)
-		operator()(T&& t) const noexcept(noexcept(!faiz::forward<T>(t)))
+		operator()(T&& t) const noexcept(noexcept(!Faiz::forward<T>(t)))
 		{
-			return !faiz::forward<T>(t);
+			return !Faiz::forward<T>(t);
 		}
 	};
 
@@ -452,9 +452,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) & faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) & Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) & faiz::forward<U>(u);
+			return Faiz::forward<T>(t) & Faiz::forward<U>(u);
 		}
 	};
 
@@ -475,9 +475,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) | faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) | Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) | faiz::forward<U>(u);
+			return Faiz::forward<T>(t) | Faiz::forward<U>(u);
 		}
 	};
 
@@ -498,9 +498,9 @@ namespace rider::faiz
 		template<typename T, typename U>
 		constexpr decltype(auto)
 		operator()(T&& t, U&& u) const
-			noexcept(noexcept(faiz::forward<T>(t) ^ faiz::forward<U>(u)))
+			noexcept(noexcept(Faiz::forward<T>(t) ^ Faiz::forward<U>(u)))
 		{
-			return faiz::forward<T>(t) ^ faiz::forward<U>(u);
+			return Faiz::forward<T>(t) ^ Faiz::forward<U>(u);
 		}
 	};
 
@@ -521,9 +521,9 @@ namespace rider::faiz
 		using is_transparent = void;
 		template<typename T>
 		constexpr decltype(auto)
-		operator()(T&& t) const noexcept(noexcept(~faiz::forward<T>(t)))
+		operator()(T&& t) const noexcept(noexcept(~Faiz::forward<T>(t)))
 		{
-			return ~faiz::forward<T>(t);
+			return ~Faiz::forward<T>(t);
 		}
 	};
 
@@ -544,7 +544,7 @@ namespace rider::faiz
 		}
 	};
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 
 #endif

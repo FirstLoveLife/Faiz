@@ -19,28 +19,28 @@ template<class T>
 void
 test_is_integral()
 {
-	static_assert(rider::faiz::is_integral<T>::value, "");
-	static_assert(rider::faiz::is_integral<const T>::value, "");
-	static_assert(rider::faiz::is_integral<volatile T>::value, "");
-	static_assert(rider::faiz::is_integral<const volatile T>::value, "");
-	static_assert(rider::faiz::is_integral_v<T>, "");
-	static_assert(rider::faiz::is_integral_v<const T>, "");
-	static_assert(rider::faiz::is_integral_v<volatile T>, "");
-	static_assert(rider::faiz::is_integral_v<const volatile T>, "");
+	static_assert(Rider::Faiz::is_integral<T>::value, "");
+	static_assert(Rider::Faiz::is_integral<const T>::value, "");
+	static_assert(Rider::Faiz::is_integral<volatile T>::value, "");
+	static_assert(Rider::Faiz::is_integral<const volatile T>::value, "");
+	static_assert(Rider::Faiz::is_integral_v<T>, "");
+	static_assert(Rider::Faiz::is_integral_v<const T>, "");
+	static_assert(Rider::Faiz::is_integral_v<volatile T>, "");
+	static_assert(Rider::Faiz::is_integral_v<const volatile T>, "");
 }
 
 template<class T>
 void
 test_is_not_integral()
 {
-	static_assert(!rider::faiz::is_integral<T>::value, "");
-	static_assert(!rider::faiz::is_integral<const T>::value, "");
-	static_assert(!rider::faiz::is_integral<volatile T>::value, "");
-	static_assert(!rider::faiz::is_integral<const volatile T>::value, "");
-	static_assert(!rider::faiz::is_integral_v<T>, "");
-	static_assert(!rider::faiz::is_integral_v<const T>, "");
-	static_assert(!rider::faiz::is_integral_v<volatile T>, "");
-	static_assert(!rider::faiz::is_integral_v<const volatile T>, "");
+	static_assert(!Rider::Faiz::is_integral<T>::value, "");
+	static_assert(!Rider::Faiz::is_integral<const T>::value, "");
+	static_assert(!Rider::Faiz::is_integral<volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_integral<const volatile T>::value, "");
+	static_assert(!Rider::Faiz::is_integral_v<T>, "");
+	static_assert(!Rider::Faiz::is_integral_v<const T>, "");
+	static_assert(!Rider::Faiz::is_integral_v<volatile T>, "");
+	static_assert(!Rider::Faiz::is_integral_v<const volatile T>, "");
 }
 
 class Empty
@@ -89,7 +89,7 @@ main()
 	test_is_integral<unsigned char>();
 	test_is_integral<wchar_t>();
 
-	test_is_not_integral<rider::faiz::nullptr_t>();
+	test_is_not_integral<Rider::Faiz::nullptr_t>();
 	test_is_not_integral<void>();
 	test_is_not_integral<int&>();
 	test_is_not_integral<int&&>();

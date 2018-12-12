@@ -19,11 +19,11 @@ void
 test_add_const_imp()
 {
 	static_assert(
-		(rider::faiz::is_same<typename rider::faiz::add_const<T>::type,
+		(Rider::Faiz::is_same<typename Rider::Faiz::add_const<T>::type,
 			const U>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::add_const_t<T>, U>::value), "");
+		(Rider::Faiz::is_same<Rider::Faiz::add_const_t<T>, U>::value), "");
 }
 
 template<class T>

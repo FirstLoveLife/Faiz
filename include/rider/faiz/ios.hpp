@@ -1,6 +1,6 @@
 #ifndef IOS
 #define IOS
-namespace rider::faiz
+namespace Rider::Faiz
 {
 
 }

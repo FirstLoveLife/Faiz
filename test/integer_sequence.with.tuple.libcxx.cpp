@@ -4,7 +4,7 @@
 #include <tuple>
 template<typename AtContainer, typename T, T... I>
 auto
-extract(const AtContainer& t, const rider::faiz::integer_sequence<T, I...>)
+extract(const AtContainer& t, const Rider::Faiz::integer_sequence<T, I...>)
 	-> decltype(std::make_tuple(std::get<I>(t)...))
 {
 	return std::make_tuple(std::get<I>(t)...);
@@ -15,43 +15,43 @@ main()
 {
 	//    Make a couple of sequences
 	using int3
-		= rider::faiz::make_integer_sequence<int, 3>; // generates int:    0,1,2
+		= Rider::Faiz::make_integer_sequence<int, 3>; // generates int:    0,1,2
 	using size7
-		= rider::faiz::make_integer_sequence<size_t, 7>; // generates size_t:
+		= Rider::Faiz::make_integer_sequence<size_t, 7>; // generates size_t:
 														 // 0,1,2,3,4,5,6
 	using size4
-		= rider::faiz::make_index_sequence<4>; // generates size_t: 0,1,2,3
+		= Rider::Faiz::make_index_sequence<4>; // generates size_t: 0,1,2,3
 	using size2
-		= rider::faiz::index_sequence_for<int, size_t>; // generates size_t: 0,1
+		= Rider::Faiz::index_sequence_for<int, size_t>; // generates size_t: 0,1
 	using intmix
-		= rider::faiz::integer_sequence<int, 9, 8, 7, 2>; // generates int:
+		= Rider::Faiz::integer_sequence<int, 9, 8, 7, 2>; // generates int:
 														  // 9,8,7,2
 	using sizemix
-		= rider::faiz::index_sequence<1, 1, 2, 3, 5>; // generates size_t:
+		= Rider::Faiz::index_sequence<1, 1, 2, 3, 5>; // generates size_t:
 													  // 1,1,2,3,5
 
 	//  Make sure they're what we expect
 	static_assert(
-		rider::faiz::is_same<int3::value_type, int>::value, "int3 type wrong");
+		Rider::Faiz::is_same<int3::value_type, int>::value, "int3 type wrong");
 	static_assert(int3::size() == 3, "int3 size wrong");
 
-	static_assert(rider::faiz::is_same<size7::value_type, size_t>::value,
+	static_assert(Rider::Faiz::is_same<size7::value_type, size_t>::value,
 		"size7 type wrong");
 	static_assert(size7::size() == 7, "size7 size wrong");
 
-	static_assert(rider::faiz::is_same<size4::value_type, size_t>::value,
+	static_assert(Rider::Faiz::is_same<size4::value_type, size_t>::value,
 		"size4 type wrong");
 	static_assert(size4::size() == 4, "size4 size wrong");
 
-	static_assert(rider::faiz::is_same<size2::value_type, size_t>::value,
+	static_assert(Rider::Faiz::is_same<size2::value_type, size_t>::value,
 		"size2 type wrong");
 	static_assert(size2::size() == 2, "size2 size wrong");
 
-	static_assert(rider::faiz::is_same<intmix::value_type, int>::value,
+	static_assert(Rider::Faiz::is_same<intmix::value_type, int>::value,
 		"intmix type wrong");
 	static_assert(intmix::size() == 4, "intmix size wrong");
 
-	static_assert(rider::faiz::is_same<sizemix::value_type, size_t>::value,
+	static_assert(Rider::Faiz::is_same<sizemix::value_type, size_t>::value,
 		"sizemix type wrong");
 	static_assert(sizemix::size() == 5, "sizemix size wrong");
 

@@ -72,7 +72,7 @@ namespace funny
 void
 test01()
 {
-	using rider::faiz::is_swappable_with;
+	using Rider::Faiz::is_swappable_with;
 	using namespace __gnu_test;
 	// Positive tests.
 	static_assert(test_property<is_swappable_with, int&, int&>(true), "");

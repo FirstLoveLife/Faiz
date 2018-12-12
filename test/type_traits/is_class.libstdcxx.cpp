@@ -23,7 +23,7 @@
 void
 test01()
 {
-	using rider::faiz::is_class;
+	using Rider::Faiz::is_class;
 	using namespace __gnu_test;
 
 	// Positive tests.

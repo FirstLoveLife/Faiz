@@ -19,7 +19,7 @@
 #include "rider/faiz/utility/concepts.hpp"
 #include <utility>
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	template<typename T>
 	struct mutable_
@@ -324,6 +324,6 @@ namespace rider::faiz
 		return move(b).get();
 	}
 	/// @}
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #endif

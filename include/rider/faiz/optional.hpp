@@ -1,13 +1,13 @@
 #ifndef OPTIONAL
 // TODO: implement ***::insert with optional, instead of pair
-namespace rider::faiz
+namespace Rider::Faiz
 {
-	// `faiz::nullopt_t` is an empty class type used to indicate optional type
-	// with uninitialized state. In particular, `faiz::optional` has a
+	// `Faiz::nullopt_t` is an empty class type used to indicate optional type
+	// with uninitialized state. In particular, `Faiz::optional` has a
 	// constructor with nullopt_t as a single argument, which creates an
 	// optional that does not contain a value.
 	//
-	// faiz::nullopt_t must be a non-aggregate LiteralType and cannot have a
+	// Faiz::nullopt_t must be a non-aggregate LiteralType and cannot have a
 	// default constructor or an initializer-list constructor.
 	//
 	// It must have a constexpr constructor that takes some
@@ -26,11 +26,11 @@ namespace rider::faiz
 		{}
 	};
 
-	// `faiz::nullopt` is a constant of type `faiz::nullopt_t` that is used to
+	// `Faiz::nullopt` is a constant of type `Faiz::nullopt_t` that is used to
 	// indicate optional type with uninitialized state.
 	inline constexpr nullopt_t nullopt{
 		nullopt_t::secret_tag{}, nullopt_t::secret_tag{}};
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #	define OPTIONAL
 #endif

@@ -7,7 +7,7 @@ https://softwareengineering.stackexchange.com/questions/274801/raw-weak-ptr-uniq
 TODO: allocator_traits: https://www.youtube.com/watch?v=ybaE9qlhHvw begin from
 58
  */
-namespace rider::faiz
+namespace Rider::Faiz
 {
 
 	template<class T>
@@ -19,12 +19,12 @@ namespace rider::faiz
 	}
 
 	template<class Targ, class = void>
-	struct has_element_type : faiz::false_type
+	struct has_element_type : Faiz::false_type
 	{};
 
 	template<class Targ>
-	struct has_element_type<Targ, faiz::void_t<typename Targ::element_type>>
-		: faiz::true_type
+	struct has_element_type<Targ, Faiz::void_t<typename Targ::element_type>>
+		: Faiz::true_type
 	{};
 
 	template<class Tptr, bool = has_element_type<Tptr>::value>
@@ -152,9 +152,9 @@ namespace rider::faiz
 		pointer_to(conditional_t<is_void_v<element_type>, nat, element_type>&
 				r) noexcept
 		{
-			return faiz::addressof(r);
+			return Faiz::addressof(r);
 		}
 	};
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif

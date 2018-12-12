@@ -18,19 +18,19 @@ int
 main()
 {
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::conditional<true, char, int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::conditional<true, char, int>::type,
 			char>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::conditional<false, char, int>::type,
+		(Rider::Faiz::is_same<Rider::Faiz::conditional<false, char, int>::type,
 			int>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::conditional_t<true, char, int>,
+		(Rider::Faiz::is_same<Rider::Faiz::conditional_t<true, char, int>,
 			char>::value),
 		"");
 	static_assert(
-		(rider::faiz::is_same<rider::faiz::conditional_t<false, char, int>,
+		(Rider::Faiz::is_same<Rider::Faiz::conditional_t<false, char, int>,
 			int>::value),
 		"");
 }

@@ -1,7 +1,7 @@
 #ifndef CALL_TRAITS
 #define CALL_TRAITS
 #include "rider/faiz/type_traits.hpp"
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	// use pandoc convert doc from
 	// https://www.boost.org/doc/libs/1_51_0/libs/utility/call_traits.htm
@@ -134,5 +134,5 @@ namespace rider::faiz
 		using param_type = const T* const;
 	};
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 #endif
