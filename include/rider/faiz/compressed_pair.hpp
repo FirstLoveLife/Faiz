@@ -28,13 +28,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "rider/faiz/math/RelationAlgebra.hpp"
+#include "rider/faiz/type_traits.hpp"
+#include "rider/faiz/utility.hpp"
+#include "rider/faiz/utility/swap.hpp"
 #include <climits>
 #include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <tuple>
-#include <type_traits>
-#include <utility>
 
 #ifndef CRUFT_TIGHT_PAIR_USE_UNSIGNED_128INT
 #	if defined(__clang__)
@@ -50,7 +52,7 @@
 #	endif
 #endif
 
-namespace cruft
+namespace Rider::Faiz
 {
 	////////////////////////////////////////////////////////////
 	// Forward declarations of main components
@@ -58,26 +60,26 @@ namespace cruft
 	template<typename T1, typename T2>
 	struct tight_pair;
 
-	template<std::size_t N, typename T1, typename T2>
+	template<size_t N, typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2>&) noexcept
 		-> std::tuple_element_t<N, tight_pair<T1, T2>>&;
 
-	template<std::size_t N, typename T1, typename T2>
+	template<size_t N, typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2> const&) noexcept
 		-> std::tuple_element_t<N, tight_pair<T1, T2>> const&;
 
-	template<std::size_t N, typename T1, typename T2>
+	template<size_t N, typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2>&&) noexcept
 		-> std::tuple_element_t<N, tight_pair<T1, T2>>&&;
 
-	template<std::size_t N, typename T1, typename T2>
+	template<size_t N, typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2> const&&) noexcept
 		-> std::tuple_element_t<N, tight_pair<T1, T2>> const&&;
-} // namespace cruft
+} // namespace Rider::Faiz
 
 namespace std
 {
@@ -85,32 +87,30 @@ namespace std
 	// Specializations needed for decomposition declarations
 
 	template<typename T1, typename T2>
-	struct tuple_size<cruft::tight_pair<T1, T2>>
-		: std::integral_constant<std::size_t, 2>
+	struct tuple_size<Rider::Faiz::tight_pair<T1, T2>> : Rider::Faiz::size_t_<2>
 	{};
 
 	template<typename T1, typename T2>
-	struct tuple_element<0, cruft::tight_pair<T1, T2>>
-	{
-		using type = T1;
-	};
+	struct tuple_element<0, Rider::Faiz::tight_pair<T1, T2>>
+		: Rider::type_identity<T1>
+	{};
 
 	template<typename T1, typename T2>
-	struct tuple_element<1, cruft::tight_pair<T1, T2>>
-	{
-		using type = T2;
-	};
+	struct tuple_element<1, Rider::Faiz::tight_pair<T1, T2>>
+		: Rider::type_identity<T2>
+	{};
 
-	template<std::size_t N, typename T1, typename T2>
-	struct tuple_element<N, cruft::tight_pair<T1, T2>>
+	template<size_t N, typename T1, typename T2>
+	struct tuple_element<N, Rider::Faiz::tight_pair<T1, T2>>
 	{
 		static_assert(N < 2,
-			"out of bounds index for tuple_element<N, cruft::tight_pair<T1, "
+			"out of bounds index for tuple_element<N, "
+			"Rider::Faiz::tight_pair<T1, "
 			"T2>>");
 	};
 } // namespace std
 
-namespace cruft
+namespace Rider::Faiz
 {
 	namespace detail
 	{
@@ -119,8 +119,8 @@ namespace cruft
 		// optimization
 
 		template<typename T>
-		struct is_ebco_eligible : std::conjunction<std::is_empty<T>,
-									  std::negation<std::is_final<T>>>
+		struct is_ebco_eligible
+			: logic::and_<is_empty<T>, logic::not_<is_final<T>>>
 		{};
 
 		template<typename T>
@@ -145,7 +145,7 @@ namespace cruft
 			// integer types such as unsigned __int128 that don't have an
 			// std::numeric_limits specialization
 
-			std::size_t precision = 0;
+			size_t precision = 0;
 			auto num = static_cast<UnsignedInteger>(-1);
 			while(num != 0)
 			{
@@ -180,8 +180,8 @@ namespace cruft
 		// one, ensure all bits are used
 
 		template<typename UInt>
-		constexpr auto
-		twice_as_big() -> decltype(auto)
+		constexpr decltype(auto)
+		twice_as_big()
 		{
 			if constexpr(has_padding_bits<UInt>())
 			{
@@ -189,31 +189,31 @@ namespace cruft
 			}
 
 			else if constexpr(sizeof(unsigned short) == 2 * sizeof(UInt)
-				&& not has_padding_bits<unsigned short>())
+				and not has_padding_bits<unsigned short>())
 			{
 				return static_cast<unsigned short>(0);
 			}
 
 			else if constexpr(sizeof(unsigned int) == 2 * sizeof(UInt)
-				&& not has_padding_bits<unsigned int>())
+				and not has_padding_bits<unsigned int>())
 			{
 				return static_cast<unsigned int>(0);
 			}
 
 			else if constexpr(sizeof(unsigned long) == 2 * sizeof(UInt)
-				&& not has_padding_bits<unsigned long>())
+				and not has_padding_bits<unsigned long>())
 			{
 				return static_cast<unsigned long>(0);
 			}
 
 			else if constexpr(sizeof(unsigned long long) == 2 * sizeof(UInt)
-				&& not has_padding_bits<unsigned long long>())
+				and not has_padding_bits<unsigned long long>())
 			{
 				return static_cast<unsigned long long>(0);
 			}
 
 			else if constexpr(sizeof(std::uintmax_t) == 2 * sizeof(UInt)
-				&& not has_padding_bits<std::uintmax_t>())
+				and not has_padding_bits<std::uintmax_t>())
 			{
 				return static_cast<std::uintmax_t>(0);
 			}
@@ -223,7 +223,7 @@ namespace cruft
 			// which are known to produce branchless code
 			// for comparisons
 			else if constexpr(sizeof(unsigned __int128) == 2 * sizeof(UInt)
-				&& not has_padding_bits<unsigned __int128>())
+				and not has_padding_bits<unsigned __int128>())
 			{
 				return static_cast<unsigned __int128>(0);
 			}
@@ -232,13 +232,12 @@ namespace cruft
 
 		template<typename T>
 		struct has_twice_as_big
-			: std::negation<std::is_void<decltype(twice_as_big<T>())>>
+			: logic::not_<is_void<decltype(twice_as_big<T>())>>
 		{};
 
 		template<typename T>
-		constexpr auto
+		constexpr decltype(twice_as_big<T>())
 		get_twice_as_big(tight_pair<T, T> const& value) noexcept
-			-> decltype(twice_as_big<T>())
 		{
 			// If the two parts of the tight_pair are unsigned integers
 			// suitably ordered (which depends on the byte order), this
@@ -248,7 +247,7 @@ namespace cruft
 			// latter might lack a few specializations for types such as
 			// unsigned __int128 unless some specific constant is defined
 
-			using cruft::get;
+			using Rider::Faiz::get;
 			return static_cast<decltype(twice_as_big<T>())>(get<0>(value))
 				<< sizeof(T) * CHAR_BIT
 				| get<1>(value);
@@ -256,9 +255,9 @@ namespace cruft
 
 		template<typename T>
 		struct can_optimize_compare
-			: std::bool_constant<(endian::native == endian::little
-									 || endian::native == endian::big)
-				  && std::is_unsigned_v<T> && has_twice_as_big<T>::value>
+			: bool_<(endian::native == endian::little
+						|| endian::native == endian::big)
+				  && is_unsigned_v<T> && has_twice_as_big<T>::value>
 		{};
 
 		////////////////////////////////////////////////////////////
@@ -298,14 +297,14 @@ namespace cruft
 			using std::get;
 
 			template<typename T, typename Enable>
-			struct pair_like_impl : std::false_type
+			struct pair_like_impl : false_
 			{};
 
 			template<typename T>
 			struct pair_like_impl<T,
-				std::void_t<decltype(get<0>(std::declval<T&>())),
-					decltype(get<1>(std::declval<T&>()))>>
-				: std::bool_constant<std::tuple_size_v<T> == 2>
+				void_t<decltype(get<0>(declval<T&>())),
+					decltype(get<1>(declval<T&>()))>>
+				: bool_<std::tuple_size_v<T> == 2>
 			{};
 		} // namespace adl_hook
 
@@ -324,7 +323,7 @@ namespace cruft
 
 		// Safeguard to avoid ambiguous conversions
 		template<typename T1, typename T2>
-		struct pair_like<cruft::tight_pair<T1, T2>> : std::false_type
+		struct pair_like<Rider::Faiz::tight_pair<T1, T2>> : false_
 		{};
 
 		// pair_assignable, pair_constructible, pair_convertible
@@ -336,28 +335,26 @@ namespace cruft
 
 			template<typename To, typename From>
 			struct pair_assignable
-				: std::bool_constant<
-					  std::is_assignable_v<decltype(get<0>(std::declval<To>())),
-						  decltype(get<0>(std::declval<
-							  From>()))> && std::is_assignable_v<decltype(get<1>(std::declval<To>())), decltype(get<1>(std::declval<From>()))>>
+				: bool_<
+					  is_assignable_v<decltype(get<0>(declval<To>())),
+						  decltype(get<0>(declval<
+							  From>()))> && is_assignable_v<decltype(get<1>(declval<To>())), decltype(get<1>(declval<From>()))>>
 			{};
 
 			template<typename To, typename From>
 			struct pair_constructible
-				: std::bool_constant<
-					  std::is_constructible_v<decltype(
-												  get<0>(std::declval<To>())),
-						  decltype(get<0>(std::declval<
-							  From>()))> && std::is_constructible_v<decltype(get<1>(std::declval<To>())), decltype(get<1>(std::declval<From>()))>>
+				: bool_<
+					  is_constructible_v<decltype(get<0>(declval<To>())),
+						  decltype(get<0>(declval<
+							  From>()))> && is_constructible_v<decltype(get<1>(declval<To>())), decltype(get<1>(declval<From>()))>>
 			{};
 
 			template<typename From, typename To>
 			struct pair_convertible
-				: std::bool_constant<
-					  std::is_convertible_v<decltype(
-												get<0>(std::declval<From>())),
-						  decltype(get<0>(std::declval<
-							  To>()))> && std::is_assignable_v<decltype(get<1>(std::declval<From>())), decltype(get<1>(std::declval<To>()))>>
+				: bool_<
+					  is_convertible_v<decltype(get<0>(declval<From>())),
+						  decltype(get<0>(declval<
+							  To>()))> && is_assignable_v<decltype(get<1>(declval<From>())), decltype(get<1>(declval<To>()))>>
 			{};
 		} // namespace adl_hook
 
@@ -366,13 +363,13 @@ namespace cruft
 		// template integer parameter is used to disambiguate the
 		// types when both members the same underlying types
 
-		template<std::size_t N,
+		template<size_t N,
 			typename T,
 			bool = is_ebco_eligible_v<T>,
-			bool = std::is_reference_v<T>>
+			bool = is_reference_v<T>>
 		struct tight_pair_element;
 
-		template<std::size_t N, typename T>
+		template<size_t N, typename T>
 		struct tight_pair_element<N, T, false, false>
 		{
 		private:
@@ -386,32 +383,32 @@ namespace cruft
 			tight_pair_element(tight_pair_element&&) = default;
 
 			constexpr tight_pair_element() noexcept(
-				std::is_nothrow_default_constructible<T>::value)
+				is_nothrow_default_constructible<T>::value)
 				: value()
 			{
-				static_assert(not std::is_reference<T>::value,
+				static_assert(not is_reference<T>::value,
 					"attempted to default construct a reference element");
 			}
 
 			template<typename U,
-				typename = std::enable_if_t<std::is_constructible_v<T, U>>>
+				typename = enable_if_t<is_constructible_v<T, U>>>
 			constexpr explicit tight_pair_element(U&& other) noexcept(
-				std::is_nothrow_constructible_v<T, U>)
-				: value(std::forward<U>(other))
+				is_nothrow_constructible_v<T, U>)
+				: value(Faiz::forward<U>(other))
 			{}
 
 			template<typename Tuple>
 			constexpr tight_pair_element(
 				std::piecewise_construct_t, Tuple&& args)
-				: value(std::make_from_tuple<T>(std::forward<Tuple>(args)))
+				: value(std::make_from_tuple<T>(Faiz::forward<Tuple>(args)))
 			{}
 
 			template<typename U>
 			constexpr auto
-			operator=(U&& other) noexcept(
-				std::is_nothrow_assignable<T&, U>::value) -> tight_pair_element&
+			operator=(U&& other) noexcept(is_nothrow_assignable<T&, U>::value)
+				-> tight_pair_element&
 			{
-				value = std::forward<U>(other);
+				value = Faiz::forward<U>(other);
 				return *this;
 			}
 
@@ -454,7 +451,7 @@ namespace cruft
 			}
 		};
 
-		template<std::size_t N, typename T>
+		template<size_t N, typename T>
 		struct tight_pair_element<N, T, false, true>
 		{
 		private:
@@ -468,24 +465,24 @@ namespace cruft
 			tight_pair_element(tight_pair_element&&) = default;
 
 			constexpr tight_pair_element() noexcept(
-				std::is_nothrow_default_constructible<T>::value)
+				is_nothrow_default_constructible<T>::value)
 				: value()
 			{
-				static_assert(not std::is_reference<T>::value,
+				static_assert(not is_reference<T>::value,
 					"attempted to default construct a reference element");
 			}
 
 			template<typename U,
-				typename = std::enable_if_t<std::is_constructible_v<T, U>>>
+				typename = enable_if_t<is_constructible_v<T, U>>>
 			constexpr explicit tight_pair_element(U&& other) noexcept(
-				std::is_nothrow_constructible_v<T, U>)
-				: value(std::forward<U>(other))
+				is_nothrow_constructible_v<T, U>)
+				: value(Faiz::forward<U>(other))
 			{}
 
 			template<typename Tuple>
 			constexpr tight_pair_element(
 				std::piecewise_construct_t, Tuple&& args)
-				: value(std::make_from_tuple<T>(std::forward<Tuple>(args)))
+				: value(std::make_from_tuple<T>(Faiz::forward<Tuple>(args)))
 			{}
 
 			auto
@@ -498,16 +495,16 @@ namespace cruft
 			auto
 			operator=(tight_pair_element&& other) -> tight_pair_element&
 			{
-				value = std::move(other.value);
+				value = move(other.value);
 				return *this;
 			}
 
 			template<typename U>
 			constexpr auto
-			operator=(U&& other) noexcept(
-				std::is_nothrow_assignable<T&, U>::value) -> tight_pair_element&
+			operator=(U&& other) noexcept(is_nothrow_assignable<T&, U>::value)
+				-> tight_pair_element&
 			{
-				value = std::forward<U>(other);
+				value = Faiz::forward<U>(other);
 				return *this;
 			}
 
@@ -543,7 +540,7 @@ namespace cruft
 			}
 		};
 
-		template<std::size_t N, typename T>
+		template<size_t N, typename T>
 		struct tight_pair_element<N, T, true, false> : private T
 		{
 			////////////////////////////////////////////////////////////
@@ -553,20 +550,20 @@ namespace cruft
 			tight_pair_element(tight_pair_element&&) = default;
 
 			constexpr tight_pair_element() noexcept(
-				std::is_nothrow_default_constructible<T>::value)
+				is_nothrow_default_constructible<T>::value)
 			{}
 
 			template<typename U,
-				typename = std::enable_if_t<std::is_constructible_v<T, U>>>
+				typename = enable_if_t<is_constructible_v<T, U>>>
 			constexpr explicit tight_pair_element(U&& other) noexcept(
-				std::is_nothrow_constructible_v<T, U>)
-				: T(std::forward<U>(other))
+				is_nothrow_constructible_v<T, U>)
+				: T(Faiz::forward<U>(other))
 			{}
 
 			template<typename Tuple>
 			constexpr tight_pair_element(
 				std::piecewise_construct_t, Tuple&& args)
-				: T(std::make_from_tuple<T>(std::forward<Tuple>(args)))
+				: T(std::make_from_tuple<T>(Faiz::forward<Tuple>(args)))
 			{}
 
 			tight_pair_element&
@@ -617,10 +614,9 @@ namespace cruft
 		// integer data
 
 		template<typename T>
-		struct needs_reordering
-			: std::bool_constant<endian::native == endian::little
-				  && std::conjunction<std::is_unsigned<T>,
-						 has_twice_as_big<T>>::value>
+		struct needs_reordering : bool_<endian::native == endian::little
+									  && std::conjunction<is_unsigned<T>,
+											 has_twice_as_big<T>>::value>
 		{};
 
 		template<typename T>
@@ -640,8 +636,7 @@ namespace cruft
 
 		template<typename T1,
 			typename T2,
-			bool RegularStorage
-			= is_ebco_eligible_v<T1> || std::is_reference_v<T1>,
+			bool RegularStorage = is_ebco_eligible_v<T1> || is_reference_v<T1>,
 			bool NeedsReodering = needs_reordering<T1>::value>
 		struct tight_pair_storage : tight_pair_element<0, T1>,
 									tight_pair_element<1, T2>
@@ -658,8 +653,8 @@ namespace cruft
 
 			template<typename U1, typename U2>
 			constexpr tight_pair_storage(U1&& first, U2&& second)
-				: tight_pair_element<0, T1>(std::forward<U1>(first)),
-				  tight_pair_element<1, T2>(std::forward<U2>(second))
+				: tight_pair_element<0, T1>(Faiz::forward<U1>(first)),
+				  tight_pair_element<1, T2>(Faiz::forward<U2>(second))
 			{}
 
 			template<typename Tuple1, typename Tuple2>
@@ -667,9 +662,9 @@ namespace cruft
 				Tuple1&& first_args,
 				Tuple2&& second_args)
 				: tight_pair_element<0, T1>(
-					  pc, std::forward<Tuple1>(first_args)),
+					  pc, Faiz::forward<Tuple1>(first_args)),
 				  tight_pair_element<1, T2>(
-					  pc, std::forward<Tuple2>(second_args))
+					  pc, Faiz::forward<Tuple2>(second_args))
 			{}
 
 			tight_pair_storage&
@@ -682,7 +677,7 @@ namespace cruft
 			////////////////////////////////////////////////////////////
 			// Element access
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() & -> decltype(auto)
 			{
@@ -698,7 +693,7 @@ namespace cruft
 				}
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() const& -> decltype(auto)
 			{
@@ -714,7 +709,7 @@ namespace cruft
 				}
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() && -> decltype(auto)
 			{
@@ -730,7 +725,7 @@ namespace cruft
 				}
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() const&& -> decltype(auto)
 			{
@@ -765,17 +760,17 @@ namespace cruft
 			template<typename U1, typename U2>
 			constexpr tight_pair_storage(U1&& first, U2&& second)
 				: elements{
-					  T(std::forward<U1>(first)), T(std::forward<U2>(second))}
+					  T(Faiz::forward<U1>(first)), T(Faiz::forward<U2>(second))}
 			{}
 
 			template<typename Tuple1, typename Tuple2>
 			constexpr tight_pair_storage(std::piecewise_construct_t,
 				Tuple1&& first_args,
 				Tuple2&& second_args)
-				: elements{
-					  std::make_from_tuple<T>(std::forward<Tuple1>(first_args)),
+				: elements{std::make_from_tuple<T>(
+							   Faiz::forward<Tuple1>(first_args)),
 					  std::make_from_tuple<T>(
-						  std::forward<Tuple2>(second_args))}
+						  Faiz::forward<Tuple2>(second_args))}
 			{}
 
 			tight_pair_storage&
@@ -788,28 +783,28 @@ namespace cruft
 			////////////////////////////////////////////////////////////
 			// Element access
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() & -> decltype(auto)
 			{
 				return static_cast<T&>(elements[N]);
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() const& -> decltype(auto)
 			{
 				return static_cast<T const&>(elements[N]);
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() && -> decltype(auto)
 			{
 				return static_cast<T&&>(elements[N]);
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() const&& -> decltype(auto)
 			{
@@ -836,17 +831,17 @@ namespace cruft
 			template<typename U1, typename U2>
 			constexpr tight_pair_storage(U1&& second, U2&& first)
 				: elements{
-					  T(std::forward<U2>(first)), T(std::forward<U1>(second))}
+					  T(Faiz::forward<U2>(first)), T(Faiz::forward<U1>(second))}
 			{}
 
 			template<typename Tuple1, typename Tuple2>
 			constexpr tight_pair_storage(std::piecewise_construct_t,
 				Tuple2&& second_args,
 				Tuple1&& first_args)
-				: elements{
-					  std::make_from_tuple<T>(std::forward<Tuple1>(first_args)),
+				: elements{std::make_from_tuple<T>(
+							   Faiz::forward<Tuple1>(first_args)),
 					  std::make_from_tuple<T>(
-						  std::forward<Tuple2>(second_args))}
+						  Faiz::forward<Tuple2>(second_args))}
 			{}
 
 			tight_pair_storage&
@@ -859,7 +854,7 @@ namespace cruft
 			////////////////////////////////////////////////////////////
 			// Element access
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() & -> decltype(auto)
 			{
@@ -873,7 +868,7 @@ namespace cruft
 				}
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() const& -> decltype(auto)
 			{
@@ -887,7 +882,7 @@ namespace cruft
 				}
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() && -> decltype(auto)
 			{
@@ -901,7 +896,7 @@ namespace cruft
 				}
 			}
 
-			template<std::size_t N>
+			template<size_t N>
 			constexpr auto
 			do_get() const&& -> decltype(auto)
 			{
@@ -921,7 +916,10 @@ namespace cruft
 	// Main class
 
 	template<typename T1, typename T2>
-	struct tight_pair : private detail::tight_pair_storage<T1, T2>
+	struct tight_pair
+		: private detail::tight_pair_storage<T1, T2>,
+		  private Math::AbstractAlgebra::RelationAlgebra::totally_ordered<
+			  tight_pair<T1, T2>>
 	{
 	private:
 		struct check_args
@@ -930,28 +928,28 @@ namespace cruft
 			static constexpr bool
 			enable_default()
 			{
-				return std::is_default_constructible<U1>::value
-					&& std::is_default_constructible<U2>::value;
+				return is_default_constructible<U1>::value
+					&& is_default_constructible<U2>::value;
 			}
 
 			template<typename U1, typename U2>
 			static constexpr bool
 			enable_explicit()
 			{
-				return std::is_constructible<T1, U1>::value
-					&& std::is_constructible<T2, U2>::value
-					&& (not std::is_convertible<U1, T1>::value
-						   || not std::is_convertible<U2, T2>::value);
+				return is_constructible<T1, U1>::value
+					&& is_constructible<T2, U2>::value
+					&& (not is_convertible<U1, T1>::value
+						   || not is_convertible<U2, T2>::value);
 			}
 
 			template<typename U1, typename U2>
 			static constexpr bool
 			enable_implicit()
 			{
-				return std::is_constructible<T1, U1>::value
-					&& std::is_constructible<T2, U2>::value
-					&& std::is_convertible<U1, T1>::value
-					&& std::is_convertible<U2, T2>::value;
+				return is_constructible<T1, U1>::value
+					&& is_constructible<T2, U2>::value
+					&& is_convertible<U1, T1>::value
+					&& is_convertible<U2, T2>::value;
 			}
 		};
 
@@ -971,8 +969,8 @@ namespace cruft
 			{
 				return detail::adl_hook::pair_constructible<tight_pair&,
 						   Tuple>::value
-					&& not detail::adl_hook::pair_convertible<Tuple,
-						   tight_pair>::value;
+					and not detail::adl_hook::pair_convertible<Tuple,
+							tight_pair>::value;
 			}
 
 			template<typename Tuple>
@@ -985,11 +983,11 @@ namespace cruft
 		};
 
 		template<typename T>
-		using check_pair_like = std::conditional_t<
-			detail::pair_like<std::remove_reference_t<T>>::value
-				&& not std::is_same_v<std::decay_t<T>, tight_pair>,
-			check_tuple_like_constructor,
-			detail::check_tuple_constructor_fail>;
+		using check_pair_like
+			= meta::if_c<detail::pair_like<remove_reference_t<T>>::value
+					and not is_same_v<decay_t<T>, tight_pair>,
+				check_tuple_like_constructor,
+				detail::check_tuple_constructor_fail>;
 
 	public:
 		////////////////////////////////////////////////////////////
@@ -1000,14 +998,14 @@ namespace cruft
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<check_args::template enable_default<U1, U2>(),
+			enable_if_t<check_args::template enable_default<U1, U2>(),
 				bool> = false>
 		constexpr tight_pair() : detail::tight_pair_storage<T1, T2>()
 		{}
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<
+			enable_if_t<
 				check_args::template enable_explicit<U1 const&, U2 const&>(),
 				bool> = false>
 		constexpr explicit tight_pair(T1 const& first, T2 const& second)
@@ -1016,7 +1014,7 @@ namespace cruft
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<
+			enable_if_t<
 				check_args::template enable_implicit<U1 const&, U2 const&>(),
 				bool> = false>
 		constexpr tight_pair(T1 const& first, T2 const& second)
@@ -1025,25 +1023,25 @@ namespace cruft
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<check_args::template enable_explicit<U1, U2>(),
+			enable_if_t<check_args::template enable_explicit<U1, U2>(),
 				bool> = false>
 		constexpr explicit tight_pair(U1&& first, U2&& second)
 			: detail::tight_pair_storage<T1, T2>(
-				  std::forward<U1>(first), std::forward<U2>(second))
+				  Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<check_args::template enable_implicit<U1, U2>(),
+			enable_if_t<check_args::template enable_implicit<U1, U2>(),
 				bool> = false>
 		constexpr tight_pair(U1&& first, U2&& second)
 			: detail::tight_pair_storage<T1, T2>(
-				  std::forward<U1>(first), std::forward<U2>(second))
+				  Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<
+			enable_if_t<
 				check_args::template enable_explicit<U1 const&, U2 const&>(),
 				bool> = false>
 		constexpr explicit tight_pair(tight_pair<U1, U2> const& pair)
@@ -1053,7 +1051,7 @@ namespace cruft
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<
+			enable_if_t<
 				check_args::template enable_implicit<U1 const&, U2 const&>(),
 				bool> = false>
 		constexpr tight_pair(tight_pair<U1, U2> const& pair)
@@ -1063,40 +1061,40 @@ namespace cruft
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<check_args::template enable_explicit<U1, U2>(),
+			enable_if_t<check_args::template enable_explicit<U1, U2>(),
 				bool> = false>
 		constexpr explicit tight_pair(tight_pair<U1, U2>&& pair)
 			: detail::tight_pair_storage<T1, T2>(
-				  std::forward<U1>(pair.template get<0>()),
-				  std::forward<U2>(pair.template get<1>()))
+				  Faiz::forward<U1>(pair.template get<0>()),
+				  Faiz::forward<U2>(pair.template get<1>()))
 		{}
 
 		template<typename U1 = T1,
 			typename U2 = T2,
-			std::enable_if_t<check_args::template enable_implicit<U1, U2>(),
+			enable_if_t<check_args::template enable_implicit<U1, U2>(),
 				bool> = false>
 		constexpr tight_pair(tight_pair<U1, U2>&& pair)
 			: detail::tight_pair_storage<T1, T2>(
-				  std::forward<U1>(pair.template get<0>()),
-				  std::forward<U2>(pair.template get<1>()))
+				  Faiz::forward<U1>(pair.template get<0>()),
+				  Faiz::forward<U2>(pair.template get<1>()))
 		{}
 
 		template<typename Tuple,
-			std::enable_if_t<
+			enable_if_t<
 				check_pair_like<Tuple>::template enable_explicit<Tuple>()>>
 		constexpr explicit tight_pair(Tuple&& tuple)
 			: detail::tight_pair_storage<T1, T2>(
-				  std::forward<T1>(get<0>(std::forward<Tuple>(tuple))),
-				  std::forward<T2>(get<1>(std::forward<Tuple>(tuple))))
+				  Faiz::forward<T1>(get<0>(Faiz::forward<Tuple>(tuple))),
+				  Faiz::forward<T2>(get<1>(Faiz::forward<Tuple>(tuple))))
 		{}
 
 		template<typename Tuple,
-			std::enable_if_t<
+			enable_if_t<
 				check_pair_like<Tuple>::template enable_implicit<Tuple>()>>
 		constexpr tight_pair(Tuple&& tuple)
 			: detail::tight_pair_storage<T1, T2>(
-				  std::forward<T1>(get<0>(std::forward<Tuple>(tuple))),
-				  std::forward<T2>(get<1>(std::forward<Tuple>(tuple))))
+				  Faiz::forward<T1>(get<0>(Faiz::forward<Tuple>(tuple))),
+				  Faiz::forward<T2>(get<1>(Faiz::forward<Tuple>(tuple))))
 		{}
 
 		template<typename Tuple1, typename Tuple2>
@@ -1104,20 +1102,20 @@ namespace cruft
 			Tuple1&& first_args,
 			Tuple2&& second_args)
 			: detail::tight_pair_storage<T1, T2>(pc,
-				  std::forward<Tuple1>(first_args),
-				  std::forward<Tuple2>(second_args))
+				  Faiz::forward<Tuple1>(first_args),
+				  Faiz::forward<Tuple2>(second_args))
 		{}
 
 		////////////////////////////////////////////////////////////
 		// Assignment operator
 
 		constexpr auto
-		operator=(std::conditional_t<std::is_copy_assignable<T1>::value
-				&& std::is_copy_assignable<T2>::value,
-			tight_pair,
-			detail::nat> const& other) noexcept(noexcept(std::
-				is_nothrow_copy_assignable<T1>::value&&
-					std::is_nothrow_copy_assignable<T2>::value)) -> tight_pair&
+		operator=(
+			meta::if_c<is_copy_assignable_v<T1> && is_copy_assignable_v<T2>,
+				tight_pair,
+				detail::nat> const&
+				other) noexcept(noexcept(is_nothrow_copy_assignable<T1>::value&&
+				is_nothrow_copy_assignable<T2>::value)) -> tight_pair&
 		{
 			static_cast<detail::tight_pair_storage<T1, T2>&>(*this)
 				= static_cast<detail::tight_pair_storage<T1, T2> const&>(other);
@@ -1125,12 +1123,12 @@ namespace cruft
 		}
 
 		constexpr auto
-		operator=(std::conditional_t<std::is_move_assignable<T1>::value
-				&& std::is_move_assignable<T2>::value,
+		operator=(meta::if_c<is_move_assignable<T1>::value
+				and is_move_assignable<T2>::value,
 			tight_pair,
-			detail::nat>&& other) noexcept(noexcept(std::
-				is_nothrow_move_assignable<T1>::value&&
-					std::is_nothrow_move_assignable<T2>::value)) -> tight_pair&
+			detail::nat>&&
+				other) noexcept(noexcept(is_nothrow_move_assignable<T1>::value&&
+				is_nothrow_move_assignable<T2>::value)) -> tight_pair&
 		{
 			static_cast<detail::tight_pair_storage<T1, T2>&>(*this)
 				= static_cast<detail::tight_pair_storage<T1, T2>&&>(other);
@@ -1138,14 +1136,14 @@ namespace cruft
 		}
 
 		template<typename Tuple,
-			typename = std::enable_if_t<
+			typename = enable_if_t<
 				check_pair_like<Tuple>::template enable_assign<Tuple>()>>
 		constexpr auto
 		operator=(Tuple&& other) -> tight_pair&
 		{
 			using std::get;
-			get<0>(*this) = get<0>(std::forward<Tuple>(other));
-			get<1>(*this) = get<1>(std::forward<Tuple>(other));
+			get<0>(*this) = get<0>(Faiz::forward<Tuple>(other));
+			get<1>(*this) = get<1>(Faiz::forward<Tuple>(other));
 			return *this;
 		}
 
@@ -1168,7 +1166,7 @@ namespace cruft
 		// picking a potential inaccessible get from an empty base
 		// class
 
-		template<std::size_t N>
+		template<size_t N>
 			constexpr auto
 			get()
 			& noexcept -> std::tuple_element_t<N, tight_pair>&
@@ -1178,7 +1176,7 @@ namespace cruft
 				static_cast<storage_t&>(*this).template do_get<N>());
 		}
 
-		template<std::size_t N>
+		template<size_t N>
 			constexpr auto
 			get() const
 			& noexcept -> std::tuple_element_t<N, tight_pair> const&
@@ -1189,7 +1187,7 @@ namespace cruft
 				static_cast<storage_t const&>(*this).template do_get<N>());
 		}
 
-		template<std::size_t N>
+		template<size_t N>
 			constexpr auto
 			get()
 			&& noexcept -> std::tuple_element_t<N, tight_pair>&&
@@ -1199,7 +1197,7 @@ namespace cruft
 				static_cast<storage_t&&>(*this).template do_get<N>());
 		}
 
-		template<std::size_t N>
+		template<size_t N>
 			constexpr auto
 			get() const
 			&& noexcept -> std::tuple_element_t<N, tight_pair> const&&
@@ -1208,6 +1206,45 @@ namespace cruft
 			return static_cast<
 				std::tuple_element_t<N, tight_pair<T1, T2>> const&&>(
 				static_cast<storage_t const&&>(*this).template do_get<N>());
+		}
+
+		template<typename T, typename U>
+		friend constexpr auto
+		operator==(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs)
+			-> bool
+		{
+			return Rider::Faiz::get<0>(lhs) == Rider::Faiz::get<0>(rhs)
+				&& Rider::Faiz::get<1>(lhs) == Rider::Faiz::get<1>(rhs);
+		}
+
+		template<typename T, typename U>
+		friend constexpr auto
+		operator<(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs)
+			-> bool
+		{
+			if(Rider::Faiz::get<0>(lhs) < Rider::Faiz::get<0>(rhs))
+			{
+				return true;
+			}
+			if(Rider::Faiz::get<0>(rhs) < Rider::Faiz::get<0>(lhs))
+			{
+				return false;
+			}
+			return Rider::Faiz::get<1>(lhs) < Rider::Faiz::get<1>(rhs);
+		}
+
+		////////////////////////////////////////////////////////////
+		// Comparison and relational operators optimized to be
+		// branchless when possible
+
+		template<typename T>
+		friend auto
+		operator<(tight_pair<T, T> const& lhs, tight_pair<T, T> const& rhs)
+			-> enable_if_t<detail::can_optimize_compare<T>::value, bool>
+		{
+			auto big_lhs = detail::get_twice_as_big(lhs);
+			auto big_rhs = detail::get_twice_as_big(rhs);
+			return big_lhs < big_rhs;
 		}
 	};
 
@@ -1233,7 +1270,7 @@ namespace cruft
 	template<typename T1,
 		typename T2,
 		typename
-		= std::enable_if_t<std::is_swappable_v<T1> && std::is_swappable_v<T2>>>
+		= enable_if_t<range::is_swappable_v<T1> && range::is_swappable_v<T2>>>
 	constexpr auto
 	swap(tight_pair<T1, T2>& lhs, tight_pair<T1, T2>& rhs) noexcept(
 		noexcept(lhs.swap(rhs))) -> void
@@ -1245,7 +1282,7 @@ namespace cruft
 	// Index-based get functions for element access and
 	// structured bindings
 
-	template<std::size_t N, typename T1, typename T2>
+	template<size_t N, typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2>& pair) noexcept
 		-> std::tuple_element_t<N, tight_pair<T1, T2>>&
@@ -1254,7 +1291,7 @@ namespace cruft
 			pair.template get<N>());
 	}
 
-	template<std::size_t N, typename T1, typename T2>
+	template<size_t N, typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2> const& pair) noexcept
 		-> std::tuple_element_t<N, tight_pair<T1, T2>> const&
@@ -1263,7 +1300,7 @@ namespace cruft
 			pair.template get<N>());
 	}
 
-	template<std::size_t N, typename T1, typename T2>
+	template<size_t N, typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2>&& pair) noexcept
 		-> std::tuple_element_t<N, tight_pair<T1, T2>>&&
@@ -1272,7 +1309,7 @@ namespace cruft
 			pair.template get<N>());
 	}
 
-	template<std::size_t N, typename T1, typename T2>
+	template<size_t N, typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2> const&& pair) noexcept
 		-> std::tuple_element_t<N, tight_pair<T1, T2>> const&&
@@ -1288,180 +1325,57 @@ namespace cruft
 	constexpr auto
 	get(tight_pair<T1, T2>& pair) noexcept -> T1&
 	{
-		return cruft::get<0>(pair);
+		return get<0>(pair);
 	}
 
 	template<typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2> const& pair) noexcept -> T1 const&
 	{
-		return cruft::get<0>(pair);
+		return get<0>(pair);
 	}
 
 	template<typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2>&& pair) noexcept -> T1&&
 	{
-		return cruft::get<0>(std::move(pair));
+		return get<0>(Faiz::move(pair));
 	}
 
 	template<typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T1, T2> const&& pair) noexcept -> T1 const&&
 	{
-		return cruft::get<0>(std::move(pair));
+		return get<0>(Faiz::move(pair));
 	}
 
 	template<typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T2, T1>& pair) noexcept -> T1&
 	{
-		return cruft::get<1>(pair);
+		return get<1>(pair);
 	}
 
 	template<typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T2, T1> const& pair) noexcept -> T1 const&
 	{
-		return cruft::get<1>(pair);
+		return get<1>(pair);
 	}
 
 	template<typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T2, T1>&& pair) noexcept -> T1&&
 	{
-		return cruft::get<1>(std::move(pair));
+		return get<1>(Faiz::move(pair));
 	}
 
 	template<typename T1, typename T2>
 	constexpr auto
 	get(tight_pair<T2, T1> const&& pair) noexcept -> T1 const&&
 	{
-		return cruft::get<1>(std::move(pair));
+		return get<1>(Faiz::move(pair));
 	}
-
-	////////////////////////////////////////////////////////////
-	// Generic comparison and relational operators
-
-	template<typename T, typename U>
-	constexpr auto
-	operator==(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
-	{
-		return get<0>(lhs) == get<0>(rhs) && get<1>(lhs) == get<1>(rhs);
-	}
-
-	template<typename T, typename U>
-	constexpr auto
-	operator!=(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
-	{
-		return get<0>(lhs) != get<0>(rhs) || get<1>(lhs) != get<1>(rhs);
-	}
-
-	template<typename T, typename U>
-	constexpr auto
-	operator<(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
-	{
-		if(get<0>(lhs) < get<0>(rhs))
-		{
-			return true;
-		}
-		if(get<0>(rhs) < get<0>(lhs))
-		{
-			return false;
-		}
-		return get<1>(lhs) < get<1>(rhs);
-	}
-
-	template<typename T, typename U>
-	constexpr auto
-	operator<=(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
-	{
-		return not(rhs < lhs);
-	}
-
-	template<typename T, typename U>
-	constexpr auto
-	operator>(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
-	{
-		return rhs < lhs;
-	}
-
-	template<typename T, typename U>
-	constexpr auto
-	operator>=(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
-	{
-		return not(lhs < rhs);
-	}
-
-	////////////////////////////////////////////////////////////
-	// Comparison and relational operators optimized to be
-	// branchless when possible
-
-	template<typename T>
-	auto
-	operator<(tight_pair<T, T> const& lhs, tight_pair<T, T> const& rhs)
-		-> std::enable_if_t<detail::can_optimize_compare<T>::value, bool>
-	{
-		auto big_lhs = detail::get_twice_as_big(lhs);
-		auto big_rhs = detail::get_twice_as_big(rhs);
-		return big_lhs < big_rhs;
-	}
-
-	template<typename T>
-	constexpr auto
-	operator<=(tight_pair<T, T> const& lhs, tight_pair<T, T> const& rhs)
-		-> std::enable_if_t<detail::can_optimize_compare<T>::value, bool>
-	{
-		auto big_lhs = detail::get_twice_as_big(lhs);
-		auto big_rhs = detail::get_twice_as_big(rhs);
-		return big_lhs <= big_rhs;
-	}
-
-	template<typename T>
-	constexpr auto
-	operator>(tight_pair<T, T> const& lhs, tight_pair<T, T> const& rhs)
-		-> std::enable_if_t<detail::can_optimize_compare<T>::value, bool>
-	{
-		auto big_lhs = detail::get_twice_as_big(lhs);
-		auto big_rhs = detail::get_twice_as_big(rhs);
-		return big_lhs > big_rhs;
-	}
-
-	template<typename T>
-	constexpr auto
-	operator>=(tight_pair<T, T> const& lhs, tight_pair<T, T> const& rhs)
-		-> std::enable_if_t<detail::can_optimize_compare<T>::value, bool>
-	{
-		auto big_lhs = detail::get_twice_as_big(lhs);
-		auto big_rhs = detail::get_twice_as_big(rhs);
-		return big_lhs >= big_rhs;
-	}
-} // namespace cruft
-
-namespace cppsort
-{
-	template<typename Compare, typename T>
-	struct is_probably_branchless_comparison;
-
-	template<typename T>
-	struct is_probably_branchless_comparison<std::less<>,
-		cruft::tight_pair<T, T>> : cruft::detail::can_optimize_compare<T>
-	{};
-
-	template<typename T>
-	struct is_probably_branchless_comparison<std::less<T>,
-		cruft::tight_pair<T, T>> : cruft::detail::can_optimize_compare<T>
-	{};
-
-	template<typename T>
-	struct is_probably_branchless_comparison<std::greater<>,
-		cruft::tight_pair<T, T>> : cruft::detail::can_optimize_compare<T>
-	{};
-
-	template<typename T>
-	struct is_probably_branchless_comparison<std::greater<T>,
-		cruft::tight_pair<T, T>> : cruft::detail::can_optimize_compare<T>
-	{};
-} // namespace cppsort
+} // namespace Rider::Faiz
 
 #endif // CRUFT_TIGHT_PAIR_H_
