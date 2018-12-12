@@ -8,7 +8,7 @@
 Don't implement:
 */
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 	// Provides member typedef type, which is defined as T if B is true at
 	// compile time, or as F if B is false.
@@ -30,10 +30,10 @@ namespace rider::faiz
 	// forward declaration
 	// If the imaginary function definition To `test() { return
 	// std::declval<From>(); }` is well-formed, (that is, either
-	// `faiz::declval<From>()` can be converted to To using implicit
+	// `Faiz::declval<From>()` can be converted to To using implicit
 	// conversions, or both From and To are possibly `cv-qualified void`),
 	// provides the member constant value equal to true. Otherwise value is
-	// false. For the purposes of this check, the use of `faiz::declval` in the
+	// false. For the purposes of this check, the use of `Faiz::declval` in the
 	// return statement is not considered an odr-use. Access checks are
 	// performed as if from a context unrelated to either type. Only the
 	// validity of the immediate context of the expression in the return
@@ -89,18 +89,18 @@ namespace rider::faiz
 
 
 	// The alias template `is_detected` is equivalent to typename
-	// `detected_or<faiz::nonesuch, Op, Args...>::value_t`. It is an
-	// alias for `faiz::true_type` if the `template-id Op<Args...>` denotes a
-	// valid type; otherwise it is an alias for `faiz::false_type`.
+	// `detected_or<Faiz::nonesuch, Op, Args...>::value_t`. It is an
+	// alias for `Faiz::true_type` if the `template-id Op<Args...>` denotes a
+	// valid type; otherwise it is an alias for `Faiz::false_type`.
 	template<template<typename...> class Op, class... Args>
 	using is_detected =
 		typename detail::detector<nonesuch, void, Op, Args...>::value_t;
 
 
 	// The alias template `detected_t` is equivalent to typename
-	// `detected_or<faiz::nonesuch, Op, Args...>::type`. It is an
+	// `detected_or<Faiz::nonesuch, Op, Args...>::type`. It is an
 	// alias for `Op<Args...>` if that template-id denotes a valid type;
-	// otherwise it is an alias for the class `faiz::nonesuch`.
+	// otherwise it is an alias for the class `Faiz::nonesuch`.
 	template<template<typename...> class Op, class... Args>
 	using detected_t = _t<detail::detector<nonesuch, void, Op, Args...>>;
 
@@ -110,9 +110,9 @@ namespace rider::faiz
 	//
 	// - If the template-id `Op<Args...>` denotes a valid type,
 	// then `value_t`
-	//  is an alias for `faiz::true_type`, and type is an alias for
+	//  is an alias for `Faiz::true_type`, and type is an alias for
 	// `Op<Args...>`;
-	// - Otherwise, `value_t` is an alias for `faiz::false_type` and type is
+	// - Otherwise, `value_t` is an alias for `Faiz::false_type` and type is
 	// an alias for `Default`.
 	template<typename Default, template<typename...> class Op, class... Args>
 	using detected_or = detail::detector<Default, void, Op, Args...>;
@@ -164,10 +164,10 @@ namespace rider::faiz
 	template<typename T>
 	inline constexpr bool is_rvalue_reference_v = is_rvalue_reference<T>::value;
 
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 
-namespace rider::faiz::detail
+namespace Rider::Faiz::detail
 {
 	template<typename T>
 	struct is_member_pointer_helper : false_
@@ -181,7 +181,7 @@ namespace rider::faiz::detail
 	true_
 	is_base_of_test_func(const volatile Base*);
 	template<typename Base>
-	faiz::false_
+	Faiz::false_
 	is_base_of_test_func(const volatile void*);
 	template<typename Base, typename Derived>
 	using pre_is_base_of
@@ -195,7 +195,7 @@ namespace rider::faiz::detail
 	template<typename Base, typename Derived, typename = void>
 	struct pre_is_base_of2 : public true_
 	{};
-	// note faiz::void_t is a C++17 feature
+	// note Faiz::void_t is a C++17 feature
 	template<typename Base, typename Derived>
 	struct pre_is_base_of2<Base, Derived, void_t<pre_is_base_of<Base, Derived>>>
 		: public pre_is_base_of<Base, Derived>
@@ -210,8 +210,9 @@ namespace rider::faiz::detail
 	{};
 
 
-	// NOTE: !rider::faiz::is_assignable<bool &, std::nullptr_t>::value'
+	// NOTE: !Rider::Faiz::is_assignable<bool &, std::nullptr_t>::value'
 	// "Error", clang++ has a bug here.
+	// TODO: use is_detected_v
 	template<typename T, typename Arg, typename>
 	struct is_assignable_imp : false_
 	{};
@@ -249,6 +250,7 @@ namespace rider::faiz::detail
 		= logic::and_<logic::not_<is_enum<T>>,
 			logic::not_<is_rvalue_reference<T>>>::value;
 
+	// TODO: use is_detected_v
 	template<typename T>
 	using is_integral_arith
 		= void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>;
@@ -267,9 +269,15 @@ namespace rider::faiz::detail
 	template<typename T>
 	using is_arithmetic_arith = void_t<decltype(T{} * T{}), decltype(+T{})&>;
 
+	// XXX: is_arithmetic_arith will allow std::complex, which is not arithmetic
+	// type(If T is an arithmetic type (that is, an integral type or a
+	// floating-point type) or a cv-qualified version thereof, provides the
+	// member constant value equal true. For any other type, value is false.) ,
+	// so add is_class to check.
 	template<typename T>
 	constexpr bool is_arithmetic_impl
 		= logic::and_<is_detected<is_arithmetic_arith, T>,
+			logic::not_<is_class<T>>,
 			bool_<not_enum_rvalue_reference_v<T>>>::value;
 
 	template<typename T, bool = is_arithmetic_impl<T>>
@@ -331,9 +339,9 @@ namespace rider::faiz::detail
 	{};
 
 
-} // namespace rider::faiz::detail
+} // namespace Rider::Faiz::detail
 
-namespace rider::faiz
+namespace Rider::Faiz
 {
 
 	template<typename... _b>
@@ -599,15 +607,15 @@ namespace rider::faiz
 	struct extent<T[], N> : extent<T, N - 1>
 	{};
 
-	template<typename T, faiz::size_t I>
+	template<typename T, Faiz::size_t I>
 	struct extent<T[I], 0> : size_t_<I>
 	{};
 
-	template<typename T, faiz::size_t I, unsigned N>
+	template<typename T, Faiz::size_t I, unsigned N>
 	struct extent<T[I], N> : extent<T, N - 1>
 	{};
 	template<typename T, unsigned N = 0>
-	inline constexpr faiz::size_t extent_v = extent<T, N>::value;
+	inline constexpr Faiz::size_t extent_v = extent<T, N>::value;
 
 	//  If T is an object type or a function type that has no cv- or ref-
 	//  qualifier (since C++17), provides a member typedef type which is T&. If
@@ -945,10 +953,8 @@ namespace rider::faiz
 	// If T is an object or reference type and the variable definition T
 	// obj(std::declval<Args>()...); is well-formed, provides the member
 	// constant value equal to true. In all other cases, value is false.
-	template<typename Tp, class... Args>
-	struct is_constructible : public bool_<__is_constructible(Tp, Args...)>
-	{};
 
+	// FIXME: the codes below cannot pass tests somehow
 	// template<typename T, class, class...>
 	// struct is_constructible_impl : false_
 	// {};
@@ -960,10 +966,6 @@ namespace rider::faiz
 	// template<typename T, class... Us>
 	// struct is_constructible : is_constructible_impl<T, void, Us...>
 	// {};
-
-	template<typename T, class... Args>
-	inline constexpr bool is_constructible_v
-		= is_constructible<T, Args...>::value;
 
 	template<typename Tp>
 	struct is_copy_constructible
@@ -1022,7 +1024,7 @@ namespace rider::faiz
 	// {};
 	// int main()
 	// {
-	//     faiz::cout << faiz::boolalpha
+	//     Faiz::cout << Faiz::boolalpha
 	//               << decay_equiv<int, int>::value << '\n'
 	//               << decay_equiv<int&, int>::value << '\n'
 	//               << decay_equiv<int&&, int>::value << '\n'
@@ -1064,13 +1066,13 @@ namespace rider::faiz
 	// same type (ignoring cv-qualification), Derived shall be a complete type;
 	// otherwise the behavior is undefined.
 	//
-	// faiz::is_base_of<A, B>::value is true even if A is a private, protected,
+	// Faiz::is_base_of<A, B>::value is true even if A is a private, protected,
 	// or ambiguous base class of B. In many situations,
-	// faiz::is_convertible<B*, A*> is the more appropriate test.
+	// Faiz::is_convertible<B*, A*> is the more appropriate test.
 	//
-	// Although no class is its own base, faiz::is_base_of<T, T>::value is true
+	// Although no class is its own base, Faiz::is_base_of<T, T>::value is true
 	// because the intent of the trait is to model the "is-a" relationship, and
-	// T is a T. Despite that, faiz::is_base_of<int, int>::value is false
+	// T is a T. Despite that, Faiz::is_base_of<int, int>::value is false
 	// because only classes participate in the relationship that this trait
 	// models.
 	template<typename Base, typename Derived>
@@ -1091,7 +1093,7 @@ namespace rider::faiz
 	inline constexpr bool is_member_pointer_v = is_member_pointer<T>::value;
 
 	// If `T` is a scalar type (that is a possibly **cv-qualified** arithmetic,
-	// pointer, pointer to member, enumeration, or `faiz::nullptr_t` type),
+	// pointer, pointer to member, enumeration, or `Faiz::nullptr_t` type),
 	// provides the member constant value equal `true`. For any other type,
 	// value is `false`.
 	//
@@ -1201,15 +1203,35 @@ namespace rider::faiz
 	template<typename T>
 	using move_assignment_t = decltype(declval<T&>() = declval<T&&>());
 
-	template<typename T, typename A = void>
-	struct is_move_assignable : false_
-	{};
 	template<typename T>
-	struct is_move_assignable<T, void_t<move_assignment_t<T>>>
-		: is_same<move_assignment_t<T>, T&>
-	{};
+	inline constexpr bool is_move_assignable_v
+		= is_detected_v<move_assignment_t, T>;
+
 	template<typename T>
-	inline constexpr bool is_move_assignable_v = is_move_assignable<T>{}();
+	struct is_move_assignable : bool_<is_move_assignable_v<T>>
+	{};
+
+	// // clang-format off
+	// template<typename T>
+	// inline constexpr bool is_nothrow_move_assignable_v
+	// 	= is_move_assignable_v<T> and noexcept(declval<T&>() = declval<T&&>());
+	// // clang-format on
+
+	// template<typename T>
+	// struct is_nothrow_move_assignable :
+	// bool_<is_nothrow_move_assignable_v<T>>
+	// {};
+
+	template<class _Tp>
+	struct is_nothrow_move_assignable
+		: public is_nothrow_assignable<typename add_lvalue_reference<_Tp>::type,
+			  typename add_rvalue_reference<_Tp>::type>
+	{};
+
+	template<class _Tp>
+	inline constexpr bool is_nothrow_move_assignable_v
+		= is_nothrow_move_assignable<_Tp>::value;
+
 
 	template<typename T, typename A>
 	struct is_nothrow_assignable_aux<true, T, A>
@@ -1298,6 +1320,6 @@ namespace rider::faiz
 	template<typename T>
 	struct is_nothrow_destructible : bool_<is_nothrow_destructible_v<T>>
 	{};
-} // namespace rider::faiz
+} // namespace Rider::Faiz
 
 #endif
