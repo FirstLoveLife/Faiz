@@ -74,6 +74,7 @@ namespace Rider
 namespace Rider::Faiz
 {
 	// FIXME: below is traits that I am not able to implement yet.
+	using std::has_unique_object_representations;
 	using std::is_constructible;
 	using std::is_constructible_v;
 	using std::is_trivially_constructible;
