@@ -70,6 +70,19 @@ namespace Rider
 
 } // namespace Rider
 
+namespace Rider::Faiz
+{
+#define ARE(what) \
+	template<typename... T > \
+	inline constexpr bool are_##what##_v = (is_##what##_v<T> && ...); \
+\
+	template<typename... T> \
+	struct are_##what : bool_<are_##what##_v<T...>> \
+	{ \
+	};  \
+
+}
+
 // forwad declare type_traits
 namespace Rider::Faiz
 {
