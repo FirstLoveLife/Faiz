@@ -984,8 +984,7 @@ namespace Rider::Faiz
 
 		template<typename T>
 		using check_pair_like
-			= meta::if_c<detail::pair_like<remove_reference_t<T>>::value
-					and not is_same_v<decay_t<T>, tight_pair>,
+		= meta::if_c<detail::pair_like<remove_reference_t<T>>::value,
 				check_tuple_like_constructor,
 				detail::check_tuple_constructor_fail>;
 
