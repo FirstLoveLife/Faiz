@@ -123,8 +123,7 @@ namespace Rider::Faiz
 			: logic::and_<is_empty<T>, logic::not_<is_final<T>>>
 		{};
 
-		template<typename T>
-		constexpr bool is_ebco_eligible_v = is_ebco_eligible<T>::value;
+		IS_ARE_ANY(ebco_eligible);
 
 		////////////////////////////////////////////////////////////
 		// Detect whether an integer has padding bits
@@ -336,26 +335,26 @@ namespace Rider::Faiz
 
 			template<typename To, typename From>
 			struct pair_assignable
-				: bool_<
-					  is_assignable_v<decltype(get<0>(declval<To>())),
-						  decltype(get<0>(declval<
-							  From>()))> && is_assignable_v<decltype(get<1>(declval<To>())), decltype(get<1>(declval<From>()))>>
+				: logic::and_<is_assignable<decltype(get<0>(declval<To>())),
+								  decltype(get<0>(declval<From>()))>,
+					  is_assignable<decltype(get<1>(declval<To>())),
+						  decltype(get<1>(declval<From>()))>>
 			{};
 
 			template<typename To, typename From>
 			struct pair_constructible
-				: bool_<
-					  is_constructible_v<decltype(get<0>(declval<To>())),
-						  decltype(get<0>(declval<
-							  From>()))> && is_constructible_v<decltype(get<1>(declval<To>())), decltype(get<1>(declval<From>()))>>
+				: logic::and_<is_constructible<decltype(get<0>(declval<To>())),
+								  decltype(get<0>(declval<From>()))>,
+					  is_constructible<decltype(get<1>(declval<To>())),
+						  decltype(get<1>(declval<From>()))>>
 			{};
 
 			template<typename From, typename To>
 			struct pair_convertible
-				: bool_<
-					  is_convertible_v<decltype(get<0>(declval<From>())),
-						  decltype(get<0>(declval<
-							  To>()))> && is_assignable_v<decltype(get<1>(declval<From>())), decltype(get<1>(declval<To>()))>>
+				: logic::and_<is_convertible<decltype(get<0>(declval<From>())),
+								  decltype(get<0>(declval<To>()))>,
+					  is_assignable<decltype(get<1>(declval<From>())),
+						  decltype(get<1>(declval<To>()))>>
 			{};
 		} // namespace adl_hook
 
@@ -466,10 +465,10 @@ namespace Rider::Faiz
 			tight_pair_element(tight_pair_element&&) = default;
 
 			constexpr tight_pair_element() noexcept(
-				is_nothrow_default_constructible<T>::value)
+				is_nothrow_default_constructible_v<T>)
 				: value()
 			{
-				static_assert(not is_reference<T>::value,
+				static_assert(not is_reference_v<T>,
 					"attempted to default construct a reference element");
 			}
 
@@ -615,9 +614,9 @@ namespace Rider::Faiz
 		// integer data
 
 		template<typename T>
-		struct needs_reordering : bool_<endian::native == endian::little
-										&& logic::and_<is_unsigned<T>,
-											 has_twice_as_big<T>>::value>
+		struct needs_reordering
+			: bool_<endian::native == endian::little
+				  and logic::and_<is_unsigned<T>, has_twice_as_big<T>>::value>
 		{};
 
 		template<typename T>
@@ -637,7 +636,7 @@ namespace Rider::Faiz
 
 		template<typename T1,
 			typename T2,
-			bool RegularStorage = is_ebco_eligible_v<T1> || is_reference_v<T1>,
+			bool RegularStorage = is_ebco_eligible_v<T1> or is_reference_v<T1>,
 			bool NeedsReodering = needs_reordering<T1>::value>
 		struct tight_pair_storage : tight_pair_element<0, T1>,
 									tight_pair_element<1, T2>
@@ -929,28 +928,27 @@ namespace Rider::Faiz
 			static constexpr bool
 			enable_default()
 			{
-				return is_default_constructible_v<U1>
-					and is_default_constructible_v<U2>;
+				return are_default_constructible_v<U1, U2>;
 			}
 
 			template<typename U1, typename U2>
 			static constexpr bool
 			enable_explicit()
 			{
-				return is_constructible_v<T1, U1>
-					and is_constructible_v<T2, U2>
-					and (not is_convertible_v<U1, T1>
-						   or not is_convertible_v<U2, T2>);
+				return logic::and_<is_constructible<T1, U1>,
+					is_constructible<T2, U2>,
+					logic::or_<logic::not_<is_convertible<U1, T1>>,
+						logic::not_<is_convertible<U2, T2>>>>::value;
 			}
 
 			template<typename U1, typename U2>
 			static constexpr bool
 			enable_implicit()
 			{
-				return is_constructible_v<T1, U1>
-					and is_constructible_v<T2, U2>
-					and is_convertible_v<U1, T1>
-					and is_convertible_v<U2, T2>;
+				return logic::and_<is_constructible<T1, U1>,
+					is_constructible<T2, U2>,
+					is_convertible<U1, T1>,
+					is_convertible<U2, T2>>::value;
 			}
 		};
 
@@ -985,7 +983,7 @@ namespace Rider::Faiz
 
 		template<typename T>
 		using check_pair_like
-		= meta::if_c<detail::pair_like<remove_reference_t<T>>::value,
+			= meta::if_c<detail::pair_like<remove_reference_t<T>>::value,
 				check_tuple_like_constructor,
 				detail::check_tuple_constructor_fail>;
 
@@ -1110,12 +1108,11 @@ namespace Rider::Faiz
 		// Assignment operator
 
 		constexpr auto
-		operator=(
-			meta::if_c<is_copy_assignable_v<T1> && is_copy_assignable_v<T2>,
-				tight_pair,
-				detail::nat> const&
-				other) noexcept(noexcept(is_nothrow_copy_assignable_v<T1>&&
-				is_nothrow_copy_assignable_v<T2>)) -> tight_pair&
+		operator=(meta::if_<are_copy_assignable<T1, T2>,
+			tight_pair,
+			detail::nat> const&
+				other) noexcept(noexcept(are_nothrow_copy_assignable_v<T1, T2>))
+			-> tight_pair&
 		{
 			static_cast<detail::tight_pair_storage<T1, T2>&>(*this)
 				= static_cast<detail::tight_pair_storage<T1, T2> const&>(other);
@@ -1123,12 +1120,10 @@ namespace Rider::Faiz
 		}
 
 		constexpr auto
-		operator=(meta::if_c<is_move_assignable_v<T1>
-				and is_move_assignable_v<T2>,
-			tight_pair,
-			detail::nat>&&
-				other) noexcept(noexcept(is_nothrow_move_assignable_v<T1>&&
-				is_nothrow_move_assignable_v<T2>)) -> tight_pair&
+		operator=(
+			meta::if_<are_move_assignable<T1, T2>, tight_pair, detail::nat>&&
+				other) noexcept(noexcept(are_nothrow_move_assignable_v<T1, T2>))
+			-> tight_pair&
 		{
 			static_cast<detail::tight_pair_storage<T1, T2>&>(*this)
 				= static_cast<detail::tight_pair_storage<T1, T2>&&>(other);
@@ -1151,8 +1146,7 @@ namespace Rider::Faiz
 		// Swap
 
 		constexpr auto
-		swap(tight_pair& other) noexcept(
-			range::is_nothrow_swappable_v<T1>&& range::is_nothrow_swappable_v<T2>)
+		swap(tight_pair& other) noexcept(range::are_nothrow_swappable_v<T1, T2>)
 			-> void
 		{
 			std::swap(static_cast<detail::tight_pair_storage<T1, T2>&>(*this),
@@ -1269,8 +1263,7 @@ namespace Rider::Faiz
 
 	template<typename T1,
 		typename T2,
-		typename
-		= enable_if_t<range::is_swappable_v<T1> && range::is_swappable_v<T2>>>
+		typename = enable_if_t<range::are_swappable_v<T1, T2>>>
 	constexpr auto
 	swap(tight_pair<T1, T2>& lhs, tight_pair<T1, T2>& rhs) noexcept(
 		noexcept(lhs.swap(rhs))) -> void
