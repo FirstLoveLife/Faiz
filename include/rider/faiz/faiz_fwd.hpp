@@ -37,6 +37,8 @@ namespace Rider
 	using index = std::ptrdiff_t;
 
 #define INLINE_VARIABLE(type, name) inline constexpr type name{};
+
+
 #define DEPRECATED(MSG) __attribute__((deprecated(MSG)))
 #define IMPL(...) __VA_ARGS__
 #define SEMICOLON ;
@@ -72,16 +74,156 @@ namespace Rider
 
 namespace Rider::Faiz
 {
-#define ARE(what) \
-	template<typename... T > \
-	inline constexpr bool are_##what##_v = (is_##what##_v<T> && ...); \
+	template<typename T, T v>
+	struct integral_constant;
+	template<typename T, T v>
+	struct integral_constant
+	{
+		static constexpr T value = v;
+		using value_type = T;
+		using type = integral_constant; // using injected-class-name
+		constexpr operator value_type() const noexcept
+		{
+			return value;
+		}
+		constexpr value_type
+		operator()() const noexcept
+		{
+			return value;
+		} // since c++14
+	};
+
+#define ImplDeclIntT(_n, _t) \
+	template<_t _vInt> \
+	using _n = integral_constant<_t, _vInt>;
+#define ImplDeclIntTDe(_t) ImplDeclIntT(_t##_, _t)
+
+	// clang-format off
+
+    ImplDeclIntTDe(bool)
+    ImplDeclIntTDe(char)
+    ImplDeclIntTDe(int)
+    ImplDeclIntT(llong_, long long)
+    ImplDeclIntTDe(long)
+    ImplDeclIntTDe(short)
+    ImplDeclIntT(ullong_, unsigned long long)
+    ImplDeclIntT(ulong_, unsigned long)
+    ImplDeclIntT(uint_, unsigned)
+    ImplDeclIntT(ushort_, unsigned short)
+    ImplDeclIntTDe(size_t)
+    ImplDeclIntTDe(ptrdiff_t)
+
+ #undef ImplDeclIntTDe
+ #undef ImplDeclIntT
+
+		// clang-format on
+
+		using true_ = bool_<true>;
+	using false_ = bool_<false>;
+	template<bool B>
+	using bool_constant = bool_<B>;
+	using true_type = true_;
+	using false_type = false_;
+
+	template<typename T>
+	using sizeof_able = size_t_<sizeof(T)>;
+} // namespace Rider::Faiz
+
+namespace Rider::Faiz::detail
+{
+	template<template <typename First, typename Second> class Trait, typename First, typename Second, typename... Rest>
+	constexpr bool binaryTraitAre_impl()
+	{
+		if constexpr (sizeof... (Rest) == 0)
+		{
+			return true;
+		}
+		return Trait<First, Second>{}() and binaryTraitAre_impl<Trait, Rest...>();
+	}
+
+	template<template <typename First, typename Second> class Trait, typename First, typename Second, typename... Rest>
+	constexpr bool binaryTraitOr_impl()
+	{
+		if constexpr (sizeof... (Rest) == 0)
+		{
+			return true;
+		}
+		return Trait<First, Second>{}() or binaryTraitOr_impl<Trait, Rest...>();
+	}
+}
+
+namespace Rider::Faiz
+{
+#define IS(name) \
+	template<typename T> \
+	inline constexpr bool is_##name##_v = is_##name<T>::value;
+
+#define BI_IS(name) \
+	template<typename From, typename To>									\
+	inline constexpr bool is_##name##_v = is_##name<From, To>::value;
+
+#define NOT(name) \
+	template<typename T> \
+	inline constexpr bool not_##name##_v = not is_##name<T>::value; \
+	template<typename T>											\
+	struct not_##name : bool_<not_##name##_v<T>>					\
+	{};
+
+#define BI_NOT(name) \
+	template<typename From, typename To>										\
+	inline constexpr bool not_##name##_v = not is_##name<From, To>::value; \
+	template<typename From, typename To>											\
+	struct not_##name : bool_<not_##name##_v<From, To>>				\
+	{};
+
+#define ARE(name) \
+	template<typename... T> \
+	inline constexpr bool are_##name##_v = (is_##name##_v<T> && ...); \
 \
 	template<typename... T> \
-	struct are_##what : bool_<are_##what##_v<T...>> \
-	{ \
-	};  \
+	struct are_##name : bool_<are_##name##_v<T...>> \
+	{};
 
-}
+#define BI_ARE(name) \
+	template<typename... T> \
+	inline constexpr bool are_##name##_v = detail::binaryTraitAre_impl<is_##name, T...>(); \
+\
+	template<typename... T> \
+	struct are_##name : bool_<are_##name##_v<T...>> \
+	{};
+
+#define ANY(name) \
+	template<typename... T> \
+	inline constexpr bool any_##name##_v = (is_##name##_v<T> || ...); \
+\
+	template<typename... T> \
+	struct any_##name : bool_<any_##name##_v<T...>> \
+	{};
+
+#define BI_ANY(name) \
+	template<typename... T>												\
+	inline constexpr bool any_##name##_v = detail::binaryTraitOr_impl<is_##name, T...>(); \
+\
+	template<typename... T> \
+	struct any_##name : bool_<any_##name##_v<T...>> \
+	{};
+
+
+#define IS_NOT_ARE_ANY(name) \
+	IS(name); \
+	NOT(name); \
+	ARE(name); \
+	ANY(name);
+
+#define BI_IS_NOT_ARE_ANY(name) \
+	BI_IS(name); \
+	BI_NOT(name); \
+	BI_ARE(name); \
+	BI_ANY(name);
+
+} // namespace Rider::Faiz
+
+
 
 // forwad declare type_traits
 namespace Rider::Faiz
@@ -92,15 +234,20 @@ namespace Rider::Faiz
 	using std::is_constructible_v;
 	using std::is_trivially_constructible;
 	using std::is_trivially_constructible_v;
+
 	using std::is_default_constructible;
-	using std::is_default_constructible_v;
+	IS_NOT_ARE_ANY(default_constructible);
+
 	using std::is_trivially_default_constructible;
-	using std::is_trivially_default_constructible_v;
+	IS_NOT_ARE_ANY(trivially_default_constructible);
+
 	using std::is_nothrow_default_constructible;
-	using std::is_nothrow_default_constructible_v;
+	IS_NOT_ARE_ANY(nothrow_default_constructible);
+
 	using std::is_nothrow_constructible;
 	using std::is_nothrow_constructible_v;
-	// using std::is_nothrow_copy_assignable;
+
+	//  using std::is_nothrow_copy_assignable;
 	// using std::is_nothrow_copy_assignable_v;
 	using std::is_standard_layout;
 	using std::is_standard_layout_v;
@@ -239,60 +386,6 @@ namespace Rider::Faiz
 	template<class T, class U>
 
 	inline constexpr bool is_same_v = is_same<T, U>::value;
-	template<typename T, T v>
-	struct integral_constant;
-	template<typename T, T v>
-	struct integral_constant
-	{
-		static constexpr T value = v;
-		using value_type = T;
-		using type = integral_constant; // using injected-class-name
-		constexpr operator value_type() const noexcept
-		{
-			return value;
-		}
-		constexpr value_type
-		operator()() const noexcept
-		{
-			return value;
-		} // since c++14
-	};
-
-#define ImplDeclIntT(_n, _t) \
-	template<_t _vInt> \
-	using _n = integral_constant<_t, _vInt>;
-#define ImplDeclIntTDe(_t) ImplDeclIntT(_t##_, _t)
-
-	// clang-format off
-
-    ImplDeclIntTDe(bool)
-    ImplDeclIntTDe(char)
-    ImplDeclIntTDe(int)
-    ImplDeclIntT(llong_, long long)
-    ImplDeclIntTDe(long)
-    ImplDeclIntTDe(short)
-    ImplDeclIntT(ullong_, unsigned long long)
-    ImplDeclIntT(ulong_, unsigned long)
-    ImplDeclIntT(uint_, unsigned)
-    ImplDeclIntT(ushort_, unsigned short)
-    ImplDeclIntTDe(size_t)
-    ImplDeclIntTDe(ptrdiff_t)
-
- #undef ImplDeclIntTDe
- #undef ImplDeclIntT
-
-		// clang-format on
-
-		using true_ = bool_<true>;
-	using false_ = bool_<false>;
-	template<bool B>
-	using bool_constant = bool_<B>;
-	using true_type = true_;
-	using false_type = false_;
-
-	template<typename T>
-	using sizeof_able = size_t_<sizeof(T)>;
-
 
 } // namespace Rider::Faiz
 
