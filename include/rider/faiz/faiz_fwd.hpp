@@ -36,6 +36,8 @@ namespace Rider
 
 	using index = std::ptrdiff_t;
 
+#define PAIR(A, B) A, B
+
 #define INLINE_VARIABLE(type, name) inline constexpr type name{};
 
 
@@ -131,26 +133,42 @@ namespace Rider::Faiz
 
 namespace Rider::Faiz::detail
 {
-	template<template <typename First, typename Second> class Trait, typename First, typename Second, typename... Rest>
-	constexpr bool binaryTraitAre_impl()
+	template<template<typename First, typename Second> class Trait,
+		typename First,
+		typename Second,
+		typename... Rest>
+	constexpr bool
+	binaryTraitAre_impl()
 	{
-		if constexpr (sizeof... (Rest) == 0)
+		if constexpr(sizeof...(Rest) == 0)
 		{
-			return true;
+			return Trait<First, Second>{}();
 		}
-		return Trait<First, Second>{}() and binaryTraitAre_impl<Trait, Rest...>();
+		else
+		{
+			return Trait<First, Second>{}()
+				and binaryTraitAre_impl<Trait, Rest...>();
+		}
 	}
 
-	template<template <typename First, typename Second> class Trait, typename First, typename Second, typename... Rest>
-	constexpr bool binaryTraitOr_impl()
+	template<template<typename First, typename Second> class Trait,
+		typename First,
+		typename Second,
+		typename... Rest>
+	constexpr bool
+	binaryTraitOr_impl()
 	{
-		if constexpr (sizeof... (Rest) == 0)
+		if constexpr(sizeof...(Rest) == 0)
 		{
-			return true;
+			return Trait<First, Second>{}();
 		}
-		return Trait<First, Second>{}() or binaryTraitOr_impl<Trait, Rest...>();
+		else
+		{
+			return Trait<First, Second>{}()
+				or binaryTraitOr_impl<Trait, Rest...>();
+		}
 	}
-}
+} // namespace Rider::Faiz::detail
 
 namespace Rider::Faiz
 {
@@ -159,21 +177,21 @@ namespace Rider::Faiz
 	inline constexpr bool is_##name##_v = is_##name<T>::value;
 
 #define BI_IS(name) \
-	template<typename From, typename To>									\
+	template<typename From, typename To> \
 	inline constexpr bool is_##name##_v = is_##name<From, To>::value;
 
 #define NOT(name) \
 	template<typename T> \
 	inline constexpr bool not_##name##_v = not is_##name<T>::value; \
-	template<typename T>											\
-	struct not_##name : bool_<not_##name##_v<T>>					\
+	template<typename T> \
+	struct not_##name : bool_<not_##name##_v<T>> \
 	{};
 
 #define BI_NOT(name) \
-	template<typename From, typename To>										\
+	template<typename From, typename To> \
 	inline constexpr bool not_##name##_v = not is_##name<From, To>::value; \
-	template<typename From, typename To>											\
-	struct not_##name : bool_<not_##name##_v<From, To>>				\
+	template<typename From, typename To> \
+	struct not_##name : bool_<not_##name##_v<From, To>> \
 	{};
 
 #define ARE(name) \
@@ -186,7 +204,8 @@ namespace Rider::Faiz
 
 #define BI_ARE(name) \
 	template<typename... T> \
-	inline constexpr bool are_##name##_v = detail::binaryTraitAre_impl<is_##name, T...>(); \
+	inline constexpr bool are_##name##_v \
+		= detail::binaryTraitAre_impl<is_##name, T...>(); \
 \
 	template<typename... T> \
 	struct are_##name : bool_<are_##name##_v<T...>> \
@@ -201,8 +220,9 @@ namespace Rider::Faiz
 	{};
 
 #define BI_ANY(name) \
-	template<typename... T>												\
-	inline constexpr bool any_##name##_v = detail::binaryTraitOr_impl<is_##name, T...>(); \
+	template<typename... T> \
+	inline constexpr bool any_##name##_v \
+		= detail::binaryTraitOr_impl<is_##name, T...>(); \
 \
 	template<typename... T> \
 	struct any_##name : bool_<any_##name##_v<T...>> \
@@ -222,7 +242,6 @@ namespace Rider::Faiz
 	BI_ANY(name);
 
 } // namespace Rider::Faiz
-
 
 
 // forwad declare type_traits
