@@ -308,17 +308,8 @@ namespace Rider::Faiz
 			{};
 		} // namespace adl_hook
 
-		template<typename T>
-		struct pair_like : adl_hook::pair_like_impl<T, void>
-		{};
-		template<typename T>
-		struct pair_like<const T> : pair_like<T>
-		{};
-		template<typename T>
-		struct pair_like<volatile T> : pair_like<T>
-		{};
-		template<typename T>
-		struct pair_like<const volatile T> : pair_like<T>
+		template<typename T, typename U = remove_cv_t<T>>
+		struct pair_like : adl_hook::pair_like_impl<U, void>
 		{};
 
 		// Safeguard to avoid ambiguous conversions
