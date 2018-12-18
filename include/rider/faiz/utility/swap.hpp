@@ -37,11 +37,12 @@ namespace Rider::Faiz::range
 	template<typename T>
 	inline constexpr bool is_swappable_v = is_swappable<T>::value;
 
+	ARE(swappable);
+
 	template<typename T>
 	struct is_nothrow_swappable;
-	template<typename T>
-	inline constexpr bool is_nothrow_swappable_v
-		= is_nothrow_swappable<T>::value;
+
+	IS_NOT_ARE_ANY(nothrow_swappable);
 
 	template<typename T, typename U>
 	struct is_swappable_with;
