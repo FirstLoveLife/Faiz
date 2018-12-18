@@ -405,6 +405,21 @@ namespace Rider::Faiz
 
 	BI_IS_NOT_ARE_ANY(same);
 
+	template<class T, class... Rest>
+	inline constexpr bool is_any_v = (is_same_v<T, Rest> || ...);
+
+	template<typename T, typename... Rest>
+	struct is_any : bool_<is_any_v<T, Rest...>>
+	{};
+
+	template<class T, class... Rest>
+	inline constexpr bool not_any_v = (not_same_v<T, Rest> and ...);
+
+	template<typename T, typename... Rest>
+	struct not_any : bool_<not_any_v<T, Rest...>>
+	{};
+
+
 } // namespace Rider::Faiz
 
 
@@ -3297,12 +3312,6 @@ namespace Rider::Faiz
 		any_constructible(...);
 	};
 
-	template<class T, class... Rest>
-	inline constexpr bool is_any_v = (is_same_v<T, Rest> || ...);
-
-	template<typename T, typename... Rest>
-	struct is_any : bool_<is_any_v<T, Rest...>>
-	{};
 
 } // namespace Rider::Faiz
 

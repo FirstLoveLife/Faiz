@@ -143,15 +143,13 @@ namespace Rider::Faiz
 	template<typename T>
 	using is_void = is_same<void, remove_cv_t<T>>;
 
-	template<typename T>
-	inline constexpr bool is_void_v = is_void<T>::value;
-
+	IS_NOT_ARE_ANY(void);
 
 	template<typename T>
 	using is_referenceable_aux = is_void<T&>;
 	template<typename T>
 	constexpr bool is_referenceable_v
-		= is_detected_v<is_referenceable_aux, T> && !is_void_v<T>;
+		= is_detected_v<is_referenceable_aux, T>&& not_void_v<T>;
 	template<typename T>
 	struct is_referenceable : bool_<is_referenceable_v<T>>
 	{};
@@ -218,7 +216,7 @@ namespace Rider::Faiz::detail
 	struct is_assignable_imp<T,
 		Arg,
 		void_t<decltype(declval<T>() = declval<Arg>())>>
-		: bool_<!is_void_v<Arg>>
+		: bool_<not is_void_v<Arg>>
 	{};
 
 	template<bool IsArithmetic, typename T>
@@ -525,8 +523,7 @@ namespace Rider::Faiz
 	template<typename T>
 	constexpr bool is_volatile_v = is_volatile<T>::value;
 
-	template<typename T>
-	inline constexpr bool is_function_v = is_function<T>::value;
+	IS_NOT_ARE_ANY(function);
 
 	template<typename T>
 	struct is_floating_point : detail::is_floating_point_aux<T>
@@ -557,8 +554,7 @@ namespace Rider::Faiz
 	struct is_arithmetic : detail::is_arithmetic_aux<T>
 	{};
 
-	template<typename T>
-	inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
+	IS_NOT_ARE_ANY(arithmetic);
 
 
 	// Checks whether T is **a pointer to object** or **a pointer to
@@ -589,7 +585,7 @@ namespace Rider::Faiz
 
 	template<typename T>
 	struct is_object
-		: bool_<!is_reference_v<T> and !is_void_v<T> and !is_function_v<T>>
+		: bool_<not_reference_v<T> and not_void_v<T> and not_function_v<T>>
 	{};
 
 
@@ -691,11 +687,11 @@ namespace Rider::Faiz
 	struct is_signed : detail::is_signed_impl<is_arithmetic_v<T>, T>
 	{};
 
-	template<typename T>
-	constexpr bool is_signed_v = is_signed<T>::value;
+	IS_NOT_ARE_ANY(signed);
+
 	template<typename T>
 	constexpr bool is_unsigned_v
-		= not is_signed<T>::value and is_arithmetic_v<T>;
+		= not_signed_v<T> and is_arithmetic_v<T>;
 	template<class T>
 	struct is_unsigned : bool_<is_unsigned_v<T>>
 	{};
@@ -709,7 +705,7 @@ namespace Rider::Faiz
 		static_assert((is_integral_v<T> or is_enum_v<T>),
 			"The template argument to make_signed must be an integer or enum "
 			"type.");
-		static_assert(not(is_same_v<remove_cv_t<T>, bool>),
+		static_assert(not_same_v<remove_cv_t<T>, bool>,
 			"The template argument to make_signed must not be the type bool.");
 
 		using t_no_cv = remove_cv_t<T>;
@@ -718,17 +714,13 @@ namespace Rider::Faiz
 		auto constexpr static base_integer_type_impl()
 		{
 			if constexpr(is_signed_v<T> and 
-				is_integral_v<T> and 
-				not is_same_v<t_no_cv, char> and
-				not is_same_v<t_no_cv, wchar_t> and
-				not is_same_v<t_no_cv, bool>)
+						 is_integral_v<T> and
+						 not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
 				return type_identity<T>{};
 			}
 			else if constexpr (is_integral_v<T> and
-						  not is_same_v<t_no_cv, char> and
-						  not is_same_v<t_no_cv, wchar_t> and
-						  not is_same_v<t_no_cv, bool>)
+							   not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
 				if constexpr (is_same_v<t_no_cv, unsigned char>)
 			    {
@@ -794,10 +786,10 @@ namespace Rider::Faiz
 	struct make_unsigned
 	{
 	private:
-		static_assert(disjunction_v<is_integral<T>, is_enum<T>>,
+		static_assert(is_integral_v<T> or is_enum_v<T>,
 			"The template argument to make_unsigned must be an integer or enum "
 			"type.");
-		static_assert(negation_v<is_same<remove_cv_t<T>, bool>>,
+		static_assert(not_same_v<remove_cv_t<T>, bool>,
 			"The template argument to make_unsigned must not be the type "
 			"bool");
 
@@ -808,16 +800,12 @@ namespace Rider::Faiz
 		{
 			if constexpr(is_unsigned_v<T> and
 						 is_integral_v<T> and
-						 not is_same_v<t_no_cv, char> and
-						 not is_same_v<t_no_cv, wchar_t> and
-						 not is_same_v<t_no_cv, bool>)
+						 not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
 				return type_identity<T>{};
 			}
 			else if constexpr(is_integral_v<T> and
-							  not is_same_v<t_no_cv, char> and
-							  not is_same_v<t_no_cv, wchar_t> and
-							  not is_same_v<t_no_cv, bool>)
+							  not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
 				if constexpr(is_same_v<t_no_cv, signed char>)
 				{
@@ -862,7 +850,7 @@ namespace Rider::Faiz
 				{
 					return type_identity<unsigned long long>{};
 				}
-		}
+			}
 		}
 
 		// clang-format on
@@ -1129,9 +1117,8 @@ namespace Rider::Faiz
 	struct is_member_function_pointer
 		: is_member_function_pointer_helper<remove_cv_t<T>>
 	{};
-	template<typename T>
-	inline constexpr bool is_member_function_pointer_v
-		= is_member_function_pointer<T>::value;
+
+	IS_NOT_ARE_ANY(member_function_pointer);
 
 	// Checks whether T is a non-static member object. Provides the member
 	// constant value which is equal to true, if T is a non-static member object
@@ -1139,7 +1126,7 @@ namespace Rider::Faiz
 	template<typename T>
 	struct is_member_object_pointer
 		: bool_<is_member_pointer<T>::value
-			  && !is_member_function_pointer<T>::value>
+			  && not_member_function_pointer<T>::value>
 	{};
 	template<typename T>
 	inline constexpr bool is_member_object_pointer_v
@@ -1164,7 +1151,7 @@ namespace Rider::Faiz
 	struct is_derived
 		: public bool_<
 			  is_base_of_v<Base,
-				  Derived> && !is_same_v<remove_cv_t<Base>, remove_cv_t<Derived>>>
+				  Derived> && not_same_v<remove_cv_t<Base>, remove_cv_t<Derived>>>
 	{};
 	template<typename Base, class Derived>
 	inline constexpr bool is_derived_of_v = is_base_of<Base, Derived>::value;
@@ -1187,7 +1174,8 @@ namespace Rider::Faiz
 	ARE(copy_assignable);
 
 	// template<typename... T >
-	// inline constexpr bool are_copy_assignable_v = (is_copy_assignable_v<T> && ...);
+	// inline constexpr bool are_copy_assignable_v = (is_copy_assignable_v<T> &&
+	// ...);
 
 	// template<typename... T>
 	// struct are_copy_assignable : bool_<are_copy_assignable_v<T...>>
@@ -1276,9 +1264,7 @@ namespace Rider::Faiz
 	struct is_unknown_bound_array<T[]> : true_
 	{};
 
-	template<typename T>
-	inline constexpr bool is_unknown_bound_array_v
-		= is_unknown_bound_array<T>::value;
+	IS_NOT_ARE_ANY(unknown_bound_array)
 
 	template<typename T, typename U = remove_all_extents_t<T>>
 	using has_dtor = decltype(declval<U>().~U());
@@ -1295,8 +1281,8 @@ namespace Rider::Faiz
         (is_detected_v<has_dtor,
            T>
        or is_reference_v<T>)
-    and not is_unknown_bound_array_v<T>
-        and not is_function_v<T>;
+    and not_unknown_bound_array_v<T>
+        and not_function_v<T>;
 
  #elif BOOST_COMP_GNUC
     template<typename T>

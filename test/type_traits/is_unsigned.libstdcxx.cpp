@@ -54,3 +54,8 @@ test01()
 	// Sanity check.
 	static_assert(test_category<is_unsigned, ClassType>(false), "");
 }
+
+int main()
+{
+	test01();
+}
