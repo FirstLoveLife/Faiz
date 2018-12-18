@@ -613,20 +613,10 @@ namespace Rider::Faiz
 		// can be reinterpreted as an integer twice as big when storing
 		// integer data
 
-		template<typename T>
+		template<typename T, typename U = remove_cv_t<T>>
 		struct needs_reordering
 			: bool_<endian::native == endian::little
-				  and logic::and_<is_unsigned<T>, has_twice_as_big<T>>::value>
-		{};
-
-		template<typename T>
-		struct needs_reordering<const T> : needs_reordering<T>
-		{};
-		template<typename T>
-		struct needs_reordering<volatile T> : needs_reordering<T>
-		{};
-		template<typename T>
-		struct needs_reordering<const volatile T> : needs_reordering<T>
+				  and logic::and_<is_unsigned<U>, has_twice_as_big<U>>::value>
 		{};
 
 		////////////////////////////////////////////////////////////
@@ -947,7 +937,7 @@ namespace Rider::Faiz
 			{
 				return logic::and_<is_constructible<T1, U1>,
 					is_constructible<T2, U2>,
-								   are_convertible<U1, T1, U2, T2>>::value;
+					are_convertible<PAIR(U1, T1), PAIR(U2, T2)>>::value;
 			}
 		};
 
