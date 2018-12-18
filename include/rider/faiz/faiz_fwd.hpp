@@ -402,9 +402,8 @@ namespace Rider::Faiz
 
 	template<typename T, class U>
 	struct is_same;
-	template<class T, class U>
 
-	inline constexpr bool is_same_v = is_same<T, U>::value;
+	BI_IS_NOT_ARE_ANY(same);
 
 } // namespace Rider::Faiz
 
@@ -3297,13 +3296,6 @@ namespace Rider::Faiz
 	{
 		any_constructible(...);
 	};
-
-	template<class T, class... Rest>
-	inline constexpr bool are_same_v = (is_same_v<T, Rest> && ...);
-
-	template<typename T, typename... Rest>
-	struct are_same : bool_<are_same_v<T, Rest...>>
-	{};
 
 	template<class T, class... Rest>
 	inline constexpr bool is_any_v = (is_same_v<T, Rest> || ...);
