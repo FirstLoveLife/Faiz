@@ -123,7 +123,7 @@ namespace Rider::Faiz
 			: logic::and_<is_empty<T>, logic::not_<is_final<T>>>
 		{};
 
-		IS_ARE_ANY(ebco_eligible);
+		IS_NOT_ARE_ANY(ebco_eligible);
 
 		////////////////////////////////////////////////////////////
 		// Detect whether an integer has padding bits
@@ -256,7 +256,7 @@ namespace Rider::Faiz
 		struct can_optimize_compare
 			: bool_<(endian::native == endian::little
 						or endian::native == endian::big)
-				  && is_unsigned_v<T> && has_twice_as_big<T>::value>
+				  and is_unsigned_v<T> and has_twice_as_big<T>::value>
 		{};
 
 		////////////////////////////////////////////////////////////
@@ -383,10 +383,10 @@ namespace Rider::Faiz
 			tight_pair_element(tight_pair_element&&) = default;
 
 			constexpr tight_pair_element() noexcept(
-				is_nothrow_default_constructible<T>::value)
+				is_nothrow_default_constructible_v<T>)
 				: value()
 			{
-				static_assert(not is_reference<T>::value,
+				static_assert(not_reference_v<T>,
 					"attempted to default construct a reference element");
 			}
 
@@ -405,7 +405,7 @@ namespace Rider::Faiz
 
 			template<typename U>
 			constexpr auto
-			operator=(U&& other) noexcept(is_nothrow_assignable<T&, U>::value)
+			operator=(U&& other) noexcept(is_nothrow_assignable_v<T&, U>)
 				-> tight_pair_element&
 			{
 				value = Faiz::forward<U>(other);
@@ -468,7 +468,7 @@ namespace Rider::Faiz
 				is_nothrow_default_constructible_v<T>)
 				: value()
 			{
-				static_assert(not is_reference_v<T>,
+				static_assert(not_reference_v<T>,
 					"attempted to default construct a reference element");
 			}
 
@@ -947,8 +947,7 @@ namespace Rider::Faiz
 			{
 				return logic::and_<is_constructible<T1, U1>,
 					is_constructible<T2, U2>,
-					is_convertible<U1, T1>,
-					is_convertible<U2, T2>>::value;
+								   are_convertible<U1, T1, U2, T2>>::value;
 			}
 		};
 
