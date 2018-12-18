@@ -40,8 +40,6 @@ namespace Rider::Faiz
 	// statement (including conversions to the return type) is considered.
 	template<typename From, class To>
 	struct is_convertible;
-	template<typename From, class To>
-	inline constexpr bool is_convertible_v = is_convertible<From, To>::value;
 
 	namespace detail
 	{
@@ -503,8 +501,8 @@ namespace Rider::Faiz
 	template<typename T>
 	struct is_reference<T&&> : true_
 	{};
-	template<typename T>
-	inline constexpr bool is_reference_v = is_reference<T>::value;
+
+	IS_NOT_ARE_ANY(reference);
 
 	template<typename T>
 	struct is_function : logic::and_<logic::not_<is_const<T const>>,
@@ -949,6 +947,8 @@ namespace Rider::Faiz
 	struct is_convertible : bool_<my_is_convertible<From, To>()>
 	{};
 
+	BI_IS_NOT_ARE_ANY(convertible);
+
 	// TODO: use detection idiom implement is_convertible
 	// If T is an object or reference type and the variable definition T
 	// obj(std::declval<Args>()...); is well-formed, provides the member
@@ -1184,6 +1184,16 @@ namespace Rider::Faiz
 	template<typename T>
 	inline constexpr bool is_copy_assignable_v = is_copy_assignable<T>::value;
 
+	ARE(copy_assignable);
+
+	// template<typename... T >
+	// inline constexpr bool are_copy_assignable_v = (is_copy_assignable_v<T> && ...);
+
+	// template<typename... T>
+	// struct are_copy_assignable : bool_<are_copy_assignable_v<T...>>
+	// {
+	// };
+
 	template<typename T>
 	struct is_trivially_copy_assignable
 		: is_trivially_assignable<_t<add_lvalue_reference<T>>,
@@ -1211,6 +1221,8 @@ namespace Rider::Faiz
 	struct is_move_assignable : bool_<is_move_assignable_v<T>>
 	{};
 
+	ARE(move_assignable);
+
 	// // clang-format off
 	// template<typename T>
 	// inline constexpr bool is_nothrow_move_assignable_v
@@ -1232,6 +1244,7 @@ namespace Rider::Faiz
 	inline constexpr bool is_nothrow_move_assignable_v
 		= is_nothrow_move_assignable<_Tp>::value;
 
+	ARE(nothrow_move_assignable);
 
 	template<typename T, typename A>
 	struct is_nothrow_assignable_aux<true, T, A>
@@ -1252,6 +1265,9 @@ namespace Rider::Faiz
 	template<typename T>
 	inline constexpr bool is_nothrow_copy_assignable_v
 		= is_nothrow_copy_assignable<T>::value;
+
+
+	ARE(nothrow_copy_assignable);
 
 	template<typename T>
 	struct is_unknown_bound_array : false_
