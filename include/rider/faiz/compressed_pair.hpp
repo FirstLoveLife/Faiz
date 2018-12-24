@@ -87,22 +87,24 @@ namespace std
 	// Specializations needed for decomposition declarations
 
 	template<typename T1, typename T2>
-	struct tuple_size<Rider::Faiz::tight_pair<T1, T2>> : Rider::Faiz::size_t_<2>
+	class tuple_size<Rider::Faiz::tight_pair<T1, T2>>
+		: public Rider::Faiz::size_t_<2>
 	{};
 
 	template<typename T1, typename T2>
-	struct tuple_element<0, Rider::Faiz::tight_pair<T1, T2>>
-		: Rider::type_identity<T1>
+	class tuple_element<0, Rider::Faiz::tight_pair<T1, T2>>
+		: public Rider::type_identity<T1>
 	{};
 
 	template<typename T1, typename T2>
-	struct tuple_element<1, Rider::Faiz::tight_pair<T1, T2>>
-		: Rider::type_identity<T2>
+	class tuple_element<1, Rider::Faiz::tight_pair<T1, T2>>
+		: public Rider::type_identity<T2>
 	{};
 
 	template<size_t N, typename T1, typename T2>
-	struct tuple_element<N, Rider::Faiz::tight_pair<T1, T2>>
+	class tuple_element<N, Rider::Faiz::tight_pair<T1, T2>>
 	{
+	public:
 		static_assert(N < 2,
 			"out of bounds index for tuple_element<N, "
 			"Rider::Faiz::tight_pair<T1, "
@@ -157,22 +159,6 @@ namespace Rider::Faiz
 			return precision != sizeof(UnsignedInteger) * CHAR_BIT;
 #endif
 		}
-
-		////////////////////////////////////////////////////////////
-		// Detect endianness at compile-time, code taken from P0463
-
-		enum class endian
-		{
-#ifdef _WIN32
-			little = 0,
-			big = 1,
-			native = little
-#else
-			little = __ORDER_LITTLE_ENDIAN__,
-			big = __ORDER_BIG_ENDIAN__,
-			native = __BYTE_ORDER__
-#endif
-		};
 
 		////////////////////////////////////////////////////////////
 		// Find an unsigned integer type twice as big as the given
@@ -254,8 +240,8 @@ namespace Rider::Faiz
 
 		template<typename T>
 		struct can_optimize_compare
-			: bool_<(endian::native == endian::little
-						or endian::native == endian::big)
+			: bool_<(std::endian::native == std::endian::little
+						or std::endian::native == std::endian::big)
 				  and is_unsigned_v<T> and has_twice_as_big<T>::value>
 		{};
 
@@ -606,7 +592,7 @@ namespace Rider::Faiz
 
 		template<typename T, typename U = remove_cv_t<T>>
 		struct needs_reordering
-			: bool_<endian::native == endian::little
+			: bool_<std::endian::native == std::endian::little
 				  and logic::and_<is_unsigned<U>, has_twice_as_big<U>>::value>
 		{};
 
@@ -986,7 +972,7 @@ namespace Rider::Faiz
 			enable_if_t<
 				check_args::template enable_explicit<U1 const&, U2 const&>(),
 				bool> = false>
-		constexpr explicit tight_pair(T1 const& first, T2 const& second)
+		constexpr explicit tight_pair(T1 const& first, T2 const& second = {})
 			: detail::tight_pair_storage<T1, T2>(first, second)
 		{}
 
@@ -995,7 +981,7 @@ namespace Rider::Faiz
 			enable_if_t<
 				check_args::template enable_implicit<U1 const&, U2 const&>(),
 				bool> = false>
-		constexpr tight_pair(T1 const& first, T2 const& second)
+		constexpr tight_pair(T1 const& first, T2 const& second = {})
 			: detail::tight_pair_storage<T1, T2>(first, second)
 		{}
 
@@ -1182,45 +1168,42 @@ namespace Rider::Faiz
 				static_cast<storage_t const&&>(*this).template do_get<N>());
 		}
 
-		template<typename T, typename U>
-		friend constexpr auto
-		operator==(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs)
-			-> bool
-		{
-			return Rider::Faiz::get<0>(lhs) == Rider::Faiz::get<0>(rhs)
-				&& Rider::Faiz::get<1>(lhs) == Rider::Faiz::get<1>(rhs);
-		}
-
-		template<typename T, typename U>
-		friend constexpr auto
-		operator<(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs)
-			-> bool
-		{
-			if(Rider::Faiz::get<0>(lhs) < Rider::Faiz::get<0>(rhs))
-			{
-				return true;
-			}
-			if(Rider::Faiz::get<0>(rhs) < Rider::Faiz::get<0>(lhs))
-			{
-				return false;
-			}
-			return Rider::Faiz::get<1>(lhs) < Rider::Faiz::get<1>(rhs);
-		}
 
 		////////////////////////////////////////////////////////////
 		// Comparison and relational operators optimized to be
 		// branchless when possible
-
-		template<typename T>
-		friend auto
-		operator<(tight_pair<T, T> const& lhs, tight_pair<T, T> const& rhs)
-			-> enable_if_t<detail::can_optimize_compare<T>::value, bool>
-		{
-			auto big_lhs = detail::get_twice_as_big(lhs);
-			auto big_rhs = detail::get_twice_as_big(rhs);
-			return big_lhs < big_rhs;
-		}
 	};
+
+	template<typename T, typename U>
+	constexpr auto
+	operator<(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
+	{
+		if(Rider::Faiz::get<0>(lhs) < Rider::Faiz::get<0>(rhs))
+		{
+			return true;
+		}
+		if(Rider::Faiz::get<0>(rhs) < Rider::Faiz::get<0>(lhs))
+		{
+			return false;
+		}
+		return Rider::Faiz::get<1>(lhs) < Rider::Faiz::get<1>(rhs);
+	}
+	template<typename T, typename U>
+	constexpr auto
+	operator==(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
+	{
+		return Rider::Faiz::get<0>(lhs) == Rider::Faiz::get<0>(rhs)
+			&& Rider::Faiz::get<1>(lhs) == Rider::Faiz::get<1>(rhs);
+	}
+	template<typename T>
+	auto
+	operator<(tight_pair<T, T> const& lhs, tight_pair<T, T> const& rhs)
+		-> enable_if_t<detail::can_optimize_compare<T>::value, bool>
+	{
+		auto big_lhs = detail::get_twice_as_big(lhs);
+		auto big_rhs = detail::get_twice_as_big(rhs);
+		return big_lhs < big_rhs;
+	}
 
 	////////////////////////////////////////////////////////////
 	// Deduction guide
