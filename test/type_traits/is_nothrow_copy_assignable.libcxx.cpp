@@ -18,16 +18,16 @@ template<class T>
 void
 test_has_nothrow_assign()
 {
-	// static_assert(std::is_nothrow_copy_assignable<T>::value, "");
-	static_assert(std::is_nothrow_copy_assignable_v<T>, "");
+	static_assert(Rider::Faiz::is_nothrow_copy_assignable<T>::value, "");
+	static_assert(Rider::Faiz::is_nothrow_copy_assignable_v<T>, "");
 }
 
 template<class T>
 void
 test_has_not_nothrow_assign()
 {
-	// static_assert(!std::is_nothrow_copy_assignable<T>::value, "");
-	static_assert(!std::is_nothrow_copy_assignable_v<T>, "");
+	static_assert(!Rider::Faiz::is_nothrow_copy_assignable<T>::value, "");
+	static_assert(!Rider::Faiz::is_nothrow_copy_assignable_v<T>, "");
 }
 
 class Empty

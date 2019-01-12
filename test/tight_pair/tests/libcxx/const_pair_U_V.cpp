@@ -70,6 +70,20 @@ namespace
 		{}
 		int value;
 	};
+
+	struct ExplicitNothrowT
+	{
+		explicit ExplicitNothrowT(int x) noexcept : value(x)
+		{}
+		int value;
+	};
+
+	struct ImplicitNothrowT
+	{
+		ImplicitNothrowT(int x) noexcept : value(x)
+		{}
+		int value;
+	};
 } // namespace
 
 TEST_CASE("const pair U C")
@@ -271,5 +285,37 @@ TEST_CASE("const pair U C")
 		constexpr P2 p2 = p1;
 		static_assert(get<0>(p2).value == 42);
 		static_assert(get<1>(p2).value == 101);
+	}
+}
+
+TEST_CASE("const pair U C noexcept")
+{
+	{ // explicit noexcept test
+		static_assert(not std::is_nothrow_constructible_v<
+					  Rider::Faiz::tight_pair<ExplicitT, ExplicitT>,
+					  Rider::Faiz::tight_pair<int, int> const&>);
+		static_assert(not std::is_nothrow_constructible_v<
+					  Rider::Faiz::tight_pair<ExplicitNothrowT, ExplicitT>,
+					  Rider::Faiz::tight_pair<int, int> const&>);
+		static_assert(not std::is_nothrow_constructible_v<
+					  Rider::Faiz::tight_pair<ExplicitT, ExplicitNothrowT>,
+					  Rider::Faiz::tight_pair<int, int> const&>);
+		static_assert(std::is_nothrow_constructible_v<
+			Rider::Faiz::tight_pair<ExplicitNothrowT, ExplicitNothrowT>,
+			Rider::Faiz::tight_pair<int, int> const&>);
+	}
+	{ // implicit noexcept test
+		static_assert(not std::is_nothrow_constructible_v<
+					  Rider::Faiz::tight_pair<ImplicitT, ImplicitT>,
+					  Rider::Faiz::tight_pair<int, int> const&>);
+		static_assert(not std::is_nothrow_constructible_v<
+					  Rider::Faiz::tight_pair<ImplicitNothrowT, ImplicitT>,
+					  Rider::Faiz::tight_pair<int, int> const&>);
+		static_assert(not std::is_nothrow_constructible_v<
+					  Rider::Faiz::tight_pair<ImplicitT, ImplicitNothrowT>,
+					  Rider::Faiz::tight_pair<int, int> const&>);
+		static_assert(std::is_nothrow_constructible_v<
+			Rider::Faiz::tight_pair<ImplicitNothrowT, ImplicitNothrowT>,
+			Rider::Faiz::tight_pair<int, int> const&>);
 	}
 }

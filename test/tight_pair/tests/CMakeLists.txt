@@ -1,11 +1,23 @@
-# Include Catch for the tests
-include_directories(${CATCH_INCLUDE_DIR})
+#cmake_minimum_required(VERSION 3.13)
+include(FetchContent)
+
+# Download and configure Catch2 for the tests
+FetchContent_Declare(
+    catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2
+    GIT_TAG master
+)
+
+FetchContent_GetProperties(catch2)
+if (NOT catch2_POPULATED)
+    FetchContent_Populate(catch2)
+    add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/contrib)
+    include(Catch)
+endif()
 
 # Define test files
-# set(CMAKE_CXX_COMPILER "clang++")
-# set(CMAKE_C_COMPILER "clang")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
+
 set(
     LIBCXX_TESTS
 
@@ -18,6 +30,7 @@ set(
     libcxx/const_first_const_second.cpp
     libcxx/const_pair_U_V.cpp
     libcxx/copy_ctor.cpp
+    libcxx/default.cpp
     libcxx/default_ctor.cpp
     libcxx/default-sfinae.cpp
     libcxx/dtor.cpp
@@ -43,7 +56,7 @@ set(
 
 # Make one executable for the whole testsuite
 add_executable(
-    tight-pair-testsuite
+    tight_pair-testsuite
 
     main.cpp
     cppreference.cpp
@@ -55,9 +68,31 @@ add_executable(
     ${LIBCXX_TESTS}
 )
 
+target_link_libraries(tight_pair-testsuite
+    PRIVATE
+        Catch2::Catch2
+        tight_pair::tight_pair
+)
+
+# Somewhat speed up Catch2 compile times
+target_compile_definitions(tight_pair-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
+target_compile_definitions(tight_pair-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
+
+# Use the gold linker if possible
+if (UNIX AND NOT APPLE)
+    set_property(TARGET tight_pair-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+endif()
+
+# Optionally enable sanitizers
+if (UNIX AND SANITIZE)
+	target_compile_options(tight_pair-testsuite PRIVATE -fsanitize=${SANITIZE})
+	set_property(TARGET tight_pair-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
+endif()
+
+include(CTest)
+
 include_directories(/home/firstlove/projects/faiz/include)
 
-add_test(testsuite tight-pair-testsuite)
 
-# Enable unit-testing
-enable_testing(true)
+string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
+catch_discover_tests(tight_pair-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})

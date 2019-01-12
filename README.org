@@ -13,9 +13,13 @@ http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduc
 **  papers to read
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3465.pdf][Adding heterogeneous comparison lookup toassociative containers]]
 * Conversion
+- ~typename~ or class? use ~class~ for sfinae(template parameter) and nest
+  template, otherwise use ~typename~
 - Faiz::index for all container indexes/subscripts/sizes, IOW, Don't use unsigned for subscripts, prefer gsl::index
+- prefer ~and/or~ to ~&&/||~, preserve ~&&~ for rvalue reference.
 - Geneally, I prefer metafunction over free constexpr function, because the
   formmer can do more.
+- Prefer ~enable_if~ in function's template parameter variable.
 , see also https://github.com/isocpp/CppCoreGuidelines/pull/1115
 * ThirdParty Package
 - boost.pp
@@ -28,3 +32,8 @@ I can't finish a project without stealing code around, so here are the main sour
 - operators.hpp comes from [[https://github.com/taocpp/operators][tao-operators]], but rerwite some of codes with cpp17,
   and remove support for return rvalue reference.
 - The tests in tests were preliminary tests adapted from libcxx/libstdcxx/tight_pair/tao-operators/range-v3/boost
+* used c++2a features
+- std::endian
+* Papers
+- [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0528r2.html][p0528R2 The Curious Case of Padding Bits, Featuring Atomic Compare-and-Exchange]] ---- tight_pair
+- [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3974.pdf][N3974 - Polymorphic Deleter for Unique Pointers]] -- unique_ptr

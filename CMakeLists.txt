@@ -4,7 +4,6 @@
 
 cmake_minimum_required(VERSION 3.11)
 project(faiz)
-
 set(header_files
         ${CMAKE_CURRENT_SOURCE_DIR}/include/rider/faiz/type_traits.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/include/rider/faiz/algorithm.hpp

@@ -964,15 +964,19 @@ namespace Rider::Faiz
 			typename U2 = T2,
 			enable_if_t<check_args::template enable_default<U1, U2>(),
 				bool> = false>
-		constexpr tight_pair() : detail::tight_pair_storage<T1, T2>()
+		constexpr tight_pair() noexcept(
+			are_nothrow_default_constructible_v<T1, T2>)
+			: detail::tight_pair_storage<T1, T2>()
 		{}
-
+		// clang-format on
 		template<typename U1 = T1,
 			typename U2 = T2,
 			enable_if_t<
 				check_args::template enable_explicit<U1 const&, U2 const&>(),
 				bool> = false>
-		constexpr explicit tight_pair(T1 const& first, T2 const& second = {})
+		constexpr explicit tight_pair(T1 const& first,
+			T2 const& second
+			= {}) noexcept(are_nothrow_copy_constructible_v<T1, T2>)
 			: detail::tight_pair_storage<T1, T2>(first, second)
 		{}
 
@@ -981,7 +985,8 @@ namespace Rider::Faiz
 			enable_if_t<
 				check_args::template enable_implicit<U1 const&, U2 const&>(),
 				bool> = false>
-		constexpr tight_pair(T1 const& first, T2 const& second = {})
+		constexpr tight_pair(T1 const& first, T2 const& second = {}) noexcept(
+			are_nothrow_copy_constructible_v<T1, T2>)
 			: detail::tight_pair_storage<T1, T2>(first, second)
 		{}
 
@@ -989,7 +994,9 @@ namespace Rider::Faiz
 			typename U2 = T2,
 			enable_if_t<check_args::template enable_explicit<U1, U2>(),
 				bool> = false>
-		constexpr explicit tight_pair(U1&& first, U2&& second)
+		constexpr explicit tight_pair(U1&& first, U2&& second) noexcept(
+			is_nothrow_constructible_v<T1, U1>and
+				is_nothrow_constructible_v<T2, U2>)
 			: detail::tight_pair_storage<T1, T2>(
 				  Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
@@ -998,7 +1005,9 @@ namespace Rider::Faiz
 			typename U2 = T2,
 			enable_if_t<check_args::template enable_implicit<U1, U2>(),
 				bool> = false>
-		constexpr tight_pair(U1&& first, U2&& second)
+		constexpr tight_pair(U1&& first, U2&& second) noexcept(
+			is_nothrow_constructible_v<T1, U1>and
+				is_nothrow_constructible_v<T2, U2>)
 			: detail::tight_pair_storage<T1, T2>(
 				  Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
@@ -1008,7 +1017,9 @@ namespace Rider::Faiz
 			enable_if_t<
 				check_args::template enable_explicit<U1 const&, U2 const&>(),
 				bool> = false>
-		constexpr explicit tight_pair(tight_pair<U1, U2> const& pair)
+		constexpr explicit tight_pair(tight_pair<U1, U2> const& pair) noexcept(
+			is_nothrow_constructible_v<T1, U1 const&>and
+				is_nothrow_constructible_v<T2, U2 const&>)
 			: detail::tight_pair_storage<T1, T2>(
 				  pair.template get<0>(), pair.template get<1>())
 		{}
@@ -1018,7 +1029,9 @@ namespace Rider::Faiz
 			enable_if_t<
 				check_args::template enable_implicit<U1 const&, U2 const&>(),
 				bool> = false>
-		constexpr tight_pair(tight_pair<U1, U2> const& pair)
+		constexpr tight_pair(tight_pair<U1, U2> const& pair) noexcept(
+			is_nothrow_constructible_v<T1, U1 const&>and
+				is_nothrow_constructible_v<T2, U2 const&>)
 			: detail::tight_pair_storage<T1, T2>(
 				  pair.template get<0>(), pair.template get<1>())
 		{}
@@ -1027,7 +1040,9 @@ namespace Rider::Faiz
 			typename U2 = T2,
 			enable_if_t<check_args::template enable_explicit<U1, U2>(),
 				bool> = false>
-		constexpr explicit tight_pair(tight_pair<U1, U2>&& pair)
+		constexpr explicit tight_pair(tight_pair<U1, U2>&& pair) noexcept(
+			is_nothrow_constructible_v<T1, U1&&>and
+				is_nothrow_constructible_v<T2, U2&&>)
 			: detail::tight_pair_storage<T1, T2>(
 				  Faiz::forward<U1>(pair.template get<0>()),
 				  Faiz::forward<U2>(pair.template get<1>()))
@@ -1037,7 +1052,9 @@ namespace Rider::Faiz
 			typename U2 = T2,
 			enable_if_t<check_args::template enable_implicit<U1, U2>(),
 				bool> = false>
-		constexpr tight_pair(tight_pair<U1, U2>&& pair)
+		constexpr tight_pair(tight_pair<U1, U2>&& pair) noexcept(
+			is_nothrow_constructible_v<T1, U1&&>and
+				is_nothrow_constructible_v<T2, U2&&>)
 			: detail::tight_pair_storage<T1, T2>(
 				  Faiz::forward<U1>(pair.template get<0>()),
 				  Faiz::forward<U2>(pair.template get<1>()))
