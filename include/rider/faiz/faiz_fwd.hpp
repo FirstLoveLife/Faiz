@@ -24,6 +24,23 @@ namespace Rider
 
 	template<typename T>
 	using _t = typename T::type;
+
+	template<typename T>
+	using _p = typename T::pointer;
+
+	template<typename T>
+	using _e = typename T::element_type;
+
+	template<typename T>
+	using _p = typename T::pointer;
+
+	template<typename T, bool b>
+	struct dependent_type : public T
+	{};
+
+	template<class T, bool b>
+	using dependent_type_t = _t<dependent_type<T, b>>;
+
 	template<typename...>
 	using void_t = void;
 	template<typename T>
@@ -230,16 +247,21 @@ namespace Rider::Faiz
 
 
 #define IS_NOT_ARE_ANY(name) \
-	IS(name); \
-	NOT(name); \
-	ARE(name); \
-	ANY(name);
+	IS(name) \
+	NOT(name) \
+	ARE(name) \
+	ANY(name)
+
+#define NOT_ARE_ANY(name) \
+	NOT(name) \
+	ARE(name) \
+	ANY(name)
 
 #define BI_IS_NOT_ARE_ANY(name) \
-	BI_IS(name); \
-	BI_NOT(name); \
-	BI_ARE(name); \
-	BI_ANY(name);
+	BI_IS(name) \
+	BI_NOT(name) \
+	BI_ARE(name) \
+	BI_ANY(name)
 
 } // namespace Rider::Faiz
 
@@ -247,6 +269,8 @@ namespace Rider::Faiz
 // forwad declare type_traits
 namespace Rider::Faiz
 {
+	using std::has_virtual_destructor;
+	using std::has_virtual_destructor_v;
 	using std::endian;
 	//  FIXME: below is traits that I am not able to implement yet.
 	using std::has_unique_object_representations;
@@ -256,16 +280,23 @@ namespace Rider::Faiz
 	using std::is_trivially_constructible_v;
 
 	using std::is_default_constructible;
-	IS_NOT_ARE_ANY(default_constructible);
+	IS_NOT_ARE_ANY(default_constructible)
 
 	using std::is_trivially_default_constructible;
-	IS_NOT_ARE_ANY(trivially_default_constructible);
+	IS_NOT_ARE_ANY(trivially_default_constructible)
 
 	using std::is_nothrow_default_constructible;
-	IS_NOT_ARE_ANY(nothrow_default_constructible);
+	IS_NOT_ARE_ANY(nothrow_default_constructible)
 
 	using std::is_nothrow_constructible;
 	using std::is_nothrow_constructible_v;
+
+	using std::is_trivially_copy_constructible;
+	using std::is_trivially_copy_constructible_v;
+
+	using std::is_nothrow_copy_constructible;
+
+	IS_NOT_ARE_ANY(nothrow_copy_constructible)
 
 	//  using std::is_nothrow_copy_assignable;
 	// using std::is_nothrow_copy_assignable_v;
@@ -398,13 +429,17 @@ namespace Rider::Faiz
 	struct enable_if;
 	template<bool B, class T = void>
 	using enable_if_t = _t<enable_if<B, T>>;
+
+	template<bool B, typename T = void>
+	using disable_if = enable_if<not B, T>;
+
 	template<bool B, typename T, typename F>
 	struct conditional;
 
 	template<typename T, class U>
 	struct is_same;
 
-	BI_IS_NOT_ARE_ANY(same);
+	BI_IS_NOT_ARE_ANY(same)
 
 	template<class T, class... Rest>
 	inline constexpr bool is_any_v = (is_same_v<T, Rest> || ...);

@@ -143,7 +143,7 @@ namespace Rider::Faiz
 	template<typename T>
 	using is_void = is_same<void, remove_cv_t<T>>;
 
-	IS_NOT_ARE_ANY(void);
+	IS_NOT_ARE_ANY(void)
 
 	template<typename T>
 	using is_referenceable_aux = is_void<T&>;
@@ -157,8 +157,9 @@ namespace Rider::Faiz
 
 	template<typename T>
 	struct is_rvalue_reference;
-	template<typename T>
-	inline constexpr bool is_rvalue_reference_v = is_rvalue_reference<T>::value;
+
+	IS_NOT_ARE_ANY(rvalue_reference)
+
 
 } // namespace Rider::Faiz
 
@@ -500,7 +501,7 @@ namespace Rider::Faiz
 	struct is_reference<T&&> : true_
 	{};
 
-	IS_NOT_ARE_ANY(reference);
+	IS_NOT_ARE_ANY(reference)
 
 	template<typename T>
 	struct is_function : logic::and_<logic::not_<is_const<T const>>,
@@ -523,7 +524,7 @@ namespace Rider::Faiz
 	template<typename T>
 	constexpr bool is_volatile_v = is_volatile<T>::value;
 
-	IS_NOT_ARE_ANY(function);
+	IS_NOT_ARE_ANY(function)
 
 	template<typename T>
 	struct is_floating_point : detail::is_floating_point_aux<T>
@@ -554,7 +555,7 @@ namespace Rider::Faiz
 	struct is_arithmetic : detail::is_arithmetic_aux<T>
 	{};
 
-	IS_NOT_ARE_ANY(arithmetic);
+	IS_NOT_ARE_ANY(arithmetic)
 
 
 	// Checks whether T is **a pointer to object** or **a pointer to
@@ -565,8 +566,7 @@ namespace Rider::Faiz
 	struct is_pointer : public detail::is_pointer_helper<remove_cv_t<T>>
 	{};
 
-	template<typename T>
-	inline constexpr bool is_pointer_v = is_pointer<T>::value;
+	IS_NOT_ARE_ANY(pointer)
 
 	template<typename T>
 	struct is_lvalue_reference : false_
@@ -687,11 +687,10 @@ namespace Rider::Faiz
 	struct is_signed : detail::is_signed_impl<is_arithmetic_v<T>, T>
 	{};
 
-	IS_NOT_ARE_ANY(signed);
+	IS_NOT_ARE_ANY(signed)
 
 	template<typename T>
-	constexpr bool is_unsigned_v
-		= not_signed_v<T> and is_arithmetic_v<T>;
+	constexpr bool is_unsigned_v = not_signed_v<T>and is_arithmetic_v<T>;
 	template<class T>
 	struct is_unsigned : bool_<is_unsigned_v<T>>
 	{};
@@ -892,6 +891,8 @@ namespace Rider::Faiz
 	struct is_array : bool_<is_array_v<T>>
 	{};
 
+	NOT_ARE_ANY(array)
+
 	// If the imaginary function definition To test() { return
 	// std::declval<From>(); } is well-formed, (that is, either
 	// std::declval<From>() can be converted to To using implicit conversions,
@@ -935,7 +936,7 @@ namespace Rider::Faiz
 	struct is_convertible : bool_<my_is_convertible<From, To>()>
 	{};
 
-	BI_IS_NOT_ARE_ANY(convertible);
+	BI_IS_NOT_ARE_ANY(convertible)
 
 	// TODO: use detection idiom implement is_convertible
 	// If T is an object or reference type and the variable definition T
@@ -1118,7 +1119,7 @@ namespace Rider::Faiz
 		: is_member_function_pointer_helper<remove_cv_t<T>>
 	{};
 
-	IS_NOT_ARE_ANY(member_function_pointer);
+	IS_NOT_ARE_ANY(member_function_pointer)
 
 	// Checks whether T is a non-static member object. Provides the member
 	// constant value which is equal to true, if T is a non-static member object
@@ -1153,8 +1154,8 @@ namespace Rider::Faiz
 			  is_base_of_v<Base,
 				  Derived> && not_same_v<remove_cv_t<Base>, remove_cv_t<Derived>>>
 	{};
-	template<typename Base, class Derived>
-	inline constexpr bool is_derived_of_v = is_base_of<Base, Derived>::value;
+
+	BI_IS_NOT_ARE_ANY(derived)
 
 	template<typename T>
 	struct is_polymorphic : public detail::is_polymorphic_impl<T, void*>
@@ -1171,7 +1172,7 @@ namespace Rider::Faiz
 	template<typename T>
 	inline constexpr bool is_copy_assignable_v = is_copy_assignable<T>::value;
 
-	ARE(copy_assignable);
+	ARE(copy_assignable)
 
 	// template<typename... T >
 	// inline constexpr bool are_copy_assignable_v = (is_copy_assignable_v<T> &&
@@ -1209,7 +1210,7 @@ namespace Rider::Faiz
 	struct is_move_assignable : bool_<is_move_assignable_v<T>>
 	{};
 
-	ARE(move_assignable);
+	ARE(move_assignable)
 
 	// // clang-format off
 	// template<typename T>
@@ -1232,7 +1233,7 @@ namespace Rider::Faiz
 	inline constexpr bool is_nothrow_move_assignable_v
 		= is_nothrow_move_assignable<_Tp>::value;
 
-	ARE(nothrow_move_assignable);
+	ARE(nothrow_move_assignable)
 
 	template<typename T, typename A>
 	struct is_nothrow_assignable_aux<true, T, A>
@@ -1250,12 +1251,8 @@ namespace Rider::Faiz
 			  _t<add_lvalue_reference<const T>>>
 	{};
 
-	template<typename T>
-	inline constexpr bool is_nothrow_copy_assignable_v
-		= is_nothrow_copy_assignable<T>::value;
 
-
-	ARE(nothrow_copy_assignable);
+	IS_NOT_ARE_ANY(nothrow_copy_assignable);
 
 	template<typename T>
 	struct is_unknown_bound_array : false_
