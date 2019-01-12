@@ -112,7 +112,7 @@ namespace Rider::Faiz::range
 				constexpr meta::if_c<!is_adl_swappable_<T&>::value
 					&& detail::is_movable_<T>::value>
 				operator()(T& a, T& b) const
-				AUTO_RETURN_NOEXCEPT((void)(b = exchange(a, (T &&) b)))
+				AUTO_RETURN_NOEXCEPT((void)(b = range::exchange(a, (T &&) b)))
 
 				// For arrays of instrinsicly swappable (i.e., movable)
 				// types for which a swap overload cannot be found via ADL,
