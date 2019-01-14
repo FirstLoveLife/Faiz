@@ -48,7 +48,7 @@ install(
 )
 
 configure_package_config_file(
-    ${CMAKE_SOURCE_DIR}/cmake/tight_pair-config.cmake.in
+    cmake/tight_pair-config.cmake.in
     ${CMAKE_BINARY_DIR}/cmake/tight_pair-config.cmake
     INSTALL_DESTINATION
 		${CMAKE_INSTALL_LIBDIR}/cmake/tight_pair
@@ -76,7 +76,7 @@ export(EXPORT tight_pair-targets
 )
 
 # Build tests if this is the main project
-if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
+# if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
     enable_testing()
     add_subdirectory(tests)
-endif()
+# endif()

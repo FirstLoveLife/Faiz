@@ -89,6 +89,8 @@ if (UNIX AND SANITIZE)
 	set_property(TARGET tight_pair-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
 endif()
 
+
+# add_test(NAME test COMMAND tight_pair-testsuite)
 include(CTest)
 
 include_directories(/home/firstlove/projects/faiz/include)

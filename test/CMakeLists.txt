@@ -28,3 +28,7 @@ target_link_libraries(faiz_test PUBLIC rider_faiz)
 set_target_properties(faiz_test PROPERTIES CXX_STANDARD 20)
 
 add_test(NAME test COMMAND faiz_test)
+
+# add_subdirectory(unique_ptr)
+enable_testing()
+add_subdirectory(tight_pair)

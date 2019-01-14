@@ -43,7 +43,7 @@ namespace Rider::Faiz
 
     template<typename T>
     using make_not_void =
-        typename Faiz::conditional<is_void<T>::value, undefined, T>::type;
+        typename Faiz::conditional<is_void_v<T>, undefined, T>::type;
 
     /**
      * @brief  Uniform interface to all pointer-like types
@@ -54,7 +54,7 @@ namespace Rider::Faiz
     {
     private:
         template<typename T>
-        using elementtype_aux = typename T::elementtype;
+        using element_type_aux = typename T::element_type;
 
         template<typename T>
         using differencetype_aux = typename T::differencetype;
@@ -75,8 +75,8 @@ namespace Rider::Faiz
         using pointer = _Ptr;
 
         /// The type pointed to.
-        using elementtype =
-            Faiz::detected_or_t<get_first_arg_t<_Ptr>, elementtype_aux, _Ptr>;
+        using element_type =
+            Faiz::detected_or_t<get_first_arg_t<_Ptr>, element_type_aux, _Ptr>;
 
         /// The type used to represent the difference between two pointers.
         using differencetype =
@@ -86,13 +86,13 @@ namespace Rider::Faiz
         template<typename U>
         using rebind = typename rebind_aux<_Ptr, U>::type;
 
-        static _Ptr pointer_to(make_not_void<elementtype>& __e)
+        static _Ptr pointer_to(make_not_void<element_type>& __e)
         {
             return _Ptr::pointer_to(__e);
         }
 
-        static_assert(!is_same<elementtype, undefined>::value,
-            "pointer type defines elementtype or is like SomePointer<T, "
+        static_assert(not_same_v<element_type, undefined>,
+            "pointer type defines element_type or is like SomePointer<T, "
             "Args>");
     };
 
@@ -106,7 +106,7 @@ namespace Rider::Faiz
         /// The pointer type
         using pointer = T*;
         /// The type pointed to
-        using elementtype = T;
+        using element_type = T;
         /// Type used to represent the difference between two pointers
         using differencetype = ptrdiff_t;
 
@@ -115,10 +115,10 @@ namespace Rider::Faiz
 
         /**
          *  @brief  Obtain a pointer to an object
-         *  @param  r  A reference to an object of type @c elementtype
+         *  @param  r  A reference to an object of type @c element_type
          *  @return @c addressof(r)
          */
-        static pointer pointer_to(make_not_void<elementtype>& r) noexcept
+        static pointer pointer_to(make_not_void<element_type>& r) noexcept
         {
             return Faiz::addressof(r);
         }

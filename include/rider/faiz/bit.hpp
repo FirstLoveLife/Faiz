@@ -1,15 +1,16 @@
 #ifndef FAIZ_BIT
 #define FAIZ_BIT
 #include "rider/faiz/cstddef.hpp"
-#include <string_view>
-#include <cstdint>
 #include <iostream>
+#include <string_view>
+#include <vector>
 namespace Rider::Faiz
 {
 	namespace detail
 	{
 		template<char Chs>
-		constexpr int toDecImpl()
+		constexpr int
+		toDecImpl()
 		{
 			return Chs > '9' ? Chs - 'A' + 10 : Chs - '0';
 		}
@@ -20,8 +21,7 @@ namespace Rider::Faiz
 	{
 		int ret{};
 
-		return (
-			(ret *= from, ret += detail::toDecImpl<Chs>()), ...);
+		return ((ret *= from, ret += detail::toDecImpl<Chs>()), ...);
 	}
 	inline namespace literals
 	{
