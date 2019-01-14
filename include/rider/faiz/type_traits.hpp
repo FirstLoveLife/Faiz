@@ -24,7 +24,7 @@ namespace Rider::Faiz
 
 	//  Provides member typedef type, which is defined as T if B is true at
 	//  compile time, or as F if B is false.
-	template<bool B, class T, typename F>
+	template<bool B, typename T, typename F>
 	using conditional_t = _t<conditional<B, T, F>>;
 
 	// forward declaration
