@@ -751,7 +751,7 @@ namespace Rider::Faiz
 
 		explicit operator bool() const noexcept
 		{
-			return (Faiz::get<0>(pair) != pointer());
+			return Faiz::get<0>(pair) != nullptr;
 		}
 	};
 
