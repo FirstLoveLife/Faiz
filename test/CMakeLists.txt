@@ -1,28 +1,44 @@
-# Copyright (C) 2018 Jonathan Müller <jonathanmueller.dev@gmail.com>
-# This file is subject to the license terms in the LICENSE file
-# found in the top-level directory of this distribution.
+include(GNUInstallDirs)
 
-if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/catch.hpp)
-    file(DOWNLOAD
-         https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp
-         ${CMAKE_CURRENT_BINARY_DIR}/catch.hpp
-         STATUS status
-         LOG log)
+find_package(Catch2)
+if(TARGET Catch2::Catch2)
+  message("Found catch2")
+  include(Catch)
+else()
+  message("no target catch2")
+  find_package(Catch2 REQUIRED)
+  if($(Catch2_FOUND))
+    MESSAGE(STATUS "use local found catch2")
+  else ($(Catch2_FOUND))
+    MESSAGE("couldn't find catch2, will download")
+    include(FetchContent)
 
-    list(GET status 0 status_code)
-    list(GET status 1 status_string)
+    # Download and configure Catch2 for the tests
+    FetchContent_Declare(
+      catch2
+      GIT_REPOSITORY https://github.com/catchorg/Catch2
+      GIT_TAG master
+      )
 
-    if(NOT status_code EQUAL 0)
-        message(FATAL_ERROR "error downloading catch: ${status_string}"
-                "${log}")
+    FetchContent_GetProperties(catch2)
+    if (NOT catch2_POPULATED)
+      FetchContent_Populate(catch2)
+      add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
+      list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/contrib)
+      include(Catch)
     endif()
+
+  endif()
+
 endif()
+
+
 
 set(tests
   cmp_nullptr.pass.cpp)
 
 add_executable(faiz_test
-                ${tests})
+  ${tests})
 target_include_directories(faiz_test SYSTEM PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(faiz_test PUBLIC rider_faiz)
 set_target_properties(faiz_test PROPERTIES CXX_STANDARD 20)
