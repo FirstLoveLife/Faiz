@@ -40,7 +40,7 @@ set(tests
 add_executable(faiz_test
   ${tests})
 target_include_directories(faiz_test SYSTEM PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(faiz_test PUBLIC rider_faiz)
+
 set_target_properties(faiz_test PROPERTIES CXX_STANDARD 20)
 
 add_test(NAME test COMMAND faiz_test)
