@@ -81,3 +81,6 @@ include_directories(/home/firstlove/projects/faiz/include)
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
 catch_discover_tests(tight_pair-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
+
+
+add_test(NAME test COMMAND tight_pair-testsuite)

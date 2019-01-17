@@ -2,7 +2,7 @@ include(GNUInstallDirs)
 
 find_package(Catch2)
 if(TARGET Catch2::Catch2)
-  message("Found catch2")
+  message("catch2 has been installed previously")
   include(Catch)
 else()
   message("no target catch2")
@@ -44,6 +44,9 @@ target_link_libraries(faiz_test PUBLIC rider_faiz)
 set_target_properties(faiz_test PROPERTIES CXX_STANDARD 20)
 
 add_test(NAME test COMMAND faiz_test)
+
+
+include_directories(/home/firstlove/projects/faiz/include)
 
 # add_subdirectory(unique_ptr)
 enable_testing()

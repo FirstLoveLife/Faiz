@@ -90,17 +90,38 @@ if (UNIX AND NOT APPLE)
 endif()
 
 
-include_directories(/home/firstlove/projects/faiz/include)
-
-enable_testing()
+# include_directories(/home/firstlove/projects/faiz/include)
 
 add_test(NAME test COMMAND unique_ptr-testsuite)
 
-# Optionally enable sanitizers
-# if (UNIX AND SANITIZE)
-  # target_compile_options(unique_ptr-testsuite PRIVATE -fsanitize=${SANITIZE})
-  # set_property(TARGET unique_ptr-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
-# endif()
 
-# string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
-# catch_discover_tests(unique_ptr-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
+target_link_libraries(unique_ptr-testsuite
+    PRIVATE
+        Catch2::Catch2
+)
+
+# Somewhat speed up Catch2 compile times
+target_compile_definitions(unique_ptr-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
+target_compile_definitions(unique_ptr-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
+
+# Use the gold linker if possible
+if (UNIX AND NOT APPLE)
+    set_property(TARGET unique_ptr-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+endif()
+
+# Optionally enable sanitizers
+if (UNIX AND SANITIZE)
+	target_compile_options(unique_ptr-testsuite PRIVATE -fsanitize=${SANITIZE})
+	set_property(TARGET unique_ptr-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
+endif()
+
+
+# add_test(NAME test COMMAND unique_ptr-testsuite)
+
+
+
+string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
+catch_discover_tests(unique_ptr-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
+
+
+# add_test(NAME test COMMAND unique_ptr-testsuite)
