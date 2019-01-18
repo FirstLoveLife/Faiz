@@ -1,9 +1,19 @@
-* Assumptions:
-- many intrinsics like ~__is_union~ available
+* Different behavior from c++ standard library
+** unique_ptr
+*** compare functions for array
+don't support arrray-compare free functions. IOW, Faiz::unique_ptr doesn't
+  support https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/testsuite/20_util/unique_ptr/specialized_algorithms/comparisons_array.cc
+Why? you know, compare array with operator ~</>/<=/>=~...... make no sense at
+  all. But why does the standard library support? Because they are ~free
+  functions~, rather than friend/member function, and array version of
+  `class_unique_ptr<T[], Deleter>` is specializeed template, so it can use
+  primary template's free function. How do I disable them? change free functions
+  into friend function with ~class totally_ordered~, but ~operator <~ and
+  ~operator ==~ are still free functions now.
 * TODO
 http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduced-in-c11/
 - implement list with pointer traits
-- import gsl's Expects(preconditions) and Ensures(postconditions)
+- use gsl's Expects(preconditions) and Ensures(postconditions)
 - use gcc/clang's modules.
 - simplify empty base classes once no_unique_address is available on clang.(it
   is available on gcc now though)
@@ -13,7 +23,7 @@ http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduc
 **  papers to read
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3465.pdf][Adding heterogeneous comparison lookup toassociative containers]]
 * Conversion
-- ~typename~ or class? use ~class~ for sfinae(template parameter) and nest
+- ~typename~ or ~class~? use ~class~ for sfinae(template parameter) and nest
   template, otherwise use ~typename~
 - Faiz::index for all container indexes/subscripts/sizes, IOW, Don't use unsigned for subscripts, prefer gsl::index
 - prefer ~and/or~ to ~&&/||~, preserve ~&&~ for rvalue reference.
@@ -31,6 +41,7 @@ I can't finish a project without stealing code around, so here are the main sour
 - many macros in faiz_fwd.hpp is mainly from [[https://github.com/ericniebler/range-v3][range-v3]] and [[https://github.com/FrankHB/YSLib][yslib]]
 - operators.hpp comes from [[https://github.com/taocpp/operators][tao-operators]], but rerwite some of codes with cpp17,
   and remove support for return rvalue reference.
+- compressed_pair.hpp is adapted from https://github.com/Morwenn/tight_pair/
 - The tests in tests were preliminary tests adapted from libcxx/libstdcxx/tight_pair/tao-operators/range-v3/boost
 * used c++2a features
 - std::endian

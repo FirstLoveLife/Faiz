@@ -1184,11 +1184,6 @@ namespace Rider::Faiz
 				std::tuple_element_t<N, tight_pair<T1, T2>> const&&>(
 				static_cast<storage_t const&&>(*this).template do_get<N>());
 		}
-
-
-		////////////////////////////////////////////////////////////
-		// Comparison and relational operators optimized to be
-		// branchless when possible
 	};
 
 	template<typename T, typename U>
@@ -1210,7 +1205,7 @@ namespace Rider::Faiz
 	operator==(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs) -> bool
 	{
 		return Rider::Faiz::get<0>(lhs) == Rider::Faiz::get<0>(rhs)
-			&& Rider::Faiz::get<1>(lhs) == Rider::Faiz::get<1>(rhs);
+			and Rider::Faiz::get<1>(lhs) == Rider::Faiz::get<1>(rhs);
 	}
 	template<typename T>
 	auto

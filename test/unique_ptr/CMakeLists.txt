@@ -48,7 +48,7 @@ set(requirements
 )
 
 set(specialized_algorithms
-  specialized_algorithms/comparisons_array.cc
+  # specialized_algorithms/comparisons_array.cc
   specialized_algorithms/comparisons.cc
   specialized_algorithms/swap.cc
 )

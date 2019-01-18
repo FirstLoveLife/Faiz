@@ -41,7 +41,7 @@ TEST_CASE("array")
 {
 	{
 		Rider::Faiz::unique_ptr<A[]> a = Rider::Faiz::make_unique<A[]>(3);
-		CHECK(a != nullptr);
+		// CHECK(a != nullptr);
 		auto value = a[0].b && a[1].b && a[2].b;
 		CHECK(value);
 	}

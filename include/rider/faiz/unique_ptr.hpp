@@ -3,6 +3,7 @@
 #include "rider/faiz/common_type.hpp"
 #include "rider/faiz/compressed_pair.hpp"
 #include "rider/faiz/functional.hpp"
+#include "rider/faiz/math/RelationAlgebra.hpp" // for totally_ordered
 #include "rider/faiz/ptr_traits.hpp"
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/utility.hpp"
@@ -42,8 +43,8 @@ namespace Rider::Faiz
 	class unique_pointer_type
 	{
 		template<typename U>
-		static typename U::pointer
-		test(typename U::pointer*);
+		static _p<U>
+		test(_p<U>*);
 
 		template<typename U>
 		static T*
@@ -234,6 +235,10 @@ namespace Rider::Faiz
 
 	template<typename T, class Tdeleter = default_delete<T>>
 	class unique_ptr
+		: Math::AbstractAlgebra::RelationAlgebra::totally_ordered<
+			  unique_ptr<T, Tdeleter>>,
+		  Math::AbstractAlgebra::RelationAlgebra::
+			  totally_ordered<std::nullptr_t, unique_ptr<T, Tdeleter>>
 	{
 	public:
 		// Tdeleter, the function object or lvalue reference to function or
@@ -498,6 +503,8 @@ namespace Rider::Faiz
 	//   - The indexing observer *operator[]* is provided.
 	template<typename T, typename Tdeleter>
 	class unique_ptr<T[], Tdeleter>
+	// : Math::AbstractAlgebra::RelationAlgebra::totally_ordered<
+	// unique_ptr<T[], Tdeleter>>
 	{
 
 	public:
@@ -771,49 +778,6 @@ namespace Rider::Faiz
 		return (a.get() == b.get());
 	}
 
-	template<typename T1, typename D1, typename T2, typename D2>
-	inline bool
-	operator!=(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
-	{
-		return !(a == b);
-	}
-
-	template<typename T1, typename D1, typename T2, typename D2>
-	inline bool
-	operator<(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
-	{
-		using P1 = typename Faiz::unique_ptr<T1, D1>::pointer;
-		using P2 = typename Faiz::unique_ptr<T2, D2>::pointer;
-		using PCommon = common_type_t<P1, P2>;
-		PCommon pT1 = a.get();
-		PCommon pT2 = b.get();
-		return std::less<PCommon>()(pT1, pT2);
-	}
-
-	// FIXME gcc dosn't support friend comparation functions here somehow, so I
-	// have to use free function.
-	template<typename T1, typename D1, typename T2, typename D2>
-	inline bool
-	operator>(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
-	{
-		return (b < a);
-	}
-
-	template<typename T1, typename D1, typename T2, typename D2>
-	inline bool
-	operator<=(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
-	{
-		return !(b < a);
-	}
-
-	template<typename T1, typename D1, typename T2, typename D2>
-	inline bool
-	operator>=(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
-	{
-		return !(a < b);
-	}
-
-
 	template<typename T, typename D>
 	inline bool
 	operator==(const unique_ptr<T, D>& a, nullptr_t) noexcept
@@ -828,25 +792,25 @@ namespace Rider::Faiz
 		return !a;
 	}
 
-	template<typename T, typename D>
+
+	template<typename T1, typename D1, typename T2, typename D2>
 	inline bool
-	operator!=(const unique_ptr<T, D>& a, nullptr_t) noexcept
+	operator<(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
 	{
-		return static_cast<bool>(a);
+		using P1 = _p<Faiz::unique_ptr<T1, D1>>;
+		using P2 = _p<Faiz::unique_ptr<T2, D2>>;
+		using PCommon = common_type_t<P1, P2>;
+		PCommon pT1 = a.get();
+		PCommon pT2 = b.get();
+		return std::less<PCommon>()(pT1, pT2);
 	}
 
-	template<typename T, typename D>
-	inline bool
-	operator!=(nullptr_t, const unique_ptr<T, D>& a) noexcept
-	{
-		return static_cast<bool>(a);
-	}
 
 	template<typename T, typename D>
 	inline bool
 	operator<(const unique_ptr<T, D>& a, nullptr_t)
 	{
-		using pointer = typename unique_ptr<T, D>::pointer;
+		using pointer = _p<unique_ptr<T, D>>;
 		return std::less<pointer>()(a.get(), nullptr);
 	}
 
@@ -854,51 +818,9 @@ namespace Rider::Faiz
 	inline bool
 	operator<(nullptr_t, const unique_ptr<T, D>& b)
 	{
-		using pointer = typename unique_ptr<T, D>::pointer;
+		using pointer = _p<unique_ptr<T, D>>;
 		pointer pT = b.get();
 		return std::less<pointer>()(nullptr, pT);
-	}
-
-	template<typename T, typename D>
-	inline bool
-	operator>(const unique_ptr<T, D>& a, nullptr_t)
-	{
-		return (nullptr < a);
-	}
-
-	template<typename T, typename D>
-	inline bool
-	operator>(nullptr_t, const unique_ptr<T, D>& b)
-	{
-		return (b < nullptr);
-	}
-
-	template<typename T, typename D>
-	inline bool
-	operator<=(const unique_ptr<T, D>& a, nullptr_t)
-	{
-		return !(nullptr < a);
-	}
-
-	template<typename T, typename D>
-	inline bool
-	operator<=(nullptr_t, const unique_ptr<T, D>& b)
-	{
-		return !(b < nullptr);
-	}
-
-	template<typename T, typename D>
-	inline bool
-	operator>=(const unique_ptr<T, D>& a, nullptr_t)
-	{
-		return !(a < nullptr);
-	}
-
-	template<typename T, typename D>
-	inline bool
-	operator>=(nullptr_t, const unique_ptr<T, D>& b)
-	{
-		return !(nullptr < b);
 	}
 
 	// http://isocpp.org/files/papers/N3656.txt
