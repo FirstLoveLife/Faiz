@@ -19,7 +19,6 @@
 
 // 20.6.11 Template class unique_ptr [unique.ptr]
 
-#include "../../testsuite_hooks.h"
 #include "rider/faiz/unique_ptr.hpp"
 #include <catch2/catch.hpp>
 

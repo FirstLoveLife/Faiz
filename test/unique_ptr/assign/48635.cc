@@ -17,7 +17,6 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../../testsuite_hooks.h"
 #include "rider/faiz/unique_ptr.hpp"
 #include <catch2/catch.hpp>
 #include <memory>

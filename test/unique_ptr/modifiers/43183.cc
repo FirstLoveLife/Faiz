@@ -19,7 +19,6 @@
 
 // 20.9.10.2.5 unique_ptr modifiers [unique.ptr.single.modifiers]
 
-#include "../../testsuite_hooks.h"
 #include "rider/faiz/unique_ptr.hpp"
 #include <catch2/catch.hpp>
 #include <memory>

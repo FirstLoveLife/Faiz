@@ -19,7 +19,6 @@
 
 // 20.9.1.4 unique_ptr creation [unique.ptr.create]
 
-#include "../../testsuite_hooks.h"
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/unique_ptr.hpp"
 #include <catch2/catch.hpp>
