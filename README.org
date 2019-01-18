@@ -1,3 +1,4 @@
+![faiz.jpg](https://i.pinimg.com/originals/8b/b0/7a/8bb07a251815e0ce517f35eb308cfed7.jpg)
 * Different behavior from c++ standard library
 ** unique_ptr
 *** compare functions for array

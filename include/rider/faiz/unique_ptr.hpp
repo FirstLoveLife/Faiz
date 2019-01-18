@@ -26,99 +26,10 @@ compile-time.
 
 namespace Rider::Faiz
 {
+	using Math::AbstractAlgebra::RelationAlgebra::totally_ordered;
 
-	// faiz is a standard library like library
-
-	// Tells if the tDeleter type has a typedef for pointer to T. If so then
-	// return it, else return T*. The large majority of the time the pointer
-	// type will be T*. The C++11 Standard requires that scoped_ptr let the
-	// deleter define the pointer type.
-	//
-	// Example usage:
-	// ```
-	//     typedef typename unique_pointer_type<int, SomeDeleter>::type
-	//     pointer
-	//
-	template<typename T, typename tDeleter>
-	class unique_pointer_type
-	{
-		template<typename U>
-		static _p<U>
-		test(_p<U>*);
-
-		template<typename U>
-		static T*
-		test(...);
-
-	public:
-		using type = decltype(test<remove_reference_t<tDeleter>>(0));
-	};
-
-
-	///////////////////////////////////////////////////////////////////////
-	// is_array_cv_convertible
-	//
-	// Tells if the array pointer P1 is cv-convertible to array pointer P2.
-	// The two types have two be equivalent pointer types and be convertible
-	// when you consider const/volatile properties of them.
-	//
-	// Example usage:
-	//     is_array_cv_convertible<int, Base*>::value             => false
-	//     is_array_cv_convertible<Base, Base*>::value            => false
-	//     is_array_cv_convertible<double*, bool*>::value         => false
-	//     is_array_cv_convertible<Subclass*, Base*>::value       => false
-	//     is_array_cv_convertible<const Base*, Base*>::value     => false
-	//     is_array_cv_convertible<Base*, Base*>::value           => true
-	//     is_array_cv_convertible<Base*, const Base*>::value     => true
-	//     is_array_cv_convertible<Base*, volatile Base*>::value  => true
-	///////////////////////////////////////////////////////////////////////
-
-	template<typename P1,
-		typename P2,
-		bool = is_same_v<remove_cv_t<typename pointer_traits<P1>::element_type>,
-			remove_cv_t<typename pointer_traits<P2>::element_type>>>
-	struct is_array_cv_convertible_impl : public is_convertible<P1, P2>
-	{}; // Return true if P1 is convertible to P2.
-
-	template<typename P1, typename P2>
-	struct is_array_cv_convertible_impl<P1, P2, false> : public false_
-	{}; // P1's underlying type is not the same as P2's, so it can't be
-		// converted, even if P2 refers to a subclass of P1. Parent == Child,
-		// but Parent[] != Child[]
-
-	template<typename P1,
-		typename P2,
-		bool = is_scalar_v<P1>and not_pointer_v<P1>>
-	struct is_array_cv_convertible : public is_array_cv_convertible_impl<P1, P2>
-	{};
-
-	template<typename P1, typename P2>
-	struct is_array_cv_convertible<P1, P2, true> : public false_
-	{}; // P1 is scalar not a pointer, so it can't be converted to a pointer.
-
-	BI_IS_NOT_ARE_ANY(array_cv_convertible)
-
-	// is_safe_array_conversion
-	//
-	// Say you have two array types: T* t and U* u. You want to assign the u
-	// to t but only if that's a safe thing to do. As shown in the logic
-	// below, the array conversion is safe if U* and T* are convertible, if
-	// U is an array, and if either U or T is not a pointer or U is not
-	// derived from T.
-	//
-	// Note: Usage of this class could be replaced with
-	// is_array_cv_convertible usage. To do: Do this replacement and test
-	// it.
-	//
-	///////////////////////////////////////////////////////////////////////
-	// clang-format on
-	template<typename T, typename T_pointer, typename U, typename U_pointer>
-	struct is_safe_array_conversion
-		: public bool_<
-			  is_convertible_v<U_pointer,
-				  T_pointer> and is_array_v<U> and (not_pointer_v<U_pointer> || not_pointer_v<T_pointer> || not_derived_v<T, remove_extent_t<U>>)>
-	{};
-
+	template<typename T>
+	using pointer_type_aux = _p<remove_reference_t<T>>;
 
 	template<typename T>
 	struct default_delete
@@ -134,9 +45,8 @@ namespace Rider::Faiz
 		// default_delete object. This constructor will only
 		// participate in overload resolution if U* is implicitly
 		// convertible to T*.
-		template<typename U>
-		default_delete(const default_delete<U>&,
-			enable_if_t<is_convertible_v<U*, T*>>* = nullptr) noexcept
+		template<typename U, enable_if_t<is_convertible_v<U*, T*>>* = nullptr>
+		default_delete(const default_delete<U>&) noexcept
 		{}
 
 		// At the point in the code the operator() is called, the type must
@@ -195,8 +105,8 @@ namespace Rider::Faiz
 		// a deallocation function, as the compiler has no way of knowing
 		// whether such functions exist and must be invoked.
 		template<typename U>
-		_t<EnableIfConvertible<U>>
-		operator()(U* ptr) const noexcept
+		auto
+		operator()(U* ptr) const noexcept -> _t<EnableIfConvertible<U>>
 		{
 			static_assert(
 				sizeof(T) > 0, "default_delete can not delete incomplete type");
@@ -221,7 +131,7 @@ namespace Rider::Faiz
 	{
 		using lval_ref_type = const tDeleter&;
 		using bad_rval_ref_type = const tDeleter&&;
-		using enable_rval_overload = false_type;
+		using enable_rval_overload = false_;
 	};
 
 	template<typename tDeleter>
@@ -229,27 +139,27 @@ namespace Rider::Faiz
 	{
 		using lval_ref_type = tDeleter&;
 		using bad_rval_ref_type = tDeleter&&;
-		using enable_rval_overload = false_type;
+		using enable_rval_overload = false_;
 	};
 
 
-	template<typename T, class Tdeleter = default_delete<T>>
-	class unique_ptr
-		: Math::AbstractAlgebra::RelationAlgebra::totally_ordered<
-			  unique_ptr<T, Tdeleter>>,
-		  Math::AbstractAlgebra::RelationAlgebra::
-			  totally_ordered<std::nullptr_t, unique_ptr<T, Tdeleter>>
+	template<typename T, typename tDeleter = default_delete<T>>
+	class unique_ptr : totally_ordered<unique_ptr<T, tDeleter>>,
+					   totally_ordered<nullptr_t, unique_ptr<T, tDeleter>>
 	{
 	public:
-		// Tdeleter, the function object or lvalue reference to function or
+		// tDeleter, the function object or lvalue reference to function or
 		// to function object, to be called from the destructor
-		using deleter_type = Tdeleter;
+		using deleter_type = tDeleter;
 		// A synonym for the template parameter T.
 		using element_type = T;
-		// A synonym for `Delete::pointer` if defined, otherwise `T *`.
-		// IOW, `remove_reference<Tdeleter>::type::pointer` if that
+
+		//  A synonym for `Delete::pointer` if defined, otherwise `T *`.
+		// IOW, `remove_reference<tDeleter>::type::pointer` if that
 		// type exists, otherwise `T*`. Must satisfy *NullablePointer*
-		using pointer = _t<unique_pointer_type<element_type, deleter_type>>;
+
+		using pointer
+			= detected_or_t<element_type*, pointer_type_aux, deleter_type>;
 
 		static_assert(not_rvalue_reference_v<deleter_type>,
 			"Come on, rvalue_reference is not what I want");
@@ -260,62 +170,57 @@ namespace Rider::Faiz
 		operator=(unique_ptr&)
 			= delete;
 
-		template<typename U, typename Udeleter>
+		template<typename uPointer, typename uDeleter>
 		unique_ptr&
-		operator=(unique_ptr<U, Udeleter>&)
+		operator=(unique_ptr<uPointer, uDeleter>&)
 			= delete;
 
 	private:
-		struct nat
-		{
-			int for_bool_;
-		};
+		using tDeleterSFINAE = unique_ptr_deleter_sfinae<tDeleter>;
 
-		using TdeleterSFINAE = unique_ptr_deleter_sfinae<Tdeleter>;
+		template<bool vDummy>
+		using tLValRef =
+			typename dependent_type<tDeleterSFINAE, vDummy>::lval_ref_type;
 
-		template<bool Vdummy>
-		using LValRefType =
-			typename dependent_type<TdeleterSFINAE, Vdummy>::lval_ref_type;
+		template<bool vDummy>
+		using tGoodRValRef =
+			typename dependent_type<tDeleterSFINAE, vDummy>::good_rval_ref_type;
 
-		template<bool Vdummy>
-		using GoodRValRefType =
-			typename dependent_type<TdeleterSFINAE, Vdummy>::good_rval_ref_type;
-
-		template<bool Vdummy>
+		template<bool vDummy>
 		using BadRValRefType =
-			typename dependent_type<TdeleterSFINAE, Vdummy>::bad_rval_ref_type;
+			typename dependent_type<tDeleterSFINAE, vDummy>::bad_rval_ref_type;
 
 
-		template<bool Vdummy,
-			typename tUDeleter
-			= dependent_type_t<type_identity<deleter_type>, Vdummy>>
+		template<bool vDummy,
+			typename uDeleter
+			= dependent_type_t<type_identity<deleter_type>, vDummy>>
 		using EnableIfDeleterDefaultConstructible = enable_if_t<
-			is_default_constructible_v<tUDeleter> and not_pointer_v<tUDeleter>>;
+			is_default_constructible_v<uDeleter> and not_pointer_v<uDeleter>>;
 
-		template<typename ArgType>
+		template<typename tArg>
 		using EnableIfDeleterConstructible
-			= enable_if_t<is_constructible_v<deleter_type, ArgType>>;
+			= enable_if_t<is_constructible_v<deleter_type, tArg>>;
 
-		template<typename UPtr, typename Up>
+		template<typename yaUnique, typename uPointer>
 		using EnableIfMoveConvertible = enable_if_t<
-			is_convertible_v<_p<UPtr>, pointer> and not_array_v<Up>>;
+			is_convertible_v<_p<yaUnique>, pointer> and not_array_v<uPointer>>;
 
 		template<typename tUDel>
 		using EnableIfDeleterConvertible = enable_if_t<
-			(is_reference_v<Tdeleter> and is_same_v<Tdeleter, tUDel>)
+			(is_reference_v<tDeleter> and is_same_v<tDeleter, tUDel>)
 			or (not_reference_v<
-					Tdeleter> and is_convertible_v<tUDel, Tdeleter>)>;
+					tDeleter> and is_convertible_v<tUDel, tDeleter>)>;
 
 		template<typename tUDel>
 		using EnableIfDeleterAssignable
-			= enable_if_t<is_assignable_v<Tdeleter&, tUDel&&>>;
+			= enable_if_t<is_assignable_v<tDeleter&, tUDel&&>>;
 
 	protected:
 		tight_pair<pointer, deleter_type> pair;
 
 	public:
-		template<bool Vdummy = true,
-			class = EnableIfDeleterDefaultConstructible<Vdummy>>
+		template<bool vDummy = true,
+			class = EnableIfDeleterDefaultConstructible<vDummy>>
 		constexpr unique_ptr() noexcept : pair{pointer{}}
 		{
 			static_assert(not_pointer_v<deleter_type>,
@@ -329,8 +234,8 @@ namespace Rider::Faiz
 				"the template argument D, the "
 				"program is ill-formed.");
 		}
-		template<bool Vdummy = true,
-			typename = EnableIfDeleterDefaultConstructible<Vdummy>>
+		template<bool vDummy = true,
+			typename = EnableIfDeleterDefaultConstructible<vDummy>>
 		constexpr unique_ptr(nullptr_t) noexcept : pair{}
 		{
 			static_assert(not_pointer_v<deleter_type>,
@@ -345,8 +250,8 @@ namespace Rider::Faiz
 				"program is ill-formed.");
 		}
 
-		template<bool Vdummy = true,
-			typename = EnableIfDeleterDefaultConstructible<Vdummy>>
+		template<bool vDummy = true,
+			typename = EnableIfDeleterDefaultConstructible<vDummy>>
 		explicit unique_ptr(pointer ptr) noexcept : pair{ptr, {}}
 		{
 			static_assert(not_pointer_v<deleter_type>,
@@ -361,49 +266,50 @@ namespace Rider::Faiz
 				"program is ill-formed.");
 		}
 
-		template<bool Vdummy = true,
-			class = EnableIfDeleterConstructible<LValRefType<Vdummy>>>
-		unique_ptr(pointer ptr, LValRefType<Vdummy> d) noexcept : pair(ptr, d)
+		template<bool vDummy = true,
+			class = EnableIfDeleterConstructible<tLValRef<vDummy>>>
+		unique_ptr(pointer ptr, tLValRef<vDummy> d) noexcept : pair(ptr, d)
 		{}
 
-		template<bool Vdummy = true,
-			class = EnableIfDeleterConstructible<GoodRValRefType<Vdummy>>>
-		unique_ptr(pointer ptr, GoodRValRefType<Vdummy> d) noexcept
+		template<bool vDummy = true,
+			class = EnableIfDeleterConstructible<tGoodRValRef<vDummy>>>
+		unique_ptr(pointer ptr, tGoodRValRef<vDummy> d) noexcept
 			: pair(ptr, move(d))
 		{
 			static_assert(not_reference_v<deleter_type>,
 				"rvalue deleter bound to reference");
 		}
 
-		template<bool Vdummy = true,
-			class = EnableIfDeleterConstructible<BadRValRefType<Vdummy>>>
-		unique_ptr(pointer ptr, BadRValRefType<Vdummy> d) = delete;
+		template<bool vDummy = true,
+			class = EnableIfDeleterConstructible<BadRValRefType<vDummy>>>
+		unique_ptr(pointer ptr, BadRValRefType<vDummy> d) = delete;
 
 
 		unique_ptr(unique_ptr&& u) noexcept
 			: pair(u.release(), forward<deleter_type>(u.get_deleter()))
 		{}
 
-		template<typename Up,
-			typename Ep,
-			class = EnableIfMoveConvertible<unique_ptr<Up, Ep>, Up>,
-			class = EnableIfDeleterConvertible<Ep>>
-		unique_ptr(unique_ptr<Up, Ep>&& u) noexcept
-			: pair(u.release(), forward<Ep>(u.get_deleter()))
+		template<typename uPointer,
+			typename uDeleter,
+			class = EnableIfMoveConvertible<unique_ptr<uPointer, uDeleter>,
+				uPointer>,
+			class = EnableIfDeleterConvertible<uDeleter>>
+		unique_ptr(unique_ptr<uPointer, uDeleter>&& u) noexcept
+			: pair(u.release(), forward<uDeleter>(u.get_deleter()))
 		{}
 
 
 		// Returns the deleter object which would be used for destruction of
 		// the managed object.
-		deleter_type&
-		get_deleter() noexcept
+		auto
+		get_deleter() noexcept -> deleter_type&
 		{
 			return Faiz::get<1>(pair);
 		}
 		// Returns the deleter object which would be used for destruction of
 		// the managed object.
-		const deleter_type&
-		get_deleter() const noexcept
+		auto
+		get_deleter() const noexcept -> const deleter_type&
 		{
 			return Faiz::get<1>(pair);
 		}
@@ -414,8 +320,9 @@ namespace Rider::Faiz
 			return Faiz::get<0>(pair);
 		}
 
-		void
-		reset(pointer p = pointer()) noexcept
+
+		auto
+		reset(pointer p = pointer()) noexcept -> void
 		{
 			pointer tmp = Faiz::get<0>(pair);
 			Faiz::get<0>(pair) = p;
@@ -425,8 +332,8 @@ namespace Rider::Faiz
 			}
 		}
 
-		void
-		swap(unique_ptr& u) noexcept
+		auto
+		swap(unique_ptr& u) noexcept -> void
 		{
 			pair.swap(u.pair);
 		}
@@ -439,8 +346,9 @@ namespace Rider::Faiz
 			return Faiz::get<0>(pair) != nullptr;
 		}
 
-		pointer
-		release() noexcept
+
+		auto
+		release() noexcept -> pointer
 		{
 			pointer t = Faiz::get<0>(pair);
 			Faiz::get<0>(pair) = pointer();
@@ -449,33 +357,34 @@ namespace Rider::Faiz
 
 
 		// may throw, e.g. if pointer defines a throwing operator*
-		add_lvalue_reference_t<T> operator*() const
+		auto operator*() const -> add_lvalue_reference_t<T>
 		{
 			return *Faiz::get<0>(pair);
 		}
 
-		pointer operator->() const noexcept
+		auto operator-> () const noexcept -> pointer
 		{
 			return Faiz::get<0>(pair);
 		}
 
-		unique_ptr&
-		operator=(unique_ptr&& u) noexcept
+		auto
+		operator=(unique_ptr&& u) noexcept -> unique_ptr&
 		{
 			reset(u.release());
 			Faiz::get<1>(pair) = std::forward<deleter_type>(u.get_deleter());
 			return *this;
 		}
 
-		template<typename Up,
-			typename Ep,
-			class = EnableIfMoveConvertible<unique_ptr<Up, Ep>, Up>,
-			class = EnableIfDeleterAssignable<Ep>>
-		unique_ptr&
-		operator=(unique_ptr<Up, Ep>&& u) noexcept
+		template<typename uPointer,
+			typename uDeleter,
+			class = EnableIfMoveConvertible<unique_ptr<uPointer, uDeleter>,
+				uPointer>,
+			class = EnableIfDeleterAssignable<uDeleter>>
+		auto
+		operator=(unique_ptr<uPointer, uDeleter>&& u) noexcept -> unique_ptr&
 		{
 			reset(u.release());
-			Faiz::get<1>(pair) = forward<Ep>(u.get_deleter());
+			Faiz::get<1>(pair) = forward<uDeleter>(u.get_deleter());
 			return *this;
 		}
 
@@ -501,184 +410,189 @@ namespace Rider::Faiz
 	//   - The observers *operator** and *operator->* are not
 	//   provided.
 	//   - The indexing observer *operator[]* is provided.
-	template<typename T, typename Tdeleter>
-	class unique_ptr<T[], Tdeleter>
+	template<typename T, typename tDeleter>
+	class unique_ptr<T[], tDeleter>
 	// : Math::AbstractAlgebra::RelationAlgebra::totally_ordered<
-	// unique_ptr<T[], Tdeleter>>
+	// unique_ptr<T[], tDeleter>>
 	{
 
 	public:
-		using deleter_type = Tdeleter;
+		using deleter_type = tDeleter;
 		using element_type = T;
-		using pointer =
-			typename unique_pointer_type<element_type, deleter_type>::type;
-		/// These functions are private in order to prevent copying, for safety.
+
+		using pointer
+			= detected_or_t<element_type*, pointer_type_aux, deleter_type>;
 
 		unique_ptr&
 		operator=(unique_ptr&)
 			= delete;
-		template<class _Up>
+		template<typename _Up>
 		unique_ptr&
 		operator=(unique_ptr<_Up>&)
 			= delete;
 
 	private:
-		template<class _From>
-		struct CheckArrayPointerConversion : is_same<_From, pointer>
+		template<typename tFrom>
+		struct CheckArrayPointerConversion : is_same<tFrom, pointer>
 		{};
 
-		template<class _FromElem>
-		struct CheckArrayPointerConversion<_FromElem*>
-			: bool_<
-				  is_same_v<_FromElem*,
-					  pointer> or (is_same_v<pointer, element_type*> and is_convertible_v<_FromElem (*)[], element_type (*)[]>)>
+		// clang-format off
+		template<typename tFromElem>
+		struct CheckArrayPointerConversion<tFromElem*>
+			: bool_<is_same_v<tFromElem*, pointer>
+                    or (is_same_v<pointer, element_type*>
+						and is_convertible_v<tFromElem (*)[], element_type (*)[]>)>
 		{};
+
+		// clang-format on
 
 		template<typename From>
 		static constexpr bool CheckArrayPointerConversion_v
 			= CheckArrayPointerConversion<From>::value;
 
 
-		typedef unique_ptr_deleter_sfinae<deleter_type> DeleterSFINAE;
+		using tDeleterSFINAE = unique_ptr_deleter_sfinae<deleter_type>;
 
-		template<bool Vdummy>
-		using LValRefType =
-			typename dependent_type<DeleterSFINAE, Vdummy>::lval_ref_type;
+		template<bool vDummy>
+		using tLValRef =
+			typename dependent_type<tDeleterSFINAE, vDummy>::lval_ref_type;
 
-		template<bool Vdummy>
-		using GoodRValRefType =
-			typename dependent_type<DeleterSFINAE, Vdummy>::good_rval_ref_type;
+		template<bool vDummy>
+		using tGoodRValRef =
+			typename dependent_type<tDeleterSFINAE, vDummy>::good_rval_ref_type;
 
-		template<bool Vdummy>
+		template<bool vDummy>
 		using BadRValRefType =
-			typename dependent_type<DeleterSFINAE, Vdummy>::bad_rval_ref_type;
+			typename dependent_type<tDeleterSFINAE, vDummy>::bad_rval_ref_type;
 
-		template<bool Vdummy,
-			class tUDeleter
-			= dependent_type_t<type_identity<deleter_type>, Vdummy>>
+		template<bool vDummy,
+			typename uDeleter
+			= dependent_type_t<type_identity<deleter_type>, vDummy>>
 		using EnableIfDeleterDefaultConstructible = enable_if_t<
-			is_default_constructible_v<tUDeleter> and not_pointer_v<tUDeleter>>;
+			is_default_constructible_v<uDeleter> and not_pointer_v<uDeleter>>;
 
-		template<class ArgType>
+		template<typename tArg>
 		using EnableIfDeleterConstructible
-			= enable_if_t<is_constructible_v<deleter_type, ArgType>>;
+			= enable_if_t<is_constructible_v<deleter_type, tArg>>;
 
-		template<class Tp>
+		template<typename tArg>
 		using EnableIfPointerConvertible
-			= enable_if_t<CheckArrayPointerConversion_v<Tp>>;
+			= enable_if_t<CheckArrayPointerConversion_v<tArg>>;
 
 		// clang-format off
-		template<typename Uptr,
-			typename Up,
-				 typename ElemT = _e<Uptr>>
-		using EnableIfMoveConvertible = enable_if_t<is_array_v<Up>
+		template<typename U,
+			typename uPointer,
+				 typename tElem = _e<U>>
+		using EnableIfMoveConvertible = enable_if_t<is_array_v<uPointer>
 			and is_same_v<pointer, element_type*>
-			and is_same_v<_p<Uptr>, ElemT*>
-			and is_convertible_v<ElemT (*)[], element_type (*)[]>>;
+			and is_same_v<_p<U>, tElem*>
+			and is_convertible_v<tElem (*)[], element_type (*)[]>>;
+
+		template<typename uDel>
+		using EnableIfDeleterConvertible = enable_if_t<
+			(is_reference_v<deleter_type> and is_same_v<deleter_type, uDel>)
+			or (not_reference_v<deleter_type> and is_convertible_v<uDel, deleter_type>)>;
 		// clang-format on
 
-		template<typename Udel>
-		using EnableIfDeleterConvertible = enable_if_t<
-			(is_reference_v<deleter_type> and is_same_v<deleter_type, Udel>)
-			or (not_reference_v<
-					deleter_type> and is_convertible_v<Udel, deleter_type>)>;
-
-		template<class Udel>
+		template<typename uDel>
 		using EnableIfDeleterAssignable
-			= enable_if_t<is_assignable_v<deleter_type&, Udel&&>>;
+			= enable_if_t<is_assignable_v<deleter_type&, uDel&&>>;
 
 
 	protected:
-		Faiz::tight_pair<pointer, deleter_type> pair;
+		tight_pair<pointer, deleter_type> pair;
 
 	public:
-		template<bool Udummy = true,
-			class = EnableIfDeleterDefaultConstructible<Udummy>>
+		template<bool vDummy = true,
+			class = EnableIfDeleterDefaultConstructible<vDummy>>
 		constexpr unique_ptr() noexcept : pair(pointer(), {})
 		{}
 
-		template<bool Udummy = true,
-			class = EnableIfDeleterDefaultConstructible<Udummy>>
+		template<bool vDummy = true,
+			class = EnableIfDeleterDefaultConstructible<vDummy>>
 		constexpr unique_ptr(nullptr_t) noexcept : pair(pointer(), {})
 		{}
 
-		template<class _Pp,
-			bool Udummy = true,
-			class = EnableIfDeleterDefaultConstructible<Udummy>,
-			class = EnableIfPointerConvertible<_Pp>>
-		explicit unique_ptr(_Pp __p) noexcept : pair(__p, {})
+		template<typename tPointer,
+			bool vDummy = true,
+			class = EnableIfDeleterDefaultConstructible<vDummy>,
+			class = EnableIfPointerConvertible<tPointer>>
+		explicit unique_ptr(tPointer p) noexcept : pair(p, {})
 		{}
 
-		template<class _Pp,
-			bool Udummy = true,
-			class = EnableIfDeleterConstructible<LValRefType<Udummy>>,
-			class = EnableIfPointerConvertible<_Pp>>
-		unique_ptr(_Pp p, LValRefType<Udummy> d) noexcept : pair(p, d)
+		template<typename uPointer,
+			bool vDummy = true,
+			class = EnableIfDeleterConstructible<tLValRef<vDummy>>,
+			class = EnableIfPointerConvertible<uPointer>>
+		unique_ptr(uPointer p, tLValRef<vDummy> d) noexcept : pair(p, d)
 		{}
 
-		template<bool Udummy = true,
-			class = EnableIfDeleterConstructible<LValRefType<Udummy>>>
-		unique_ptr(nullptr_t, LValRefType<Udummy> d) noexcept : pair(nullptr, d)
+		template<bool vDummy = true,
+			class = EnableIfDeleterConstructible<tLValRef<vDummy>>>
+		unique_ptr(nullptr_t, tLValRef<vDummy> d) noexcept : pair(nullptr, d)
 		{}
 
-		template<class Pp,
-			bool Udummy = true,
-			class = EnableIfDeleterConstructible<GoodRValRefType<Udummy>>,
-			class = EnableIfPointerConvertible<Pp>>
-		unique_ptr(Pp p, GoodRValRefType<Udummy> d) noexcept : pair(p, move(d))
+		template<typename tPointer,
+			bool vDummy = true,
+			class = EnableIfDeleterConstructible<tGoodRValRef<vDummy>>,
+			class = EnableIfPointerConvertible<tPointer>>
+		unique_ptr(tPointer p, tGoodRValRef<vDummy> d) noexcept
+			: pair(p, move(d))
 		{
-			static_assert(not_reference<deleter_type>::value,
+			static_assert(not_reference_v<deleter_type>,
 				"rvalue deleter bound to reference");
 		}
 
-		template<bool Udummy = true,
-			class = EnableIfDeleterConstructible<GoodRValRefType<Udummy>>>
-		unique_ptr(nullptr_t, GoodRValRefType<Udummy> d) noexcept
+		template<bool vDummy = true,
+			class = EnableIfDeleterConstructible<tGoodRValRef<vDummy>>>
+		unique_ptr(nullptr_t, tGoodRValRef<vDummy> d) noexcept
 			: pair(nullptr, move(d))
 		{
-			static_assert(not_reference<deleter_type>::value,
+			static_assert(not_reference_v<deleter_type>,
 				"rvalue deleter bound to reference");
 		}
 
-		template<class Pp,
-			bool Udummy = true,
-			class = EnableIfDeleterConstructible<BadRValRefType<Udummy>>,
-			class = EnableIfPointerConvertible<Pp>>
-		unique_ptr(Pp p, BadRValRefType<Udummy> d) = delete;
+		template<typename uPointer,
+			bool vDummy = true,
+			class = EnableIfDeleterConstructible<BadRValRefType<vDummy>>,
+			class = EnableIfPointerConvertible<uPointer>>
+		unique_ptr(uPointer p, BadRValRefType<vDummy> d) = delete;
 
 		unique_ptr(unique_ptr&& u) noexcept
 			: pair(u.release(), forward<deleter_type>(u.get_deleter()))
 		{}
 
-		unique_ptr&
-		operator=(unique_ptr&& u) noexcept
+		auto
+		operator=(unique_ptr&& u) noexcept -> unique_ptr&
 		{
 			reset(u.release());
 			Faiz::get<1>(pair) = forward<deleter_type>(u.get_deleter());
 			return *this;
 		}
 
-		template<class Up,
-			class Ep,
-			class = EnableIfMoveConvertible<unique_ptr<Up, Ep>, Up>,
-			class = EnableIfDeleterConvertible<Ep>>
-		unique_ptr(unique_ptr<Up, Ep>&& u) noexcept
-			: pair(u.release(), forward<Ep>(u.get_deleter()))
+		template<typename uPointer,
+			typename uDeleter,
+			class = EnableIfMoveConvertible<unique_ptr<uPointer, uDeleter>,
+				uPointer>,
+			class = EnableIfDeleterConvertible<uDeleter>>
+		unique_ptr(unique_ptr<uPointer, uDeleter>&& u) noexcept
+			: pair(u.release(), forward<uDeleter>(u.get_deleter()))
 		{}
 
-		template<class Up,
-			class Ep,
-			class = EnableIfMoveConvertible<unique_ptr<Up, Ep>, Up>,
-			class = EnableIfDeleterAssignable<Ep>>
+		template<typename uPointer,
+			typename uDeleter,
+			class = EnableIfMoveConvertible<unique_ptr<uPointer, uDeleter>,
+				uPointer>,
+			class = EnableIfDeleterAssignable<uDeleter>>
 		unique_ptr&
-		operator=(unique_ptr<Up, Ep>&& u) noexcept
+		operator=(unique_ptr<uPointer, uDeleter>&& u) noexcept
 		{
 			reset(u.release());
-			Faiz::get<1>(pair) = forward<Ep>(u.get_deleter());
+			Faiz::get<1>(pair) = forward<uDeleter>(u.get_deleter());
 			return *this;
 		}
 
-		unique_ptr& operator=(nullptr_t) noexcept
+		auto operator=(nullptr_t) noexcept -> unique_ptr&
 		{
 			reset();
 			return *this;
@@ -688,9 +602,10 @@ namespace Rider::Faiz
 			reset();
 		}
 
-		template<class Pp>
-		enable_if_t<CheckArrayPointerConversion_v<Pp>>
-		reset(Pp p) noexcept
+		template<typename tPointer>
+		auto
+		reset(tPointer p) noexcept
+			-> enable_if_t<CheckArrayPointerConversion_v<tPointer>>
 		{
 			pointer tmp = Faiz::get<0>(pair);
 			Faiz::get<0>(pair) = p;
@@ -701,7 +616,7 @@ namespace Rider::Faiz
 		}
 
 
-		void reset(nullptr_t = nullptr) noexcept
+		auto reset(nullptr_t = nullptr) noexcept -> void
 		{
 			pointer tmp = Faiz::get<0>(pair);
 			Faiz::get<0>(pair) = nullptr;
@@ -712,8 +627,8 @@ namespace Rider::Faiz
 		}
 
 
-		pointer
-		release() noexcept
+		auto
+		release() noexcept -> pointer
 		{
 			pointer tmp = Faiz::get<0>(pair);
 			Faiz::get<0>(pair) = pointer();
@@ -721,8 +636,8 @@ namespace Rider::Faiz
 		}
 
 
-		void
-		swap(unique_ptr& x) noexcept
+		auto
+		swap(unique_ptr& x) noexcept -> void
 		{
 			pair.swap(x.pair);
 		}
@@ -738,20 +653,20 @@ namespace Rider::Faiz
 			return Faiz::get<0>(pair)[i];
 		}
 
-		pointer
-		get() const noexcept
+		auto
+		get() const noexcept -> pointer
 		{
 			return Faiz::get<0>(pair);
 		}
 
-		deleter_type&
-		get_deleter() noexcept
+		auto
+		get_deleter() noexcept -> deleter_type&
 		{
 			return Faiz::get<1>(pair);
 		}
 
-		const deleter_type&
-		get_deleter() const noexcept
+		auto
+		get_deleter() const noexcept -> const deleter_type&
 		{
 			return Faiz::get<1>(pair);
 		}
@@ -764,7 +679,7 @@ namespace Rider::Faiz
 
 
 	template<typename T, typename D>
-	inline void
+	auto
 	swap(unique_ptr<T, D>& a, unique_ptr<T, D>& b) noexcept
 	{
 		a.swap(b);
@@ -772,21 +687,21 @@ namespace Rider::Faiz
 
 
 	template<typename T1, typename D1, typename T2, typename D2>
-	inline bool
+	auto
 	operator==(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
 	{
 		return (a.get() == b.get());
 	}
 
 	template<typename T, typename D>
-	inline bool
+	auto
 	operator==(const unique_ptr<T, D>& a, nullptr_t) noexcept
 	{
 		return !a;
 	}
 
 	template<typename T, typename D>
-	inline bool
+	auto
 	operator==(nullptr_t, const unique_ptr<T, D>& a) noexcept
 	{
 		return !a;
@@ -794,20 +709,20 @@ namespace Rider::Faiz
 
 
 	template<typename T1, typename D1, typename T2, typename D2>
-	inline bool
+	auto
 	operator<(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
 	{
 		using P1 = _p<Faiz::unique_ptr<T1, D1>>;
 		using P2 = _p<Faiz::unique_ptr<T2, D2>>;
-		using PCommon = common_type_t<P1, P2>;
-		PCommon pT1 = a.get();
-		PCommon pT2 = b.get();
-		return std::less<PCommon>()(pT1, pT2);
+		using tCommon = common_type_t<P1, P2>;
+		tCommon pT1 = a.get();
+		tCommon pT2 = b.get();
+		return std::less<tCommon>()(pT1, pT2);
 	}
 
 
 	template<typename T, typename D>
-	inline bool
+	auto
 	operator<(const unique_ptr<T, D>& a, nullptr_t)
 	{
 		using pointer = _p<unique_ptr<T, D>>;
@@ -815,7 +730,7 @@ namespace Rider::Faiz
 	}
 
 	template<typename T, typename D>
-	inline bool
+	auto
 	operator<(nullptr_t, const unique_ptr<T, D>& b)
 	{
 		using pointer = _p<unique_ptr<T, D>>;
@@ -824,26 +739,26 @@ namespace Rider::Faiz
 	}
 
 	// http://isocpp.org/files/papers/N3656.txt
-	template<class T>
+	template<typename T>
 	struct Unique_if
 	{
 		using Single_object = unique_ptr<T>;
 	};
 
-	template<class T>
+	template<typename T>
 	struct Unique_if<T[]>
 	{
 		using Unknown_bound = unique_ptr<T[]>;
 	};
 
-	template<class T, Faiz::size_t N>
+	template<typename T, Faiz::size_t N>
 	struct Unique_if<T[N]>
 	{
 		using Known_bound = void;
 	};
 
 	// lwg 2098
-	template<class T, class... Args>
+	template<typename T, typename... Args>
 	typename Unique_if<T>::Single_object
 	make_unique(Args&&... args)
 	{
@@ -857,7 +772,7 @@ namespace Rider::Faiz
 		}
 	}
 
-	template<class T>
+	template<typename T>
 	typename Unique_if<T>::Unknown_bound
 	make_unique(size_t n)
 	{
@@ -865,13 +780,13 @@ namespace Rider::Faiz
 		return unique_ptr<T>(new U[n]());
 	}
 
-	template<class T, class... Args>
+	template<typename T, typename... Args>
 	typename Unique_if<T>::Known_bound
 	make_unique(Args&&...)
 		= delete;
 
-	template<class T, class D>
-	typename enable_if<std::is_swappable_v<D>, void>::type
+	template<typename T, typename D>
+	enable_if_t<std::is_swappable_v<D>, void>
 	swap(unique_ptr<T, D>& x, unique_ptr<T, D>& y) noexcept
 	{
 		x.swap(y);
