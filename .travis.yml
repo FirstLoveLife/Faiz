@@ -1,0 +1,30 @@
+dist: trusty
+
+sudo: required
+
+env: ARCH_TRAVIS_CLEAN_CHROOT=1
+
+arch:
+
+  packages:
+    - python
+    - python-nose
+    - clang
+    - gcc
+
+  script:
+    - cmake -H. -Bbuild
+          -DCMAKE_CONFIGURATION_TYPES="${BUILD_TYPE}"
+          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+          -G"${CMAKE_GENERATOR}"
+     - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
+        cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
+       else
+        cmake --build build --config ${BUILD_TYPE} -- -j2;
+         fi
+    - cd build
+    - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure -j 4
+
+script: 'curl -s https://raw.githubusercontent.com/mikkeloscar/arch-travis/master/arch-travis.sh | bash'
+
+# vim: ft=yaml ts=2 sw=2 et:
