@@ -1,69 +1,139 @@
-# Control file for continuous integration testing at http://travis-ci.org/
-
-language: cpp
+language: generic
+os: linux
+dist: xenial
 
 matrix:
   include:
-    # An optimised build with address, leak and undefined behavior checking
-    - os: linux
-      compiler: clang
-      sudo: required
-      env: CFLAGS="-fsanitize=address" LDFLAGS="-fsanitize=address"
-    - os: linux
-      compiler: gcc-8
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-8
-      env:
-        - CC=gcc-8
-        - AR=gcc-ar-8
-    # An unoptimised C99 build, for detecting non-static inline functions
-    - os: linux
-      compiler: gcc-8
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-8
-      env:
-        - CC=gcc-8
-        - AR=gcc-ar-8
-        - CFLAGS="-std=gnu99 -O0"
-    - os: osx
-      compiler: clang
-    - os: linux
       compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.7']
+      env: CXX=g++-4.7
 
-env:
-  global:
-    - HTSDIR=./htslib
+    - compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7']
+      env:
+        - CXX=g++-7
+        - CXXSTD=-std=c++17
 
-# For linux systems
-addons:
-  apt:
-    packages:
-    - liblzma-dev
-    - libbz2-dev
+    - compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-8']
+      env:
+        - CXX=g++-8
+        - CXXSTD=-std=c++20
 
-# For MacOSX systems
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install xz || ( brew update && brew install xz ); fi
+      compiler: clang
+      env:
+        - CXX=clang++
 
-before_script:
-  # Clone htslib, trying the same branch name in the owners' copy of htslib.
-  # If this exists then the user is likely making a joint PR to htslib and
-  # samtools and we want to validate this PR works in the context of their
-  # htslib.  If not, then we need to test this PR against the upstream
-  # develop htslib as this is what we'll be linking against once merged.
-  # Logic for choosing which to use is in the .travis/clone script.
-  - .travis/clone "git://github.com/$(dirname $TRAVIS_REPO_SLUG)/htslib.git" "$HTSDIR" "$TRAVIS_BRANCH"
+
+    - compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-7']
+          packages: ['clang-7']
+      env:
+        - CXX=clang++-7
+
+    - os: osx
+      osx_image: xcode6.4
+      compiler: clang
+      env:
+        - CXX=clang++
+
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang
+      env:
+        - CXX=clang++
+
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env:
+        - CXX=clang++
+
+    - os: osx
+      osx_image: xcode9.4
+      compiler: clang
+      env:
+        - CXX=clang++
+
+    - os: osx
+      osx_image: xcode10
+      compiler: clang
+      env:
+        - CXX=clang++
+
+    - compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-7']
+      env:
+        - CXX=g++-7
+        - CXXFLAGS="-O0 --coverage"
+      before_script:
+        - pip install --user cpp-coveralls
+      after_success:
+        - coveralls --gcov gcov-7 --gcov-options '\-lp' --exclude src
+
+    - compiler: clang
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-7']
+          packages: ['clang-7', 'clang-tidy-7']
+      env:
+        - CXX=clang++-7
+        - CLANG_TIDY=clang-tidy-7
+      script:
+        - make -kj3 clang-tidy
+
+    - language: python
+      python:
+        - "3.6"
+      sudo: required
+      install:
+        - pip install conan conan-package-tools
+      env:
+        - CONAN_GCC_VERSIONS=7
+        - CONAN_DOCKER_IMAGE=lasote/conangcc7
+      script:
+        - python .conan/build.py
+
+    - compiler: gcc
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-8']
+      env:
+        - CXX=g++-8
+      script:
+        - $CXX --version
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cmake --build .
+        - cmake --build . --target test
+
+
 
 script:
-  - cmake -H. -Bbuild
-  - cd build
-  - make
-  - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure -j 4
+  - cmake --version
+  - clang --version
+  - gcc --version
+  # - sudo pip install --upgrade pip
+  # - sudo pip install cmake
+  # - ls /usr/local/bin
+  # - /usr/local/bin/cmake --version
+  # - /usr/local/bin/cmake -H. -Bbuild
+  # - cat /home/travis/build/FirstLoveLife/Rider-Faiz/build/CMakeFiles/CMakeOutput.log
+  # - make
+  # - make test

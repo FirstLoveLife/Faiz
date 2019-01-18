@@ -2,7 +2,7 @@
 # This file is subject to the license terms in the LICENSE file
 # found in the top-level directory of this distribution.
 
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.11)
 project(faiz)
 
 # Build tests if this is the main project
