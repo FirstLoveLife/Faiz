@@ -12,28 +12,26 @@ matrix:
       before_script:
         - CXX=g++-8
         - CXXSTD=-std=c++20
+      env:
+        - CXX=g++
 
     - compiler: clang
       before_install:
         - sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
         - sudo apt-get update -qq
-
       install:
         - sudo apt-get install libboost-all-dev
         - sudo apt-get install --allow-unauthenticated -qq clang++-8
-        - export CXX="clang++-8"
-
+        - export CXX="clang++"
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'libboost-all-dev']
-          packages: ['g++-8']
+          packages: ['g++-8', 'libboost-all-dev']
       env:
-        - CXX=clang++-8
+        - CXX=clang++
       before_script:
-        - CXX=clang++-8
+        - CXX=clang++
         - CXXSTD=-std=c++20
-
-
 
 
 script:

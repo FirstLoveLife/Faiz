@@ -55,12 +55,13 @@ I can't finish a project without stealing code around, so here are the main sour
 
 * license
 This library includes(and are most modified heavily) third party open source
-software components: [[https://github.com/llvm-mirror/libcxx][libcxx]] and [[https://github.com/gcc-mirror/gcc/tree/master/libstdc%2B%2B-v3][libstdcxx]](for test files and some traits)[https://github.com/FrankHB/YSLib/][YSLib],
-[[https://github.com/Morwenn/tight_pair/][tight_pair]](~compressed_pair.hpp~, for [[https://en.cppreference.com/w/cpp/language/ebo][ebco]] and test cases), [[https://github.com/ericniebler/range-v3][range-v3]](for
-utilities like is_swappable and some meta functions), and
-[[https://github.com/catchorg/Catch2][Catch2]](for write test files), [[https://www.boost.org/][boost]](esp for boost.pp and boost.boost.predef),
-[[https://github.com/taocpp/operators][tao-operators]](for compare functions, can be replaced with ~three-way comparison~
-if it is available.). Each of these software components have their own license. Please see ./Foo/License.txt, ./Bar/License.txt, and ./Whatsit/License.txt.
+software components:
+- [[https://github.com/llvm-mirror/libcxx][libcxx]] and [[https://github.com/gcc-mirror/gcc/tree/master/libstdc%2B%2B-v3][libstdcxx]](for test files and some traits)
+- [[https://github.com/FrankHB/YSLib/][YSLib]],
+- [[https://github.com/Morwenn/tight_pair/][tight_pair]](~compressed_pair.hpp~, for [[https://en.cppreference.com/w/cpp/language/ebo][ebco]] and test cases), [[https://github.com/ericniebler/range-v3][range-v3]](for utilities like is_swappable and some meta functions), and
+- [[https://github.com/catchorg/Catch2][Catch2]](for write test files), [[https://www.boost.org/][boost]](esp for boost.pp and boost.boost.predef),
+[[https://github.com/taocpp/operators][- tao-operators]](for compare functions, can be replaced with ~three-way
+comparison~ if it is available.). Each of these software components have their own license. Please see ./Foo/License.txt, ./Bar/License.txt, and ./Whatsit/License.txt.
 
 All files mentioned below preserve original copyright.
 
