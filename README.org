@@ -1,3 +1,6 @@
+[[https://travis-ci.org/FirstLoveLife/Rider-Faiz][file:https://travis-ci.org/FirstLoveLife/Rider-Faiz.svg?branch=master]]
+
+
 * Different behavior from c++ standard library
 ** unique_ptr
 *** compare functions for array
@@ -31,6 +34,10 @@ http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduc
   formmer can do more.
 - Prefer ~enable_if~ in function's template parameter variable.
 , see also https://github.com/isocpp/CppCoreGuidelines/pull/1115
+* Travis-CI
+- g++-8
+- clang++-8
+- -std=c++20
 * ThirdParty Package
 - boost.pp
 - [[https://www.boost.org/doc/libs/1_68_0/doc/html/predef/using_the_predefs.html][boost.predef]]
