@@ -38,9 +38,6 @@ http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduc
 - g++-8
 - clang++-8
 - -std=c++20
-* ThirdParty Package
-- boost.pp
-- [[https://www.boost.org/doc/libs/1_68_0/doc/html/predef/using_the_predefs.html][boost.predef]]
 * Acknowledgements
 I can't finish a project without stealing code around, so here are the main sources of the code that can be found in this projects when I didn't write it by myself:
 - A great deal of code originally comes from the libcxx/libstdcxx/cppreference implementation of
@@ -56,4 +53,19 @@ I can't finish a project without stealing code around, so here are the main sour
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0528r2.html][p0528R2 The Curious Case of Padding Bits, Featuring Atomic Compare-and-Exchange]] ---- tight_pair
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3974.pdf][N3974 - Polymorphic Deleter for Unique Pointers]] -- unique_ptr
 
+* license
+This library includes(and are most modified heavily) third party open source
+software components: [[https://github.com/llvm-mirror/libcxx][libcxx]] and [[https://github.com/gcc-mirror/gcc/tree/master/libstdc%2B%2B-v3][libstdcxx]](for test files and some traits)[https://github.com/FrankHB/YSLib/][YSLib],
+[[https://github.com/Morwenn/tight_pair/][tight_pair]](~compressed_pair.hpp~, for [[https://en.cppreference.com/w/cpp/language/ebo][ebco]] and test cases), [[https://github.com/ericniebler/range-v3][range-v3]](for
+utilities like is_swappable and some meta functions), and
+[[https://github.com/catchorg/Catch2][Catch2]](for write test files), [[https://www.boost.org/][boost]](esp for boost.pp and boost.boost.predef),
+[[https://github.com/taocpp/operators][tao-operators]](for compare functions, can be replaced with ~three-way comparison~
+if it is available.). Each of these software components have their own license. Please see ./Foo/License.txt, ./Bar/License.txt, and ./Whatsit/License.txt.
+
+All files mentioned below preserve original copyright.
+
+* Who is faiz?
+#+BEGIN_SRC language
+Kamen Rider Faiz (仮面ライダーファイズ Kamen Raidā Faizu, Masked Rider Faiz) is the main protagonist of the 2003-2004 Kamen Rider Series installment Kamen Rider 555. Its gear is the first of the Rider Gears seen in the series. Its motif is based on the Greek letter phi (Φ).
+#+END_SRC
 [[faiz.jpg][faiz.jpg]]
