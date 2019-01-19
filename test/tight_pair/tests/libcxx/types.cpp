@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 #include "rider/faiz/compressed_pair.hpp"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <type_traits>
 
 TEST_CASE("test std::tuple_element")

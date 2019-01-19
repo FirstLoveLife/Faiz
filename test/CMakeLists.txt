@@ -1,5 +1,5 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 
 
 
@@ -40,7 +40,7 @@ set_target_properties(faiz_test PROPERTIES CXX_STANDARD 20)
 add_test(NAME test COMMAND faiz_test)
 
 
-include_directories(/home/firstlove/projects/faiz/include)
+include_directories($(CMAKE_CURRENT_SOURCE_DIR)/include)
 
 # add_subdirectory(unique_ptr)
 enable_testing()

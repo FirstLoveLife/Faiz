@@ -23,7 +23,7 @@
  */
 #include "archetypes.h"
 #include "rider/faiz/compressed_pair.hpp"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <string>
 #include <type_traits>
 #include <utility>

@@ -23,7 +23,7 @@
  */
 #include "rider/faiz/compressed_pair.hpp"
 #include <array>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <tuple>
 #include <type_traits>
 #include <utility>

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 #include "rider/faiz/compressed_pair.hpp"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 template<typename T1, typename T2>
 void

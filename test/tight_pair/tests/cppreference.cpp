@@ -23,7 +23,7 @@
  */
 #include "rider/faiz/compressed_pair.hpp"
 #include <algorithm>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <complex>
 #include <functional>
 #include <string>

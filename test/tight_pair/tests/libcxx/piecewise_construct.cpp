@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 #include "rider/faiz/compressed_pair.hpp"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <tuple>
 #include <utility>
 

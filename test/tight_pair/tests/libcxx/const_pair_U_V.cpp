@@ -24,7 +24,7 @@
 #include "archetypes.h"
 #include "rider/faiz/compressed_pair.hpp"
 #include "test_convertible.h"
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <type_traits>
 
 namespace
