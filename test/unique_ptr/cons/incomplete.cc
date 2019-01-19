@@ -17,14 +17,11 @@
 
 // { dg-do compile { target c++11 } }
 
-#include "rider/faiz/unique_ptr.hpp"
+// #include "rider/faiz/unique_ptr.hpp"
 #include <catch2/catch.hpp>
 #include <memory>
 
-namespace
-{
-	struct Incomplete;
-}
+struct Incomplete;
 
 void
 f(void** p)
@@ -32,7 +29,9 @@ f(void** p)
 	::new(p[0]) std::unique_ptr<Incomplete>();
 	::new(p[1]) std::unique_ptr<Incomplete[]>();
 
+#if __GNUC__ >= 8 && __GNUC_MINOR__ >= 2 && __GNUC_PATCHLEVEL__ >= 1
 	// PR libstdc++/87704
 	::new(p[2]) std::unique_ptr<Incomplete>(nullptr);
 	::new(p[3]) std::unique_ptr<Incomplete[]>(nullptr);
+#endif
 }
