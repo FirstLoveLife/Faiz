@@ -5,6 +5,7 @@
 cmake_minimum_required(VERSION 3.11)
 project(faiz)
 
+# include_directories(${root_SOURCE_DIR}/include)
 # Build tests if this is the main project
 enable_testing()
 add_subdirectory(test)

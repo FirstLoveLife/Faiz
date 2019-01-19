@@ -90,7 +90,6 @@ if (UNIX AND NOT APPLE)
 endif()
 
 
-# include_directories(/home/firstlove/projects/faiz/include)
 
 add_test(NAME test COMMAND unique_ptr-testsuite)
 
@@ -119,6 +118,7 @@ endif()
 # add_test(NAME test COMMAND unique_ptr-testsuite)
 
 
+include_directories( ${CMAKE_SOURCE_DIR}/include )
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
 catch_discover_tests(unique_ptr-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})

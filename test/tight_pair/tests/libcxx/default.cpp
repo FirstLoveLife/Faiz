@@ -25,8 +25,8 @@
 #include "rider/faiz/compressed_pair.hpp"
 #include <catch2/catch.hpp>
 
+#include "rider/faiz/compressed_pair.hpp"
 #include <catch2/catch.hpp>
-#include <tight_pair.h>
 #include <type_traits>
 
 TEST_CASE("default noexcept")
