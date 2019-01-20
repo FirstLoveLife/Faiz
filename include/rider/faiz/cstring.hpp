@@ -3,10 +3,10 @@
 #include "rider/faiz/algorithm.hpp"
 #include "rider/faiz/cstddef.hpp" // for size_t
 #include "rider/faiz/debug.hpp"
+#include "rider/faiz/macros.hpp"
 namespace Rider::Faiz
 {
-	template<class CharT>
-	class char_traits;
+	tpl<class CharT> class char_traits;
 
 	// Copies count characters from the object pointed to by src to the object
 	// pointed to by dest. Both objects are reinterpreted as arrays of unsigned
@@ -98,12 +98,12 @@ namespace Rider::Faiz
 	}
 
 
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_find(const Char* p, Size sz, Char c, Size pos) noexcept
+		cexp Size
+		str_find(const Char* p, Size sz, Char c, Size pos) noexcept
 	{
 		Expects(p || sz == 0);
 		if(pos < sz)
@@ -111,12 +111,13 @@ namespace Rider::Faiz
 				return Size(ret - p);
 		return NPos;
 	}
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_find(const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
+		cexp Size
+		str_find(
+			const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
 		Expects((p || sz == 0) && (s || n == 0));
 		if(n == 0)
@@ -129,12 +130,12 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_rfind(const Char* p, Size sz, Char c, Size pos) noexcept
+		cexp Size
+		str_rfind(const Char* p, Size sz, Char c, Size pos) noexcept
 	{
 		Expects(p || sz == 0);
 		if(0 < sz)
@@ -147,12 +148,13 @@ namespace Rider::Faiz
 		}
 		return NPos;
 	}
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_rfind(const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
+		cexp Size
+		str_rfind(
+			const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
 		Expects((p || sz == 0) && (s || n == 0));
 		if(n <= sz)
@@ -166,13 +168,13 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_find_first_of(
-		const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
+		cexp Size
+		str_find_first_of(
+			const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
 		Expects((p || sz == 0) && (s || n == 0));
 		if(n != 0)
@@ -184,13 +186,13 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_find_last_of(
-		const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
+		cexp Size
+		str_find_last_of(
+			const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
 		Expects((p || sz == 0) && (s || n == 0));
 		if(sz != 0 && n != 0)
@@ -205,12 +207,12 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_find_first_not_of(const Char* p, Size sz, Char c, Size pos) noexcept
+		cexp Size
+		str_find_first_not_of(const Char* p, Size sz, Char c, Size pos) noexcept
 	{
 		Expects(p || sz == 0);
 		for(; pos < sz; ++pos)
@@ -218,13 +220,13 @@ namespace Rider::Faiz
 				return pos;
 		return NPos;
 	}
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_find_first_not_of(
-		const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
+		cexp Size
+		str_find_first_not_of(
+			const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
 		Expects((p || sz == 0) && (s || n == 0));
 		for(; pos < sz; ++pos)
@@ -233,12 +235,12 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_find_last_not_of(const Char* p, Size sz, Char c, Size pos) noexcept
+		cexp Size
+		str_find_last_not_of(const Char* p, Size sz, Char c, Size pos) noexcept
 	{
 		Expects(p || sz == 0);
 		if(sz != 0)
@@ -252,13 +254,13 @@ namespace Rider::Faiz
 		}
 		return NPos;
 	}
-	template<typename Char,
-		typename Size,
+	tpl<typ Char,
+		typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
-	constexpr Size
-	str_find_last_not_of(
-		const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
+		cexp Size
+		str_find_last_not_of(
+			const Char* p, Size sz, const Char* s, Size pos, Size n) noexcept
 	{
 		Expects((p || sz == 0) && (s || n == 0));
 		if(sz != 0)

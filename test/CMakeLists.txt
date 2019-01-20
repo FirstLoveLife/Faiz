@@ -8,7 +8,7 @@ if(TARGET Catch2::Catch2)
   message("catch2 has been installed previously")
   include(Catch)
 else()
-  message("no target catch2")
+  message("no target catch2, Cloning into your build dir......")
 
   include(FetchContent)
   # Download and configure Catch2 for the tests

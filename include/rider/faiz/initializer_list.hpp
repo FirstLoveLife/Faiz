@@ -1,10 +1,10 @@
 #ifndef INITIALIZER_LIST
 #define INITIALIZER_LIST
 #include "rider/faiz/cstddef.hpp"
+#include "rider/faiz/macros.hpp"
 namespace Rider::Faiz
 {
-	template<class E>
-	class initializer_list
+	tpl<class E> class initializer_list
 	{
 		const E* b;
 		size_t s;
@@ -17,22 +17,24 @@ namespace Rider::Faiz
 		using iterator = const E*;
 		using const_iterator = const E*;
 
-		constexpr initializer_list() noexcept : b(nullptr), s(0)
+		cexp
+		initializer_list() noexcept
+			: b(nullptr), s(0)
 		{}
 
-		constexpr size_t
+		cexp size_t
 		size() const noexcept
 		{
 			return size;
 		}
 
-		constexpr const E*
+		cexp const E*
 		begin() const noexcept
 		{
 			return begin;
 		}
 
-		constexpr const E*
+		cexp const E*
 		end() const noexcept
 		{
 			return s + b;
@@ -41,15 +43,13 @@ namespace Rider::Faiz
 
 	// rbegin and rend are in "iterator.hpp"
 
-	template<class E>
-	inline constexpr const E*
+	tpl<class E> inline cexp const E*
 	begin(initializer_list<E> il) noexcept
 	{
 		return il.begin();
 	}
 
-	template<class E>
-	inline constexpr const E*
+	tpl<class E> inline cexp const E*
 	end(initializer_list<E> il) noexcept
 	{
 		return il.end();

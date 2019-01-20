@@ -1,12 +1,13 @@
 #ifndef OBSERVER_PTR
 #define OBSERVER_PTR
 #include "rider/faiz/debug.hpp"
+#include "rider/faiz/macros.hpp"
 #include "rider/faiz/math/RelationAlgebra.hpp"
 namespace Rider::Faiz
 {
-	template<typename T>
-	class observer_ptr : private totally_ordered<observer_ptr<T>>,
-						 private equality_comparable<observer_ptr<T>, nullptr_t>
+	tpl<typ T> class observer_ptr
+		: private totally_ordered<observer_ptr<T>>,
+		  private equality_comparable<observer_ptr<T>, nullptr_t>
 	{
 	public:
 		using element_type = T;
@@ -17,50 +18,54 @@ namespace Rider::Faiz
 		T* ptr{};
 
 	public:
-		constexpr observer_ptr() noexcept = default;
-		constexpr observer_ptr(nullptr_t) noexcept : ptr()
+		cexp
+		observer_ptr() noexcept
+			= default;
+		cexp observer_ptr(nullptr_t) noexcept : ptr()
 		{}
-		explicit constexpr observer_ptr(pointer p) noexcept : ptr(p)
+		explicit cexp
+		observer_ptr(pointer p) noexcept
+			: ptr(p)
 		{}
-		template<typename Other>
-		constexpr observer_ptr(observer_ptr<Other> other) noexcept
+		tpl<typ Other> cexp
+		observer_ptr(observer_ptr<Other> other) noexcept
 			: ptr(other.get())
 		{}
 
-		constexpr reference operator*() const noexcept
+		cexp reference operator*() const noexcept
 		{
 			Expects(get() != nullptr);
 			return *ptr;
 		}
 
-		constexpr pointer operator->() const noexcept
+		cexp pointer operator->() const noexcept
 		{
 			return ptr;
 		}
 
-		friend constexpr bool
+		friend cexp bool
 		operator==(observer_ptr p, nullptr_t) noexcept
 		{
 			return !p.ptr;
 		}
 
-		explicit constexpr operator bool() const noexcept
+		explicit cexp operator bool() const noexcept
 		{
 			return ptr;
 		}
 
-		explicit constexpr operator pointer() const noexcept
+		explicit cexp operator pointer() const noexcept
 		{
 			return ptr;
 		}
 
-		constexpr pointer
+		cexp pointer
 		get() const noexcept
 		{
 			return ptr;
 		}
 
-		constexpr pointer
+		cexp pointer
 		release() noexcept
 		{
 			const auto res(ptr);
@@ -69,13 +74,13 @@ namespace Rider::Faiz
 			return res;
 		}
 
-		constexpr void
+		cexp void
 		reset(pointer p = {}) noexcept
 		{
 			ptr = p;
 		}
 
-		constexpr void
+		cexp void
 		swap(observer_ptr& other) noexcept
 		{
 			// TODO: use Faiz::swap

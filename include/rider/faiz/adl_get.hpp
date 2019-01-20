@@ -14,6 +14,7 @@
 #define RANGES_V3_DETAIL_ADL_GET_HPP
 
 #include "rider/faiz/faiz_fwd.hpp"
+#include "rider/faiz/macros.hpp"
 #include <cstddef>
 
 namespace Rider::Faiz
@@ -22,17 +23,14 @@ namespace Rider::Faiz
 	{
 		namespace _adl_get_
 		{
-			template<class>
-			void
+			tpl<class> void
 			get();
 
-			template<std::size_t I, typename Tuple>
-			constexpr auto
+			tpl<std::size_t I, typ Tuple> cexp auto
 			adl_get(Tuple&& t)
 				DECLTYPE_AUTO_RETURN_NOEXCEPT(get<I>(static_cast<Tuple&&>(t)))
 
-					template<typename T, typename Tuple>
-					constexpr auto adl_get(Tuple&& t)
+					tpl<typ T, typ Tuple> cexp auto adl_get(Tuple&& t)
 						DECLTYPE_AUTO_RETURN_NOEXCEPT(
 							get<T>(static_cast<Tuple&&>(t)))
 		} // namespace _adl_get_

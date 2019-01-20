@@ -3,6 +3,7 @@
 /*
 Don't implement myself: not_fn, invoke
  */
+#include "rider/faiz/macros.hpp"
 #include "rider/faiz/type_traits.hpp"
 #include "rider/faiz/utility.hpp"
 #include <exception> // for std::except
@@ -12,45 +13,36 @@ namespace Rider::Faiz
 {
 	// both call_traits::param_type and this conditional check are ok, but
 	// check is more simple.
-	template<typename T>
-	struct check : Faiz::conditional<Faiz::is_arithmetic<T>::value, T, check<T>>
+	tpl<typ T> struct check
+		: Faiz::conditional<Faiz::is_arithmetic<T>::value, T, check<T>>
 	{};
 
 
-	template<typename T = void>
-	struct plus;
+	tpl<typ T = void> struct plus;
 
-	template<typename T = void>
-	struct minus;
+	tpl<typ T = void> struct minus;
 
-	template<typename T = void>
-	struct multiplies;
+	tpl<typ T = void> struct multiplies;
 
-	template<typename T = void>
-	struct divides;
+	tpl<typ T = void> struct divides;
 
-	template<typename T = void>
-	struct modulus;
+	tpl<typ T = void> struct modulus;
 
-	template<typename T = void>
-	struct negate;
+	tpl<typ T = void> struct negate;
 
-	template<typename T>
-	struct plus
+	tpl<typ T> struct plus
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x, check<T> y) const
 		{
 			return x + y;
 		}
 	};
 
-	template<>
-	struct plus<void>
+	tpl<> struct plus<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) + Faiz::forward<U>(u)))
 		{
@@ -58,22 +50,19 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename T>
-	struct minus
+	tpl<typ T> struct minus
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x, check<T> y) const
 		{
 			return x - y;
 		}
 	};
 
-	template<>
-	struct minus<void>
+	tpl<> struct minus<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) - Faiz::forward<U>(u)))
 		{
@@ -81,22 +70,19 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename T>
-	struct multiplies
+	tpl<typ T> struct multiplies
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x, check<T> y) const
 		{
 			return x * y;
 		}
 	};
 
-	template<>
-	struct multiplies<void>
+	tpl<> struct multiplies<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) * Faiz::forward<U>(u)))
 		{
@@ -105,22 +91,19 @@ namespace Rider::Faiz
 	};
 
 
-	template<typename T>
-	struct divides
+	tpl<typ T> struct divides
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x, check<T> y) const
 		{
 			return x / y;
 		}
 	};
 
-	template<>
-	struct divides<void>
+	tpl<> struct divides<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) / Faiz::forward<U>(u)))
 		{
@@ -129,22 +112,19 @@ namespace Rider::Faiz
 	};
 
 
-	template<typename T>
-	struct modulus
+	tpl<typ T> struct modulus
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x, check<T> y) const
 		{
 			return x % y;
 		}
 	};
 
-	template<>
-	struct modulus<void>
+	tpl<> struct modulus<void>
 	{
 		using is_transparent = void;
-		template<typename A, typename B>
-		constexpr decltype(auto)
+		tpl<typ A, typ B> cexp decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) % Faiz::forward<B>(b);
@@ -152,22 +132,19 @@ namespace Rider::Faiz
 	};
 
 
-	template<typename T>
-	struct negate
+	tpl<typ T> struct negate
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x) const
 		{
 			return -x;
 		}
 	};
 
-	template<>
-	struct negate<void>
+	tpl<> struct negate<void>
 	{
 		using is_transparent = void;
-		template<typename T>
-		constexpr decltype(auto)
+		tpl<typ T> cexp decltype(auto)
 		operator()(T&& t) const noexcept(noexcept(-Faiz::forward<T>(t)))
 		{
 			return -Faiz::forward<T>(t);
@@ -175,22 +152,19 @@ namespace Rider::Faiz
 	};
 
 
-	template<typename T>
-	struct equal_to
+	tpl<typ T> struct equal_to
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x, check<T> y) const
 		{
 			return x == y;
 		}
 	};
 
-	template<>
-	struct equal_to<void>
+	tpl<> struct equal_to<void>
 	{
 		using is_transparent = int;
-		template<typename A, typename B>
-		constexpr decltype(auto)
+		tpl<typ A, typ B> cexp decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) == Faiz::forward<B>(b);
@@ -198,22 +172,19 @@ namespace Rider::Faiz
 	};
 
 
-	template<typename T>
-	struct not_equal_to
+	tpl<typ T> struct not_equal_to
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x, check<T> y) const
 		{
 			return x != y;
 		}
 	};
 
-	template<>
-	struct not_equal_to<void>
+	tpl<> struct not_equal_to<void>
 	{
 		using is_transparent = int;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) != Faiz::forward<U>(u)))
 		{
@@ -221,33 +192,29 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename T>
-	struct greater
+	tpl<typ T> struct greater
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x, check<T> y) const
 		{
 			return x > y;
 		}
 	};
 
-	template<>
-	struct greater<void>
+	tpl<> struct greater<void>
 	{
 		using is_transparent = void;
 
-		template<typename A, typename B>
-		constexpr decltype(auto)
+		tpl<typ A, typ B> cexp decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) > Faiz::forward<B>(b);
 		}
 	};
 
-	template<typename T>
-	struct less
+	tpl<typ T> struct less
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x, check<T> y) const
 		{
 			return x < y;
@@ -259,7 +226,7 @@ namespace Rider::Faiz
 	// it accepts arguments of arbitrary types and uses perfect forwarding,
 	// which avoids unnecessary copying and conversion when the function object
 	// is used in heterogeneous context, or with rvalue arguments. In
-	// particular, template functions such as `std::set::find` and
+	// particular, tpl functions such as `std::set::find` and
 	// `std::set::lower_bound` make use of this member type on their Compare
 	// types.
 	//
@@ -276,7 +243,7 @@ namespace Rider::Faiz
 	//  paragraph 13. The default comparison function objects is std::less<Key>
 	//  according to 23.4.2 [associative.map.syn] and 23.4.3
 	//  [associative.set.syn]. According to 20.10.5 [comparison] paragraph 4 the
-	//  general template for std::less<...> does not define a nested type
+	//  general tpl for std::less<...> does not define a nested type
 	//  is_transparent but the std::less<void> specialization does. That is, no,
 	//  you don't get a transparent operator by default.
 	//
@@ -286,12 +253,10 @@ namespace Rider::Faiz
 	// always done, and that's still the default.
 	// * Iff you choose to use std::less<> (which is new for C++14) or another
 	// "transparent functor" type then you get the new functionality.
-	template<>
-	struct less<void>
+	tpl<> struct less<void>
 	{
 		using is_transparent = void;
-		template<typename A, typename B>
-		constexpr decltype(auto)
+		tpl<typ A, typ B> cexp decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) < Faiz::forward<B>(b);
@@ -299,22 +264,19 @@ namespace Rider::Faiz
 	};
 
 
-	template<typename T>
-	struct greater_equal
+	tpl<typ T> struct greater_equal
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x, check<T> y) const
 		{
 			return x >= y;
 		}
 	};
 
-	template<>
-	struct greater_equal<void>
+	tpl<> struct greater_equal<void>
 	{
 		using is_transparent = void;
-		template<typename A, typename B>
-		constexpr decltype(auto)
+		tpl<typ A, typ B> cexp decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) >= Faiz::forward<B>(b);
@@ -322,22 +284,19 @@ namespace Rider::Faiz
 	};
 
 
-	template<typename T>
-	struct less_equal
+	tpl<typ T> struct less_equal
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x, check<T> y) const
 		{
 			return x <= y;
 		}
 	};
 
-	template<>
-	struct less_equal<void>
+	tpl<> struct less_equal<void>
 	{
 		using is_transparent = void;
-		template<typename A, typename B>
-		constexpr decltype(auto)
+		tpl<typ A, typ B> cexp decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) <= Faiz::forward<B>(b);
@@ -345,31 +304,25 @@ namespace Rider::Faiz
 	};
 
 
-	template<typename T = void>
-	struct logical_and;
+	tpl<typ T = void> struct logical_and;
 
-	template<typename T = void>
-	struct logical_or;
+	tpl<typ T = void> struct logical_or;
 
-	template<typename T = void>
-	struct logical_not;
+	tpl<typ T = void> struct logical_not;
 
-	template<typename T>
-	struct logical_and
+	tpl<typ T> struct logical_and
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x, check<T> y) const
 		{
 			return x && y;
 		}
 	};
 
-	template<>
-	struct logical_and<void>
+	tpl<> struct logical_and<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) && Faiz::forward<U>(u)))
 		{
@@ -377,22 +330,19 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename T>
-	struct logical_or
+	tpl<typ T> struct logical_or
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x, check<T> y) const
 		{
 			return x || y;
 		}
 	};
 
-	template<>
-	struct logical_or<void>
+	tpl<> struct logical_or<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) || Faiz::forward<U>(u)))
 		{
@@ -400,10 +350,9 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename T>
-	struct logical_not
+	tpl<typ T> struct logical_not
 	{
-		constexpr bool
+		cexp bool
 		operator()(check<T> x) const
 		{
 			return !x;
@@ -411,46 +360,37 @@ namespace Rider::Faiz
 	};
 
 
-	template<>
-	struct logical_not<void>
+	tpl<> struct logical_not<void>
 	{
 		using is_transparent = void;
-		template<typename T>
-		constexpr decltype(auto)
+		tpl<typ T> cexp decltype(auto)
 		operator()(T&& t) const noexcept(noexcept(!Faiz::forward<T>(t)))
 		{
 			return !Faiz::forward<T>(t);
 		}
 	};
 
-	template<typename T = void>
-	struct bit_and;
+	tpl<typ T = void> struct bit_and;
 
-	template<typename T = void>
-	struct bit_or;
+	tpl<typ T = void> struct bit_or;
 
-	template<typename T = void>
-	struct bit_xor;
+	tpl<typ T = void> struct bit_xor;
 
-	template<typename T = void>
-	struct bit_not;
+	tpl<typ T = void> struct bit_not;
 
-	template<typename T>
-	struct bit_and
+	tpl<typ T> struct bit_and
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x, check<T> y) const
 		{
 			return x & y;
 		}
 	};
 
-	template<>
-	struct bit_and<void>
+	tpl<> struct bit_and<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) & Faiz::forward<U>(u)))
 		{
@@ -458,22 +398,19 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename T>
-	struct bit_or
+	tpl<typ T> struct bit_or
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x, check<T> y) const
 		{
 			return x | y;
 		}
 	};
 
-	template<>
-	struct bit_or<void>
+	tpl<> struct bit_or<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) | Faiz::forward<U>(u)))
 		{
@@ -481,22 +418,19 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename T>
-	struct bit_xor
+	tpl<typ T> struct bit_xor
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x, check<T> y) const
 		{
 			return x ^ y;
 		}
 	};
 
-	template<>
-	struct bit_xor<void>
+	tpl<> struct bit_xor<void>
 	{
 		using is_transparent = void;
-		template<typename T, typename U>
-		constexpr decltype(auto)
+		tpl<typ T, typ U> cexp decltype(auto)
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) ^ Faiz::forward<U>(u)))
 		{
@@ -504,10 +438,9 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename T>
-	struct bit_not
+	tpl<typ T> struct bit_not
 	{
-		constexpr T
+		cexp T
 		operator()(check<T> x) const
 		{
 			return ~x;
@@ -515,12 +448,10 @@ namespace Rider::Faiz
 	};
 
 
-	template<>
-	struct bit_not<void>
+	tpl<> struct bit_not<void>
 	{
 		using is_transparent = void;
-		template<typename T>
-		constexpr decltype(auto)
+		tpl<typ T> cexp decltype(auto)
 		operator()(T&& t) const noexcept(noexcept(~Faiz::forward<T>(t)))
 		{
 			return ~Faiz::forward<T>(t);

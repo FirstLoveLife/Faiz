@@ -1,15 +1,15 @@
 #ifndef CHAR_TRAITS
 #define CHAR_TRAITS
 
-#include "rider/faiz/cstring.hpp"
+#include "rider/faiz/macros.hpp"
+
 #include "rider/faiz/cwchar.hpp"
 #include "rider/faiz/debug.hpp"
 
 #include <ios>
 namespace Rider::Faiz
 {
-	template<class CharT>
-	struct char_traits
+	tpl<class CharT> struct char_traits
 	{
 		typedef CharT char_type;
 		typedef int int_type;
@@ -17,27 +17,27 @@ namespace Rider::Faiz
 		typedef std::streampos pos_type;
 		typedef mbstate_t state_type;
 
-		static inline void constexpr assign(
-			char_type& c1, const char_type& c2) noexcept
+		static inline void cexp
+		assign(char_type& c1, const char_type& c2) noexcept
 		{
 			c1 = c2;
 		}
-		static constexpr bool
+		static cexp bool
 		eq(char_type c1, char_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr bool
+		static cexp bool
 		lt(char_type c1, char_type c2) noexcept
 		{
 			return c1 < c2;
 		}
 
-		static constexpr int
+		static cexp int
 		compare(const char_type* s1, const char_type* s2, size_t n);
-		static constexpr size_t
+		static cexp size_t
 		length(const char_type* s);
-		static constexpr const char_type*
+		static cexp const char_type*
 		find(const char_type* s, size_t n, const char_type& a);
 		static char_type*
 		move(char_type* s1, const char_type* s2, size_t n);
@@ -48,35 +48,34 @@ namespace Rider::Faiz
 		static char_type*
 		assign(char_type* s, size_t n, char_type a);
 
-		static constexpr int_type
+		static cexp int_type
 		not_eof(int_type c) noexcept
 		{
 			return eq_int_type(c, eof()) ? ~eof() : c;
 		}
-		static constexpr char_type
+		static cexp char_type
 		to_char_type(int_type c) noexcept
 		{
 			return char_type(c);
 		}
-		static constexpr int_type
+		static cexp int_type
 		to_int_type(char_type c) noexcept
 		{
 			return int_type(c);
 		}
-		static constexpr bool
+		static cexp bool
 		eq_int_type(int_type c1, int_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr int_type
+		static cexp int_type
 		eof() noexcept
 		{
 			return int_type(EOF);
 		}
 	};
 
-	template<class CharT>
-	constexpr int
+	tpl<class CharT> cexp int
 	char_traits<CharT>::compare(
 		const char_type* s1, const char_type* s2, size_t n)
 	{
@@ -90,8 +89,7 @@ namespace Rider::Faiz
 		return 0;
 	}
 
-	template<class CharT>
-	constexpr size_t
+	tpl<class CharT> cexp size_t
 	char_traits<CharT>::length(const char_type* s)
 	{
 		size_t len = 0;
@@ -100,8 +98,7 @@ namespace Rider::Faiz
 		return len;
 	}
 
-	template<class CharT>
-	constexpr const CharT*
+	tpl<class CharT> cexp const CharT*
 	char_traits<CharT>::find(const char_type* s, size_t n, const char_type& a)
 	{
 		for(; n; --n)
@@ -113,8 +110,7 @@ namespace Rider::Faiz
 		return 0;
 	}
 
-	template<class CharT>
-	CharT*
+	tpl<class CharT> CharT*
 	char_traits<CharT>::move(char_type* s1, const char_type* s2, size_t n)
 	{
 		char_type* r = s1;
@@ -133,8 +129,7 @@ namespace Rider::Faiz
 		return r;
 	}
 
-	template<class CharT>
-	inline CharT*
+	tpl<class CharT> inline CharT*
 	char_traits<CharT>::copy(char_type* s1, const char_type* s2, size_t n)
 	{
 		assertWithLog(
@@ -145,8 +140,7 @@ namespace Rider::Faiz
 		return r;
 	}
 
-	template<class CharT>
-	inline CharT*
+	tpl<class CharT> inline CharT*
 	char_traits<CharT>::assign(char_type* s, size_t n, char_type a)
 	{
 		char_type* r = s;
@@ -157,8 +151,7 @@ namespace Rider::Faiz
 
 	// char_traits<char>
 
-	template<>
-	struct char_traits<char>
+	tpl<> struct char_traits<char>
 	{
 		typedef char char_type;
 		typedef int int_type;
@@ -166,29 +159,30 @@ namespace Rider::Faiz
 		typedef std::streampos pos_type;
 		typedef mbstate_t state_type;
 
-		static constexpr void
+		static cexp void
 		assign(char_type& c1, const char_type& c2) noexcept
 		{
 			c1 = c2;
 		}
-		static constexpr bool
+		static cexp bool
 		eq(char_type c1, char_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr bool
+		static cexp bool
 		lt(char_type c1, char_type c2) noexcept
 		{
 			return (unsigned char)c1 < (unsigned char)c2;
 		}
 
-		static constexpr int
+		static cexp int
 		compare(const char_type* s1, const char_type* s2, size_t n) noexcept;
-		static inline size_t constexpr length(const char_type* s) noexcept
+		static inline size_t cexp
+		length(const char_type* s) noexcept
 		{
 			return __builtin_strlen(s);
 		}
-		static constexpr const char_type*
+		static cexp const char_type*
 		find(const char_type* s, size_t n, const char_type& a) noexcept;
 		static inline char_type*
 		move(char_type* s1, const char_type* s2, size_t n) noexcept
@@ -207,34 +201,34 @@ namespace Rider::Faiz
 			return n == 0 ? s : (char_type*)memset(s, to_int_type(a), n);
 		}
 
-		static constexpr int_type
+		static cexp int_type
 		not_eof(int_type c) noexcept
 		{
 			return eq_int_type(c, eof()) ? ~eof() : c;
 		}
-		static constexpr char_type
+		static cexp char_type
 		to_char_type(int_type c) noexcept
 		{
 			return char_type(c);
 		}
-		static constexpr int_type
+		static cexp int_type
 		to_int_type(char_type c) noexcept
 		{
 			return int_type((unsigned char)c);
 		}
-		static constexpr bool
+		static cexp bool
 		eq_int_type(int_type c1, int_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr int_type
+		static cexp int_type
 		eof() noexcept
 		{
 			return int_type(EOF);
 		}
 	};
 
-	constexpr int
+	cexp int
 	char_traits<char>::compare(
 		const char_type* s1, const char_type* s2, size_t n) noexcept
 	{
@@ -250,7 +244,7 @@ namespace Rider::Faiz
 		return 0;
 	}
 
-	constexpr const char*
+	cexp const char*
 	char_traits<char>::find(
 		const char_type* s, size_t n, const char_type& a) noexcept
 	{
@@ -266,8 +260,7 @@ namespace Rider::Faiz
 	}
 
 
-	template<>
-	struct char_traits<wchar_t>
+	tpl<> struct char_traits<wchar_t>
 	{
 		typedef wchar_t char_type;
 		typedef wint_t int_type;
@@ -275,27 +268,27 @@ namespace Rider::Faiz
 		typedef std::streampos pos_type;
 		typedef mbstate_t state_type;
 
-		static constexpr void
+		static cexp void
 		assign(char_type& c1, const char_type& c2) noexcept
 		{
 			c1 = c2;
 		}
-		static constexpr bool
+		static cexp bool
 		eq(char_type c1, char_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr bool
+		static cexp bool
 		lt(char_type c1, char_type c2) noexcept
 		{
 			return c1 < c2;
 		}
 
-		static constexpr int
+		static cexp int
 		compare(const char_type* s1, const char_type* s2, size_t n) noexcept;
-		static constexpr size_t
+		static cexp size_t
 		length(const char_type* s) noexcept;
-		static constexpr const char_type*
+		static cexp const char_type*
 		find(const char_type* s, size_t n, const char_type& a) noexcept;
 		static inline char_type*
 		move(char_type* s1, const char_type* s2, size_t n) noexcept
@@ -314,34 +307,34 @@ namespace Rider::Faiz
 			return n == 0 ? s : (char_type*)wmemset(s, a, n);
 		}
 
-		static constexpr int_type
+		static cexp int_type
 		not_eof(int_type c) noexcept
 		{
 			return eq_int_type(c, eof()) ? ~eof() : c;
 		}
-		static constexpr char_type
+		static cexp char_type
 		to_char_type(int_type c) noexcept
 		{
 			return char_type(c);
 		}
-		static constexpr int_type
+		static cexp int_type
 		to_int_type(char_type c) noexcept
 		{
 			return int_type(c);
 		}
-		static constexpr bool
+		static cexp bool
 		eq_int_type(int_type c1, int_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr int_type
+		static cexp int_type
 		eof() noexcept
 		{
 			return int_type(WEOF);
 		}
 	};
 
-	constexpr int
+	cexp int
 	char_traits<wchar_t>::compare(
 		const char_type* s1, const char_type* s2, size_t n) noexcept
 	{
@@ -357,7 +350,7 @@ namespace Rider::Faiz
 		return 0;
 	}
 
-	constexpr size_t
+	cexp size_t
 	char_traits<wchar_t>::length(const char_type* s) noexcept
 	{
 		size_t len = 0;
@@ -366,7 +359,7 @@ namespace Rider::Faiz
 		return len;
 	}
 
-	constexpr const wchar_t*
+	cexp const wchar_t*
 	char_traits<wchar_t>::find(
 		const char_type* s, size_t n, const char_type& a) noexcept
 	{
@@ -382,8 +375,7 @@ namespace Rider::Faiz
 	}
 
 
-	template<>
-	struct char_traits<char16_t>
+	tpl<> struct char_traits<char16_t>
 	{
 		typedef char16_t char_type;
 		typedef uint_least16_t int_type;
@@ -391,27 +383,27 @@ namespace Rider::Faiz
 		typedef std::u16streampos pos_type;
 		typedef mbstate_t state_type;
 
-		static constexpr void
+		static cexp void
 		assign(char_type& c1, const char_type& c2) noexcept
 		{
 			c1 = c2;
 		}
-		static constexpr bool
+		static cexp bool
 		eq(char_type c1, char_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr bool
+		static cexp bool
 		lt(char_type c1, char_type c2) noexcept
 		{
 			return c1 < c2;
 		}
 
-		static constexpr int
+		static cexp int
 		compare(const char_type* s1, const char_type* s2, size_t n) noexcept;
-		static constexpr size_t
+		static cexp size_t
 		length(const char_type* s) noexcept;
-		static constexpr const char_type*
+		static cexp const char_type*
 		find(const char_type* s, size_t n, const char_type& a) noexcept;
 
 		static char_type*
@@ -423,34 +415,34 @@ namespace Rider::Faiz
 		static char_type*
 		assign(char_type* s, size_t n, char_type a) noexcept;
 
-		static constexpr int_type
+		static cexp int_type
 		not_eof(int_type c) noexcept
 		{
 			return eq_int_type(c, eof()) ? ~eof() : c;
 		}
-		static constexpr char_type
+		static cexp char_type
 		to_char_type(int_type c) noexcept
 		{
 			return char_type(c);
 		}
-		static constexpr int_type
+		static cexp int_type
 		to_int_type(char_type c) noexcept
 		{
 			return int_type(c);
 		}
-		static constexpr bool
+		static cexp bool
 		eq_int_type(int_type c1, int_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr int_type
+		static cexp int_type
 		eof() noexcept
 		{
 			return int_type(0xFFFF);
 		}
 	};
 
-	constexpr int
+	cexp int
 	char_traits<char16_t>::compare(
 		const char_type* s1, const char_type* s2, size_t n) noexcept
 	{
@@ -464,7 +456,7 @@ namespace Rider::Faiz
 		return 0;
 	}
 
-	constexpr size_t
+	cexp size_t
 	char_traits<char16_t>::length(const char_type* s) noexcept
 	{
 		size_t len = 0;
@@ -473,7 +465,7 @@ namespace Rider::Faiz
 		return len;
 	}
 
-	constexpr const char16_t*
+	cexp const char16_t*
 	char_traits<char16_t>::find(
 		const char_type* s, size_t n, const char_type& a) noexcept
 	{
@@ -526,8 +518,7 @@ namespace Rider::Faiz
 		return r;
 	}
 
-	template<>
-	struct char_traits<char32_t>
+	tpl<> struct char_traits<char32_t>
 	{
 		typedef char32_t char_type;
 		typedef uint_least32_t int_type;
@@ -535,27 +526,27 @@ namespace Rider::Faiz
 		typedef std::u32streampos pos_type;
 		typedef mbstate_t state_type;
 
-		static constexpr void
+		static cexp void
 		assign(char_type& c1, const char_type& c2) noexcept
 		{
 			c1 = c2;
 		}
-		static constexpr bool
+		static cexp bool
 		eq(char_type c1, char_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr bool
+		static cexp bool
 		lt(char_type c1, char_type c2) noexcept
 		{
 			return c1 < c2;
 		}
 
-		static constexpr int
+		static cexp int
 		compare(const char_type* s1, const char_type* s2, size_t n) noexcept;
-		static constexpr size_t
+		static cexp size_t
 		length(const char_type* s) noexcept;
-		static constexpr const char_type*
+		static cexp const char_type*
 		find(const char_type* s, size_t n, const char_type& a) noexcept;
 
 		static char_type*
@@ -567,34 +558,34 @@ namespace Rider::Faiz
 		static char_type*
 		assign(char_type* s, size_t n, char_type a) noexcept;
 
-		static constexpr int_type
+		static cexp int_type
 		not_eof(int_type c) noexcept
 		{
 			return eq_int_type(c, eof()) ? ~eof() : c;
 		}
-		static constexpr char_type
+		static cexp char_type
 		to_char_type(int_type c) noexcept
 		{
 			return char_type(c);
 		}
-		static constexpr int_type
+		static cexp int_type
 		to_int_type(char_type c) noexcept
 		{
 			return int_type(c);
 		}
-		static constexpr bool
+		static cexp bool
 		eq_int_type(int_type c1, int_type c2) noexcept
 		{
 			return c1 == c2;
 		}
-		static constexpr int_type
+		static cexp int_type
 		eof() noexcept
 		{
 			return int_type(0xFFFFFFFF);
 		}
 	};
 
-	constexpr int
+	cexp int
 	char_traits<char32_t>::compare(
 		const char_type* s1, const char_type* s2, size_t n) noexcept
 	{
@@ -608,7 +599,7 @@ namespace Rider::Faiz
 		return 0;
 	}
 
-	constexpr size_t
+	cexp size_t
 	char_traits<char32_t>::length(const char_type* s) noexcept
 	{
 		size_t len = 0;
@@ -617,7 +608,7 @@ namespace Rider::Faiz
 		return len;
 	}
 
-	constexpr const char32_t*
+	cexp const char32_t*
 	char_traits<char32_t>::find(
 		const char_type* s, size_t n, const char_type& a) noexcept
 	{

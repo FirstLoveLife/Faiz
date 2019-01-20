@@ -1,7 +1,7 @@
 #ifndef IOS
 #define IOS
-namespace Rider::Faiz
-{
 
-}
+#include "rider/faiz/macros.hpp"
+namespace Rider::Faiz
+{}
 #endif

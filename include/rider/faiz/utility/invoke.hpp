@@ -15,111 +15,93 @@
 #define RANGES_V3_UTILITY_INVOKE_HPP
 
 #include "rider/faiz/faiz_fwd.hpp"
+#include "rider/faiz/macros.hpp"
 #include "rider/faiz/utility/concepts.hpp"
 #include "rider/faiz/utility/static_const.hpp"
 
 namespace Rider::Faiz
 {
-	template<typename T>
-	struct is_reference_wrapper : meta::if_<is_same<remove_cvref_t<T>, T>,
-									  false_,
-									  is_reference_wrapper<remove_cvref_t<T>>>
+	tpl<typ T> struct is_reference_wrapper
+		: meta::if_<is_same<remove_cvref_t<T>, T>,
+			  false_,
+			  is_reference_wrapper<remove_cvref_t<T>>>
 	{};
 
-	template<typename T>
-	struct is_reference_wrapper<reference_wrapper<T>> : true_
+	tpl<typ T> struct is_reference_wrapper<reference_wrapper<T>> : true_
 	{};
 
-	template<typename T>
-	struct is_reference_wrapper<std::reference_wrapper<T>> : true_
+	tpl<typ T> struct is_reference_wrapper<std::reference_wrapper<T>> : true_
 	{};
 
-	template<typename T>
-	using is_reference_wrapper_t = _t<is_reference_wrapper<T>>;
+	tpl<typ T> using is_reference_wrapper_t = _t<is_reference_wrapper<T>>;
 
 	struct invoke_fn
 	{
 	private:
-		template<typename MemberFunctionPtr, typename First, typename... Rest>
-		static constexpr auto
+		tpl<typ MemberFunctionPtr, typ First, typ... Rest> static cexp auto
 		invoke_member_fn(true_,
 			range::detail::any,
 			MemberFunctionPtr fn,
 			First&& first,
 			Rest&&... rest)
 			DECLTYPE_AUTO_RETURN_NOEXCEPT(
-				(static_cast<First&&>(first).*fn)(static_cast<Rest&&>(
-					rest)...)) template<typename MemberFunctionPtr,
-				typename First,
-				typename... Rest>
-			static constexpr auto invoke_member_fn(false_,
+				(static_cast<First&&>(first).*fn)(static_cast<Rest&&>(rest)...))
+				tpl<typ MemberFunctionPtr, typ First, typ... Rest> static cexp
+			auto invoke_member_fn(false_,
 				true_,
 				MemberFunctionPtr fn,
 				First&& first,
 				Rest&&... rest)
 				DECLTYPE_AUTO_RETURN_NOEXCEPT(
 					(static_cast<First&&>(first).get().*fn)(static_cast<Rest&&>(
-						rest)...)) template<typename MemberFunctionPtr,
-					typename First,
-					typename... Rest>
-				static constexpr auto invoke_member_fn(false_,
-					false_,
-					MemberFunctionPtr fn,
-					First&& first,
-					Rest&&... rest)
-					DECLTYPE_AUTO_RETURN_NOEXCEPT(
-						((*static_cast<First&&>(first)).*fn)(
-							static_cast<Rest&&>(rest)...))
+						rest)...)) tpl<typ MemberFunctionPtr,
+					typ First,
+					typ... Rest> static cexp
+			auto invoke_member_fn(false_,
+				false_,
+				MemberFunctionPtr fn,
+				First&& first,
+				Rest&&... rest)
+				DECLTYPE_AUTO_RETURN_NOEXCEPT(((*static_cast<First&&>(first))
+					.*fn)(static_cast<Rest&&>(rest)...))
 
-						template<typename MemberDataPtr, typename First>
-						static constexpr auto invoke_member_data(true_,
-							range::detail::any,
-							MemberDataPtr ptr,
-							First&& first)
-							DECLTYPE_AUTO_RETURN_NOEXCEPT(
-								static_cast<First&&>(first)
-								.*ptr) template<typename MemberDataPtr,
-								typename First>
-							static constexpr auto invoke_member_data(
-								false_, true_, MemberDataPtr ptr, First&& first)
-								DECLTYPE_AUTO_RETURN_NOEXCEPT(
-									static_cast<First&&>(first).get()
-									.*ptr) template<typename MemberDataPtr,
-									typename First>
-								static constexpr auto invoke_member_data(false_,
-									false_,
-									MemberDataPtr ptr,
-									First&& first)
-									DECLTYPE_AUTO_RETURN_NOEXCEPT(
-										(*static_cast<First&&>(first))
-										.*ptr) public
-			: template<typename F,
-				  typename Obj,
-				  typename First,
-				  typename... Rest,
-				  meta::if_c<is_function<F>::value, int> = 0>
-			  constexpr auto
+					tpl<typ MemberDataPtr, typ First> static cexp
+			auto invoke_member_data(
+				true_, range::detail::any, MemberDataPtr ptr, First&& first)
+				DECLTYPE_AUTO_RETURN_NOEXCEPT(static_cast<First&&>(first)
+					.*ptr) tpl<typ MemberDataPtr, typ First> static cexp
+			auto invoke_member_data(
+				false_, true_, MemberDataPtr ptr, First&& first)
+				DECLTYPE_AUTO_RETURN_NOEXCEPT(static_cast<First&&>(first).get()
+					.*ptr) tpl<typ MemberDataPtr, typ First> static cexp
+			auto invoke_member_data(
+				false_, false_, MemberDataPtr ptr, First&& first)
+				DECLTYPE_AUTO_RETURN_NOEXCEPT(
+					(*static_cast<First&&>(first)).*ptr) public
+			: tpl<typ F,
+				  typ Obj,
+				  typ First,
+				  typ... Rest,
+				  meta::if_c<is_function<F>::value, int> = 0> cexp auto
 			  operator()(F Obj::*ptr, First&& first, Rest&&... rest) const
 			  DECLTYPE_AUTO_RETURN_NOEXCEPT(
 				  invoke_member_fn(is_base_of<Obj, decay_t<First>>{},
 					  is_reference_wrapper_t<decay_t<First>>{},
 					  ptr,
 					  static_cast<First&&>(first),
-					  static_cast<Rest&&>(rest)...)) template<typename Data,
-				  typename Obj,
-				  typename First,
-				  meta::if_c<!is_function<Data>::value, int> = 0>
-			  constexpr auto
+					  static_cast<Rest&&>(rest)...)) tpl<typ Data,
+				  typ Obj,
+				  typ First,
+				  meta::if_c<!is_function<Data>::value, int> = 0> cexp auto
 			  operator()(Data Obj::*ptr, First&& first) const
 			  DECLTYPE_AUTO_RETURN_NOEXCEPT(
 				  invoke_member_data(is_base_of<Obj, decay_t<First>>{},
 					  is_reference_wrapper_t<decay_t<First>>{},
 					  ptr,
-					  static_cast<First&&>(first))) template<typename F,
-				  typename... Args,
+					  static_cast<First&&>(first))) tpl<typ F,
+				  typ... Args,
 				  meta::if_c<!std::is_member_pointer<remove_cvref_t<F>>::value,
-					  int> = 0>
-			  constexpr auto
+					  int> = 0> cexp auto
 			  operator()(F&& fn, Args&&... args) const
 			  DECLTYPE_AUTO_RETURN_NOEXCEPT(
 				  static_cast<F&&>(fn)(static_cast<Args&&>(args)...))
@@ -129,33 +111,40 @@ namespace Rider::Faiz
 	/// \cond
 	namespace detail
 	{
-		template<typename T>
-		struct reference_wrapper_
+		tpl<typ T> struct reference_wrapper_
 		{
 			T* t_ = nullptr;
-			constexpr reference_wrapper_() = default;
-			constexpr reference_wrapper_(T& t) noexcept : t_(std::addressof(t))
+			cexp
+			reference_wrapper_()
+				= default;
+			cexp
+			reference_wrapper_(T& t) noexcept
+				: t_(std::addressof(t))
 			{}
-			constexpr reference_wrapper_(T&&) = delete;
-			constexpr T&
+			cexp
+			reference_wrapper_(T&&)
+				= delete;
+			cexp T&
 			get() const noexcept
 			{
 				return *t_;
 			}
 		};
-		template<typename T>
-		struct reference_wrapper_<T&> : reference_wrapper_<T>
+		tpl<typ T> struct reference_wrapper_<T&> : reference_wrapper_<T>
 		{
 			using reference_wrapper_<T>::reference_wrapper_;
 		};
-		template<typename T>
-		struct reference_wrapper_<T&&>
+		tpl<typ T> struct reference_wrapper_<T&&>
 		{
 			T* t_ = nullptr;
-			constexpr reference_wrapper_() = default;
-			constexpr reference_wrapper_(T&& t) noexcept : t_(std::addressof(t))
+			cexp
+			reference_wrapper_()
+				= default;
+			cexp
+			reference_wrapper_(T&& t) noexcept
+				: t_(std::addressof(t))
 			{}
-			constexpr T&&
+			cexp T&&
 			get() const noexcept
 			{
 				return static_cast<T&&>(*t_);
@@ -165,8 +154,7 @@ namespace Rider::Faiz
 
 	// Can be used to store rvalue references in addition to lvalue
 	// references. Also, see: https://wg21.link/lwg2993
-	template<typename T>
-	struct reference_wrapper : private detail::reference_wrapper_<T>
+	tpl<typ T> struct reference_wrapper : private detail::reference_wrapper_<T>
 	{
 	private:
 		using base_ = detail::reference_wrapper_<T>;
@@ -175,20 +163,23 @@ namespace Rider::Faiz
 		using type = _t<remove_reference<T>>;
 		using reference = meta::if_<is_reference<T>, T, T&>;
 
-		constexpr reference_wrapper() = default;
-		template<typename U,
+		cexp
+		reference_wrapper()
+			= default;
+		tpl<typ U,
 			CONCEPT_REQUIRES_(range::Constructible<base_, U>()
 				&& !range::Same<remove_cvref_t<U>, reference_wrapper>())>
-		constexpr reference_wrapper(U&& u) noexcept(
-			std::is_nothrow_constructible<base_, U>::value)
+			cexp
+			reference_wrapper(U&& u) noexcept(
+				std::is_nothrow_constructible<base_, U>::value)
 			: detail::reference_wrapper_<T>{static_cast<U&&>(u)}
 		{}
-		constexpr reference
+		cexp reference
 		get() const noexcept
 		{
 			return this->base_::get();
 		}
-		constexpr operator reference() const noexcept
+		cexp operator reference() const noexcept
 		{
 			return get();
 		}
@@ -197,8 +188,7 @@ namespace Rider::Faiz
 		{
 			return {get()};
 		}
-		template<typename... Args>
-		constexpr auto
+		tpl<typ... Args> cexp auto
 		operator()(Args&&... args) const
 			DECLTYPE_NOEXCEPT(invoke(declval<reference>(), declval<Args>()...))
 		{
@@ -206,12 +196,11 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename Fun, typename... Args>
-	using invoke_result_t
+	tpl<typ Fun, typ... Args> using invoke_result_t
 		= decltype(invoke(declval<Fun>(), declval<Args>()...));
 
-	template<typename Fun, typename... Args>
-	struct invoke_result : meta::defer<invoke_result_t, Fun, Args...>
+	tpl<typ Fun, typ... Args> struct invoke_result
+		: meta::defer<invoke_result_t, Fun, Args...>
 	{};
 
 } // namespace Rider::Faiz

@@ -16,21 +16,23 @@
 #define RANGES_V3_UTILITY_BOX_HPP
 
 #include "rider/faiz/faiz_fwd.hpp"
+#include "rider/faiz/macros.hpp"
 #include "rider/faiz/utility/concepts.hpp"
 #include <utility>
 
 namespace Rider::Faiz
 {
-	template<typename T>
-	struct mutable_
+	tpl<typ T> struct mutable_
 	{
 		mutable T value;
 		CONCEPT_REQUIRES(std::is_default_constructible<T>::value)
-		constexpr mutable_() : value{}
+		cexp
+		mutable_()
+			: value{}
 		{}
-		constexpr explicit mutable_(T const& t) : value(t)
+		cexp explicit mutable_(T const& t) : value(t)
 		{}
-		constexpr explicit mutable_(T&& t) : value(move(t))
+		cexp explicit mutable_(T&& t) : value(move(t))
 		{}
 		mutable_ const&
 		operator=(T const& t) const
@@ -44,17 +46,16 @@ namespace Rider::Faiz
 			value = move(t);
 			return *this;
 		}
-		constexpr operator T&() const&
+		cexp operator T&() const&
 		{
 			return value;
 		}
 	};
 
-	template<typename T, T v>
-	struct constant
+	tpl<typ T, T v> struct constant
 	{
 		constant() = default;
-		constexpr explicit constant(T const&)
+		cexp explicit constant(T const&)
 		{}
 		constant&
 		operator=(T const&)
@@ -66,11 +67,11 @@ namespace Rider::Faiz
 		{
 			return *this;
 		}
-		constexpr operator T() const
+		cexp operator T() const
 		{
 			return v;
 		}
-		constexpr T
+		cexp T
 		exchange(T const&) const
 		{
 			return v;
@@ -99,18 +100,17 @@ namespace Rider::Faiz
 		// - aggregates             ([expr.prim.lambda]/4)
 		// - default constructible  ([expr.prim.lambda]/p21)
 		// - copy assignable        ([expr.prim.lambda]/p21)
-		template<typename Fn>
-		using could_be_lambda = bool_<!std::is_default_constructible<Fn>::value
-			&& !std::is_copy_assignable<Fn>::value>;
+		tpl<typ Fn> using could_be_lambda
+			= bool_ < !std::is_default_constructible<Fn>::value
+			&& !std::is_copy_assignable<Fn>::value > ;
 
-		template<typename>
-		constexpr box_compress
+		tpl<typ> cexp box_compress
 		box_compression_(...)
 		{
 			return box_compress::none;
 		}
-		template<typename T,
-			typename = meta::if_<meta::strict_and<std::is_empty<T>,
+		tpl<typ T,
+			typ = meta::if_<meta::strict_and<std::is_empty<T>,
 				meta::not_<is_final<T>>
 #if defined(__GNUC__) && !defined(__clang__) && __GNUC__ == 6 \
 	&& __GNUC_MINOR__ < 2
@@ -122,26 +122,25 @@ namespace Rider::Faiz
 				meta::not_<could_be_lambda<T>>
 #endif
 				>>>
-		constexpr box_compress
-		box_compression_(long)
+			cexp box_compress
+			box_compression_(long)
 		{
 			return box_compress::ebo;
 		}
 #ifndef RANGES_WORKAROUND_MSVC_249830
-		// MSVC pukes passing non-constant-expression objects to constexpr
+		// MSVC pukes passing non-constant-expression objects to cexp
 		// functions, so do not coalesce.
-		template<typename T,
-			typename = meta::if_<meta::strict_and<std::is_empty<T>,
+		tpl<typ T,
+			typ = meta::if_<meta::strict_and<std::is_empty<T>,
 				std::is_trivial<T>,
 				std::is_default_constructible<T>>>>
-		constexpr box_compress
-		box_compression_(int)
+			cexp box_compress
+			box_compression_(int)
 		{
 			return box_compress::coalesce;
 		}
 #endif
-		template<typename T>
-		constexpr box_compress
+		tpl<typ T> cexp box_compress
 		box_compression()
 		{
 			return box_compression_<T>(0);
@@ -149,46 +148,46 @@ namespace Rider::Faiz
 	} // namespace detail
 	/// \endcond
 
-	template<typename Element,
-		typename Tag = void,
-		detail::box_compress = detail::box_compression<Element>()>
-	class box
+	tpl<typ Element,
+		typ Tag = void,
+		detail::box_compress = detail::box_compression<Element>()> class box
 	{
 		Element value;
 
 	public:
 		CONCEPT_REQUIRES(std::is_default_constructible<Element>::value)
-		constexpr box() noexcept(
-			std::is_nothrow_default_constructible<Element>::value)
+		cexp
+		box() noexcept(std::is_nothrow_default_constructible<Element>::value)
 			: value{}
 		{}
-		template<typename E,
+		tpl<typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value&&
 					std::is_convertible<E, Element>::value)>
-		constexpr box(E&& e) noexcept(
-			std::is_nothrow_constructible<Element, E>::value)
+			cexp
+			box(E&& e) noexcept(
+				std::is_nothrow_constructible<Element, E>::value)
 			: value(static_cast<E&&>(e))
 		{}
-		template<typename E,
+		tpl<typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value
 				&& !std::is_convertible<E, Element>::value)>
-		constexpr explicit box(E&& e) noexcept(
-			std::is_nothrow_constructible<Element, E>::value)
+			cexp explicit box(E&& e) noexcept(
+				std::is_nothrow_constructible<Element, E>::value)
 			: value(static_cast<E&&>(e))
 		{}
 
-		constexpr Element&
+		cexp Element&
 			get()
 			& noexcept
 		{
 			return value;
 		}
-		constexpr Element const&
+		cexp Element const&
 		get() const& noexcept
 		{
 			return value;
 		}
-		constexpr Element&&
+		cexp Element&&
 			get()
 			&& noexcept
 		{
@@ -196,42 +195,43 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename Element, typename Tag>
-	class box<Element, Tag, detail::box_compress::ebo> : Element
+	tpl<typ Element, typ Tag> class box<Element, Tag, detail::box_compress::ebo>
+		: Element
 	{
 	public:
 		CONCEPT_REQUIRES(std::is_default_constructible<Element>::value)
-		constexpr box() noexcept(
-			std::is_nothrow_default_constructible<Element>::value)
+		cexp
+		box() noexcept(std::is_nothrow_default_constructible<Element>::value)
 			: Element{}
 		{}
-		template<typename E,
+		tpl<typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value&&
 					std::is_convertible<E, Element>::value)>
-		constexpr box(E&& e) noexcept(
-			std::is_nothrow_constructible<Element, E>::value)
+			cexp
+			box(E&& e) noexcept(
+				std::is_nothrow_constructible<Element, E>::value)
 			: Element(static_cast<E&&>(e))
 		{}
-		template<typename E,
+		tpl<typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value
 				&& !std::is_convertible<E, Element>::value)>
-		constexpr explicit box(E&& e) noexcept(
-			std::is_nothrow_constructible<Element, E>::value)
+			cexp explicit box(E&& e) noexcept(
+				std::is_nothrow_constructible<Element, E>::value)
 			: Element(static_cast<E&&>(e))
 		{}
 
-		constexpr Element&
+		cexp Element&
 			get()
 			& noexcept
 		{
 			return *this;
 		}
-		constexpr Element const&
+		cexp Element const&
 		get() const& noexcept
 		{
 			return *this;
 		}
-		constexpr Element&&
+		cexp Element&&
 			get()
 			&& noexcept
 		{
@@ -239,37 +239,39 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename Element, typename Tag>
-	class box<Element, Tag, detail::box_compress::coalesce>
+	tpl<typ Element,
+		typ Tag> class box<Element, Tag, detail::box_compress::coalesce>
 	{
 		static Element value;
 
 	public:
-		constexpr box() noexcept
+		cexp
+		box() noexcept
 		{}
-		template<typename E,
+		tpl<typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value&&
 					std::is_convertible<E, Element>::value)>
-		constexpr box(E&&) noexcept
+			cexp
+			box(E&&) noexcept
 		{}
-		template<typename E,
+		tpl<typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value
 				&& !std::is_convertible<E, Element>::value)>
-		constexpr explicit box(E&&) noexcept
+			cexp explicit box(E&&) noexcept
 		{}
 
-		constexpr Element&
+		cexp Element&
 			get()
 			& noexcept
 		{
 			return value;
 		}
-		constexpr Element const&
+		cexp Element const&
 		get() const& noexcept
 		{
 			return value;
 		}
-		constexpr Element&&
+		cexp Element&&
 			get()
 			&& noexcept
 		{
@@ -277,48 +279,42 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<typename Element, typename Tag>
-	Element box<Element, Tag, detail::box_compress::coalesce>::value;
+	tpl<typ Element, typ Tag> Element
+		box<Element, Tag, detail::box_compress::coalesce>::value;
 
 	// Get by tag type
-	template<typename Tag, typename Element, detail::box_compress BC>
-	constexpr Element&
+	tpl<typ Tag, typ Element, detail::box_compress BC> cexp Element&
 	get(box<Element, Tag, BC>& b) noexcept
 	{
 		return b.get();
 	}
 
-	template<typename Tag, typename Element, detail::box_compress BC>
-	constexpr Element const&
+	tpl<typ Tag, typ Element, detail::box_compress BC> cexp Element const&
 	get(box<Element, Tag, BC> const& b) noexcept
 	{
 		return b.get();
 	}
 
-	template<typename Tag, typename Element, detail::box_compress BC>
-	constexpr Element&&
+	tpl<typ Tag, typ Element, detail::box_compress BC> cexp Element&&
 	get(box<Element, Tag, BC>&& b) noexcept
 	{
 		return move(b).get();
 	}
 
 	// Get by index
-	template<std::size_t I, typename Element, detail::box_compress BC>
-	constexpr Element&
+	tpl<std::size_t I, typ Element, detail::box_compress BC> cexp Element&
 	get(box<Element, size_t_<I>, BC>& b) noexcept
 	{
 		return b.get();
 	}
 
-	template<std::size_t I, typename Element, detail::box_compress BC>
-	constexpr Element const&
+	tpl<std::size_t I, typ Element, detail::box_compress BC> cexp Element const&
 	get(box<Element, size_t_<I>, BC> const& b) noexcept
 	{
 		return b.get();
 	}
 
-	template<std::size_t I, typename Element, detail::box_compress BC>
-	constexpr Element&&
+	tpl<std::size_t I, typ Element, detail::box_compress BC> cexp Element&&
 	get(box<Element, size_t_<I>, BC>&& b) noexcept
 	{
 		return move(b).get();

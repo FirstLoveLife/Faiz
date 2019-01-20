@@ -1,29 +1,26 @@
 #ifndef ALGORITHM
 #define ALGORITHM
+#include "rider/faiz/macros.hpp"
 #include <iostream>
 namespace Rider::Faiz
 {
-	template<class T>
-	constexpr const T&
+	tpl<class T> cexp const T&
 	min(const T& a, const T& b)
 	{
 		return (b < a) ? b : a;
 	}
-	template<class T>
-	constexpr const T&
+	tpl<class T> cexp const T&
 	max(const T& a, const T& b)
 	{
 		return (b < a) ? a : b;
 	}
 
-	template<class T, class Cmp>
-	constexpr const T&
+	tpl<class T, class Cmp> cexp const T&
 	min(const T& a, const T& b, Cmp less)
 	{
 		return less(b, a) ? b : a;
 	}
-	template<class T, class Cmp>
-	constexpr const T&
+	tpl<class T, class Cmp> cexp const T&
 	max(const T& a, const T& b, Cmp less)
 	{
 		return less(b, a) ? a : b;
@@ -42,8 +39,7 @@ namespace Rider::Faiz
 	// ```
 	// Output:
 	// 1234
-	template<class InputIt, class Size, class OutputIt>
-	constexpr OutputIt
+	tpl<class InputIt, class Size, class OutputIt> cexp OutputIt
 	copy_n(InputIt first, Size count, OutputIt result)
 	{
 		if(count > 0)
@@ -57,14 +53,13 @@ namespace Rider::Faiz
 		return result;
 	}
 
-	template<unsigned N, class T>
-	T
+	tpl<unsigned N, class T> T
 	power(T x)
 	{
-		if constexpr(N == 0u)
-			return T(1);
-		else if constexpr(N % 2u == 0u)
-			return power<N / 2>(x * x);
+		if
+			cexp(N == 0u) return T(1);
+		else if
+			cexp(N % 2u == 0u) return power<N / 2>(x * x);
 		else
 			return x * power<N - 1>(x);
 	}

@@ -1,5 +1,6 @@
 #ifndef CHECKD_DELETER
 #define CHECKD_DELETER
+#include "rider/faiz/macros.hpp"
 namespace Rider::Faiz
 {
 	// std::shared_ptr alternative: https://stackoverflow.com/a/22091803/6949852
@@ -20,8 +21,7 @@ namespace Rider::Faiz
 	// >
 	// > Silences a compiler warning.
 
-	template<class T>
-	void
+	tpl<class T> void
 	checked_delete(T* x)
 	{
 		// intentionally complex - simplification causes regressions
@@ -30,8 +30,7 @@ namespace Rider::Faiz
 		delete x;
 	}
 
-	template<class T>
-	void
+	tpl<class T> void
 	checked_array_delete(T* x)
 	{
 		using type_must_be_complete = char[sizeof(T) ? 1 : -1];
@@ -39,11 +38,10 @@ namespace Rider::Faiz
 		delete[] x;
 	}
 
-	template<class T>
-	struct checked_deleter
+	tpl<class T> struct checked_deleter
 	{
-		using result_type = void ;
-		using argument_type =  T*;
+		using result_type = void;
+		using argument_type = T*;
 
 		void
 		operator()(T* x) const
@@ -53,8 +51,7 @@ namespace Rider::Faiz
 		}
 	};
 
-	template<class T>
-	struct checked_array_deleter
+	tpl<class T> struct checked_array_deleter
 	{
 		using result_type = void;
 		using argument_type = T*;

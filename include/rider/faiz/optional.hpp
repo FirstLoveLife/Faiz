@@ -1,5 +1,7 @@
 #ifndef OPTIONAL
 // TODO: implement ***::insert with optional, instead of pair
+//
+#	include "rider/faiz/macros.hpp"
 namespace Rider::Faiz
 {
 	// `Faiz::nullopt_t` is an empty class type used to indicate optional type
@@ -10,7 +12,7 @@ namespace Rider::Faiz
 	// Faiz::nullopt_t must be a non-aggregate LiteralType and cannot have a
 	// default constructor or an initializer-list constructor.
 	//
-	// It must have a constexpr constructor that takes some
+	// It must have a cexp constructor that takes some
 	// implementation-defined literal type.
 	//
 	// The constraints on nullopt_t's constructors exist to support both `op =
@@ -22,13 +24,13 @@ namespace Rider::Faiz
 		{
 			inline explicit secret_tag() = default;
 		};
-		constexpr explicit nullopt_t(secret_tag, secret_tag) noexcept
+		cexp explicit nullopt_t(secret_tag, secret_tag) noexcept
 		{}
 	};
 
 	// `Faiz::nullopt` is a constant of type `Faiz::nullopt_t` that is used to
 	// indicate optional type with uninitialized state.
-	inline constexpr nullopt_t nullopt{
+	inline cexp nullopt_t nullopt{
 		nullopt_t::secret_tag{}, nullopt_t::secret_tag{}};
 
 } // namespace Rider::Faiz

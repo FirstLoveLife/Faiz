@@ -1,5 +1,6 @@
 #ifndef CASSERT
 #define CASSERT
+#include "rider/faiz/macros.hpp"
 #include <cassert>
 #include <iostream>
 namespace Rider

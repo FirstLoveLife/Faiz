@@ -13,17 +13,16 @@
 #define STATIC_CONST
 
 #include "rider/faiz/faiz_fwd.hpp"
+#include "rider/faiz/macros.hpp"
 namespace Rider::Faiz
 {
 
-	template<typename T>
-	struct static_const
+	tpl<typ T> struct static_const
 	{
-		static constexpr T value{};
+		static cexp T value{};
 	};
 
-	template<typename T>
-	constexpr T static_const<T>::value;
+	tpl<typ T> cexp T static_const<T>::value;
 } // namespace Rider::Faiz
 
 #endif

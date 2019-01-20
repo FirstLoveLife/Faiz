@@ -1,6 +1,7 @@
 #ifndef UTILITY
 #define UTILITY
 #include "rider/faiz/faiz_fwd.hpp"
+#include "rider/faiz/macros.hpp"
 #include "rider/faiz/type_traits.hpp"
 namespace Rider::Faiz
 {
@@ -21,8 +22,7 @@ namespace Rider::Faiz
 	//      return *this;
 	// }
 	// ```
-	template<class T>
-	constexpr remove_reference_t<T>&&
+	tpl<class T> cexp remove_reference_t<T>&&
 	move(T&& t) noexcept
 	{
 		using U = remove_reference_t<T>;
@@ -45,7 +45,7 @@ namespace Rider::Faiz
 	// overload functions.
 	//
 	// ```cpp
-	// template<class T>
+	// tpl<class T>
 	// void wrapper(T&& arg)
 	// {
 	//     // arg is always lvalue
@@ -68,8 +68,7 @@ namespace Rider::Faiz
 	// **Faiz::string**, then T is deduced to
 	// **Faiz::string**&, and **Faiz::forward** ensures that a non-const
 	// lvalue reference is passed to foo.
-	template<class T>
-	constexpr T&&
+	tpl<class T> cexp T&&
 	forward(remove_reference_t<T>& t) noexcept
 	{
 		return static_cast<T&&>(t);
@@ -91,7 +90,7 @@ namespace Rider::Faiz
 	// overload functions.
 	//
 	// ```cpp
-	// template<class T>
+	// tpl<class T>
 	// void wrapper(T&& arg)
 	// {
 	//     // arg is always lvalue
@@ -114,8 +113,7 @@ namespace Rider::Faiz
 	// **Faiz::string**, then T is deduced to
 	// **Faiz::string**&, and **Faiz::forward** ensures that a non-const
 	// lvalue reference is passed to foo.
-	template<class T>
-	constexpr T&&
+	tpl<class T> cexp T&&
 	forward(remove_reference_t<T>&& t) noexcept
 	{
 		static_assert(!is_lvalue_reference_v<T>,
@@ -125,8 +123,7 @@ namespace Rider::Faiz
 
 	// Obtains the actual address of the object or function arg, even in
 	// presence of overloaded operator&
-	template<typename T>
-	constexpr T*
+	tpl<typ T> cexp T*
 	AddressOf(T& v) noexcept
 	{
 		return reinterpret_cast<T*>(
@@ -135,8 +132,7 @@ namespace Rider::Faiz
 
 	// Rvalue overload is deleted to prevent taking the address of const
 	// rvalues.
-	template<class T>
-	const T*
+	tpl<class T> const T*
 	addressof(const T&&)
 		= delete;
 

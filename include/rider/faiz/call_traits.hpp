@@ -1,11 +1,51 @@
 #ifndef CALL_TRAITS
-#define CALL_TRAITS
-#include "rider/faiz/type_traits.hpp"
+#	define CALL_TRAITS
+#	include "rider/faiz/type_traits.hpp"
+#	ifndef FAIZ_BIT
+#		define FAIZ_BIT
+#		include "rider/faiz/cstddef.hpp"
+#		include "rider/faiz/macros.hpp"
+#		include <iostream>
+#		include <string_view>
+#		include <vector>
+namespace Rider::Faiz
+{
+	namespace detail
+	{
+		tpl<char Chs> cexp int
+		toDecImpl()
+		{
+			return Chs > '9' ? Chs - 'A' + 10 : Chs - '0';
+		}
+	} // namespace detail
+	tpl<int from, char... Chs> cexp int
+	toDec()
+	{
+		int ret{};
+
+		return ((ret *= from, ret += detail::toDecImpl<Chs>()), ...);
+	}
+	inline namespace literals
+	{
+		tpl<char... Chs> cexp int operator"" _B()
+		{
+			return toDec<2, Chs...>();
+		}
+		tpl<char... Chs> cexp int operator"" _O()
+		{
+			return toDec<8, Chs...>();
+		}
+
+		// I decide not to provide heximal, too ugly
+
+	} // namespace literals
+} // namespace Rider::Faiz
+
 namespace Rider::Faiz
 {
 	// use pandoc convert doc from
 	// https://www.boost.org/doc/libs/1_51_0/libs/utility/call_traits.htm
-	// The template class call_traits<T> encapsulates the "best" method to
+	// The tpl class call_traits<T> encapsulates the "best" method to
 	// pass a parameter of some type T to or from a function, and consists
 	// of a collection of typedefs defined as in the table below. The
 	// purpose of call_traits is to ensure that problems like "[references
@@ -14,10 +54,10 @@ namespace Rider::Faiz
 	// each case if your existing practice is to use the type defined on the
 	// left, then replace it with the call_traits defined type on the right.
 	// Note that for compilers that do not support either partial
-	// specialization or member templates, no benefit will occur from using
+	// specialization or member tpls, no benefit will occur from using
 	// call_traits: the call_traits defined types will always be the same as
 	// the existing practice in this case. In addition if only member
-	// templates and not partial template specialisation is support by the
+	// tpls and not partial tpl specialisation is support by the
 	// compiler (for example Visual C++ 6) then call_traits can not be used
 	// with array types (although it can be used to solve the reference to
 	// reference problem).
@@ -80,8 +120,7 @@ namespace Rider::Faiz
 	//     of the function if they depend upon the passed parameter, the
 	//     semantics of the passed parameter is otherwise unchanged
 	//     (requires partial specialization).
-	template<typename T>
-	struct call_traits
+	tpl<typ T> struct call_traits
 	{
 	public:
 		using value_type = T;
@@ -99,8 +138,7 @@ namespace Rider::Faiz
 				const T&>>;
 	};
 
-	template<typename T>
-	struct call_traits<T&>
+	tpl<typ T> struct call_traits<T&>
 	{
 		using value_type = T&;
 		using reference = T&;
@@ -108,8 +146,7 @@ namespace Rider::Faiz
 		using param_type = T&;
 	};
 
-	template<typename T, size_t N>
-	struct call_traits<T[N]>
+	tpl<typ T, size_t N> struct call_traits<T[N]>
 	{
 	private:
 		using array_type = T[N];
@@ -121,8 +158,7 @@ namespace Rider::Faiz
 		using param_type = const T* const;
 	};
 
-	template<typename T, size_t N>
-	struct call_traits<const T[N]>
+	tpl<typ T, size_t N> struct call_traits<const T[N]>
 	{
 	private:
 		using array_type = const T[N];
@@ -135,4 +171,4 @@ namespace Rider::Faiz
 	};
 
 } // namespace Rider::Faiz
-#endif
+#	endif
