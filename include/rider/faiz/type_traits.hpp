@@ -150,6 +150,7 @@ namespace Rider::Faiz
 	tpl<typ T> struct is_referenceable : bool_<is_referenceable_v<T>>
 	{};
 
+	NOT(referenceable)
 
 	tpl<typ T> struct is_rvalue_reference;
 
@@ -870,54 +871,30 @@ namespace Rider::Faiz
 	{};
 	tpl<typ T> using add_pointer_t = _t<add_pointer<T>>;
 
-	// Applies lvalue-to-rvalue, array-to-pointer,
-	// and function-to-pointer implicit conversions to the type **T**,
-	// removes cv-qualifiers, and defines the resulting type as the member
-	// typedef type. Formally:
-	// * If **T** names the type "**array of U**" or "**reference to array
-	// of U**", the member typedef type is
-	// **U***.
-	// * Otherwise, if **T** is a function type **F** or a reference
-	// thereto, the member typedef type is
-	// **add_pointer<F>::type**.
-	// * Otherwise, the member typedef type is
-	// **remove_cv<remove_reference<T>::type>::type**
-	//
-	//```cpp
-	// #include <iostream>
-	// #include <type_traits>
-	// tpl <typ T, typ U>
-	// struct decay_equiv :
-	//     is_same<typ decay<T>::type, U>::type
-	// {};
-	// int main()
-	// {
-	//     Faiz::cout << Faiz::boolalpha
-	//               << decay_equiv<int, int>::value << '\n'
-	//               << decay_equiv<int&, int>::value << '\n'
-	//               << decay_equiv<int&&, int>::value << '\n'
-	//               << decay_equiv<const int&, int>::value << '\n'
-	//               << decay_equiv<int[2], int*>::value << '\n'
-	//               << decay_equiv<int(int), int(*)(int)>::value << '\n';
-	// }
-	// ```
-	// true
-	// true
-	// true
-	// true
-	// true
-	// true
-	//
-	tpl<typ T> struct decay
+	tpl<typ T, typ U = remove_reference_t<T>, typ E = remove_cv_t<U>> fn
+	decay_impl()
 	{
-	private:
-		using U = remove_reference_t<T>;
+		if constexpr(not_referenceable_v<T>)
+		{
+			return type_identity<E>();
+		}
+		else if constexpr(is_array_v<U>)
+		{
+			return type_identity<add_pointer_t<remove_extent_t<U>>>();
+		}
+		else if constexpr(is_function_v<U>)
+		{
+			return type_identity<add_pointer_t<U>>();
+		}
+		else
+		{
+			return type_identity<E>();
+		}
+	}
 
-	public:
-		using type = meta::if_<is_array<U>,
-			remove_extent_t<U>*,
-			meta::if_<is_function<U>, add_pointer_t<U>, remove_cv_t<U>>>;
-	};
+	tpl<typ T> struct decay : decltype(decay_impl<T>())
+	{};
+
 	tpl<typ T> using decay_t = _t<decay<T>>;
 
 	tpl<typ T, typ Arg> struct is_assignable
