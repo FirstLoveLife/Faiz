@@ -367,7 +367,7 @@ namespace Rider::Faiz
 		= is_lvalue_reference<T>::value;
 
 	tpl<typ T> struct remove_cvref;
-	tpl<typ T> using remove_cvref_t = remove_cvref<T>;
+	tpl<typ T> using remove_cvref_t = typename remove_cvref<T>::type;
 	tpl<typ T> struct is_integral;
 	tpl<bool B, typ T = void> struct enable_if;
 	tpl<bool B, class T = void> using enable_if_t = _t<enable_if<B, T>>;
