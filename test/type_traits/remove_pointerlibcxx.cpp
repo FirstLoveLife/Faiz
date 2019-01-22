@@ -11,23 +11,29 @@
 
 // remove_pointer
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T, class U>
-void
-test_remove_pointer()
+namespace
 {
-	static_assert(
-		(Rider::Faiz::is_same<typename Rider::Faiz::remove_pointer<T>::type,
-			U>::value),
-		"");
-	static_assert(
-		(Rider::Faiz::is_same<Rider::Faiz::remove_pointer_t<T>, U>::value), "");
-}
 
-int
-main()
+	template<class T, class U>
+	void
+	test_remove_pointer()
+	{
+		STATIC_REQUIRE(
+			Rider::Faiz::is_same<typename Rider::Faiz::remove_pointer<T>::type,
+				U>::value);
+
+		STATIC_REQUIRE(
+			Rider::Faiz::is_same<Rider::Faiz::remove_pointer_t<T>, U>::value);
+	}
+
+} // namespace
+TEST_CASE("remove_pointerlibcxx: ")
 {
 	test_remove_pointer<void, void>();
 	test_remove_pointer<int, int>();

@@ -17,39 +17,88 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+
+using Rider::Faiz::is_arithmetic;
+
+
+TEST_CASE(
+	"is_arithmetic.libstdcxx: (test_category<is_arithmetic, void>(false))")
 {
-	using Rider::Faiz::is_arithmetic;
-	using namespace __gnu_test;
-
-	static_assert(test_category<is_arithmetic, void>(false), "");
-
-	static_assert(test_category<is_arithmetic, char>(true), "");
-	static_assert(test_category<is_arithmetic, signed char>(true), "");
-	static_assert(test_category<is_arithmetic, unsigned char>(true), "");
-#ifdef _GLIBCXX_USE_WCHAR_T
-	static_assert(test_category<is_arithmetic, wchar_t>(true), "");
-#endif
-	static_assert(test_category<is_arithmetic, short>(true), "");
-	static_assert(test_category<is_arithmetic, unsigned short>(true), "");
-	static_assert(test_category<is_arithmetic, int>(true), "");
-	static_assert(test_category<is_arithmetic, unsigned int>(true), "");
-	static_assert(test_category<is_arithmetic, long>(true), "");
-	static_assert(test_category<is_arithmetic, unsigned long>(true), "");
-	static_assert(test_category<is_arithmetic, long long>(true), "");
-	static_assert(test_category<is_arithmetic, unsigned long long>(true), "");
-	static_assert(test_category<is_arithmetic, float>(true), "");
-	static_assert(test_category<is_arithmetic, double>(true), "");
-	static_assert(test_category<is_arithmetic, long double>(true), "");
-
-	// Sanity check.
-	static_assert(test_category<is_arithmetic, ClassType>(false), "");
+	STATIC_REQUIRE(test_category<is_arithmetic, void>(false));
 }
-int main()
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, long "
+		  "double>(true))")
 {
-	test01();
+	STATIC_REQUIRE(test_category<is_arithmetic, long double>(true));
+}
+TEST_CASE(
+	"is_arithmetic.libstdcxx: (test_category<is_arithmetic, double>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, double>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, unsigned "
+		  "long long>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, unsigned long long>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, char>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, char>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, "
+		  "ClassType>(false))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, ClassType>(false));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, signed "
+		  "char>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, signed char>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, unsigned "
+		  "char>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, unsigned char>(true));
+}
+TEST_CASE(
+	"is_arithmetic.libstdcxx: (test_category<is_arithmetic, short>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, short>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, long>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, long>(true));
+}
+TEST_CASE(
+	"is_arithmetic.libstdcxx: (test_category<is_arithmetic, float>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, float>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, unsigned "
+		  "int>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, unsigned int>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: ")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, long long>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, unsigned "
+		  "short>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, unsigned short>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, int>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, int>(true));
+}
+TEST_CASE("is_arithmetic.libstdcxx: (test_category<is_arithmetic, unsigned "
+		  "long>(true))")
+{
+	STATIC_REQUIRE(test_category<is_arithmetic, unsigned long>(true));
 }

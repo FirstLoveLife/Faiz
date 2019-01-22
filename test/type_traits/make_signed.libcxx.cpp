@@ -11,38 +11,44 @@
 
 // make_signed
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-enum Enum
+namespace
 {
-	zero,
-	one_
-};
 
-enum BigEnum : unsigned long long // MSVC's ABI doesn't follow the Standard
-{
-	bigzero,
-	big = 0xFFFFFFFFFFFFFFFFULL
-};
+	enum Enum
+	{
+		zero,
+		one_
+	};
 
-// enum HugeEnum : __uint128_t
-// {
-// 	hugezero
-// };
+	enum BigEnum : unsigned long long // MSVC's ABI doesn't follow the Standard
+	{
+		bigzero,
+		big = 0xFFFFFFFFFFFFFFFFULL
+	};
 
-template<class T, class U>
-void
-test_make_signed()
-{
-	static_assert(
-		(std::is_same<typename Rider::Faiz::make_signed<T>::type, U>::value),
-		"");
-	static_assert((std::is_same<Rider::Faiz::make_signed_t<T>, U>::value), "");
-}
+	// enum HugeEnum : __uint128_t
+	// {
+	// 	hugezero
+	// };
 
-int
-main()
+	template<class T, class U>
+	void
+	test_make_signed()
+	{
+		STATIC_REQUIRE(
+			std::is_same<typename Rider::Faiz::make_signed<T>::type, U>::value);
+
+		STATIC_REQUIRE(std::is_same<Rider::Faiz::make_signed_t<T>, U>::value);
+	}
+
+} // namespace
+TEST_CASE("make_signed.libcxx: ")
 {
 	test_make_signed<signed char, signed char>();
 	test_make_signed<unsigned char, signed char>();

@@ -17,33 +17,37 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+// #include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
-void
-test01()
+
+namespace
+{}
+TEST_CASE("remove_all_extents libstdcxx")
 {
 	using Rider::Faiz::remove_all_extents;
 	using Rider::Faiz::is_same;
-	using namespace __gnu_test;
+	// using namespace __gnu_test;
 
-	static_assert(is_same<remove_all_extents<int>::type, int>::value, "");
-	static_assert(is_same<remove_all_extents<int[2]>::type, int>::value, "");
-	static_assert(is_same<remove_all_extents<int[2][3]>::type, int>::value, "");
-	static_assert(is_same<remove_all_extents<int[][3]>::type, int>::value, "");
-	static_assert(
-		is_same<remove_all_extents<const int[2][3]>::type, const int>::value,
-		"");
-	static_assert(
-		is_same<remove_all_extents<ClassType>::type, ClassType>::value, "");
-	static_assert(
-		is_same<remove_all_extents<ClassType[2]>::type, ClassType>::value, "");
-	static_assert(
-		is_same<remove_all_extents<ClassType[2][3]>::type, ClassType>::value,
-		"");
-	static_assert(
-		is_same<remove_all_extents<ClassType[][3]>::type, ClassType>::value,
-		"");
-	static_assert(is_same<remove_all_extents<const ClassType[2][3]>::type,
-					  const ClassType>::value,
-		"");
+	STATIC_REQUIRE(is_same<remove_all_extents<int>::type, int>::value);
+	STATIC_REQUIRE(is_same<remove_all_extents<int[2]>::type, int>::value);
+	STATIC_REQUIRE(is_same<remove_all_extents<int[2][3]>::type, int>::value);
+	STATIC_REQUIRE(is_same<remove_all_extents<int[][3]>::type, int>::value);
+	STATIC_REQUIRE(
+		is_same<remove_all_extents<const int[2][3]>::type, const int>::value);
+
+	STATIC_REQUIRE(
+		is_same<remove_all_extents<ClassType>::type, ClassType>::value);
+	STATIC_REQUIRE(
+		is_same<remove_all_extents<ClassType[2]>::type, ClassType>::value);
+	STATIC_REQUIRE(
+		is_same<remove_all_extents<ClassType[2][3]>::type, ClassType>::value);
+
+	STATIC_REQUIRE(
+		is_same<remove_all_extents<ClassType[][3]>::type, ClassType>::value);
+
+	STATIC_REQUIRE(is_same<remove_all_extents<const ClassType[2][3]>::type,
+		const ClassType>::value);
 }

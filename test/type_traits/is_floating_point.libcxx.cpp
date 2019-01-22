@@ -11,70 +11,77 @@
 
 // is_floating_point
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_is_floating_point()
+namespace
 {
 
-	static_assert(Rider::Faiz::is_floating_point<T>::value, "");
-	static_assert(Rider::Faiz::is_floating_point<const T>::value, "");
-	static_assert(Rider::Faiz::is_floating_point<volatile T>::value, "");
-	static_assert(Rider::Faiz::is_floating_point<const volatile T>::value, "");
-	static_assert(Rider::Faiz::is_floating_point_v<T>, "");
-	static_assert(Rider::Faiz::is_floating_point_v<const T>, "");
-	static_assert(Rider::Faiz::is_floating_point_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_floating_point_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_floating_point()
+	{
 
-template<class T>
-void
-test_is_not_floating_point()
-{
-	static_assert(!Rider::Faiz::is_floating_point<T>::value, "");
-	static_assert(!Rider::Faiz::is_floating_point<const T>::value, "");
-	static_assert(!Rider::Faiz::is_floating_point<volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_floating_point<const volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_floating_point_v<T>, "");
-	static_assert(!Rider::Faiz::is_floating_point_v<const T>, "");
-	static_assert(!Rider::Faiz::is_floating_point_v<volatile T>, "");
-	static_assert(!Rider::Faiz::is_floating_point_v<const volatile T>, "");
-}
+		STATIC_REQUIRE(Rider::Faiz::is_floating_point<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_floating_point<const T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_floating_point<volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_floating_point<const volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_floating_point_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_floating_point_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_floating_point_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::is_floating_point_v<const volatile T>);
+	}
 
-class Empty
-{};
+	template<class T>
+	void
+	test_is_not_floating_point()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_floating_point<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_floating_point<const T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_floating_point<volatile T>::value);
+		STATIC_REQUIRE(
+			!Rider::Faiz::is_floating_point<const volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_floating_point_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_floating_point_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_floating_point_v<volatile T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_floating_point_v<const volatile T>);
+	}
 
-class NotEmpty
-{
-	virtual ~NotEmpty();
-};
+	class Empty
+	{};
 
-union Union
-{};
+	class NotEmpty
+	{
+		virtual ~NotEmpty();
+	};
 
-struct bit_zero
-{
-	int : 0;
-};
+	union Union
+	{};
 
-class Abstract
-{
-	virtual ~Abstract() = 0;
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-enum Enum
-{
-	zero,
-	one
-};
-struct incomplete_type;
+	class Abstract
+	{
+		virtual ~Abstract() = 0;
+	};
 
-typedef void (*FunctionPtr)();
+	enum Enum
+	{
+		zero,
+		one
+	};
+	struct incomplete_type;
 
-int
-main()
+	typedef void (*FunctionPtr)();
+
+} // namespace
+TEST_CASE("is_floating_point.libcxx: ")
 {
 	test_is_floating_point<float>();
 	test_is_floating_point<double>();

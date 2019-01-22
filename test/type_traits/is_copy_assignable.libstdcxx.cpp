@@ -19,62 +19,61 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+// #include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+TEST_CASE("is_copy_assignable libstdcxx: ")
 {
-	using std::is_copy_assignable;
-	using namespace __gnu_test;
+	using Rider::Faiz::is_copy_assignable;
+	// using namespace __gnu_test;
 
 	// Positive tests.
-	static_assert(test_property<is_copy_assignable, int>(true), "");
-	static_assert(test_property<is_copy_assignable, float>(true), "");
-	static_assert(test_property<is_copy_assignable, EnumType>(true), "");
-	static_assert(test_property<is_copy_assignable, int*>(true), "");
-	static_assert(test_property<is_copy_assignable, int (*)(int)>(true), "");
-	static_assert(
-		test_property<is_copy_assignable, int(ClassType::*)>(true), "");
-	static_assert(
-		test_property<is_copy_assignable, int (ClassType::*)(int)>(true), "");
+	STATIC_REQUIRE(test_property<is_copy_assignable, int>(true));
+	STATIC_REQUIRE(test_property<is_copy_assignable, float>(true));
+	STATIC_REQUIRE(test_property<is_copy_assignable, EnumType>(true));
+	STATIC_REQUIRE(test_property<is_copy_assignable, int*>(true));
+	STATIC_REQUIRE(test_property<is_copy_assignable, int (*)(int)>(true));
+	STATIC_REQUIRE(test_property<is_copy_assignable, int(ClassType::*)>(true));
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, int (ClassType::*)(int)>(true));
 
-	static_assert(
-		test_property<is_copy_assignable, NoexceptCopyAssignClass>(true), "");
-	static_assert(
-		test_property<is_copy_assignable, ExceptCopyAssignClass>(true), "");
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, NoexceptCopyAssignClass>(true));
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, ExceptCopyAssignClass>(true));
 
 	// Negative tests.
-	static_assert(test_property<is_copy_assignable, void>(false), "");
-	static_assert(test_property<is_copy_assignable, int[2]>(false), "");
-	static_assert(test_property<is_copy_assignable, float[][3]>(false), "");
-	static_assert(
-		test_property<is_copy_assignable, EnumType[2][3][4]>(false), "");
-	static_assert(test_property<is_copy_assignable, int * [3]>(false), "");
-	static_assert(
-		test_property<is_copy_assignable, int (*[][2])(int)>(false), "");
-	static_assert(
-		test_property<is_copy_assignable, int(ClassType:: * [2][3])>(false),
-		"");
-	static_assert(
-		test_property<is_copy_assignable, int (ClassType::*[][2][3])(int)>(
-			false),
-		"");
-	static_assert(
-		test_property<is_copy_assignable, ClassType(unsigned) const&>(false),
-		"");
-	static_assert(
-		test_property<is_copy_assignable, bool(ClassType) const>(false), "");
-	static_assert(test_property<is_copy_assignable, bool(...) &&>(false), "");
-	static_assert(
-		test_property<is_copy_assignable, EnumType(int, ...)>(false), "");
+	STATIC_REQUIRE(test_property<is_copy_assignable, void>(false));
+	STATIC_REQUIRE(test_property<is_copy_assignable, int[2]>(false));
+	STATIC_REQUIRE(test_property<is_copy_assignable, float[][3]>(false));
+	STATIC_REQUIRE(test_property<is_copy_assignable, EnumType[2][3][4]>(false));
+	STATIC_REQUIRE(test_property<is_copy_assignable, int * [3]>(false));
+	STATIC_REQUIRE(test_property<is_copy_assignable, int (*[][2])(int)>(false));
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, int(ClassType:: * [2][3])>(false));
 
-	static_assert(
-		test_property<is_copy_assignable, NoexceptMoveAssignClass>(false), "");
-	static_assert(
-		test_property<is_copy_assignable, ExceptMoveAssignClass>(false), "");
-	static_assert(
-		test_property<is_copy_assignable, DeletedCopyAssignClass>(false), "");
-	static_assert(
-		test_property<is_copy_assignable, DeletedMoveAssignClass>(false), "");
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, int (ClassType::*[][2][3])(int)>(
+			false));
+
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, ClassType(unsigned) const&>(false));
+
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, bool(ClassType) const>(false));
+	STATIC_REQUIRE(test_property<is_copy_assignable, bool(...) &&>(false));
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, EnumType(int, ...)>(false));
+
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, NoexceptMoveAssignClass>(false));
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, ExceptMoveAssignClass>(false));
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, DeletedCopyAssignClass>(false));
+	STATIC_REQUIRE(
+		test_property<is_copy_assignable, DeletedMoveAssignClass>(false));
 }

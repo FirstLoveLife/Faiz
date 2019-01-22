@@ -14,23 +14,28 @@
 // remove_cvref
 
 #include "rider/faiz/type_traits.hpp"
+#include <catch2/catch.hpp>
 
-#include "../test_macros.h"
 
-template<class T, class U>
-void
-test_remove_cvref()
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+
+namespace
 {
-	static_assert(
-		(Rider::Faiz::is_same<typename Rider::Faiz::remove_cvref<T>::type,
-			U>::value),
-		"");
-	static_assert(
-		(Rider::Faiz::is_same<Rider::Faiz::remove_cvref_t<T>, U>::value), "");
-}
+	template<class T, class U>
+	void
+	test_remove_cvref()
+	{
+		STATIC_REQUIRE(
+			Rider::Faiz::is_same<typename Rider::Faiz::remove_cvref<T>::type,
+				U>::value);
 
-int
-main()
+		STATIC_REQUIRE(
+			Rider::Faiz::is_same<Rider::Faiz::remove_cvref_t<T>, U>::value);
+	}
+
+} // namespace
+TEST_CASE("remove_cvref.libcxx: ")
 {
 	test_remove_cvref<void, void>();
 	test_remove_cvref<int, int>();

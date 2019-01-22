@@ -18,45 +18,47 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+// #include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+namespace
+{}
+TEST_CASE("remove_cvref libstdcxx")
 {
 	using Rider::Faiz::remove_cvref;
 	using Rider::Faiz::is_same;
-	using namespace __gnu_test;
+	// using namespace __gnu_test;
 
-	static_assert(
-		is_same<remove_cvref<const volatile int>::type, int>::value, "");
-	static_assert(is_same<remove_cvref<const volatile int*>::type,
-					  const volatile int*>::value,
-		"");
-	static_assert(
-		is_same<typename remove_cvref<const volatile int&>::type, int>::value,
-		"");
-	static_assert(
-		is_same<typename remove_cvref<const volatile int&&>::type, int>::value,
-		"");
-	static_assert(
-		is_same<remove_cvref<const volatile ClassType>::type, ClassType>::value,
-		"");
-	static_assert(is_same<remove_cvref<const volatile ClassType*>::type,
-					  const volatile ClassType*>::value,
-		"");
-	static_assert(
+	STATIC_REQUIRE(is_same<remove_cvref<const volatile int>::type, int>::value);
+	STATIC_REQUIRE(is_same<remove_cvref<const volatile int*>::type,
+		const volatile int*>::value);
+
+	STATIC_REQUIRE(
+		is_same<typename remove_cvref<const volatile int&>::type, int>::value);
+
+	STATIC_REQUIRE(
+		is_same<typename remove_cvref<const volatile int&&>::type, int>::value);
+
+	STATIC_REQUIRE(is_same<remove_cvref<const volatile ClassType>::type,
+		ClassType>::value);
+
+	STATIC_REQUIRE(is_same<remove_cvref<const volatile ClassType*>::type,
+		const volatile ClassType*>::value);
+
+	STATIC_REQUIRE(
 		is_same<typename remove_cvref<const volatile ClassType&>::type,
-			ClassType>::value,
-		"");
-	static_assert(
+			ClassType>::value);
+
+	STATIC_REQUIRE(
 		is_same<typename remove_cvref<const volatile ClassType&&>::type,
-			ClassType>::value,
-		"");
-	static_assert(
-		is_same<typename remove_cvref<const int(&)[3]>::type, int[3]>::value,
-		"");
-	static_assert(is_same<typename remove_cvref<const int (&)()>::type,
-					  const int()>::value,
-		"");
+			ClassType>::value);
+
+	STATIC_REQUIRE(
+		is_same<typename remove_cvref<const int(&)[3]>::type, int[3]>::value);
+
+	STATIC_REQUIRE(is_same<typename remove_cvref<const int (&)()>::type,
+		const int()>::value);
 }

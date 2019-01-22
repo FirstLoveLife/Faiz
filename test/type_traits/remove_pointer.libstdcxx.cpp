@@ -17,23 +17,21 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+// #include "test-utilities.hpp"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+TEST_CASE("remove_pointer.libstdcxx")
 {
 	using Rider::Faiz::remove_pointer;
 	using Rider::Faiz::is_same;
-	using namespace __gnu_test;
 
-	static_assert(is_same<remove_pointer<int*>::type, int>::value, "");
-	static_assert(is_same<remove_pointer<int>::type, int>::value, "");
-	static_assert(
-		is_same<remove_pointer<const int*>::type, const int>::value, "");
-	static_assert(is_same<remove_pointer<int**>::type, int*>::value, "");
-	static_assert(
-		is_same<remove_pointer<ClassType*>::type, ClassType>::value, "");
-	static_assert(
-		is_same<remove_pointer<ClassType>::type, ClassType>::value, "");
+	STATIC_REQUIRE(is_same<remove_pointer<int*>::type, int>::value);
+	STATIC_REQUIRE(is_same<remove_pointer<int>::type, int>::value);
+	STATIC_REQUIRE(is_same<remove_pointer<const int*>::type, const int>::value);
+	STATIC_REQUIRE(is_same<remove_pointer<int**>::type, int*>::value);
+	STATIC_REQUIRE(is_same<remove_pointer<ClassType*>::type, ClassType>::value);
+	STATIC_REQUIRE(is_same<remove_pointer<ClassType>::type, ClassType>::value);
 }

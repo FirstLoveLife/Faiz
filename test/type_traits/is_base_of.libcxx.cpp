@@ -12,41 +12,44 @@
 // is_base_of
 
 #include "rider/faiz/type_traits.hpp"
+#include <catch2/catch.hpp>
 
-#include "../test_macros.h"
-
-template<class T, class U>
-void
-test_is_base_of()
+namespace
 {
-	static_assert((Rider::Faiz::is_base_of<T, U>::value), "");
-	static_assert((Rider::Faiz::is_base_of<const T, U>::value), "");
-	static_assert((Rider::Faiz::is_base_of<T, const U>::value), "");
-	static_assert((Rider::Faiz::is_base_of<const T, const U>::value), "");
-	static_assert((Rider::Faiz::is_base_of_v<T, U>), "");
-	static_assert((Rider::Faiz::is_base_of_v<const T, U>), "");
-	static_assert((Rider::Faiz::is_base_of_v<T, const U>), "");
-	static_assert((Rider::Faiz::is_base_of_v<const T, const U>), "");
-}
 
-template<class T, class U>
-void
-test_is_not_base_of()
-{
-	static_assert((!Rider::Faiz::is_base_of<T, U>::value), "");
-}
 
-struct B
-{};
-struct B1 : B
-{};
-struct B2 : B
-{};
-struct D : private B1, private B2
-{};
+	template<class T, class U>
+	void
+	test_is_base_of()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_base_of<T, U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_base_of<const T, U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_base_of<T, const U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_base_of<const T, const U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_base_of_v<T, U>);
+		STATIC_REQUIRE(Rider::Faiz::is_base_of_v<const T, U>);
+		STATIC_REQUIRE(Rider::Faiz::is_base_of_v<T, const U>);
+		STATIC_REQUIRE(Rider::Faiz::is_base_of_v<const T, const U>);
+	}
 
-int
-main()
+	template<class T, class U>
+	void
+	test_is_not_base_of()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_base_of<T, U>::value);
+	}
+
+	struct B
+	{};
+	struct B1 : B
+	{};
+	struct B2 : B
+	{};
+	struct D : private B1, private B2
+	{};
+
+} // namespace
+TEST_CASE("is_base_of.libcxx: ")
 {
 	test_is_base_of<B, D>();
 	test_is_base_of<B1, D>();

@@ -1,68 +1,74 @@
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_is_object()
+namespace
 {
-	static_assert(Rider::Faiz::is_object<T>::value, "");
-	static_assert(Rider::Faiz::is_object<const T>::value, "");
-	static_assert(Rider::Faiz::is_object<volatile T>::value, "");
-	static_assert(Rider::Faiz::is_object<const volatile T>::value, "");
-	static_assert(Rider::Faiz::is_object_v<T>, "");
-	static_assert(Rider::Faiz::is_object_v<const T>, "");
-	static_assert(Rider::Faiz::is_object_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_object_v<const volatile T>, "");
-}
 
-template<class T>
-void
-test_is_not_object()
-{
-	static_assert(!Rider::Faiz::is_object<T>::value, "");
-	static_assert(!Rider::Faiz::is_object<const T>::value, "");
-	static_assert(!Rider::Faiz::is_object<volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_object<const volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_object_v<T>, "");
-	static_assert(!Rider::Faiz::is_object_v<const T>, "");
-	static_assert(!Rider::Faiz::is_object_v<volatile T>, "");
-	static_assert(!Rider::Faiz::is_object_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_object()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_object<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_object<const T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_object<volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_object<const volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_object_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_object_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_object_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::is_object_v<const volatile T>);
+	}
 
-class incomplete_type;
+	template<class T>
+	void
+	test_is_not_object()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_object<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_object<const T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_object<volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_object<const volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_object_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_object_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_object_v<volatile T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_object_v<const volatile T>);
+	}
 
-class Empty
-{};
+	class incomplete_type;
 
-class NotEmpty
-{
-	virtual ~NotEmpty();
-};
+	class Empty
+	{};
 
-union Union
-{};
+	class NotEmpty
+	{
+		virtual ~NotEmpty();
+	};
 
-struct bit_zero
-{
-	int : 0;
-};
+	union Union
+	{};
 
-class Abstract
-{
-	virtual ~Abstract() = 0;
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-enum Enum
-{
-	zero,
-	one
-};
+	class Abstract
+	{
+		virtual ~Abstract() = 0;
+	};
 
-typedef void (*FunctionPtr)();
+	enum Enum
+	{
+		zero,
+		one
+	};
+
+	typedef void (*FunctionPtr)();
 
 
-int
-main()
+} // namespace
+TEST_CASE("is_object.libcxx: ")
 {
 	// An object type is a (possibly cv-qualified) type that is not a function
 	// type, not a reference type, and not a void type.

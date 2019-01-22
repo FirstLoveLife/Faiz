@@ -17,25 +17,27 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+// #include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+TEST_CASE("is_object.libstdcxx")
 {
 	using Rider::Faiz::is_object;
-	using namespace __gnu_test;
+	// using namespace __gnu_test;
 
-	static_assert(test_category<is_object, int(int)>(false), "");
-	static_assert(test_category<is_object, ClassType(ClassType)>(false), "");
-	static_assert(
-		test_category<is_object, float(int, float, int[], int&)>(false), "");
-	static_assert(test_category<is_object, int&>(false), "");
-	static_assert(test_category<is_object, ClassType&>(false), "");
-	static_assert(test_category<is_object, int (&)(int)>(false), "");
-	static_assert(test_category<is_object, void>(false), "");
-	static_assert(test_category<is_object, const void>(false), "");
+	STATIC_REQUIRE(test_category<is_object, int(int)>(false));
+	STATIC_REQUIRE(test_category<is_object, ClassType(ClassType)>(false));
+	STATIC_REQUIRE(
+		test_category<is_object, float(int, float, int[], int&)>(false));
+	STATIC_REQUIRE(test_category<is_object, int&>(false));
+	STATIC_REQUIRE(test_category<is_object, ClassType&>(false));
+	STATIC_REQUIRE(test_category<is_object, int (&)(int)>(false));
+	STATIC_REQUIRE(test_category<is_object, void>(false));
+	STATIC_REQUIRE(test_category<is_object, const void>(false));
 
 	// Sanity check.
-	static_assert(test_category<is_object, ClassType>(true), "");
+	STATIC_REQUIRE(test_category<is_object, ClassType>(true));
 }

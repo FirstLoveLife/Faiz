@@ -19,84 +19,90 @@
 //  and no base class B for which is_empty_v<B> is false.
 
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_is_empty()
+namespace
 {
-	static_assert(Rider::Faiz::is_empty<T>::value, "");
-	static_assert(Rider::Faiz::is_empty<const T>::value, "");
-	static_assert(Rider::Faiz::is_empty<volatile T>::value, "");
-	static_assert(Rider::Faiz::is_empty<const volatile T>::value, "");
+
+	template<class T>
+	void
+	test_is_empty()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_empty<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_empty<const T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_empty<volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_empty<const volatile T>::value);
 #if TEST_STD_VER > 14
-	static_assert(Rider::Faiz::is_empty_v<T>, "");
-	static_assert(Rider::Faiz::is_empty_v<const T>, "");
-	static_assert(Rider::Faiz::is_empty_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_empty_v<const volatile T>, "");
+		STATIC_REQUIRE(Rider::Faiz::is_empty_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_empty_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_empty_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::is_empty_v<const volatile T>);
 #endif
-}
+	}
 
-template<class T>
-void
-test_is_not_empty()
-{
-	static_assert(!Rider::Faiz::is_empty<T>::value, "");
-	static_assert(!Rider::Faiz::is_empty<const T>::value, "");
-	static_assert(!Rider::Faiz::is_empty<volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_empty<const volatile T>::value, "");
+	template<class T>
+	void
+	test_is_not_empty()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_empty<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_empty<const T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_empty<volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_empty<const volatile T>::value);
 #if TEST_STD_VER > 14
-	static_assert(!Rider::Faiz::is_empty_v<T>, "");
-	static_assert(!Rider::Faiz::is_empty_v<const T>, "");
-	static_assert(!Rider::Faiz::is_empty_v<volatile T>, "");
-	static_assert(!Rider::Faiz::is_empty_v<const volatile T>, "");
+		STATIC_REQUIRE(!Rider::Faiz::is_empty_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_empty_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_empty_v<volatile T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_empty_v<const volatile T>);
 #endif
-}
+	}
 
-class Empty
-{};
-struct NotEmpty
-{
-	int foo;
-};
+	class Empty
+	{};
+	struct NotEmpty
+	{
+		int foo;
+	};
 
-class VirtualFn
-{
-	virtual ~VirtualFn();
-};
+	class VirtualFn
+	{
+		virtual ~VirtualFn();
+	};
 
-union Union
-{};
+	union Union
+	{};
 
-struct EmptyBase : public Empty
-{};
-struct VirtualBase : virtual Empty
-{};
-struct NotEmptyBase : public NotEmpty
-{};
+	struct EmptyBase : public Empty
+	{};
+	struct VirtualBase : virtual Empty
+	{};
+	struct NotEmptyBase : public NotEmpty
+	{};
 
-struct StaticMember
-{
-	static int foo;
-};
-struct NonStaticMember
-{
-	int foo;
-};
+	struct StaticMember
+	{
+		static int foo;
+	};
+	struct NonStaticMember
+	{
+		int foo;
+	};
 
-struct bit_zero
-{
-	int : 0;
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-struct bit_one
-{
-	int : 1;
-};
+	struct bit_one
+	{
+		int : 1;
+	};
 
-int
-main()
+} // namespace
+TEST_CASE("is_empty.libcxx: ")
 {
 	test_is_not_empty<void>();
 	test_is_not_empty<int&>();

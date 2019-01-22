@@ -10,68 +10,74 @@
 
 // is_polymorphic
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_is_polymorphic()
+namespace
 {
-	static_assert(Rider::Faiz::is_polymorphic<T>::value, "");
-	static_assert(Rider::Faiz::is_polymorphic<const T>::value, "");
-	static_assert(Rider::Faiz::is_polymorphic<volatile T>::value, "");
-	static_assert(Rider::Faiz::is_polymorphic<const volatile T>::value, "");
-	static_assert(Rider::Faiz::is_polymorphic_v<T>, "");
-	static_assert(Rider::Faiz::is_polymorphic_v<const T>, "");
-	static_assert(Rider::Faiz::is_polymorphic_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_polymorphic_v<const volatile T>, "");
-}
 
-template<class T>
-void
-test_is_not_polymorphic()
-{
-	static_assert(!Rider::Faiz::is_polymorphic<T>::value, "");
-	static_assert(!Rider::Faiz::is_polymorphic<const T>::value, "");
-	static_assert(!Rider::Faiz::is_polymorphic<volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_polymorphic<const volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_polymorphic_v<T>, "");
-	static_assert(!Rider::Faiz::is_polymorphic_v<const T>, "");
-	static_assert(!Rider::Faiz::is_polymorphic_v<volatile T>, "");
-	static_assert(!Rider::Faiz::is_polymorphic_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_polymorphic()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_polymorphic<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_polymorphic<const T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_polymorphic<volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_polymorphic<const volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_polymorphic_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_polymorphic_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_polymorphic_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::is_polymorphic_v<const volatile T>);
+	}
 
-class Empty
-{};
+	template<class T>
+	void
+	test_is_not_polymorphic()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_polymorphic<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_polymorphic<const T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_polymorphic<volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_polymorphic<const volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_polymorphic_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_polymorphic_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_polymorphic_v<volatile T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_polymorphic_v<const volatile T>);
+	}
 
-class NotEmpty
-{
-	virtual ~NotEmpty();
-};
+	class Empty
+	{};
 
-union Union
-{};
+	class NotEmpty
+	{
+		virtual ~NotEmpty();
+	};
 
-struct bit_zero
-{
-	int : 0;
-};
+	union Union
+	{};
 
-class Abstract
-{
-	virtual ~Abstract() = 0;
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
+
+	class Abstract
+	{
+		virtual ~Abstract() = 0;
+	};
 
 #if TEST_STD_VER >= 11
-class Final final
-{};
+	class Final final
+	{};
 #else
-class Final
-{};
+	class Final
+	{};
 #endif
 
-int
-main()
+} // namespace
+TEST_CASE("is_polymorphic.libcxx: ")
 {
 	test_is_not_polymorphic<void>();
 	test_is_not_polymorphic<int&>();

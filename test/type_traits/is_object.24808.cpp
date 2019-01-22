@@ -17,22 +17,26 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_hooks.h"
-#include "../testsuite_tr1.h"
+// #include "../testsuite_hooks.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
+// #include "../testsuite_tr1.h"
 #include "rider/faiz/type_traits.hpp"
-// libRider::Faizc++/24808
-void
-test01()
+
+namespace
 {
-	using Rider::Faiz::is_object;
-	using namespace __gnu_test;
+	// libRider::Faizc++/24808
+	void
+	test01()
+	{
+		using Rider::Faiz::is_object;
 
-	VERIFY((test_category<is_object, IncompleteClass>(true)));
-}
+		REQUIRE(test_category<is_object, IncompleteClass>(true));
+	}
 
-int
-main()
+} // namespace
+TEST_CASE("is_object.24808: ")
 {
 	test01();
-	return 0;
 }

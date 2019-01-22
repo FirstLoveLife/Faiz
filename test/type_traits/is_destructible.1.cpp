@@ -1,167 +1,172 @@
 #include "rider/faiz/type_traits.hpp"
-using namespace Rider::Faiz;
-template<class T>
-void
-test_is_destructible()
-{
-	static_assert(is_destructible<T>::value, "");
-	static_assert(is_destructible<const T>::value, "");
-	static_assert(is_destructible<volatile T>::value, "");
-	static_assert(is_destructible<const volatile T>::value, "");
-	static_assert(is_destructible_v<T>, "");
-	static_assert(is_destructible_v<const T>, "");
-	static_assert(is_destructible_v<volatile T>, "");
-	static_assert(is_destructible_v<const volatile T>, "");
-}
+#include <catch2/catch.hpp>
 
-template<class T>
-void
-test_is_not_destructible()
+namespace
 {
-	static_assert(!is_destructible<T>::value, "");
-	static_assert(!is_destructible<const T>::value, "");
-	static_assert(!is_destructible<volatile T>::value, "");
-	static_assert(!is_destructible<const volatile T>::value, "");
-	static_assert(!is_destructible_v<T>, "");
-	static_assert(!is_destructible_v<const T>, "");
-	static_assert(!is_destructible_v<volatile T>, "");
-	static_assert(!is_destructible_v<const volatile T>, "");
-}
 
-class Empty
-{};
+	using namespace Rider::Faiz;
+	template<class T>
+	void
+	test_is_destructible()
+	{
+		STATIC_REQUIRE(is_destructible<T>::value);
+		STATIC_REQUIRE(is_destructible<const T>::value);
+		STATIC_REQUIRE(is_destructible<volatile T>::value);
+		STATIC_REQUIRE(is_destructible<const volatile T>::value);
+		STATIC_REQUIRE(is_destructible_v<T>);
+		STATIC_REQUIRE(is_destructible_v<const T>);
+		STATIC_REQUIRE(is_destructible_v<volatile T>);
+		STATIC_REQUIRE(is_destructible_v<const volatile T>);
+	}
 
-class NotEmpty
-{
-	virtual ~NotEmpty();
-};
+	template<class T>
+	void
+	test_is_not_destructible()
+	{
+		STATIC_REQUIRE(!is_destructible<T>::value);
+		STATIC_REQUIRE(!is_destructible<const T>::value);
+		STATIC_REQUIRE(!is_destructible<volatile T>::value);
+		STATIC_REQUIRE(!is_destructible<const volatile T>::value);
+		STATIC_REQUIRE(!is_destructible_v<T>);
+		STATIC_REQUIRE(!is_destructible_v<const T>);
+		STATIC_REQUIRE(!is_destructible_v<volatile T>);
+		STATIC_REQUIRE(!is_destructible_v<const volatile T>);
+	}
 
-union Union
-{};
+	class Empty
+	{};
 
-struct bit_zero
-{
-	int : 0;
-};
+	class NotEmpty
+	{
+		virtual ~NotEmpty();
+	};
 
-struct A
-{
-	~A();
-};
+	union Union
+	{};
 
-typedef void(Function)();
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-struct PublicAbstract
-{
-public:
-	virtual void
-	foo()
-		= 0;
-};
-struct ProtectedAbstract
-{
-protected:
-	virtual void
-	foo()
-		= 0;
-};
-struct PrivateAbstract
-{
-private:
-	virtual void
-	foo()
-		= 0;
-};
+	struct A
+	{
+		~A();
+	};
 
-struct PublicDestructor
-{
-public:
-	~PublicDestructor()
-	{}
-};
-struct ProtectedDestructor
-{
-protected:
-	~ProtectedDestructor()
-	{}
-};
-struct PrivateDestructor
-{
-private:
-	~PrivateDestructor()
-	{}
-};
+	typedef void(Function)();
 
-struct VirtualPublicDestructor
-{
-public:
-	virtual ~VirtualPublicDestructor()
-	{}
-};
-struct VirtualProtectedDestructor
-{
-protected:
-	virtual ~VirtualProtectedDestructor()
-	{}
-};
-struct VirtualPrivateDestructor
-{
-private:
-	virtual ~VirtualPrivateDestructor()
-	{}
-};
+	struct PublicAbstract
+	{
+	public:
+		virtual void
+		foo()
+			= 0;
+	};
+	struct ProtectedAbstract
+	{
+	protected:
+		virtual void
+		foo()
+			= 0;
+	};
+	struct PrivateAbstract
+	{
+	private:
+		virtual void
+		foo()
+			= 0;
+	};
 
-struct PurePublicDestructor
-{
-public:
-	virtual ~PurePublicDestructor() = 0;
-};
-struct PureProtectedDestructor
-{
-protected:
-	virtual ~PureProtectedDestructor() = 0;
-};
-struct PurePrivateDestructor
-{
-private:
-	virtual ~PurePrivateDestructor() = 0;
-};
+	struct PublicDestructor
+	{
+	public:
+		~PublicDestructor()
+		{}
+	};
+	struct ProtectedDestructor
+	{
+	protected:
+		~ProtectedDestructor()
+		{}
+	};
+	struct PrivateDestructor
+	{
+	private:
+		~PrivateDestructor()
+		{}
+	};
 
-struct DeletedPublicDestructor
-{
-public:
-	~DeletedPublicDestructor() = delete;
-};
-struct DeletedProtectedDestructor
-{
-protected:
-	~DeletedProtectedDestructor() = delete;
-};
-struct DeletedPrivateDestructor
-{
-private:
-	~DeletedPrivateDestructor() = delete;
-};
+	struct VirtualPublicDestructor
+	{
+	public:
+		virtual ~VirtualPublicDestructor()
+		{}
+	};
+	struct VirtualProtectedDestructor
+	{
+	protected:
+		virtual ~VirtualProtectedDestructor()
+		{}
+	};
+	struct VirtualPrivateDestructor
+	{
+	private:
+		virtual ~VirtualPrivateDestructor()
+		{}
+	};
 
-struct DeletedVirtualPublicDestructor
-{
-public:
-	virtual ~DeletedVirtualPublicDestructor() = delete;
-};
-struct DeletedVirtualProtectedDestructor
-{
-protected:
-	virtual ~DeletedVirtualProtectedDestructor() = delete;
-};
-struct DeletedVirtualPrivateDestructor
-{
-private:
-	virtual ~DeletedVirtualPrivateDestructor() = delete;
-};
+	struct PurePublicDestructor
+	{
+	public:
+		virtual ~PurePublicDestructor() = 0;
+	};
+	struct PureProtectedDestructor
+	{
+	protected:
+		virtual ~PureProtectedDestructor() = 0;
+	};
+	struct PurePrivateDestructor
+	{
+	private:
+		virtual ~PurePrivateDestructor() = 0;
+	};
+
+	struct DeletedPublicDestructor
+	{
+	public:
+		~DeletedPublicDestructor() = delete;
+	};
+	struct DeletedProtectedDestructor
+	{
+	protected:
+		~DeletedProtectedDestructor() = delete;
+	};
+	struct DeletedPrivateDestructor
+	{
+	private:
+		~DeletedPrivateDestructor() = delete;
+	};
+
+	struct DeletedVirtualPublicDestructor
+	{
+	public:
+		virtual ~DeletedVirtualPublicDestructor() = delete;
+	};
+	struct DeletedVirtualProtectedDestructor
+	{
+	protected:
+		virtual ~DeletedVirtualProtectedDestructor() = delete;
+	};
+	struct DeletedVirtualPrivateDestructor
+	{
+	private:
+		virtual ~DeletedVirtualPrivateDestructor() = delete;
+	};
 
 
-int
-main()
+} // namespace
+TEST_CASE("is_destructible.1: ")
 {
 	test_is_destructible<A>();
 	test_is_destructible<int&>();

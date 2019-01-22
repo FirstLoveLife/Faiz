@@ -11,52 +11,58 @@
 
 // is_same
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T, class U>
-void
-test_is_same()
+namespace
 {
-	static_assert((Rider::Faiz::is_same<T, U>::value), "");
-	static_assert((!Rider::Faiz::is_same<const T, U>::value), "");
-	static_assert((!Rider::Faiz::is_same<T, const U>::value), "");
-	static_assert((Rider::Faiz::is_same<const T, const U>::value), "");
-	static_assert((Rider::Faiz::is_same_v<T, U>), "");
-	static_assert((!Rider::Faiz::is_same_v<const T, U>), "");
-	static_assert((!Rider::Faiz::is_same_v<T, const U>), "");
-	static_assert((Rider::Faiz::is_same_v<const T, const U>), "");
-}
 
-template<class T, class U>
-void
-test_is_same_ref()
-{
-	static_assert((Rider::Faiz::is_same<T, U>::value), "");
-	static_assert((Rider::Faiz::is_same<const T, U>::value), "");
-	static_assert((Rider::Faiz::is_same<T, const U>::value), "");
-	static_assert((Rider::Faiz::is_same<const T, const U>::value), "");
-	static_assert((Rider::Faiz::is_same_v<T, U>), "");
-	static_assert((Rider::Faiz::is_same_v<const T, U>), "");
-	static_assert((Rider::Faiz::is_same_v<T, const U>), "");
-	static_assert((Rider::Faiz::is_same_v<const T, const U>), "");
-}
+	template<class T, class U>
+	void
+	test_is_same()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_same<T, U>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_same<const T, U>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_same<T, const U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_same<const T, const U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_same_v<T, U>);
+		STATIC_REQUIRE(!Rider::Faiz::is_same_v<const T, U>);
+		STATIC_REQUIRE(!Rider::Faiz::is_same_v<T, const U>);
+		STATIC_REQUIRE(Rider::Faiz::is_same_v<const T, const U>);
+	}
 
-template<class T, class U>
-void
-test_is_not_same()
-{
-	static_assert((!Rider::Faiz::is_same<T, U>::value), "");
-}
+	template<class T, class U>
+	void
+	test_is_same_ref()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_same<T, U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_same<const T, U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_same<T, const U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_same<const T, const U>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_same_v<T, U>);
+		STATIC_REQUIRE(Rider::Faiz::is_same_v<const T, U>);
+		STATIC_REQUIRE(Rider::Faiz::is_same_v<T, const U>);
+		STATIC_REQUIRE(Rider::Faiz::is_same_v<const T, const U>);
+	}
 
-class Class
-{
-public:
-	~Class();
-};
+	template<class T, class U>
+	void
+	test_is_not_same()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_same<T, U>::value);
+	}
 
-int
-main()
+	class Class
+	{
+	public:
+		~Class();
+	};
+
+} // namespace
+TEST_CASE("is_same.libcxx: ")
 {
 	test_is_same<int, int>();
 	test_is_same<void, void>();

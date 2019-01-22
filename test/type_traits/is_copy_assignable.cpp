@@ -11,65 +11,71 @@
 
 // is_copy_assignable
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_is_copy_assignable()
+namespace
 {
-	static_assert((Rider::Faiz::is_copy_assignable<T>::value), "");
-#if TEST_STD_VER > 14
-	static_assert((Rider::Faiz::is_copy_assignable_v<T>), "");
-#endif
-}
 
-template<class T>
-void
-test_is_not_copy_assignable()
-{
-	static_assert((!Rider::Faiz::is_copy_assignable<T>::value), "");
-#if TEST_STD_VER > 14
-	static_assert((!Rider::Faiz::is_copy_assignable_v<T>), "");
-#endif
-}
-
-class Empty
-{};
-
-class NotEmpty
-{
-public:
-	virtual ~NotEmpty();
-};
-
-union Union
-{};
-
-struct bit_zero
-{
-	int : 0;
-};
-
-struct A
-{
-	A();
-};
-
-class B
-{
-	B&
-	operator=(const B&);
-};
-
-struct C
-{
+	template<class T>
 	void
-	operator=(C&); // not const
-};
+	test_is_copy_assignable()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_copy_assignable<T>::value);
+#if TEST_STD_VER > 14
+		STATIC_REQUIRE(Rider::Faiz::is_copy_assignable_v<T>);
+#endif
+	}
 
-int
-main()
+	template<class T>
+	void
+	test_is_not_copy_assignable()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_copy_assignable<T>::value);
+#if TEST_STD_VER > 14
+		STATIC_REQUIRE(!Rider::Faiz::is_copy_assignable_v<T>);
+#endif
+	}
+
+	class Empty
+	{};
+
+	class NotEmpty
+	{
+	public:
+		virtual ~NotEmpty();
+	};
+
+	union Union
+	{};
+
+	struct bit_zero
+	{
+		int : 0;
+	};
+
+	struct A
+	{
+		A();
+	};
+
+	class B
+	{
+		B&
+		operator=(const B&);
+	};
+
+	struct C
+	{
+		void
+		operator=(C&); // not const
+	};
+
+} // namespace
+TEST_CASE("is_copy_assignable: ")
 {
 	test_is_copy_assignable<int>();
 	test_is_copy_assignable<int&>();

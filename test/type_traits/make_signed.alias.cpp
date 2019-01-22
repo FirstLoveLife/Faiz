@@ -18,16 +18,18 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "rider/faiz/type_traits.hpp"
-using namespace Rider::Faiz;
+#include <catch2/catch.hpp>
 
+using namespace Rider::Faiz;
 template<typename Trait, typename Result>
 using test = is_same<typename Trait::type, Result>;
 
-static_assert(test<make_signed<const int>, make_signed_t<const int>>(),
-	"make_signed_t<const int>");
+TEST_CASE("make_signed")
+{
 
-static_assert(test<make_signed<unsigned>, make_signed_t<unsigned>>(),
-	"make_signed_t<unsigned>");
+	STATIC_REQUIRE(test<make_signed<const int>, make_signed_t<const int>>());
 
-static_assert(
-	test<make_signed<char>, make_signed_t<char>>(), "make_signed_t<char>");
+	STATIC_REQUIRE(test<make_signed<unsigned>, make_signed_t<unsigned>>());
+
+	STATIC_REQUIRE(test<make_signed<char>, make_signed_t<char>>());
+}

@@ -11,69 +11,73 @@
 
 // is_class
 
-#include "../test_macros.h"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 #include <cstddef> // for Rider::Faiz::nullptr_t
-template<class T>
-void
-test_is_class()
+
+namespace
 {
-	static_assert(Rider::Faiz::is_class<T>::value, "");
-	static_assert(Rider::Faiz::is_class<const T>::value, "");
-	static_assert(Rider::Faiz::is_class<volatile T>::value, "");
-	static_assert(Rider::Faiz::is_class<const volatile T>::value, "");
-	static_assert(Rider::Faiz::is_class_v<T>, "");
-	static_assert(Rider::Faiz::is_class_v<const T>, "");
-	static_assert(Rider::Faiz::is_class_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_class_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_class()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_class<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_class<const T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_class<volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_class<const volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_class_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_class_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_class_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::is_class_v<const volatile T>);
+	}
 
-template<class T>
-void
-test_is_not_class()
-{
-	static_assert(!Rider::Faiz::is_class<T>::value, "");
-	static_assert(!Rider::Faiz::is_class<const T>::value, "");
-	static_assert(!Rider::Faiz::is_class<volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_class<const volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_class_v<T>, "");
-	static_assert(!Rider::Faiz::is_class_v<const T>, "");
-	static_assert(!Rider::Faiz::is_class_v<volatile T>, "");
-	static_assert(!Rider::Faiz::is_class_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_not_class()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_class<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_class<const T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_class<volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_class<const volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_class_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_class_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_class_v<volatile T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_class_v<const volatile T>);
+	}
 
-class Empty
-{};
+	class Empty
+	{};
 
-class NotEmpty
-{
-	virtual ~NotEmpty();
-};
+	class NotEmpty
+	{
+		virtual ~NotEmpty();
+	};
 
-union Union
-{};
+	union Union
+	{};
 
-struct bit_zero
-{
-	int : 0;
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-class Abstract
-{
-	virtual ~Abstract() = 0;
-};
+	class Abstract
+	{
+		virtual ~Abstract() = 0;
+	};
 
-enum Enum
-{
-	zero,
-	one
-};
-struct incomplete_type;
+	enum Enum
+	{
+		zero,
+		one
+	};
+	struct incomplete_type;
 
-typedef void (*FunctionPtr)();
+	typedef void (*FunctionPtr)();
 
-int
-main()
+} // namespace
+TEST_CASE("is_class.libcxx: ")
 {
 	test_is_class<Empty>();
 	test_is_class<bit_zero>();

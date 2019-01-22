@@ -10,27 +10,26 @@
 // type_traits
 
 // conditional
-
 #include "../test_macros.h"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-int
-main()
+TEST_CASE("conditional libstdcxx")
 {
-	static_assert(
-		(Rider::Faiz::is_same<Rider::Faiz::conditional<true, char, int>::type,
-			char>::value),
-		"");
-	static_assert(
-		(Rider::Faiz::is_same<Rider::Faiz::conditional<false, char, int>::type,
-			int>::value),
-		"");
-	static_assert(
-		(Rider::Faiz::is_same<Rider::Faiz::conditional_t<true, char, int>,
-			char>::value),
-		"");
-	static_assert(
-		(Rider::Faiz::is_same<Rider::Faiz::conditional_t<false, char, int>,
-			int>::value),
-		"");
+	STATIC_REQUIRE(
+		Rider::Faiz::is_same<Rider::Faiz::conditional<true, char, int>::type,
+			char>::value);
+
+	STATIC_REQUIRE(
+		Rider::Faiz::is_same<Rider::Faiz::conditional<false, char, int>::type,
+			int>::value);
+
+	STATIC_REQUIRE(
+		Rider::Faiz::is_same<Rider::Faiz::conditional_t<true, char, int>,
+			char>::value);
+
+	STATIC_REQUIRE(
+		Rider::Faiz::is_same<Rider::Faiz::conditional_t<false, char, int>,
+			int>::value);
 }

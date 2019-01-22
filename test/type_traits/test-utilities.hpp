@@ -1,39 +1,14 @@
-// -*- C++ -*-
-// Testing utilities for the tr1 testsuite.
-//
-// Copyright (C) 2004-2018 Free Software Foundation, Inc.
-//
-// This file is part of the GNU ISO C++ Library.  This library is free
-// software; you can redistribute it and/or modify it under the
-// terms of the GNU General Public License as published by the
-// Free Software Foundation; either version 3, or (at your option)
-// any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License along
-// with this library; see the file COPYING3.  If not see
-// <http://www.gnu.org/licenses/>.
-//
+#ifndef TEST_UTILITIES
+#define TEST_UTILITIES
 
-#ifndef _GLIBCXX_TESTSUITE_TR1_H
-#define _GLIBCXX_TESTSUITE_TR1_H
-
-#include "testsuite_hooks.h"
-#include <ext/type_traits.h>
-
-namespace __gnu_test
+namespace
 {
-	// For tr1/type_traits.
+	class empty
+	{};
+
 	template<template<typename> class Category, typename Type>
-#if __cplusplus >= 201103L
-	constexpr
-#endif
-		bool
-		test_category(bool value)
+	constexpr bool
+	test_category(bool value)
 	{
 		return (Category<Type>::value == value
 			&& Category<const Type>::value == value
@@ -45,53 +20,223 @@ namespace __gnu_test
 			&& Category<const volatile Type>::type::value == value);
 	}
 
-	// For testing tr1/type_traits/extent, which has a second template
-	// parameter.
-	template<template<typename, unsigned> class Property,
-		typename Type,
-		unsigned Uint>
-#if __cplusplus >= 201103L
-	constexpr
-#endif
-		bool
-		test_property(typename Property<Type, Uint>::value_type value)
+	namespace gnu_assign
 	{
-		return (Property<Type, Uint>::value == value
-			&& Property<Type, Uint>::type::value == value);
-	}
 
-#if __cplusplus >= 201103L
-	template<template<typename...> class Property,
-		typename Type1,
-		typename... Types>
-	constexpr bool
-	test_property(typename Property<Type1, Types...>::value_type value)
-	{
-		return (Property<Type1, Types...>::value == value
-			&& Property<Type1, Types...>::type::value == value);
-	}
-#else
-	template<template<typename> class Property, typename Type>
-	bool
-	test_property(typename Property<Type>::value_type value)
-	{
-		return (Property<Type>::value == value
-			&& Property<Type>::type::value == value);
-	}
-#endif
+		struct Empty
+		{};
 
-	template<template<typename, typename> class Relationship,
-		typename Type1,
-		typename Type2>
-#if __cplusplus >= 201103L
-	constexpr
-#endif
-		bool
-		test_relationship(bool value)
-	{
-		return (Relationship<Type1, Type2>::value == value
-			&& Relationship<Type1, Type2>::type::value == value);
-	}
+		struct B
+		{
+			int i;
+			B()
+			{}
+		};
+		struct D : B
+		{};
+
+		enum E
+		{
+			ee1
+		};
+		enum E2
+		{
+			ee2
+		};
+		enum class SE
+		{
+			e1
+		};
+		enum class SE2
+		{
+			e2
+		};
+
+		enum OpE : int;
+		enum class OpSE : bool;
+
+		union U
+		{
+			int i;
+			Empty b;
+		};
+
+		union UAssignAll
+		{
+			bool b;
+			char c;
+			template<class T>
+			void
+			operator=(T&&);
+		};
+
+		union UDelAssignAll
+		{
+			bool b;
+			char c;
+			template<class T>
+			void
+			operator=(T&&)
+				= delete;
+		};
+
+		struct Abstract
+		{
+			virtual ~Abstract() = 0;
+		};
+
+		struct AbstractDelDtor
+		{
+			~AbstractDelDtor() = delete;
+			virtual void
+			foo()
+				= 0;
+		};
+
+		struct Ukn;
+
+		template<class To>
+		struct ImplicitTo
+		{
+			operator To();
+		};
+
+		template<class To>
+		struct ExplicitTo
+		{
+			explicit operator To();
+		};
+
+		template<class To>
+		struct DelImplicitTo
+		{
+			operator To() = delete;
+		};
+
+		template<class To>
+		struct DelExplicitTo
+		{
+			explicit operator To() = delete;
+		};
+
+		struct Ellipsis
+		{
+			Ellipsis(...)
+			{}
+		};
+
+		struct DelEllipsis
+		{
+			DelEllipsis(...) = delete;
+		};
+
+		struct Any
+		{
+			template<class T>
+			Any(T&&)
+			{}
+		};
+
+		struct nAny
+		{
+			template<class... T>
+			nAny(T&&...)
+			{}
+		};
+
+		struct DelnAny
+		{
+			template<class... T>
+			DelnAny(T&&...) = delete;
+		};
+
+		template<class... Args>
+		struct FromArgs
+		{
+			FromArgs(Args...);
+		};
+
+		template<class... Args>
+		struct DelFromArgs
+		{
+			DelFromArgs(Args...) = delete;
+		};
+
+		struct DelDef
+		{
+			DelDef() = delete;
+		};
+
+		struct DelCopy
+		{
+			DelCopy(const DelCopy&) = delete;
+		};
+
+		struct DelDtor
+		{
+			DelDtor() = default;
+			DelDtor(const DelDtor&) = default;
+			DelDtor(DelDtor&&) = default;
+			DelDtor(int);
+			DelDtor(int, B, U);
+			~DelDtor() = delete;
+		};
+
+		struct Nontrivial
+		{
+			Nontrivial();
+			Nontrivial(const Nontrivial&);
+			Nontrivial&
+			operator=(const Nontrivial&);
+			~Nontrivial();
+		};
+
+		union NontrivialUnion
+		{
+			int i;
+			Nontrivial n;
+		};
+
+		struct UnusualCopy
+		{
+			UnusualCopy(UnusualCopy&);
+		};
+
+		struct AnyAssign
+		{
+			template<class T>
+			void
+			operator=(T&&);
+		};
+
+		struct DelAnyAssign
+		{
+			template<class T>
+			void
+			operator=(T&&)
+				= delete;
+		};
+
+		struct DelCopyAssign
+		{
+			DelCopyAssign&
+			operator=(const DelCopyAssign&)
+				= delete;
+			DelCopyAssign&
+			operator=(DelCopyAssign&&)
+				= default;
+		};
+
+		struct MO
+		{
+			MO(MO&&) = default;
+			MO&
+			operator=(MO&&)
+				= default;
+		};
+	} // namespace gnu_assign
+	// namespace gnu_assign
+
 
 	// Test types.
 	class ClassType
@@ -153,26 +298,26 @@ namespace __gnu_test
 
 	struct NothrowExplicitClass
 	{
-		NothrowExplicitClass(double&) throw();
-		explicit NothrowExplicitClass(int&) throw();
-		NothrowExplicitClass(double&, int&, double&) throw();
+		NothrowExplicitClass(double&) noexcept;
+		explicit NothrowExplicitClass(int&) noexcept;
+		NothrowExplicitClass(double&, int&, double&) noexcept;
 	};
 
 	struct ThrowExplicitClass
 	{
-		ThrowExplicitClass(double&) THROW(int);
-		explicit ThrowExplicitClass(int&) THROW(int);
-		ThrowExplicitClass(double&, int&, double&) THROW(int);
+		ThrowExplicitClass(double&) noexcept(false);
+		explicit ThrowExplicitClass(int&) noexcept(false);
+		ThrowExplicitClass(double&, int&, double&) noexcept(false);
 	};
 
 	struct ThrowDefaultClass
 	{
-		ThrowDefaultClass() THROW(int);
+		ThrowDefaultClass() noexcept(false);
 	};
 
 	struct ThrowCopyConsClass
 	{
-		ThrowCopyConsClass(const ThrowCopyConsClass&) THROW(int);
+		ThrowCopyConsClass(const ThrowCopyConsClass&) noexcept(false);
 	};
 
 #if __cplusplus >= 201103L
@@ -460,15 +605,6 @@ namespace __gnu_test
 		}
 	};
 
-	// For use in 8_c_compatibility.
-	template<typename R, typename T>
-	typename __gnu_cxx::__enable_if<std::__are_same<R, T>::__value,
-		bool>::__type check_ret_type(T)
-	{
-		return true;
-	}
-
-#if __cplusplus >= 201103L
 	namespace construct
 	{
 		struct Empty
@@ -637,7 +773,7 @@ namespace __gnu_test
 
 		struct NTD3
 		{
-			~NTD3() throw();
+			~NTD3() noexcept;
 		};
 
 		struct TD1
@@ -647,7 +783,7 @@ namespace __gnu_test
 
 		struct TD2
 		{
-			~TD2() THROW(int);
+			~TD2() noexcept(false);
 		};
 
 		struct Aggr
@@ -1029,9 +1165,36 @@ namespace __gnu_test
 		operator=(MoveConsOnlyType&&)
 			= delete;
 	};
+
+	template<template<typename, typename> class Relationship,
+		typename Type1,
+		typename Type2>
+	constexpr bool
+	test_relationship(bool value)
+	{
+		return (Relationship<Type1, Type2>::value == value
+			&& Relationship<Type1, Type2>::type::value == value);
+	}
+
+
+	template<template<typename, unsigned> class Property,
+		typename Type,
+		unsigned Uint>
+	constexpr bool
+	test_property(typename Property<Type, Uint>::value_type value)
+	{
+		return (Property<Type, Uint>::value == value
+			&& Property<Type, Uint>::type::value == value);
+	}
+
+	// XXX:https://stackoverflow.com/questions/54301862/is-footype1-types-legal-when-foo-is-a-struct-which-accepts-single-templa#comment95428703_54301862
+	template<template<typename...> class Property, typename... Types>
+	constexpr bool
+	test_property(typename Property<Types...>::value_type value)
+	{
+		return (Property<Types...>::value == value
+			&& Property<Types...>::type::value == value);
+	}
+
+} // namespace
 #endif
-
-
-} // namespace __gnu_test
-
-#endif // _GLIBCXX_TESTSUITE_TR1_H

@@ -18,34 +18,46 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "rider/faiz/type_traits.hpp"
-#include "../testsuite_tr1.h"
+#include <catch2/catch.hpp>
 
-void test01()
+// #include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+
+TEST_CASE("is_member_pointer libstdcxx: ")
 {
-  using std::is_member_function_pointer;
-  using namespace __gnu_test;
+	using Rider::Faiz::is_member_function_pointer;
 
-  // Positive tests.
-  static_assert(test_category<is_member_function_pointer,
-		int (ClassType::*) (int)>(true), "");
-  static_assert(test_category<is_member_function_pointer,
-		int (ClassType::*) (int) const>(true), "");
-  static_assert(test_category<is_member_function_pointer,
-		int (ClassType::*) (float, ...)>(true), "");
-  static_assert(test_category<is_member_function_pointer,
-		ClassType (ClassType::*) (ClassType)>(true), "");
-  static_assert(test_category<is_member_function_pointer,
-		float (ClassType::*) (int, float, int[], int&)>(true), "");
+	// Positive tests.
+	STATIC_REQUIRE(
+		test_category<is_member_function_pointer, int (ClassType::*)(int)>(
+			true));
 
-  // Negative tests.
-  static_assert(test_category<is_member_function_pointer,
-		int (ClassType::*)>(false), "");
-  static_assert(test_category<is_member_function_pointer,
-		const int (ClassType::*)>(false), "");
-  static_assert(test_category<is_member_function_pointer,
-		ClassType (ClassType::*)>(false), "");
+	STATIC_REQUIRE(test_category<is_member_function_pointer,
+		int (ClassType::*)(int) const>(true));
 
-  // Sanity check.
-  static_assert(test_category<is_member_function_pointer,
-		ClassType>(false), "");
+	STATIC_REQUIRE(test_category<is_member_function_pointer,
+		int (ClassType::*)(float, ...)>(true));
+
+	STATIC_REQUIRE(test_category<is_member_function_pointer,
+		ClassType (ClassType::*)(ClassType)>(true));
+
+	STATIC_REQUIRE(test_category<is_member_function_pointer,
+		float (ClassType::*)(int, float, int[], int&)>(true));
+
+
+	// Negative tests.
+	STATIC_REQUIRE(
+		test_category<is_member_function_pointer, int(ClassType::*)>(false));
+
+	STATIC_REQUIRE(
+		test_category<is_member_function_pointer, const int(ClassType::*)>(
+			false));
+
+	STATIC_REQUIRE(
+		test_category<is_member_function_pointer, ClassType(ClassType::*)>(
+			false));
+
+
+	// Sanity check.
+	STATIC_REQUIRE(test_category<is_member_function_pointer, ClassType>(false));
 }

@@ -17,35 +17,36 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+// #include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+TEST_CASE("is_union_libstdcxx: ")
 {
 	using Rider::Faiz::is_union;
-	using namespace __gnu_test;
 
 	// Positive tests.
-	static_assert(test_category<is_union, UnionType>(true), "");
+	STATIC_REQUIRE(test_category<is_union, UnionType>(true));
 
 	// Negative tests.
-	static_assert(test_category<is_union, ClassType>(false), "");
-	static_assert(test_category<is_union, DerivedType>(false), "");
-	static_assert(test_category<is_union, ConvType>(false), "");
-	static_assert(test_category<is_union, AbstractClass>(false), "");
-	static_assert(test_category<is_union, PolymorphicClass>(false), "");
-	static_assert(test_category<is_union, DerivedPolymorphic>(false), "");
-	static_assert(test_category<is_union, void>(false), "");
-	static_assert(test_category<is_union, int>(false), "");
-	static_assert(test_category<is_union, float>(false), "");
-	static_assert(test_category<is_union, int[2]>(false), "");
-	static_assert(test_category<is_union, int*>(false), "");
-	static_assert(test_category<is_union, int (*)(int)>(false), "");
-	static_assert(test_category<is_union, float&>(false), "");
-	static_assert(test_category<is_union, float (&)(float)>(false), "");
-	static_assert(test_category<is_union, int(ClassType::*)>(false), "");
-	static_assert(test_category<is_union, int (ClassType::*)(int)>(false), "");
-	static_assert(test_category<is_union, int(int)>(false), "");
-	static_assert(test_category<is_union, EnumType>(false), "");
+	STATIC_REQUIRE(test_category<is_union, ClassType>(false));
+	STATIC_REQUIRE(test_category<is_union, DerivedType>(false));
+	STATIC_REQUIRE(test_category<is_union, ConvType>(false));
+	STATIC_REQUIRE(test_category<is_union, AbstractClass>(false));
+	STATIC_REQUIRE(test_category<is_union, PolymorphicClass>(false));
+	STATIC_REQUIRE(test_category<is_union, DerivedPolymorphic>(false));
+	STATIC_REQUIRE(test_category<is_union, void>(false));
+	STATIC_REQUIRE(test_category<is_union, int>(false));
+	STATIC_REQUIRE(test_category<is_union, float>(false));
+	STATIC_REQUIRE(test_category<is_union, int[2]>(false));
+	STATIC_REQUIRE(test_category<is_union, int*>(false));
+	STATIC_REQUIRE(test_category<is_union, int (*)(int)>(false));
+	STATIC_REQUIRE(test_category<is_union, float&>(false));
+	STATIC_REQUIRE(test_category<is_union, float (&)(float)>(false));
+	STATIC_REQUIRE(test_category<is_union, int(ClassType::*)>(false));
+	STATIC_REQUIRE(test_category<is_union, int (ClassType::*)(int)>(false));
+	STATIC_REQUIRE(test_category<is_union, int(int)>(false));
+	STATIC_REQUIRE(test_category<is_union, EnumType>(false));
 }

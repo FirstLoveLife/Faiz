@@ -19,43 +19,48 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
-void
-test01()
+
+namespace
 {
-	using Rider::Faiz::is_unsigned;
-	using namespace __gnu_test;
+	void
+	test01()
+	{
+		using Rider::Faiz::is_unsigned;
 
-	static_assert(test_category<is_unsigned, void>(false), "");
+		STATIC_REQUIRE(test_category<is_unsigned, void>(false));
 
-	static_assert(test_category<is_unsigned, char>(char(-1) > char(0)), "");
-	static_assert(test_category<is_unsigned, signed char>(false), "");
-	static_assert(test_category<is_unsigned, unsigned char>(true), "");
-	static_assert(
-		test_category<is_unsigned, wchar_t>(wchar_t(-1) > wchar_t(0)), "");
-	static_assert(test_category<is_unsigned, short>(false), "");
-	static_assert(test_category<is_unsigned, unsigned short>(true), "");
-	static_assert(test_category<is_unsigned, int>(false), "");
-	static_assert(test_category<is_unsigned, unsigned int>(true), "");
-	static_assert(test_category<is_unsigned, long>(false), "");
-	static_assert(test_category<is_unsigned, unsigned long>(true), "");
-	static_assert(test_category<is_unsigned, long long>(false), "");
-	static_assert(test_category<is_unsigned, unsigned long long>(true), "");
+		STATIC_REQUIRE(test_category<is_unsigned, char>(char(-1) > char(0)));
+		STATIC_REQUIRE(test_category<is_unsigned, signed char>(false));
+		STATIC_REQUIRE(test_category<is_unsigned, unsigned char>(true));
+		STATIC_REQUIRE(
+			test_category<is_unsigned, wchar_t>(wchar_t(-1) > wchar_t(0)));
+		STATIC_REQUIRE(test_category<is_unsigned, short>(false));
+		STATIC_REQUIRE(test_category<is_unsigned, unsigned short>(true));
+		STATIC_REQUIRE(test_category<is_unsigned, int>(false));
+		STATIC_REQUIRE(test_category<is_unsigned, unsigned int>(true));
+		STATIC_REQUIRE(test_category<is_unsigned, long>(false));
+		STATIC_REQUIRE(test_category<is_unsigned, unsigned long>(true));
+		STATIC_REQUIRE(test_category<is_unsigned, long long>(false));
+		STATIC_REQUIRE(test_category<is_unsigned, unsigned long long>(true));
 
-	static_assert(test_category<is_unsigned, float>(false), "");
-	static_assert(test_category<is_unsigned, double>(false), "");
-	static_assert(test_category<is_unsigned, long double>(false), "");
+		STATIC_REQUIRE(test_category<is_unsigned, float>(false));
+		STATIC_REQUIRE(test_category<is_unsigned, double>(false));
+		STATIC_REQUIRE(test_category<is_unsigned, long double>(false));
 
-	static_assert(test_category<is_unsigned, unsigned __int128>(true), "");
-	static_assert(test_category<is_unsigned, __int128>(false), "");
+		STATIC_REQUIRE(test_category<is_unsigned, unsigned __int128>(true));
+		STATIC_REQUIRE(test_category<is_unsigned, __int128>(false));
 
-	static_assert(test_category<is_unsigned, __float128>(false), "");
-	// Sanity check.
-	static_assert(test_category<is_unsigned, ClassType>(false), "");
-}
+		STATIC_REQUIRE(test_category<is_unsigned, __float128>(false));
+		// Sanity check.
+		STATIC_REQUIRE(test_category<is_unsigned, ClassType>(false));
+	}
 
-int main()
+} // namespace
+TEST_CASE("is_unsigned.libstdcxx: ")
 {
 	test01();
 }

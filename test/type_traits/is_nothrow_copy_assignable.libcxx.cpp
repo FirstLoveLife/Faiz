@@ -11,49 +11,55 @@
 
 // is_nothrow_copy_assignable
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_has_nothrow_assign()
+namespace
 {
-	static_assert(Rider::Faiz::is_nothrow_copy_assignable<T>::value, "");
-	static_assert(Rider::Faiz::is_nothrow_copy_assignable_v<T>, "");
-}
 
-template<class T>
-void
-test_has_not_nothrow_assign()
-{
-	static_assert(!Rider::Faiz::is_nothrow_copy_assignable<T>::value, "");
-	static_assert(!Rider::Faiz::is_nothrow_copy_assignable_v<T>, "");
-}
+	template<class T>
+	void
+	test_has_nothrow_assign()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_nothrow_copy_assignable<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_nothrow_copy_assignable_v<T>);
+	}
 
-class Empty
-{};
+	template<class T>
+	void
+	test_has_not_nothrow_assign()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_nothrow_copy_assignable<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_nothrow_copy_assignable_v<T>);
+	}
 
-struct NotEmpty
-{
-	virtual ~NotEmpty();
-};
+	class Empty
+	{};
 
-union Union
-{};
+	struct NotEmpty
+	{
+		virtual ~NotEmpty();
+	};
 
-struct bit_zero
-{
-	int : 0;
-};
+	union Union
+	{};
 
-struct A
-{
-	A&
-	operator=(const A&);
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-int
-main()
+	struct A
+	{
+		A&
+		operator=(const A&);
+	};
+
+} // namespace
+TEST_CASE("is_nothrow_copy_assignable.libcxx: ")
 {
 	test_has_nothrow_assign<int&>();
 	test_has_nothrow_assign<Union>();

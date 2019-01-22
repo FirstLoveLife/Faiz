@@ -17,35 +17,35 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+TEST_CASE("is_class")
 {
 	using Rider::Faiz::is_class;
-	using namespace __gnu_test;
 
 	// Positive tests.
-	static_assert(test_category<is_class, ClassType>(true), "");
-	static_assert(test_category<is_class, DerivedType>(true), "");
-	static_assert(test_category<is_class, ConvType>(true), "");
-	static_assert(test_category<is_class, AbstractClass>(true), "");
-	static_assert(test_category<is_class, PolymorphicClass>(true), "");
-	static_assert(test_category<is_class, DerivedPolymorphic>(true), "");
+	STATIC_REQUIRE(test_category<is_class, ClassType>(true));
+	STATIC_REQUIRE(test_category<is_class, DerivedType>(true));
+	STATIC_REQUIRE(test_category<is_class, ConvType>(true));
+	STATIC_REQUIRE(test_category<is_class, AbstractClass>(true));
+	STATIC_REQUIRE(test_category<is_class, PolymorphicClass>(true));
+	STATIC_REQUIRE(test_category<is_class, DerivedPolymorphic>(true));
 
 	// Negative tests.
-	static_assert(test_category<is_class, UnionType>(false), "");
-	static_assert(test_category<is_class, void>(false), "");
-	static_assert(test_category<is_class, int>(false), "");
-	static_assert(test_category<is_class, float>(false), "");
-	static_assert(test_category<is_class, int[2]>(false), "");
-	static_assert(test_category<is_class, int*>(false), "");
-	static_assert(test_category<is_class, int (*)(int)>(false), "");
-	static_assert(test_category<is_class, float&>(false), "");
-	static_assert(test_category<is_class, float (&)(float)>(false), "");
-	static_assert(test_category<is_class, int(ClassType::*)>(false), "");
-	static_assert(test_category<is_class, int (ClassType::*)(int)>(false), "");
-	static_assert(test_category<is_class, int(int)>(false), "");
-	static_assert(test_category<is_class, EnumType>(false), "");
+	STATIC_REQUIRE(test_category<is_class, UnionType>(false));
+	STATIC_REQUIRE(test_category<is_class, void>(false));
+	STATIC_REQUIRE(test_category<is_class, int>(false));
+	STATIC_REQUIRE(test_category<is_class, float>(false));
+	STATIC_REQUIRE(test_category<is_class, int[2]>(false));
+	STATIC_REQUIRE(test_category<is_class, int*>(false));
+	STATIC_REQUIRE(test_category<is_class, int (*)(int)>(false));
+	STATIC_REQUIRE(test_category<is_class, float&>(false));
+	STATIC_REQUIRE(test_category<is_class, float (&)(float)>(false));
+	STATIC_REQUIRE(test_category<is_class, int(ClassType::*)>(false));
+	STATIC_REQUIRE(test_category<is_class, int (ClassType::*)(int)>(false));
+	STATIC_REQUIRE(test_category<is_class, int(int)>(false));
+	STATIC_REQUIRE(test_category<is_class, EnumType>(false));
 }

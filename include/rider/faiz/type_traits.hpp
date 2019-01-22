@@ -396,6 +396,8 @@ namespace Rider::Faiz
 		: type_identity<remove_cv_t<remove_reference_t<T>>>
 	{};
 
+	// tpl<typ T> using remove_cvref_t = typename remove_cvref<T>::type;
+
 	/******************** is *********************/
 
 	// If T and U name the same type (including const/volatile

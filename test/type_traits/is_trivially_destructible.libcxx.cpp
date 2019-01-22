@@ -16,128 +16,133 @@
 #	pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 #endif
 
-#include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_is_trivially_destructible()
+namespace
 {
-	static_assert(Rider::Faiz::is_trivially_destructible<T>::value, "");
-	static_assert(Rider::Faiz::is_trivially_destructible<const T>::value, "");
-	static_assert(
-		Rider::Faiz::is_trivially_destructible<volatile T>::value, "");
-	static_assert(
-		Rider::Faiz::is_trivially_destructible<const volatile T>::value, "");
-	static_assert(Rider::Faiz::is_trivially_destructible_v<T>, "");
-	static_assert(Rider::Faiz::is_trivially_destructible_v<const T>, "");
-	static_assert(Rider::Faiz::is_trivially_destructible_v<volatile T>, "");
-	static_assert(
-		Rider::Faiz::is_trivially_destructible_v<const volatile T>, "");
-}
 
-template<class T>
-void
-test_is_not_trivially_destructible()
-{
-	static_assert(!Rider::Faiz::is_trivially_destructible<T>::value, "");
-	static_assert(!Rider::Faiz::is_trivially_destructible<const T>::value, "");
-	static_assert(
-		!Rider::Faiz::is_trivially_destructible<volatile T>::value, "");
-	static_assert(
-		!Rider::Faiz::is_trivially_destructible<const volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_trivially_destructible_v<T>, "");
-	static_assert(!Rider::Faiz::is_trivially_destructible_v<const T>, "");
-	static_assert(!Rider::Faiz::is_trivially_destructible_v<volatile T>, "");
-	static_assert(
-		!Rider::Faiz::is_trivially_destructible_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_trivially_destructible()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_trivially_destructible<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_trivially_destructible<const T>::value);
+		STATIC_REQUIRE(
+			Rider::Faiz::is_trivially_destructible<volatile T>::value);
+		STATIC_REQUIRE(
+			Rider::Faiz::is_trivially_destructible<const volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_trivially_destructible_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_trivially_destructible_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_trivially_destructible_v<volatile T>);
+		STATIC_REQUIRE(
+			Rider::Faiz::is_trivially_destructible_v<const volatile T>);
+	}
 
-struct PublicDestructor
-{
-public:
-	~PublicDestructor()
-	{}
-};
-struct ProtectedDestructor
-{
-protected:
-	~ProtectedDestructor()
-	{}
-};
-struct PrivateDestructor
-{
-private:
-	~PrivateDestructor()
-	{}
-};
+	template<class T>
+	void
+	test_is_not_trivially_destructible()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_trivially_destructible<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_trivially_destructible<const T>::value);
+		STATIC_REQUIRE(
+			!Rider::Faiz::is_trivially_destructible<volatile T>::value);
+		STATIC_REQUIRE(
+			!Rider::Faiz::is_trivially_destructible<const volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_trivially_destructible_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_trivially_destructible_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_trivially_destructible_v<volatile T>);
+		STATIC_REQUIRE(
+			!Rider::Faiz::is_trivially_destructible_v<const volatile T>);
+	}
 
-struct VirtualPublicDestructor
-{
-public:
-	virtual ~VirtualPublicDestructor()
-	{}
-};
-struct VirtualProtectedDestructor
-{
-protected:
-	virtual ~VirtualProtectedDestructor()
-	{}
-};
-struct VirtualPrivateDestructor
-{
-private:
-	virtual ~VirtualPrivateDestructor()
-	{}
-};
+	struct PublicDestructor
+	{
+	public:
+		~PublicDestructor()
+		{}
+	};
+	struct ProtectedDestructor
+	{
+	protected:
+		~ProtectedDestructor()
+		{}
+	};
+	struct PrivateDestructor
+	{
+	private:
+		~PrivateDestructor()
+		{}
+	};
 
-struct PurePublicDestructor
-{
-public:
-	virtual ~PurePublicDestructor() = 0;
-};
-struct PureProtectedDestructor
-{
-protected:
-	virtual ~PureProtectedDestructor() = 0;
-};
-struct PurePrivateDestructor
-{
-private:
-	virtual ~PurePrivateDestructor() = 0;
-};
+	struct VirtualPublicDestructor
+	{
+	public:
+		virtual ~VirtualPublicDestructor()
+		{}
+	};
+	struct VirtualProtectedDestructor
+	{
+	protected:
+		virtual ~VirtualProtectedDestructor()
+		{}
+	};
+	struct VirtualPrivateDestructor
+	{
+	private:
+		virtual ~VirtualPrivateDestructor()
+		{}
+	};
+
+	struct PurePublicDestructor
+	{
+	public:
+		virtual ~PurePublicDestructor() = 0;
+	};
+	struct PureProtectedDestructor
+	{
+	protected:
+		virtual ~PureProtectedDestructor() = 0;
+	};
+	struct PurePrivateDestructor
+	{
+	private:
+		virtual ~PurePrivateDestructor() = 0;
+	};
 
 
-class Empty
-{};
+	class Empty
+	{};
 
-union Union
-{};
+	union Union
+	{};
 
-struct bit_zero
-{
-	int : 0;
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-class Abstract
-{
-	virtual void
-	foo()
-		= 0;
-};
+	class Abstract
+	{
+		virtual void
+		foo()
+			= 0;
+	};
 
-class AbstractDestructor
-{
-	virtual ~AbstractDestructor() = 0;
-};
+	class AbstractDestructor
+	{
+		virtual ~AbstractDestructor() = 0;
+	};
 
-struct A
-{
-	~A();
-};
+	struct A
+	{
+		~A();
+	};
 
-int
-main()
+} // namespace
+TEST_CASE("is_trivially_destructible.libcxx: ")
 {
 	test_is_not_trivially_destructible<void>();
 	test_is_not_trivially_destructible<A>();

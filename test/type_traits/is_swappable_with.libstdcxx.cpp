@@ -19,6 +19,8 @@
 // <http://www.gnu.org/licenses/>.
 
 #include "../testsuite_tr1.h"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
 namespace funny
@@ -75,53 +77,52 @@ test01()
 	using Rider::Faiz::is_swappable_with;
 	using namespace __gnu_test;
 	// Positive tests.
-	static_assert(test_property<is_swappable_with, int&, int&>(true), "");
-	static_assert(
-		test_property<is_swappable_with, funny::T0, funny::T0>(true), "");
-	static_assert(
-		test_property<is_swappable_with, funny::T0, const funny::T0>(true), "");
-	static_assert(
-		test_property<is_swappable_with, funny::T1, funny::T2>(true), "");
-	static_assert(
-		test_property<is_swappable_with, funny::T2, funny::T1>(true), "");
-	static_assert(
-		test_property<is_swappable_with, funny::BoolLike, bool&>(true), "");
-	static_assert(
+	STATIC_REQUIRE(test_property<is_swappable_with, int&, int&>(true));
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::T0, funny::T0>(true));
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::T0, const funny::T0>(true));
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::T1, funny::T2>(true));
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::T2, funny::T1>(true));
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::BoolLike, bool&>(true));
+	STATIC_REQUIRE(
 		test_property<is_swappable_with, const funny::BoolLike, bool&>(true),
-		"");
+
 
 	// Negative tests.
-	static_assert(test_property<is_swappable_with, int, int>(false), "");
-	static_assert(test_property<is_swappable_with, int&, unsigned&>(false), "");
-	static_assert(
-		test_property<is_swappable_with, const int&, const int&>(false), "");
-	static_assert(
-		test_property<is_swappable_with, funny::F0, funny::F0>(false), "");
-	static_assert(
+	STATIC_REQUIRE(test_property<is_swappable_with, int, int>(false));
+	STATIC_REQUIRE(test_property<is_swappable_with, int&, unsigned&>(false));
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, const int&, const int&>(false));
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::F0, funny::F0>(false));
+	STATIC_REQUIRE(
 		test_property<is_swappable_with, funny::F0, const funny::F0>(false),
-		"");
-	static_assert(
-		test_property<is_swappable_with, funny::T0, funny::T1>(false), "");
-	static_assert(
-		test_property<is_swappable_with, funny::F0, funny::F1>(false), "");
-	static_assert(
+
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::T0, funny::T1>(false));
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::F0, funny::F1>(false));
+	STATIC_REQUIRE(
 		test_property<is_swappable_with, funny::F0, const funny::F1>(false),
-		"");
-	static_assert(
+
+	STATIC_REQUIRE(
 		test_property<is_swappable_with, const funny::F0, funny::F1>(false),
-		"");
-	static_assert(
-		test_property<is_swappable_with, funny::F2, funny::F3>(false), "");
-	static_assert(
+
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::F2, funny::F3>(false));
+	STATIC_REQUIRE(
 		test_property<is_swappable_with, funny::F2, const funny::F3>(false),
-		"");
-	static_assert(
+
+	STATIC_REQUIRE(
 		test_property<is_swappable_with, const funny::F2, funny::F3>(false),
-		"");
-	static_assert(
-		test_property<is_swappable_with, funny::F4, funny::F4>(false), "");
-	static_assert(
+
+	STATIC_REQUIRE(
+		test_property<is_swappable_with, funny::F4, funny::F4>(false));
+	STATIC_REQUIRE(
 		test_property<is_swappable_with, funny::BoolLike, funny::BoolLike>(
 			false),
-		"");
 }

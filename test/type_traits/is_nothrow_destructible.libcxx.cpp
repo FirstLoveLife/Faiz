@@ -16,121 +16,129 @@
 #	pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 #endif
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_is_nothrow_destructible()
+namespace
 {
-	static_assert(Rider::Faiz::is_nothrow_destructible<T>::value, "");
-	static_assert(Rider::Faiz::is_nothrow_destructible<const T>::value, "");
-	static_assert(Rider::Faiz::is_nothrow_destructible<volatile T>::value, "");
-	static_assert(
-		Rider::Faiz::is_nothrow_destructible<const volatile T>::value, "");
+
+	template<class T>
+	void
+	test_is_nothrow_destructible()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_nothrow_destructible<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_nothrow_destructible<const T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_nothrow_destructible<volatile T>::value);
+		STATIC_REQUIRE(
+			Rider::Faiz::is_nothrow_destructible<const volatile T>::value);
 #if TEST_STD_VER > 14
-	static_assert(Rider::Faiz::is_nothrow_destructible_v<T>, "");
-	static_assert(Rider::Faiz::is_nothrow_destructible_v<const T>, "");
-	static_assert(Rider::Faiz::is_nothrow_destructible_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_nothrow_destructible_v<const volatile T>, "");
+		STATIC_REQUIRE(Rider::Faiz::is_nothrow_destructible_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_nothrow_destructible_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_nothrow_destructible_v<volatile T>);
+		STATIC_REQUIRE(
+			Rider::Faiz::is_nothrow_destructible_v<const volatile T>);
 #endif
-}
+	}
 
-template<class T>
-void
-test_is_not_nothrow_destructible()
-{
-	static_assert(!Rider::Faiz::is_nothrow_destructible<T>::value, "");
-	static_assert(!Rider::Faiz::is_nothrow_destructible<const T>::value, "");
-	static_assert(!Rider::Faiz::is_nothrow_destructible<volatile T>::value, "");
-	static_assert(
-		!Rider::Faiz::is_nothrow_destructible<const volatile T>::value, "");
+	template<class T>
+	void
+	test_is_not_nothrow_destructible()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_nothrow_destructible<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_nothrow_destructible<const T>::value);
+		STATIC_REQUIRE(
+			!Rider::Faiz::is_nothrow_destructible<volatile T>::value);
+		STATIC_REQUIRE(
+			!Rider::Faiz::is_nothrow_destructible<const volatile T>::value);
 #if TEST_STD_VER > 14
-	static_assert(!Rider::Faiz::is_nothrow_destructible_v<T>, "");
-	static_assert(!Rider::Faiz::is_nothrow_destructible_v<const T>, "");
-	static_assert(!Rider::Faiz::is_nothrow_destructible_v<volatile T>, "");
-	static_assert(
-		!Rider::Faiz::is_nothrow_destructible_v<const volatile T>, "");
+		STATIC_REQUIRE(!Rider::Faiz::is_nothrow_destructible_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_nothrow_destructible_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_nothrow_destructible_v<volatile T>);
+		STATIC_REQUIRE(
+			!Rider::Faiz::is_nothrow_destructible_v<const volatile T>);
 #endif
-}
+	}
 
 
-struct PublicDestructor
-{
-public:
-	~PublicDestructor()
-	{}
-};
-struct ProtectedDestructor
-{
-protected:
-	~ProtectedDestructor()
-	{}
-};
-struct PrivateDestructor
-{
-private:
-	~PrivateDestructor()
-	{}
-};
+	struct PublicDestructor
+	{
+	public:
+		~PublicDestructor()
+		{}
+	};
+	struct ProtectedDestructor
+	{
+	protected:
+		~ProtectedDestructor()
+		{}
+	};
+	struct PrivateDestructor
+	{
+	private:
+		~PrivateDestructor()
+		{}
+	};
 
-struct VirtualPublicDestructor
-{
-public:
-	virtual ~VirtualPublicDestructor()
-	{}
-};
-struct VirtualProtectedDestructor
-{
-protected:
-	virtual ~VirtualProtectedDestructor()
-	{}
-};
-struct VirtualPrivateDestructor
-{
-private:
-	virtual ~VirtualPrivateDestructor()
-	{}
-};
+	struct VirtualPublicDestructor
+	{
+	public:
+		virtual ~VirtualPublicDestructor()
+		{}
+	};
+	struct VirtualProtectedDestructor
+	{
+	protected:
+		virtual ~VirtualProtectedDestructor()
+		{}
+	};
+	struct VirtualPrivateDestructor
+	{
+	private:
+		virtual ~VirtualPrivateDestructor()
+		{}
+	};
 
-struct PurePublicDestructor
-{
-public:
-	virtual ~PurePublicDestructor() = 0;
-};
-struct PureProtectedDestructor
-{
-protected:
-	virtual ~PureProtectedDestructor() = 0;
-};
-struct PurePrivateDestructor
-{
-private:
-	virtual ~PurePrivateDestructor() = 0;
-};
+	struct PurePublicDestructor
+	{
+	public:
+		virtual ~PurePublicDestructor() = 0;
+	};
+	struct PureProtectedDestructor
+	{
+	protected:
+		virtual ~PureProtectedDestructor() = 0;
+	};
+	struct PurePrivateDestructor
+	{
+	private:
+		virtual ~PurePrivateDestructor() = 0;
+	};
 
-class Empty
-{};
-
-
-union Union
-{};
-
-struct bit_zero
-{
-	int : 0;
-};
-
-class Abstract
-{
-	virtual void
-	foo()
-		= 0;
-};
+	class Empty
+	{};
 
 
-int
-main()
+	union Union
+	{};
+
+	struct bit_zero
+	{
+		int : 0;
+	};
+
+	class Abstract
+	{
+		virtual void
+		foo()
+			= 0;
+	};
+
+
+} // namespace
+TEST_CASE("is_nothrow_destructible.libcxx: ")
 {
 	test_is_not_nothrow_destructible<void>();
 	test_is_not_nothrow_destructible<char[]>();

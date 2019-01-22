@@ -12,31 +12,38 @@
 // rank
 
 #include "rider/faiz/type_traits.hpp"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
 
-#include "../test_macros.h"
 
-template<class T, unsigned A>
-void
-test_rank()
+// #include "../test_macros.h"
+
+#include "test-utilities.hpp"
+
+namespace
 {
-	static_assert(Rider::Faiz::rank<T>::value == A, "");
-	static_assert(Rider::Faiz::rank<const T>::value == A, "");
-	static_assert(Rider::Faiz::rank<volatile T>::value == A, "");
-	static_assert(Rider::Faiz::rank<const volatile T>::value == A, "");
-	static_assert(Rider::Faiz::rank_v<T> == A, "");
-	static_assert(Rider::Faiz::rank_v<const T> == A, "");
-	static_assert(Rider::Faiz::rank_v<volatile T> == A, "");
-	static_assert(Rider::Faiz::rank_v<const volatile T> == A, "");
-}
+	template<class T, unsigned A>
+	void
+	test_rank()
+	{
+		STATIC_REQUIRE(Rider::Faiz::rank<T>::value == A);
+		STATIC_REQUIRE(Rider::Faiz::rank<const T>::value == A);
+		STATIC_REQUIRE(Rider::Faiz::rank<volatile T>::value == A);
+		STATIC_REQUIRE(Rider::Faiz::rank<const volatile T>::value == A);
+		STATIC_REQUIRE(Rider::Faiz::rank_v<T> == A);
+		STATIC_REQUIRE(Rider::Faiz::rank_v<const T> == A);
+		STATIC_REQUIRE(Rider::Faiz::rank_v<volatile T> == A);
+		STATIC_REQUIRE(Rider::Faiz::rank_v<const volatile T> == A);
+	}
 
-class Class
-{
-public:
-	~Class();
-};
+	class Class
+	{
+	public:
+		~Class();
+	};
 
-int
-main()
+} // namespace
+TEST_CASE("rank.libcxx: ")
 {
 	test_rank<void, 0>();
 	test_rank<int&, 0>();

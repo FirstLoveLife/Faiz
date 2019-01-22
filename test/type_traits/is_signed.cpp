@@ -11,47 +11,53 @@
 
 // is_signed
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 #include <complex>
-template<class T>
-void
-test_is_signed()
+
+namespace
 {
-	static_assert(Rider::Faiz::is_signed<T>::value, "");
-	static_assert(Rider::Faiz::is_signed<const T>::value, "");
-	static_assert(Rider::Faiz::is_signed<volatile T>::value, "");
-	static_assert(Rider::Faiz::is_signed<const volatile T>::value, "");
-	static_assert(Rider::Faiz::is_signed_v<T>, "");
-	static_assert(Rider::Faiz::is_signed_v<const T>, "");
-	static_assert(Rider::Faiz::is_signed_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_signed_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_signed()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_signed<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_signed<const T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_signed<volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_signed<const volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_signed_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_signed_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_signed_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::is_signed_v<const volatile T>);
+	}
 
-template<class T>
-void
-test_is_not_signed()
-{
-	static_assert(!Rider::Faiz::is_signed<T>::value, "");
-	static_assert(!Rider::Faiz::is_signed<const T>::value, "");
-	static_assert(!Rider::Faiz::is_signed<volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_signed<const volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_signed_v<T>, "");
-	static_assert(!Rider::Faiz::is_signed_v<const T>, "");
-	static_assert(!Rider::Faiz::is_signed_v<volatile T>, "");
-	static_assert(!Rider::Faiz::is_signed_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_not_signed()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_signed<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_signed<const T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_signed<volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_signed<const volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_signed_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_signed_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_signed_v<volatile T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_signed_v<const volatile T>);
+	}
 
-class Class
-{
-public:
-	~Class();
-};
+	class Class
+	{
+	public:
+		~Class();
+	};
 
-struct A; // incomplete
+	struct A; // incomplete
 
-int
-main()
+} // namespace
+TEST_CASE("is_signed: ")
 {
 	test_is_not_signed<void>();
 	test_is_not_signed<int&>();
@@ -67,8 +73,8 @@ main()
 	test_is_signed<int>();
 	test_is_signed<double>();
 
-// #ifndef _LIBCPP_HAS_NO_INT128
-// 	test_is_signed<__int128_t>();
-// 	test_is_not_signed<__uint128_t>();
-// #endif
+	// #ifndef _LIBCPP_HAS_NO_INT128
+	// 	test_is_signed<__int128_t>();
+	// 	test_is_not_signed<__uint128_t>();
+	// #endif
 }

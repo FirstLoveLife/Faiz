@@ -19,40 +19,42 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+// #include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+TEST_CASE("is_null_pointer libstdcxx")
 {
 	using Rider::Faiz::is_null_pointer;
-	using namespace __gnu_test;
+	// using namespace __gnu_test;
 
-	static_assert(
-		test_category<is_null_pointer, Rider::Faiz::nullptr_t>(true), "");
+	STATIC_REQUIRE(
+		test_category<is_null_pointer, Rider::Faiz::nullptr_t>(true));
 
-	static_assert(test_category<is_null_pointer, int>(false), "");
-	static_assert(test_category<is_null_pointer, float>(false), "");
-	static_assert(test_category<is_null_pointer, EnumType>(false), "");
-	static_assert(test_category<is_null_pointer, int*>(false), "");
-	static_assert(test_category<is_null_pointer, int (*)(int)>(false), "");
-	static_assert(test_category<is_null_pointer, int(ClassType::*)>(false), "");
-	static_assert(
-		test_category<is_null_pointer, int (ClassType::*)(int)>(false), "");
-	static_assert(test_category<is_null_pointer, int[2]>(false), "");
-	static_assert(test_category<is_null_pointer, float[][3]>(false), "");
-	static_assert(test_category<is_null_pointer, EnumType[2][3][4]>(false), "");
-	static_assert(test_category<is_null_pointer, int * [3]>(false), "");
-	static_assert(test_category<is_null_pointer, int (*[][2])(int)>(false), "");
-	static_assert(
-		test_category<is_null_pointer, int(ClassType:: * [2][3])>(false), "");
-	static_assert(
-		test_category<is_null_pointer, int (ClassType::*[][2][3])(int)>(false),
-		"");
-	static_assert(test_category<is_null_pointer, ClassType>(false), "");
-	static_assert(test_category<is_null_pointer, PODType>(false), "");
-	static_assert(test_category<is_null_pointer, void>(false), "");
-	static_assert(test_category<is_null_pointer, NType>(false), "");
-	static_assert(test_category<is_null_pointer, TType>(false), "");
-	static_assert(test_category<is_null_pointer, SLType>(false), "");
+	STATIC_REQUIRE(test_category<is_null_pointer, int>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, float>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, EnumType>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, int*>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, int (*)(int)>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, int(ClassType::*)>(false));
+	STATIC_REQUIRE(
+		test_category<is_null_pointer, int (ClassType::*)(int)>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, int[2]>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, float[][3]>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, EnumType[2][3][4]>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, int * [3]>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, int (*[][2])(int)>(false));
+	STATIC_REQUIRE(
+		test_category<is_null_pointer, int(ClassType:: * [2][3])>(false));
+	STATIC_REQUIRE(
+		test_category<is_null_pointer, int (ClassType::*[][2][3])(int)>(false));
+
+	STATIC_REQUIRE(test_category<is_null_pointer, ClassType>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, PODType>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, void>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, NType>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, TType>(false));
+	STATIC_REQUIRE(test_category<is_null_pointer, SLType>(false));
 }

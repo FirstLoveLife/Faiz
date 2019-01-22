@@ -19,53 +19,57 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+namespace
 {
-	using Rider::Faiz::is_integral;
-	using namespace __gnu_test;
 
-	static_assert(test_category<is_integral, void>(false), "");
+	void
+	test01()
+	{
+		using Rider::Faiz::is_integral;
 
-	static_assert(test_category<is_integral, char>(true), "");
-	static_assert(test_category<is_integral, signed char>(true), "");
-	static_assert(test_category<is_integral, unsigned char>(true), "");
-	static_assert(test_category<is_integral, wchar_t>(true), "");
-	static_assert(test_category<is_integral, char16_t>(true), "");
-	static_assert(test_category<is_integral, char32_t>(true), "");
-	static_assert(test_category<is_integral, short>(true), "");
-	static_assert(test_category<is_integral, unsigned short>(true), "");
-	static_assert(test_category<is_integral, int>(true), "");
-	static_assert(test_category<is_integral, unsigned int>(true), "");
-	static_assert(test_category<is_integral, long>(true), "");
-	static_assert(test_category<is_integral, unsigned long>(true), "");
-	static_assert(test_category<is_integral, long long>(true), "");
-	static_assert(test_category<is_integral, unsigned long long>(true), "");
+		STATIC_REQUIRE(test_category<is_integral, void>(false));
 
-	static_assert(test_category<is_integral, float>(false), "");
-	static_assert(test_category<is_integral, double>(false), "");
-	static_assert(test_category<is_integral, long double>(false), "");
+		STATIC_REQUIRE(test_category<is_integral, char>(true));
+		STATIC_REQUIRE(test_category<is_integral, signed char>(true));
+		STATIC_REQUIRE(test_category<is_integral, unsigned char>(true));
+		STATIC_REQUIRE(test_category<is_integral, wchar_t>(true));
+		STATIC_REQUIRE(test_category<is_integral, char16_t>(true));
+		STATIC_REQUIRE(test_category<is_integral, char32_t>(true));
+		STATIC_REQUIRE(test_category<is_integral, short>(true));
+		STATIC_REQUIRE(test_category<is_integral, unsigned short>(true));
+		STATIC_REQUIRE(test_category<is_integral, int>(true));
+		STATIC_REQUIRE(test_category<is_integral, unsigned int>(true));
+		STATIC_REQUIRE(test_category<is_integral, long>(true));
+		STATIC_REQUIRE(test_category<is_integral, unsigned long>(true));
+		STATIC_REQUIRE(test_category<is_integral, long long>(true));
+		STATIC_REQUIRE(test_category<is_integral, unsigned long long>(true));
+
+		STATIC_REQUIRE(test_category<is_integral, float>(false));
+		STATIC_REQUIRE(test_category<is_integral, double>(false));
+		STATIC_REQUIRE(test_category<is_integral, long double>(false));
 
 #ifndef __STRICT_ANSI__
-	// GNU Extensions.
+		// GNU Extensions.
 #	ifdef _GLIBCXX_USE_INT128
-	static_assert(test_category<is_integral, __int128>(true), "");
-	static_assert(test_category<is_integral, unsigned __int128>(true), "");
+		STATIC_REQUIRE(test_category<is_integral, __int128>(true));
+		STATIC_REQUIRE(test_category<is_integral, unsigned __int128>(true));
 #	endif
 
 #	ifdef _GLIBCXX_USE_FLOAT128
-	static_assert(test_category<is_integral, __float128>(false), "");
+		STATIC_REQUIRE(test_category<is_integral, __float128>(false));
 #	endif
 #endif
 
-	// Sanity check.
-	static_assert(test_category<is_integral, ClassType>(false), "");
-}
-int
-main()
+		// Sanity check.
+		STATIC_REQUIRE(test_category<is_integral, ClassType>(false));
+	}
+} // namespace
+TEST_CASE("is_integral.libstdcxx: ")
 {
 	test01();
 }

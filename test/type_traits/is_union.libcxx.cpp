@@ -11,70 +11,75 @@
 
 // is_union
 
-#include "../test_macros.h"
+// #include "../test_macros.h"
 #include "rider/faiz/type_traits.hpp"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
 #include <cstddef> // for std::nullptr_t
 
-template<class T>
-void
-test_is_union()
+namespace
 {
-	static_assert(Rider::Faiz::is_union<T>::value, "");
-	static_assert(Rider::Faiz::is_union<const T>::value, "");
-	static_assert(Rider::Faiz::is_union<volatile T>::value, "");
-	static_assert(Rider::Faiz::is_union<const volatile T>::value, "");
-	static_assert(Rider::Faiz::is_union_v<T>, "");
-	static_assert(Rider::Faiz::is_union_v<const T>, "");
-	static_assert(Rider::Faiz::is_union_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_union_v<const volatile T>, "");
-}
 
-template<class T>
-void
-test_is_not_union()
-{
-	static_assert(!Rider::Faiz::is_union<T>::value, "");
-	static_assert(!Rider::Faiz::is_union<const T>::value, "");
-	static_assert(!Rider::Faiz::is_union<volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_union<const volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_union_v<T>, "");
-	static_assert(!Rider::Faiz::is_union_v<const T>, "");
-	static_assert(!Rider::Faiz::is_union_v<volatile T>, "");
-	static_assert(!Rider::Faiz::is_union_v<const volatile T>, "");
-}
+	template<class T>
+	void
+	test_is_union()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_union<T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_union<const T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_union<volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_union<const volatile T>::value);
+		STATIC_REQUIRE(Rider::Faiz::is_union_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::is_union_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::is_union_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::is_union_v<const volatile T>);
+	}
 
-class Empty
-{};
+	template<class T>
+	void
+	test_is_not_union()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_union<T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_union<const T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_union<volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_union<const volatile T>::value);
+		STATIC_REQUIRE(!Rider::Faiz::is_union_v<T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_union_v<const T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_union_v<volatile T>);
+		STATIC_REQUIRE(!Rider::Faiz::is_union_v<const volatile T>);
+	}
 
-class NotEmpty
-{
-	virtual ~NotEmpty();
-};
+	class Empty
+	{};
 
-union Union
-{};
+	class NotEmpty
+	{
+		virtual ~NotEmpty();
+	};
 
-struct bit_zero
-{
-	int : 0;
-};
+	union Union
+	{};
 
-class Abstract
-{
-	virtual ~Abstract() = 0;
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-enum Enum
-{
-	zero,
-	one
-};
-struct incomplete_type;
+	class Abstract
+	{
+		virtual ~Abstract() = 0;
+	};
 
-typedef void (*FunctionPtr)();
+	enum Enum
+	{
+		zero,
+		one
+	};
+	struct incomplete_type;
 
-int
-main()
+	typedef void (*FunctionPtr)();
+
+} // namespace
+TEST_CASE("is_union.libcxx: ")
 {
 	test_is_union<Union>();
 

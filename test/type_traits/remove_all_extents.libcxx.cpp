@@ -12,30 +12,35 @@
 // remove_all_extents
 
 #include "rider/faiz/type_traits.hpp"
+#include <catch2/catch.hpp>
 
-#include "../test_macros.h"
 
-enum Enum
+// #include "../test_macros.h"
+#include "test-utilities.hpp"
+
+namespace
 {
-	zero,
-	one_
-};
+	enum Enum
+	{
+		zero,
+		one_
+	};
 
-template<class T, class U>
-void
-test_remove_all_extents()
-{
-	static_assert(
-		(Rider::Faiz::is_same<typename Rider::Faiz::remove_all_extents<T>::type,
-			U>::value),
-		"");
-	static_assert(
-		(Rider::Faiz::is_same<Rider::Faiz::remove_all_extents_t<T>, U>::value),
-		"");
-}
+	template<class T, class U>
+	void
+	test_remove_all_extents()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_same<
+			typename Rider::Faiz::remove_all_extents<T>::type,
+			U>::value);
 
-int
-main()
+		STATIC_REQUIRE(
+			Rider::Faiz::is_same<Rider::Faiz::remove_all_extents_t<T>,
+				U>::value);
+	}
+
+} // namespace
+TEST_CASE("remove_all_extents.libcxx: ")
 {
 	test_remove_all_extents<int, int>();
 	test_remove_all_extents<const Enum, const Enum>();

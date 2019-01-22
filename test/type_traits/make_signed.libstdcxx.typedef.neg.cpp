@@ -1,3 +1,4 @@
+#define CATCH_CONFIG_MAIN // This tells Catch to provide a main() - only do this
 // { dg-do compile { target c++11 } }
 
 // 2007-05-03  Benjamin Kosnik  <bkoz@redhat.com>
@@ -19,22 +20,28 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_character.h"
-#include "rider/faiz/type_traits.hpp"
-enum test_enum
-{
-	first_selection
-};
+// #include "../testsuite_character.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
 
-void
-test01()
+#include "rider/faiz/type_traits.hpp"
+
+namespace
+{
+	enum test_enum
+	{
+		first_selection
+	};
+
+}
+TEST_CASE("make_signed libstdcxx")
 {
 	using Rider::Faiz::make_signed;
 
 	// Negative tests.
 	typedef make_signed<bool>::type test1_type;
 
-	typedef make_signed<__gnu_test::pod_uint>::type test2_type;
+	// typedef make_signed<__gnu_test::pod_uint>::type test2_type;
 
 	typedef make_signed<int[4]>::type test3_type;
 

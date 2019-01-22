@@ -13,58 +13,63 @@
 
 // XFAIL: gcc-4.9
 
-#include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-template<class T>
-void
-test_has_trivially_copy_assignable()
+namespace
 {
-	static_assert(Rider::Faiz::is_trivially_copy_assignable<T>::value, "");
+
+	template<class T>
+	void
+	test_has_trivially_copy_assignable()
+	{
+		STATIC_REQUIRE(Rider::Faiz::is_trivially_copy_assignable<T>::value);
 #if TEST_STD_VER > 14
-	static_assert(Rider::Faiz::is_trivially_copy_assignable_v<T>, "");
+		STATIC_REQUIRE(Rider::Faiz::is_trivially_copy_assignable_v<T>);
 #endif
-}
+	}
 
-template<class T>
-void
-test_has_not_trivially_copy_assignable()
-{
-	static_assert(!Rider::Faiz::is_trivially_copy_assignable<T>::value, "");
+	template<class T>
+	void
+	test_has_not_trivially_copy_assignable()
+	{
+		STATIC_REQUIRE(!Rider::Faiz::is_trivially_copy_assignable<T>::value);
 #if TEST_STD_VER > 14
-	static_assert(!Rider::Faiz::is_trivially_copy_assignable_v<T>, "");
+		STATIC_REQUIRE(!Rider::Faiz::is_trivially_copy_assignable_v<T>);
 #endif
-}
+	}
 
-class Empty
-{};
+	class Empty
+	{};
 
-class NotEmpty
-{
-	virtual ~NotEmpty();
-};
+	class NotEmpty
+	{
+		virtual ~NotEmpty();
+	};
 
-union Union
-{};
+	union Union
+	{};
 
-struct bit_zero
-{
-	int : 0;
-};
+	struct bit_zero
+	{
+		int : 0;
+	};
 
-class Abstract
-{
-	virtual ~Abstract() = 0;
-};
+	class Abstract
+	{
+		virtual ~Abstract() = 0;
+	};
 
-struct A
-{
-	A&
-	operator=(const A&);
-};
+	struct A
+	{
+		A&
+		operator=(const A&);
+	};
 
-int
-main()
+} // namespace
+TEST_CASE("is_trivially_copy_assignable.libcxx: ")
 {
 	test_has_trivially_copy_assignable<int&>();
 	test_has_trivially_copy_assignable<Union>();

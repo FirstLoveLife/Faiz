@@ -19,21 +19,23 @@
 // with this library; see the file COPYING3.  If not see
 // <http://www.gnu.org/licenses/>.
 
-#include "../testsuite_tr1.h"
+// #include "../testsuite_tr1.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 
-void
-test01()
+TEST_CASE("is_trivially_destructible libstdcxx: ")
 {
 	using Rider::Faiz::is_trivially_destructible;
 	using Rider::Faiz::is_destructible;
-	using namespace __gnu_test;
+	// using namespace __gnu_test;
 
-	static_assert(test_category<is_trivially_destructible, int>(true), "");
-	static_assert(test_category<is_destructible, TType>(true), "");
-	static_assert(test_category<is_trivially_destructible, TType>(true), "");
-	static_assert(test_category<is_trivially_destructible, PODType>(true), "");
+	STATIC_REQUIRE(test_category<is_trivially_destructible, int>(true));
+	STATIC_REQUIRE(test_category<is_destructible, TType>(true));
+	STATIC_REQUIRE(test_category<is_trivially_destructible, TType>(true));
+	STATIC_REQUIRE(test_category<is_trivially_destructible, PODType>(true));
 
-	static_assert(test_category<is_trivially_destructible, NType>(false), "");
-	static_assert(test_category<is_trivially_destructible, SLType>(false), "");
+	STATIC_REQUIRE(test_category<is_trivially_destructible, NType>(false));
+	STATIC_REQUIRE(test_category<is_trivially_destructible, SLType>(false));
 }

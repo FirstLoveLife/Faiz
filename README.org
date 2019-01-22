@@ -1,4 +1,4 @@
-[[https://travis-ci.org/FirstLoveLife/Rider-Faiz][file:https://travis-ci.org/FirstLoveLife/Rider-Faiz.svg?branch=master]]
+[[https://travis-ci.org/FirstLoveLife/Faiz][file:https://travis-ci.org/FirstLoveLife/Faiz.svg?branch=master]]
 
 
 * WIP
@@ -15,6 +15,9 @@ Why? you know, compare array with operator ~</>/<=/>=~...... make no sense at
   primary template's free function. How do I disable them? change free functions
   into friend function with ~class totally_ordered~, but ~operator <~ and
   ~operator ==~ are still free functions now.
+* Modern stuff
+** Catch2
+- STATIC_REQUIRE
 * TODO
 http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduced-in-c11/
 - implement list with pointer traits
@@ -25,6 +28,7 @@ http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduc
 - use [[http://open-std.org/JTC1/SC22/WG21/docs/papers/2018/p0892r2.html][explicit(bool)]] for pair/tuple once it is available.(gcc 9 has this
   feature, but I'm too lazy to compile it myself, clang doesn't work on it yet).
 - add `ssize` function http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1227r0.html
+- implement useable common_type
 **  papers to read
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3465.pdf][Adding heterogeneous comparison lookup toassociative containers]]
 * Conversion

@@ -1,4 +1,7 @@
 //===----------------------------------------------------------------------===//
+/// usr/bin/ld.gold:
+/// CMakeFiles/type_traits-testsuite.dir/is_floating_point.libstdcxx.cpp.o:
+/// previou
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -11,71 +14,80 @@
 
 // is_integral
 
-#include "../test_macros.h"
+#include "test-utilities.hpp"
+#include <catch2/catch.hpp>
+
 #include "rider/faiz/type_traits.hpp"
 #include <cstddef> // for std::nullptr_t
 
-template<class T>
-void
-test_is_integral()
+namespace
 {
-	static_assert(Rider::Faiz::is_integral<T>::value, "");
-	static_assert(Rider::Faiz::is_integral<const T>::value, "");
-	static_assert(Rider::Faiz::is_integral<volatile T>::value, "");
-	static_assert(Rider::Faiz::is_integral<const volatile T>::value, "");
-	static_assert(Rider::Faiz::is_integral_v<T>, "");
-	static_assert(Rider::Faiz::is_integral_v<const T>, "");
-	static_assert(Rider::Faiz::is_integral_v<volatile T>, "");
-	static_assert(Rider::Faiz::is_integral_v<const volatile T>, "");
-}
 
-template<class T>
-void
-test_is_not_integral()
-{
-	static_assert(!Rider::Faiz::is_integral<T>::value, "");
-	static_assert(!Rider::Faiz::is_integral<const T>::value, "");
-	static_assert(!Rider::Faiz::is_integral<volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_integral<const volatile T>::value, "");
-	static_assert(!Rider::Faiz::is_integral_v<T>, "");
-	static_assert(!Rider::Faiz::is_integral_v<const T>, "");
-	static_assert(!Rider::Faiz::is_integral_v<volatile T>, "");
-	static_assert(!Rider::Faiz::is_integral_v<const volatile T>, "");
-}
+	namespace
+	{
 
-class Empty
-{};
+		template<class T>
+		void
+		test_is_integral()
+		{
+			STATIC_REQUIRE(Rider::Faiz::is_integral<T>::value);
+			STATIC_REQUIRE(Rider::Faiz::is_integral<const T>::value);
+			STATIC_REQUIRE(Rider::Faiz::is_integral<volatile T>::value);
+			STATIC_REQUIRE(Rider::Faiz::is_integral<const volatile T>::value);
+			STATIC_REQUIRE(Rider::Faiz::is_integral_v<T>);
+			STATIC_REQUIRE(Rider::Faiz::is_integral_v<const T>);
+			STATIC_REQUIRE(Rider::Faiz::is_integral_v<volatile T>);
+			STATIC_REQUIRE(Rider::Faiz::is_integral_v<const volatile T>);
+		}
 
-class NotEmpty
-{
-	virtual ~NotEmpty();
-};
+		template<class T>
+		void
+		test_is_not_integral()
+		{
+			STATIC_REQUIRE(!Rider::Faiz::is_integral<T>::value);
+			STATIC_REQUIRE(!Rider::Faiz::is_integral<const T>::value);
+			STATIC_REQUIRE(!Rider::Faiz::is_integral<volatile T>::value);
+			STATIC_REQUIRE(!Rider::Faiz::is_integral<const volatile T>::value);
+			STATIC_REQUIRE(!Rider::Faiz::is_integral_v<T>);
+			STATIC_REQUIRE(!Rider::Faiz::is_integral_v<const T>);
+			STATIC_REQUIRE(!Rider::Faiz::is_integral_v<volatile T>);
+			STATIC_REQUIRE(!Rider::Faiz::is_integral_v<const volatile T>);
+		}
 
-union Union
-{};
+		class Empty
+		{};
 
-struct bit_zero
-{
-	int : 0;
-};
+		class NotEmpty
+		{
+			virtual ~NotEmpty();
+		};
 
-class Abstract
-{
-	virtual ~Abstract() = 0;
-};
+		union Union
+		{};
 
-enum Enum
-{
-	zero,
-	one
-};
-struct incomplete_type;
+		struct bit_zero
+		{
+			int : 0;
+		};
 
-typedef void (*FunctionPtr)();
+		class Abstract
+		{
+			virtual ~Abstract() = 0;
+		};
+
+		enum Enum
+		{
+			zero,
+			one
+		};
+		struct incomplete_type;
+
+		typedef void (*FunctionPtr)();
 
 
-int
-main()
+	} // namespace
+} // namespace
+TEST_CASE("is_integral.libcxx: ")
 {
 	test_is_integral<short>();
 	test_is_integral<unsigned short>();
