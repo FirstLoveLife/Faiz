@@ -1,8 +1,10 @@
-#ifndef MACROS
-#define MACROS
+#ifndef MACROS_HPP
+#define MACROS_HPP
 
 #define tpl template
 #define typ typename
+#define cElseIf else if constexpr
+#define cIf if constexpr
 #define cexp constexpr
 #define PAIR(A, B) A, B
 #define INLINE_VARIABLE(type, name) inline cexp type name{};

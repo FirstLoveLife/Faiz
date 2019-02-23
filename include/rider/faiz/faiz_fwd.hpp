@@ -10,7 +10,6 @@
 //
 // Project home: https://github.com/ericniebler/range-v3
 //
-
 #ifndef FAIZ_FWD_HPP
 #define FAIZ_FWD_HPP
 #include "rider/faiz/debug.hpp"
@@ -34,7 +33,7 @@ namespace Rider
 	tpl<typ T, bool b> struct dependent_type : public T
 	{};
 
-	tpl<class T, bool b> using dependent_type_t = _t<dependent_type<T, b>>;
+	tpl<typ T, bool b> using dependent_type_t = _t<dependent_type<T, b>>;
 
 	tpl<typ...> using void_t = void;
 	tpl<typ T> struct type_identity
@@ -137,10 +136,7 @@ namespace Rider::Faiz
 
 namespace Rider::Faiz::detail
 {
-	tpl<tpl<typ First, typ Second> class Trait,
-		typ First,
-		typ Second,
-		typ... Rest>
+	tpl<tpl<typ First, typ Second> typ Trait, typ First, typ Second, typ... Rest>
 		cexp bool
 		binaryTraitAre_impl()
 	{
@@ -156,10 +152,7 @@ namespace Rider::Faiz::detail
 		}
 	}
 
-	tpl<tpl<typ First, typ Second> class Trait,
-		typ First,
-		typ Second,
-		typ... Rest>
+	tpl<tpl<typ First, typ Second> typ Trait, typ First, typ Second, typ... Rest>
 		cexp bool
 		binaryTraitOr_impl()
 	{
@@ -292,47 +285,47 @@ namespace Rider::Faiz
 	using std::is_union;
 	using std::is_union_v;
 	using std::is_class;
-	using std::is_class_v;
+	IS_NOT_ARE_ANY(class)
 
 	using std::is_trivially_assignable;
 	using std::is_trivially_assignable_v;
 	using std::is_enum;
-	using std::is_enum_v;
+	IS_NOT_ARE_ANY(enum);
 
 	tpl<typ T> struct reference_wrapper;
 
 	tpl<typ> struct is_reference_wrapper;
 
-	tpl<class T> struct add_cv;
-	tpl<class T> struct add_const;
-	tpl<class T> struct add_volatile;
+	tpl<typ T> struct add_cv;
+	tpl<typ T> struct add_const;
+	tpl<typ T> struct add_volatile;
 
-	tpl<class T> using add_cv_t = _t<add_cv<T>>;
-	tpl<class T> using add_const_t = _t<add_const<T>>;
-	tpl<class T> using add_volatile_t = _t<add_volatile<T>>;
+	tpl<typ T> using add_cv_t = _t<add_cv<T>>;
+	tpl<typ T> using add_const_t = _t<add_const<T>>;
+	tpl<typ T> using add_volatile_t = _t<add_volatile<T>>;
 
-	tpl<class T> struct remove_const;
-	tpl<class T> struct remove_volatile;
+	tpl<typ T> struct remove_const;
+	tpl<typ T> struct remove_volatile;
 
-	tpl<class T> struct is_destructible;
+	tpl<typ T> struct is_destructible;
 
 
-	tpl<class T> struct is_nothrow_destructible;
+	tpl<typ T> struct is_nothrow_destructible;
 
-	tpl<class T> using remove_const_t = _t<remove_const<T>>;
+	tpl<typ T> using remove_const_t = _t<remove_const<T>>;
 
-	tpl<class T> using remove_volatile_t = _t<remove_volatile<T>>;
+	tpl<typ T> using remove_volatile_t = _t<remove_volatile<T>>;
 
 	tpl<typ T> using remove_cv = remove_volatile<remove_const_t<T>>;
 
 	tpl<typ T> using remove_cv_t = _t<remove_cv<T>>;
 
-	tpl<class T> struct add_lvalue_reference;
-	tpl<class T> struct add_rvalue_reference;
-	tpl<class T> using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
-	tpl<class T> using add_rvalue_reference_t = _t<add_rvalue_reference<T>>;
+	tpl<typ T> struct add_lvalue_reference;
+	tpl<typ T> struct add_rvalue_reference;
+	tpl<typ T> using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
+	tpl<typ T> using add_rvalue_reference_t = _t<add_rvalue_reference<T>>;
 
-	tpl<class T> add_rvalue_reference_t<T>
+	tpl<typ T> add_rvalue_reference_t<T>
 	declval() noexcept;
 
 	//  If T is an object type (that is any possibly cv-qualified type other
@@ -347,30 +340,30 @@ namespace Rider::Faiz
 	// is_scalar<T>::value || is_array<T>::value  || is_union<T>::value  ||
 	// is_class<T>::value>
 	// ```
-	tpl<class T> struct is_object;
-	tpl<class T> inline cexp bool is_object_v = is_object<T>::value;
+	tpl<typ T> struct is_object;
+	tpl<typ T> inline cexp bool is_object_v = is_object<T>::value;
 
-	tpl<class T, class U> struct is_assignable;
+	tpl<typ T, class U> struct is_assignable;
 
-	tpl<class T, class U> struct is_nothrow_assignable;
-	tpl<class T, class U> inline cexp bool is_assignable_v
+	tpl<typ T, class U> struct is_nothrow_assignable;
+	tpl<typ T, class U> inline cexp bool is_assignable_v
 		= is_assignable<T, U>::value;
 
-	tpl<class T, class U> inline cexp bool is_nothrow_assignable_v
+	tpl<typ T, class U> inline cexp bool is_nothrow_assignable_v
 		= is_nothrow_assignable<T, U>::value;
 	tpl<typ Base, typ Derived> struct is_base_of;
 	tpl<typ T> struct remove_reference;
 	tpl<typ T> using remove_reference_t = _t<remove_reference<T>>;
 
-	tpl<class T> struct is_lvalue_reference;
-	tpl<class T> inline cexp bool is_lvalue_reference_v
-		= is_lvalue_reference<T>::value;
+	tpl<typ T> struct is_lvalue_reference;
+
+	IS_NOT_ARE_ANY(lvalue_reference);
 
 	tpl<typ T> struct remove_cvref;
 	tpl<typ T> using remove_cvref_t = typename remove_cvref<T>::type;
 	tpl<typ T> struct is_integral;
 	tpl<bool B, typ T = void> struct enable_if;
-	tpl<bool B, class T = void> using enable_if_t = _t<enable_if<B, T>>;
+	tpl<bool B, typ T = void> using enable_if_t = _t<enable_if<B, T>>;
 
 	tpl<bool B, typ T = void> using disable_if = enable_if<not B, T>;
 
@@ -380,13 +373,13 @@ namespace Rider::Faiz
 
 	BI_IS_NOT_ARE_ANY(same)
 
-	tpl<class T, class... Rest> inline cexp bool is_any_v
+	tpl<typ T, class... Rest> inline cexp bool is_any_v
 		= (is_same_v<T, Rest> || ...);
 
 	tpl<typ T, typ... Rest> struct is_any : bool_<is_any_v<T, Rest...>>
 	{};
 
-	tpl<class T, class... Rest> inline cexp bool not_any_v
+	tpl<typ T, class... Rest> inline cexp bool not_any_v
 		= (not_same_v<T, Rest> and ...);
 
 	tpl<typ T, typ... Rest> struct not_any : bool_<not_any_v<T, Rest...>>
@@ -410,10 +403,9 @@ namespace Rider::Faiz
 	// More or fewer than 39 will be slower on my machine.
 	namespace detail
 	{
-		tpl<class Tindex, Tindex... V> struct integer_sequence_aux
+		tpl<typ Tindex, Tindex... V> struct integer_sequence_aux
 		{
-			tpl<tpl<class Tfrom, Tfrom...> class TtoIndexSeq,
-				class Tto> using convert
+			tpl<tpl<typ Tfrom, Tfrom...> typ TtoIndexSeq, typ Tto> using convert
 				= TtoIndexSeq<Tto, V...>;
 		};
 
@@ -502,9 +494,9 @@ namespace Rider::Faiz
 
 	} // namespace detail
 
-	tpl<class T, T... Vseq> struct integer_sequence
+	tpl<typ T, T... Vseq> struct integer_sequence
 	{
-		typedef T value_type;
+		using value_type = T;
 		static_assert(Faiz::is_integral<T>::value,
 			"Faiz::integer_sequence can only be instantiated with an integral "
 			"type");
@@ -521,7 +513,7 @@ namespace Rider::Faiz
 	tpl<typ T, T V> using make_integer_sequence_aux_unchecked
 		= typ detail::make<V>::type::tpl convert<integer_sequence, T>;
 
-	tpl<class T, T V> struct make_integer_sequence_checked
+	tpl<typ T, T V> struct make_integer_sequence_checked
 		: type_identity<make_integer_sequence_aux_unchecked<T, 0 <= V ? V : 0>>
 	{
 		static_assert(std::is_integral<T>::value,
@@ -532,10 +524,10 @@ namespace Rider::Faiz
 			"length");
 	};
 
-	tpl<class T, T V> using make_integer_sequence_aux
+	tpl<typ T, T V> using make_integer_sequence_aux
 		= _t<make_integer_sequence_checked<T, V>>;
 
-	tpl<class T, T V> using make_integer_sequence
+	tpl<typ T, T V> using make_integer_sequence
 		= make_integer_sequence_aux<T, V>;
 
 	tpl<Faiz::size_t V> using make_index_sequence
@@ -759,9 +751,9 @@ namespace Rider::Faiz::meta
 	tpl<tpl<typ...> class C, typ... Ts> using defer_trait
 		= defer<detail::_t_t, detail::defer_<C, Ts...>>;
 
-	tpl<class T> using sizeof_ = size_t_<sizeof(T)>;
+	tpl<typ T> using sizeof_ = size_t_<sizeof(T)>;
 
-	tpl<class T> using alignof_ = size_t_<alignof(T)>;
+	tpl<typ T> using alignof_ = size_t_<alignof(T)>;
 
 	namespace lazy
 	{
@@ -848,7 +840,7 @@ namespace Rider::Faiz::meta
 			: lazy::invoke<F, Ret, Args...>
 		{};
 
-		tpl<typ F, tpl<typ...> class T, typ... Ts> struct apply<F, T<Ts...>>
+		tpl<typ F, tpl<typ...> typ T, typ... Ts> struct apply<F, T<Ts...>>
 			: lazy::invoke<F, Ts...>
 		{};
 
@@ -2815,15 +2807,18 @@ namespace Rider::Faiz::logic
 {
 	tpl<typ...> struct and_;
 
+
 	tpl<> struct and_<> : true_
 	{};
 
 	tpl<typ _b1> struct and_<_b1> : _b1
 	{};
 
-	tpl<typ _b1, class _b2, class... _bn> struct and_<_b1, _b2, _bn...>
+	tpl<typ _b1, typ _b2, typ... _bn> struct and_<_b1, _b2, _bn...>
 		: meta::if_<_b1, and_<_b2, _bn...>, _b1>
 	{};
+
+	tpl<typ... bn> inline constexpr bool and_v = and_<bn...>::value;
 
 	tpl<typ...> struct or_;
 

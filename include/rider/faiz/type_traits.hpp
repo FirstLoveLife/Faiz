@@ -35,7 +35,7 @@ namespace Rider::Faiz
 	// performed as if from a context unrelated to either type. Only the
 	// validity of the immediate context of the expression in the return
 	// statement (including conversions to the return type) is considered.
-	tpl<typ From, class To> struct is_convertible;
+	tpl<typ From, typ To> struct is_convertible;
 
 	namespace detail
 	{
@@ -43,7 +43,7 @@ namespace Rider::Faiz
 		tpl<typ Default,
 			class AlwaysVoid,
 			tpl<typ...> class Op,
-			class... Args> struct detector : type_identity<Default>
+			typ... Args> struct detector : type_identity<Default>
 		{
 			using value_t = false_;
 		};
@@ -87,7 +87,7 @@ namespace Rider::Faiz
 	// `detected_or<Faiz::nonesuch, Op, Args...>::value_t`. It is an
 	// alias for `Faiz::true_type` if the `tpl-id Op<Args...>` denotes a
 	// valid type; otherwise it is an alias for `Faiz::false_type`.
-	tpl<tpl<typ...> class Op, class... Args> using is_detected
+	tpl<tpl<typ...> class Op, typ... Args> using is_detected
 		= typ detail::detector<nonesuch, void, Op, Args...>::value_t;
 
 
@@ -95,7 +95,7 @@ namespace Rider::Faiz
 	// `detected_or<Faiz::nonesuch, Op, Args...>::type`. It is an
 	// alias for `Op<Args...>` if that tpl-id denotes a valid type;
 	// otherwise it is an alias for the class `Faiz::nonesuch`.
-	tpl<tpl<typ...> class Op, class... Args> using detected_t
+	tpl<tpl<typ...> class Op, typ... Args> using detected_t
 		= _t<detail::detector<nonesuch, void, Op, Args...>>;
 
 	// The alias tpl `detected_or` is an alias for an unspecified class
@@ -108,35 +108,30 @@ namespace Rider::Faiz
 	// `Op<Args...>`;
 	// - Otherwise, `value_t` is an alias for `Faiz::false_type` and type is
 	// an alias for `Default`.
-	tpl<typ Default, tpl<typ...> class Op, class... Args> using detected_or
+	tpl<typ Default, tpl<typ...> class Op, typ... Args> using detected_or
 		= detail::detector<Default, void, Op, Args...>;
 
-	tpl<tpl<typ...> class Op, class... Args> cexp bool is_detected_v
+	tpl<tpl<typ...> class Op, typ... Args> cexp bool is_detected_v
 		= is_detected<Op, Args...>::value;
 
-	tpl<typ Default, tpl<typ...> class Op, class... Args> using detected_or_t
+	tpl<typ Default, tpl<typ...> class Op, typ... Args> using detected_or_t
 		= _t<detected_or<Default, Op, Args...>>;
 	//
 	// The alias tpl is_detected_exact checks whether `detected_t<Op,
 	// Args...>` is Expected.
-	tpl<typ Expected,
-		tpl<typ...> class Op,
-		class... Args> using is_detected_exact
+	tpl<typ Expected, tpl<typ...> class Op, typ... Args> using is_detected_exact
 		= is_same<Expected, detected_t<Op, Args...>>;
 
-
-	tpl<typ Expected, tpl<typ...> class Op, class... Args> cexp bool
+	tpl<typ Expected, tpl<typ...> class Op, typ... Args> cexp bool
 		is_detected_exact_v
 		= is_detected_exact<Expected, Op, Args...>::value;
 	//
 	//  The alias tpl `is_detected_convertible` checks whether
 	// `detected_t<Op, Args...>` is convertible to To.
-	tpl<typ To,
-		tpl<typ...> class Op,
-		class... Args> using is_detected_convertible
+	tpl<typ To, tpl<typ...> class Op, typ... Args> using is_detected_convertible
 		= is_convertible<detected_t<Op, Args...>, To>;
 
-	tpl<typ To, tpl<typ...> class Op, class... Args> cexp bool
+	tpl<typ To, tpl<typ...> class Op, typ... Args> cexp bool
 		is_detected_convertible_v
 		= is_detected_convertible<To, Op, Args...>::value;
 
@@ -146,7 +141,7 @@ namespace Rider::Faiz
 
 	tpl<typ T> using is_referenceable_aux = is_void<T&>;
 	tpl<typ T> cexp bool is_referenceable_v
-		= is_detected_v<is_referenceable_aux, T> && not_void_v<T>;
+		= is_detected_v<is_referenceable_aux, T> and not_void_v<T>;
 	tpl<typ T> struct is_referenceable : bool_<is_referenceable_v<T>>
 	{};
 
@@ -165,7 +160,7 @@ namespace Rider::Faiz::detail
 	tpl<typ T> struct is_member_pointer_helper : false_
 	{};
 
-	tpl<typ T, class U> struct is_member_pointer_helper<T U::*> : true_
+	tpl<typ T, typ U> struct is_member_pointer_helper<T U::*> : true_
 	{};
 
 	tpl<typ Base> true_
@@ -180,13 +175,12 @@ namespace Rider::Faiz::detail
 	// using pre_is_base_of2 =
 	// detected_or_t<true_, pre_is_base_of,
 	// Base, Derived>;
-	tpl<typ Base, typ Derived, typ = void> struct pre_is_base_of2 : public true_
+	tpl<typ Base, typ Derived, typ = void> struct pre_is_base_of2 : true_
 	{};
 	// note Faiz::void_t is a C++17 feature
 	tpl<typ Base, typ Derived> struct pre_is_base_of2<Base,
 		Derived,
-		void_t<pre_is_base_of<Base, Derived>>>
-		: public pre_is_base_of<Base, Derived>
+		void_t<pre_is_base_of<Base, Derived>>> : pre_is_base_of<Base, Derived>
 	{};
 
 	tpl<typ T, typ> struct is_polymorphic_impl : false_
@@ -203,8 +197,7 @@ namespace Rider::Faiz::detail
 	{};
 	tpl<typ T, typ Arg> struct is_assignable_imp<T,
 		Arg,
-		void_t<decltype(declval<T>() = declval<Arg>())>>
-		: bool_<not is_void_v<Arg>>
+		void_t<decltype(declval<T>() = declval<Arg>())>> : not_void<Arg>
 	{};
 
 	tpl<bool IsArithmetic, typ T> struct is_signed_impl : bool_<T(-1) < T(0)>
@@ -227,15 +220,14 @@ namespace Rider::Faiz::detail
 	{};
 
 	tpl<typ T> cexp bool not_enum_rvalue_reference_v
-		= logic::and_<logic::not_<is_enum<T>>,
-			logic::not_<is_rvalue_reference<T>>>::value;
+		= logic::and_v<not_enum<T>, not_rvalue_reference<T>>;
 
 	// TODO: use is_detected_v
 	tpl<typ T> using is_integral_arith
 		= void_t<decltype(T{} * T{}), decltype(+T{})&, decltype(T{} % 1)>;
 	tpl<typ T> cexp bool is_integral_impl
-		= meta::and_<is_detected<is_integral_arith, T>,
-			bool_<not_enum_rvalue_reference_v<T>>>::value;
+		= is_detected_v<is_integral_arith,
+			  T> and not_enum_rvalue_reference_v<T>;
 
 	tpl<typ T, bool = is_integral_impl<T>> struct is_integral_aux : false_
 	{};
@@ -251,9 +243,8 @@ namespace Rider::Faiz::detail
 	// member constant value equal true. For any other type, value is false.) ,
 	// so add is_class to check.
 	tpl<typ T> cexp bool is_arithmetic_impl
-		= logic::and_<is_detected<is_arithmetic_arith, T>,
-			logic::not_<is_class<T>>,
-			bool_<not_enum_rvalue_reference_v<T>>>::value;
+		= is_detected_v<is_arithmetic_arith,
+			  T> and not_class_v<T> and not_enum_rvalue_reference_v<T>;
 
 	tpl<typ T, bool = is_arithmetic_impl<T>> struct is_arithmetic_aux : false_
 	{};
@@ -295,11 +286,11 @@ namespace Rider::Faiz::detail
 	tpl<typ T> struct add_pointer<T, true> : type_identity<T>
 	{};
 
-	tpl<typ T, class... Args> struct add_pointer<T(Args...), true>
+	tpl<typ T, typ... Args> struct add_pointer<T(Args...), true>
 		: type_identity<T (*)(Args...)>
 	{};
 
-	tpl<typ T, class... Args> struct add_pointer<T(Args..., ...), true>
+	tpl<typ T, typ... Args> struct add_pointer<T(Args..., ...), true>
 		: type_identity<T (*)(Args..., ...)>
 	{};
 
@@ -309,13 +300,13 @@ namespace Rider::Faiz::detail
 namespace Rider::Faiz
 {
 
-	tpl<typ... _b> using conjunction = logic::and_<_b...>;
+	tpl<typ... B> using conjunction = logic::and_<B...>;
 	tpl<typ... B> inline cexp bool conjunction_v = conjunction<B...>::value;
 
-	tpl<typ... _b> using disjunction = logic::or_<_b...>;
+	tpl<typ... B> using disjunction = logic::or_<B...>;
 	tpl<typ... B> inline cexp bool disjunction_v = disjunction<B...>::value;
 
-	tpl<typ _b> using negation = logic::not_<_b>;
+	tpl<typ B> using negation = logic::not_<B>;
 	tpl<typ B> inline cexp bool negation_v = negation<B>::value;
 
 	// clang-format on
@@ -392,8 +383,7 @@ namespace Rider::Faiz
 	// Removing cvref does most of what decay does, but doesn't convert
 	// function types and array types to pointers.
 
-	tpl<typ T> struct remove_cvref
-		: type_identity<remove_cv_t<remove_reference_t<T>>>
+	tpl<typ T> struct remove_cvref : remove_cv<remove_reference_t<T>>
 	{};
 
 	// tpl<typ T> using remove_cvref_t = typename remove_cvref<T>::type;
@@ -403,7 +393,7 @@ namespace Rider::Faiz
 	// If T and U name the same type (including const/volatile
 	// qualifications), provides the member constant value equal to true.
 	// Otherwise value is false.
-	tpl<typ T, class U> struct is_same : false_
+	tpl<typ T, typ U> struct is_same : false_
 	{};
 
 	// If T and U name the same type (including const/volatile
@@ -415,14 +405,14 @@ namespace Rider::Faiz
 
 	tpl<typ T> struct is_null_pointer : is_same<nullptr_t, remove_cv_t<T>>
 	{};
-	tpl<typ T> cexp bool is_null_pointer_v = is_null_pointer<T>::value;
+	IS(null_pointer)
 
 	tpl<typ T> struct is_const : false_
 	{};
 	tpl<typ T> struct is_const<const T> : true_
 	{};
 
-	tpl<typ T> inline cexp bool is_const_v = is_const<T>::value;
+	IS_NOT_ARE_ANY(const)
 
 	tpl<typ T> struct is_reference : false_
 	{};
@@ -433,28 +423,28 @@ namespace Rider::Faiz
 
 	IS_NOT_ARE_ANY(reference)
 
-	tpl<typ T> struct is_function : logic::and_<logic::not_<is_const<T const>>,
-										logic::not_<is_reference<T>>>
+	tpl<typ T> struct is_function
+		: bool_<not_const_v<T const> and not_reference_v<T>>
 	{};
 
-	tpl<typ T> struct is_volatile : public false_
+	tpl<typ T> struct is_volatile : false_
 	{};
-	tpl<typ T> struct is_volatile<T volatile> : public true_
+	tpl<typ T> struct is_volatile<T volatile> : true_
 	{};
-	tpl<typ T, size_t N> struct is_volatile<T volatile[N]> : public true_
+	tpl<typ T, size_t N> struct is_volatile<T volatile[N]> : true_
 	{};
-	tpl<typ T> struct is_volatile<T volatile[]> : public true_
+	tpl<typ T> struct is_volatile<T volatile[]> : true_
 	{};
 
-	tpl<typ T> cexp bool is_volatile_v = is_volatile<T>::value;
+	IS_NOT_ARE_ANY(volatile)
 
 	IS_NOT_ARE_ANY(function)
 
 	tpl<typ T> struct is_floating_point : detail::is_floating_point_aux<T>
 	{};
 
-	tpl<typ T> inline cexp bool is_floating_point_v
-		= is_floating_point<T>::value;
+
+	IS_NOT_ARE_ANY(floating_point);
 
 	// Checks whether T is an integral type. Provides the member constant
 	// value which is equal to true, if T is the type bool, char, char16_t,
@@ -466,7 +456,7 @@ namespace Rider::Faiz
 	tpl<typ T> struct is_integral : detail::is_integral_aux<T>
 	{};
 
-	tpl<typ T> inline cexp bool is_integral_v = is_integral<T>::value;
+	IS_NOT_ARE_ANY(integral)
 	//  If T is an arithmetic type (that is, an integral type or a
 	// floating-point type) or a cv-qualified version thereof, provides the
 	// member constant value equal true. For any other type, value is false.
@@ -482,8 +472,7 @@ namespace Rider::Faiz
 	// function** (but not a pointer to member/member function). Provides
 	// the member constant value which is equal to true, if T is a
 	// object/function pointer type. Otherwise, value is equal to false.
-	tpl<typ T> struct is_pointer
-		: public detail::is_pointer_helper<remove_cv_t<T>>
+	tpl<typ T> struct is_pointer : detail::is_pointer_helper<remove_cv_t<T>>
 	{};
 
 	IS_NOT_ARE_ANY(pointer)
@@ -583,17 +572,19 @@ namespace Rider::Faiz
 		= delete;
 
 	// TODO: check whether standard has as_cref_t
-	tpl<typ T, typ R = _t<remove_reference<T>>> using as_cref_t
-		= _t<add_lvalue_reference<_t<add_const<R>>>>;
+	tpl<typ T, typ R = remove_reference_t<T>> using as_cref_t
+		= add_lvalue_reference_t<add_const_t<R>>;
 
-	tpl<class T> struct is_signed
-		: detail::is_signed_impl<is_arithmetic_v<T>, T>
+	tpl<typ T> struct is_signed : detail::is_signed_impl<is_arithmetic_v<T>, T>
 	{};
 
+
+	// using std::is_signed_v;
+	// IS_NOT_ARE_ANY(signed)
 	IS_NOT_ARE_ANY(signed)
 
 	tpl<typ T> cexp bool is_unsigned_v = not_signed_v<T> and is_arithmetic_v<T>;
-	tpl<class T> struct is_unsigned : bool_<is_unsigned_v<T>>
+	tpl<typ T> struct is_unsigned : bool_<is_unsigned_v<T>>
 	{};
 
 	// TODO: add support for compiler extension larger signed.
@@ -612,28 +603,28 @@ namespace Rider::Faiz
 		// clang-format off
 		auto cexp static base_integer_type_impl()
 		{
-			if cexp(is_signed_v<T> and
+			cIf(is_signed_v<T> and
 						 is_integral_v<T> and
 						 not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
 				return type_identity<T>{};
 			}
-			else if cexp (is_integral_v<T> and
+			cElseIf  (is_integral_v<T> and
 							   not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
-				if cexp (is_same_v<t_no_cv, unsigned char>)
+				cIf (is_same_v<t_no_cv, unsigned char>)
 			    {
                     return type_identity<signed char>{};
                 }
-				else if cexp (is_same_v<t_no_cv, unsigned short>)
+				cElseIf (is_same_v<t_no_cv, unsigned short>)
 				{
                     return  type_identity<signed short>{};
                 }
-				else if cexp (is_same_v<t_no_cv, unsigned int>)
+				 cElseIf (is_same_v<t_no_cv, unsigned int>)
 				{
                     return  type_identity<int>{};
                 }
-				else if cexp (is_same_v<t_no_cv, unsigned long>)
+				cElseIf (is_same_v<t_no_cv, unsigned long>)
 				{
                     return  type_identity<long>{};
                 }
@@ -644,19 +635,19 @@ namespace Rider::Faiz
 			}
 			else
 			{
-				if cexp (sizeof(t_no_cv) == sizeof(unsigned char))
+				cIf (sizeof(t_no_cv) == sizeof(unsigned char))
 				{
 					return type_identity<signed char>{};
 				}
-				else if cexp (sizeof(t_no_cv) == sizeof(unsigned short))
+				cElseIf (sizeof(t_no_cv) == sizeof(unsigned short))
 				{
 					return type_identity<signed short>{};
 				}
-				else if cexp (sizeof(t_no_cv) == sizeof(unsigned int))
+				cElseIf (sizeof(t_no_cv) == sizeof(unsigned int))
 				{
 					return type_identity<int>{};
 				}
-				else if cexp (sizeof(t_no_cv) == sizeof(unsigned long))
+				cElseIf (sizeof(t_no_cv) == sizeof(unsigned long))
 				{
 					return type_identity<long>{};
 				}
@@ -681,7 +672,7 @@ namespace Rider::Faiz
 			const_base_integer_type>;
 	};
 
-	tpl<class T> struct make_unsigned
+	tpl<typ T> struct make_unsigned
 	{
 	private:
 		static_assert(is_integral_v<T> or is_enum_v<T>,
@@ -696,28 +687,28 @@ namespace Rider::Faiz
 		// clang-format off
 		auto cexp static base_integer_type_impl()
 		{
-			if cexp(is_unsigned_v<T> and
+			cIf(is_unsigned_v<T> and
 						 is_integral_v<T> and
 						 not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
 				return type_identity<T>{};
 			}
-			else if cexp(is_integral_v<T> and
+			cElseIf(is_integral_v<T> and
 							  not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
-				if cexp(is_same_v<t_no_cv, signed char>)
+				cIf(is_same_v<t_no_cv, signed char>)
 				{
 					return type_identity<unsigned char>{};
 				}
-				else if cexp(is_same_v<t_no_cv, short>)
+				cElseIf(is_same_v<t_no_cv, short>)
 				{
 					return type_identity<unsigned short>{};
 				}
-				else if cexp(is_same_v<t_no_cv, int>)
+				cElseIf(is_same_v<t_no_cv, int>)
 				{
 					return type_identity<unsigned int>{};
 				}
-				else if cexp(is_same_v<t_no_cv, long>)
+				cElseIf(is_same_v<t_no_cv, long>)
 				{
 					return type_identity<unsigned long>{};
 				}
@@ -728,19 +719,19 @@ namespace Rider::Faiz
 			}
 			else
 			{
-				if cexp(sizeof(t_no_cv) == sizeof(unsigned char))
+				cIf(sizeof(t_no_cv) == sizeof(unsigned char))
 				{
 					return type_identity<unsigned char>{};
 				}
-				else if cexp(sizeof(t_no_cv) == sizeof(unsigned short))
+				cElseIf(sizeof(t_no_cv) == sizeof(unsigned short))
 				{
 					return type_identity<unsigned short>{};
 				}
-				else if cexp(sizeof(t_no_cv) == sizeof(unsigned int))
+				cElseIf(sizeof(t_no_cv) == sizeof(unsigned int))
 				{
 					return type_identity<unsigned int>{};
 				}
-				else if cexp(sizeof(t_no_cv) == sizeof(unsigned long))
+				cElseIf(sizeof(t_no_cv) == sizeof(unsigned long))
 				{
 					return type_identity<unsigned long>{};
 				}
@@ -765,9 +756,9 @@ namespace Rider::Faiz
 			const_base_integer_type>;
 	};
 
-	tpl<class T> using make_unsigned_t = _t<make_unsigned<T>>;
+	tpl<typ T> using make_unsigned_t = _t<make_unsigned<T>>;
 
-	tpl<class T> using make_signed_t = _t<make_signed<T>>;
+	tpl<typ T> using make_signed_t = _t<make_signed<T>>;
 
 	tpl<bool B, typ T> struct enable_if
 	{};
@@ -807,23 +798,21 @@ namespace Rider::Faiz
 	tpl<typ From, typ To> using is_convertible_helper
 		= decltype(test_aux<To>(declval<From>()));
 
-	tpl<typ From, typ To> cexp bool
+	tpl<typ From, typ To> cfn
 	my_is_convertible()
 	{
-		if
-			cexp(
-				disjunction<is_void<From>, is_function<To>, is_array<To>>::value)
-			{
-				return is_void_v<To>;
-			}
+		cIf(disjunction_v<is_void<From>, is_function<To>, is_array<To>>)
+		{
+			return is_void<To>();
+		}
 		else
 		{
-			return is_detected<is_convertible_helper, From, To>::value;
+			return is_detected<is_convertible_helper, From, To>();
 		}
 	}
 
 	tpl<typ From, typ To> struct is_convertible
-		: bool_<my_is_convertible<From, To>()>
+		: decltype(my_is_convertible<From, To>())
 	{};
 
 	BI_IS_NOT_ARE_ANY(convertible)
@@ -847,11 +836,10 @@ namespace Rider::Faiz
 	// {};
 
 	tpl<typ Tp> struct is_copy_constructible
-		: public is_constructible<Tp, add_lvalue_reference_t<add_const_t<Tp>>>
+		: is_constructible<Tp, as_cref_t<Tp>>
 	{};
 
-	tpl<typ Tp> inline cexp bool is_copy_constructible_v
-		= is_copy_constructible<Tp>::value;
+	IS_NOT_ARE_ANY(copy_constructible)
 
 	tpl<typ T> inline cexp size_t rank_v = 0;
 	tpl<typ T> inline cexp size_t rank_v<T[]> = 1u + rank_v<T>;
@@ -876,15 +864,15 @@ namespace Rider::Faiz
 	tpl<typ T, typ U = remove_reference_t<T>, typ E = remove_cv_t<U>> fn
 	decay_impl()
 	{
-		if constexpr(not_referenceable_v<T>)
+		cIf(not_referenceable_v<T>)
 		{
 			return type_identity<E>();
 		}
-		else if constexpr(is_array_v<U>)
+		cElseIf(is_array_v<U>)
 		{
 			return type_identity<add_pointer_t<remove_extent_t<U>>>();
 		}
-		else if constexpr(is_function_v<U>)
+		cElseIf(is_function_v<U>)
 		{
 			return type_identity<add_pointer_t<U>>();
 		}
@@ -900,7 +888,7 @@ namespace Rider::Faiz
 	tpl<typ T> using decay_t = _t<decay<T>>;
 
 	tpl<typ T, typ Arg> struct is_assignable
-		: public detail::is_assignable_imp<T, Arg, void>
+		: detail::is_assignable_imp<T, Arg, void>
 	{};
 
 	// If Derived is derived from Base or if both are the same non-union class
@@ -921,20 +909,19 @@ namespace Rider::Faiz
 	// because only classes participate in the relationship that this trait
 	// models.
 	tpl<typ Base, typ Derived> struct is_base_of
-		: public meta::if_<logic::and_<is_class<Base>, is_class<Derived>>,
+		: meta::if_<logic::and_<is_class<Base>, is_class<Derived>>,
 			  detail::pre_is_base_of2<Base, Derived>,
 			  false_>
 	{};
-	tpl<typ Base, class Derived> inline cexp bool is_base_of_v
+	tpl<typ Base, typ Derived> inline cexp bool is_base_of_v
 		= is_base_of<Base, Derived>::value;
 
 
 	tpl<typ T> struct is_member_pointer
-		: detail::is_member_pointer_helper<_t<remove_cv<T>>>
+		: detail::is_member_pointer_helper<remove_cv_t<T>>
 	{};
-	tpl<typ T> inline cexp bool is_member_pointer_v
-		= is_member_pointer<T>::value;
 
+	IS(member_pointer)
 	// If `T` is a scalar type (that is a possibly **cv-qualified** arithmetic,
 	// pointer, pointer to member, enumeration, or `Faiz::nullptr_t` type),
 	// provides the member constant value equal `true`. For any other type,
@@ -953,12 +940,13 @@ namespace Rider::Faiz
 									  is_member_pointer<T>,
 									  is_null_pointer<T>>
 	{};
-	tpl<typ T> inline cexp bool is_scalar_v = is_scalar<T>::value;
+
+	IS_NOT_ARE_ANY(scalar)
 
 	tpl<typ T> struct is_member_function_pointer_helper : false_
 	{};
 
-	tpl<typ T, class U> struct is_member_function_pointer_helper<T U::*>
+	tpl<typ T, typ U> struct is_member_function_pointer_helper<T U::*>
 		: is_function<T>
 	{};
 	//
@@ -975,12 +963,10 @@ namespace Rider::Faiz
 	// constant value which is equal to true, if T is a non-static member object
 	// type. Otherwise, value is equal to false.
 	tpl<typ T> struct is_member_object_pointer
-		: bool_<is_member_pointer<T>::value
-			  && not_member_function_pointer<T>::value>
+		: bool_<is_member_pointer_v<T> and not_member_function_pointer_v<T>>
 	{};
-	tpl<typ T> inline cexp bool is_member_object_pointer_v
-		= is_member_object_pointer<T>::value;
 
+	IS_NOT_ARE_ANY(member_object_pointer)
 
 	// Given two (possibly identical) types Base and Derived,
 	// is_base_of<Base, Derived>::value == true if and only if Base is a
@@ -997,28 +983,23 @@ namespace Rider::Faiz
 	//     is_derived<Parent, Child>::value        => true
 	//     is_derived<Child, Parent>::value        => false
 	tpl<typ Base, typ Derived> struct is_derived
-		: public bool_<
+		: bool_<
 			  is_base_of_v<Base,
-				  Derived> && not_same_v<remove_cv_t<Base>, remove_cv_t<Derived>>>
+				  Derived> and not_same_v<remove_cv_t<Base>, remove_cv_t<Derived>>>
 	{};
 
 	BI_IS_NOT_ARE_ANY(derived)
 
-	tpl<typ T> struct is_polymorphic
-		: public detail::is_polymorphic_impl<T, void*>
+	tpl<typ T> struct is_polymorphic : detail::is_polymorphic_impl<T, void*>
 	{};
 
-	tpl<typ T> cexp bool is_polymorphic_v = is_polymorphic<T>::value;
+	IS(polymorphic)
 
 	tpl<typ T> struct is_copy_assignable
-		: is_assignable<_t<add_lvalue_reference<T>>,
-			  add_lvalue_reference_t<const T>>
+		: is_assignable<add_lvalue_reference_t<T>, as_cref_t<T>>
 	{};
 
-	tpl<typ T> inline cexp bool is_copy_assignable_v
-		= is_copy_assignable<T>::value;
-
-	ARE(copy_assignable)
+	IS_NOT_ARE_ANY(copy_assignable)
 
 	// tpl<typ... T >
 	// inline cexp bool are_copy_assignable_v = (is_copy_assignable_v<T> &&
@@ -1030,16 +1011,14 @@ namespace Rider::Faiz
 	// };
 
 	tpl<typ T> struct is_trivially_copy_assignable
-		: is_trivially_assignable<_t<add_lvalue_reference<T>>,
-			  add_lvalue_reference_t<const T>>
+		: is_trivially_assignable<add_lvalue_reference_t<T>, as_cref_t<T>>
 	{};
-	tpl<typ T> inline cexp bool is_trivially_copy_assignable_v
-		= is_trivially_copy_assignable<T>::value;
 
-	tpl<bool, class T, typ A> struct is_nothrow_assignable_aux;
+	IS_NOT_ARE_ANY(trivially_copy_assignable)
 
-	tpl<typ T, typ A> struct is_nothrow_assignable_aux<false, T, A>
-		: public false_
+	tpl<bool, typ T, typ A> struct is_nothrow_assignable_aux;
+
+	tpl<typ T, typ A> struct is_nothrow_assignable_aux<false, T, A> : false_
 	{};
 
 	tpl<typ T> using move_assignment_t
@@ -1051,7 +1030,7 @@ namespace Rider::Faiz
 	tpl<typ T> struct is_move_assignable : bool_<is_move_assignable_v<T>>
 	{};
 
-	ARE(move_assignable)
+	NOT_ARE_ANY(move_assignable)
 
 	// // clang-format off
 	// tpl<typ T>
@@ -1064,27 +1043,23 @@ namespace Rider::Faiz
 	// bool_<is_nothrow_move_assignable_v<T>>
 	// {};
 
-	tpl<class _Tp> struct is_nothrow_move_assignable
-		: public is_nothrow_assignable<typ add_lvalue_reference<_Tp>::type,
-			  typ add_rvalue_reference<_Tp>::type>
+	tpl<typ T> struct is_nothrow_move_assignable
+		: is_nothrow_assignable<add_lvalue_reference_t<T>,
+			  add_rvalue_reference_t<T>>
 	{};
 
-	tpl<class _Tp> inline cexp bool is_nothrow_move_assignable_v
-		= is_nothrow_move_assignable<_Tp>::value;
-
-	ARE(nothrow_move_assignable)
+	IS_NOT_ARE_ANY(nothrow_move_assignable)
 
 	tpl<typ T, typ A> struct is_nothrow_assignable_aux<true, T, A>
-		: public bool_<noexcept(declval<T>() = declval<A>())>
+		: bool_<noexcept(declval<T>() = declval<A>())>
 	{};
 
 	tpl<typ T, typ A> struct is_nothrow_assignable
-		: public is_nothrow_assignable_aux<is_assignable<T, A>::value, T, A>
+		: is_nothrow_assignable_aux<is_assignable_v<T, A>, T, A>
 	{};
 
 	tpl<typ T> struct is_nothrow_copy_assignable
-		: is_nothrow_assignable<_t<add_lvalue_reference<T>>,
-			  _t<add_lvalue_reference<const T>>>
+		: is_nothrow_assignable<add_lvalue_reference_t<T>, as_cref_t<T>>
 	{};
 
 
@@ -1120,17 +1095,17 @@ namespace Rider::Faiz
     cexp bool
     my_is_destructible()
     {
-        if cexp(is_reference_v<T>)
+        cIf(is_reference_v<T>)
         {
             return true;
         }
-        else if cexp(
+        cElseIf(
             is_same_v<remove_cv_t<T>,
                 void> || is_function_v<T> || is_unknown_bound_array<T>::value)
         {
             return false;
         }
-        else if cexp(is_object_v<T>)
+        cElseIf(is_object_v<T>)
         {
             return is_detected_v<has_dtor, T>;
         }
@@ -1147,7 +1122,7 @@ namespace Rider::Faiz
 	{};
 
 	tpl<typ T> inline cexp bool is_nothrow_destructible_v
-		= is_destructible_v<T> && noexcept(is_destructible_v<T>);
+		= is_destructible_v<T> and noexcept(is_destructible_v<T>);
 	tpl<typ T> struct is_nothrow_destructible
 		: bool_<is_nothrow_destructible_v<T>>
 	{};
