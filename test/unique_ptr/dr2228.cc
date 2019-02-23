@@ -20,6 +20,32 @@
 #include "rider/faiz/unique_ptr.hpp"
 #include <catch2/catch.hpp>
 
+template<typename X>
+void tfoo(X)
+{}
+
+template<>
+void
+tfoo(int)
+{}
+
+template<>
+void
+tfoo(char)
+{}
+
+int
+foo()
+{
+	return 5;
+}
+
+void
+bar()
+{
+	tfoo('c');
+}
+
 namespace
 {
 	struct do_nothing

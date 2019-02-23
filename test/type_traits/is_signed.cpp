@@ -48,6 +48,21 @@ namespace
 		STATIC_REQUIRE(!Rider::Faiz::is_signed_v<const volatile T>);
 	}
 
+	template<class T>
+	void
+	test_is_not_signed_v()
+	{
+		STATIC_REQUIRE(Rider::Faiz::not_signed_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::not_signed_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::not_signed_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::not_signed_v<const volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::not_signed_v<T>);
+		STATIC_REQUIRE(Rider::Faiz::not_signed_v<const T>);
+		STATIC_REQUIRE(Rider::Faiz::not_signed_v<volatile T>);
+		STATIC_REQUIRE(Rider::Faiz::not_signed_v<const volatile T>);
+	}
+
+
 	class Class
 	{
 	public:
@@ -76,5 +91,27 @@ TEST_CASE("is_signed: ")
 	// #ifndef _LIBCPP_HAS_NO_INT128
 	// 	test_is_signed<__int128_t>();
 	// 	test_is_not_signed<__uint128_t>();
+	// #endif
+}
+
+TEST_CASE("not_signed_v: ")
+{
+	test_is_not_signed_v<void>();
+	test_is_not_signed_v<int&>();
+	test_is_not_signed_v<Class>();
+	test_is_not_signed_v<int*>();
+	test_is_not_signed_v<const int*>();
+	test_is_not_signed_v<char[3]>();
+	test_is_not_signed_v<char[]>();
+	test_is_not_signed_v<bool>();
+	test_is_not_signed_v<unsigned>();
+	test_is_not_signed_v<A>();
+	// test_is_signed<Rider::Faiz::complex<double>>();
+	test_is_signed<int>();
+	test_is_signed<double>();
+
+	// #ifndef _LIBCPP_HAS_NO_INT128
+	// 	test_is_signed<__int128_t>();
+	// 	test_is_not_signed_v<__uint128_t>();
 	// #endif
 }
