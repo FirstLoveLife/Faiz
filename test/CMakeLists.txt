@@ -5,10 +5,11 @@
 
 find_package(Catch2 QUIET)
 if(TARGET Catch2::Catch2)
-  message("catch2 has been installed previously")
+
+  message("${BoldBlue}catch2 has been installed previously\n\n${ColourReset}")
   include(Catch)
 else()
-  message("no target catch2, Cloning into your build dir......")
+  message("${Green}====> Catch2 hasn't not been installed on your os, git cloning into your build dir now${ColourReset}\n")
 
   include(FetchContent)
   # Download and configure Catch2 for the tests
@@ -24,6 +25,8 @@ else()
     add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
     list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/contrib)
     include(Catch)
+
+  message("${BoldBlue}git clone Catch2 successfully!${ColourReset}\n\n")
   endif()
 
 endif()
@@ -47,3 +50,4 @@ enable_testing()
 add_subdirectory(tight_pair)
 add_subdirectory(unique_ptr)
 add_subdirectory(type_traits)
+# add_subdirectory(data/softfloat)
