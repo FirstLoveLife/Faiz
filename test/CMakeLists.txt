@@ -6,7 +6,7 @@
 find_package(Catch2 QUIET)
 if(TARGET Catch2::Catch2)
 
-  message("${BoldBlue}catch2 has been installed previously\n\n${ColourReset}")
+  message("${BoldBlue}Catch2 has been installed previously\n\n${ColourReset}")
   include(Catch)
 else()
   message("${Green}====> Catch2 hasn't not been installed on your os, git cloning into your build dir now${ColourReset}\n")

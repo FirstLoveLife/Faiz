@@ -1,9 +1,5 @@
-# Copyright (C) 2018 Jonathan Müller <jonathanmueller.dev@gmail.com>
-# This file is subject to the license terms in the LICENSE file
-# found in the top-level directory of this distribution.
-
 cmake_minimum_required(VERSION 3.11)
-project(faiz)
+project(faiz LANGUAGES CXX)
 
 if(NOT WIN32)
   string(ASCII 27 Esc)
@@ -25,39 +21,39 @@ if(NOT WIN32)
   set(BoldWhite   "${Esc}[1;37m")
 endif()
 
-# find_package(Mach7 QUIET)
-# if(TARGET Mach7::Mach7)
-#   message("${BoldBlue}Mach7 has been installed previously\n\n${ColourReset}")
-#   include_directories(${Mach7_INCLUDE_DIRS})
+find_package(Mach7 QUIET)
+if(TARGET Mach7)
+  message("${BoldBlue}\nMach7 has been installed previously\n\n${ColourReset}")
+  include_directories(${Mach7_INCLUDE_DIRS})
 
-# else()
+else()
 
-#   message("${Green}====> Downloading Mach7 ---- Functional programming style pattern-matching library for C++${ColourReset}")
-#   include(FetchContent)
-#   # Download and configure Mach7 for the tests
-#   FetchContent_Declare(
-#     mach7
-#     GIT_REPOSITORY https://github.com/solodon4/Mach7/
-#     GIT_TAG master
-#     )
+  message("${Green}====> Downloading Mach7 ---- Functional programming style pattern-matching library for C++${ColourReset}")
+  include(FetchContent)
+  # Download and configure Mach7 for the tests
+  FetchContent_Declare(
+    mach7
+    GIT_REPOSITORY https://github.com/solodon4/Mach7/
+    GIT_TAG master
+    )
 
-#   FetchContent_GetProperties(mach7)
-#   if (NOT mach7_POPULATED)
-#     FetchContent_Populate(mach7)
+  FetchContent_GetProperties(mach7)
+  if (NOT mach7_POPULATED)
+    FetchContent_Populate(mach7)
 
-#     message(${mach7_SOURCE_DIR})
-#     message(${mach7_BINARY_DIR})
-#     add_subdirectory(${mach7_SOURCE_DIR}/code/test)
-#     list(APPEND CMAKE_MODULE_PATH ${mach7_SOURCE_DIR}/contrib)
-#     message("${BoldBlue}\ngit clone Mach7 successfully!\n\n${ColourReset}")
-#   endif()
+    message(${mach7_SOURCE_DIR})
+    message(${mach7_BINARY_DIR})
+    add_subdirectory(${mach7_SOURCE_DIR}/code/test)
+    list(APPEND CMAKE_MODULE_PATH ${mach7_SOURCE_DIR}/contrib)
+    message("${BoldBlue}\ngit clone Mach7 successfully!\n\n${ColourReset}")
+  endif()
 
-# endif()
+endif()
 find_package(FooBar)
 
 
 
-  # include_directories(${root_SOURCE_DIR}/include)
-  # Build tests if this is the main project
-  enable_testing()
-  add_subdirectory(test)
+# include_directories(${root_SOURCE_DIR}/include)
+# Build tests if this is the main project
+enable_testing()
+add_subdirectory(test)
