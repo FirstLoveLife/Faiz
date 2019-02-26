@@ -457,6 +457,7 @@ namespace Rider::Faiz
 	{};
 
 	IS_NOT_ARE_ANY(integral)
+
 	//  If T is an arithmetic type (that is, an integral type or a
 	// floating-point type) or a cv-qualified version thereof, provides the
 	// member constant value equal true. For any other type, value is false.
@@ -601,7 +602,8 @@ namespace Rider::Faiz
 		using t_no_cv = remove_cv_t<T>;
 
 		// clang-format off
-		auto cexp static base_integer_type_impl()
+		static cfn
+		base_integer_type_impl()
 		{
 			cIf(is_signed_v<T> and
 						 is_integral_v<T> and
@@ -613,21 +615,21 @@ namespace Rider::Faiz
 							   not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
 				cIf (is_same_v<t_no_cv, unsigned char>)
-			    {
-                    return type_identity<signed char>{};
-                }
+				{
+					return type_identity<signed char>{};
+				}
 				cElseIf (is_same_v<t_no_cv, unsigned short>)
 				{
-                    return  type_identity<signed short>{};
-                }
+					return  type_identity<signed short>{};
+				}
 				 cElseIf (is_same_v<t_no_cv, unsigned int>)
 				{
-                    return  type_identity<int>{};
-                }
+					return  type_identity<int>{};
+				}
 				cElseIf (is_same_v<t_no_cv, unsigned long>)
 				{
-                    return  type_identity<long>{};
-                }
+					return  type_identity<long>{};
+				}
 				else
 				{
 					return type_identity<long long> {};
@@ -685,7 +687,8 @@ namespace Rider::Faiz
 		using t_no_cv = remove_cv_t<T>;
 
 		// clang-format off
-		auto cexp static base_integer_type_impl()
+		static cfn
+		base_integer_type_impl()
 		{
 			cIf(is_unsigned_v<T> and
 						 is_integral_v<T> and

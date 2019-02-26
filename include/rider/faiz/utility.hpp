@@ -22,8 +22,8 @@ namespace Rider::Faiz
 	//      return *this;
 	// }
 	// ```
-	tpl<class T> cexp remove_reference_t<T>&&
-	move(T&& t) noexcept
+	tpl<class T> cfn
+	move(T&& t) noexcept->remove_reference_t<T>&&
 	{
 		using U = remove_reference_t<T>;
 		return static_cast<U&&>(t);
@@ -68,8 +68,8 @@ namespace Rider::Faiz
 	// **Faiz::string**, then T is deduced to
 	// **Faiz::string**&, and **Faiz::forward** ensures that a non-const
 	// lvalue reference is passed to foo.
-	tpl<class T> cexp T&&
-	forward(remove_reference_t<T>& t) noexcept
+	tpl<class T> cfn
+	forward(remove_reference_t<T>& t) noexcept->T&&
 	{
 		return static_cast<T&&>(t);
 	}
@@ -113,18 +113,18 @@ namespace Rider::Faiz
 	// **Faiz::string**, then T is deduced to
 	// **Faiz::string**&, and **Faiz::forward** ensures that a non-const
 	// lvalue reference is passed to foo.
-	tpl<class T> cexp T&&
-	forward(remove_reference_t<T>&& t) noexcept
+	tpl<class T> cfn
+	forward(remove_reference_t<T>&& t) noexcept->T&&
 	{
-		static_assert(!is_lvalue_reference_v<T>,
+		static_assert(not_lvalue_reference_v<T>,
 			"can not forward an rvalue as an lvalue");
 		return static_cast<T&&>(t);
 	}
 
 	// Obtains the actual address of the object or function arg, even in
 	// presence of overloaded operator&
-	tpl<typ T> cexp T*
-	AddressOf(T& v) noexcept
+	tpl<typ T> cfn
+	AddressOf(T& v) noexcept->T*
 	{
 		return reinterpret_cast<T*>(
 			const_cast<char*>(reinterpret_cast<const volatile char(&)[1]>(v)));

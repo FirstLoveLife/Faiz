@@ -49,7 +49,6 @@ else()
   endif()
 
 endif()
-find_package(FooBar)
 
 
 

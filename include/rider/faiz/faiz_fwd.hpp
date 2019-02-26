@@ -90,12 +90,13 @@ namespace Rider::Faiz
 		static cexp T value = v;
 		using value_type = T;
 		using type = integral_constant; // using injected-class-name
-		cexp operator value_type() const noexcept
+		cCNV operator value_type() const noexcept
 		{
 			return value;
 		}
-		cexp value_type
+		cfn
 		operator()() const noexcept
+			-> value_type
 		{
 			return value;
 		} // since c++14
@@ -123,9 +124,8 @@ namespace Rider::Faiz
  #undef ImplDeclIntTDe
  #undef ImplDeclIntT
 
-		// clang-format on
 
-		using true_ = bool_<true>;
+	using true_ = bool_<true>;
 	using false_ = bool_<false>;
 	tpl<bool B> using bool_constant = bool_<B>;
 	using true_type = true_;
@@ -134,37 +134,38 @@ namespace Rider::Faiz
 	tpl<typ T> using sizeof_able = size_t_<sizeof(T)>;
 } // namespace Rider::Faiz
 
+		// clang-format on
 namespace Rider::Faiz::detail
 {
-	tpl<tpl<typ First, typ Second> typ Trait, typ First, typ Second, typ... Rest>
-		cexp bool
-		binaryTraitAre_impl()
+	tpl<tpl<typ tFirst, typ tSecond> class Trait, typ tFirst, typ tSecond, typ... tRest>
+	cfn
+	binaryTraitAre_impl()
+		-> bool
 	{
-		if
-			cexp(sizeof...(Rest) == 0)
-			{
-				return Trait<First, Second>{}();
-			}
-		else
+		cIf(sizeof...(tRest) == 0)
 		{
-			return Trait<First, Second>{}()
-				and binaryTraitAre_impl<Trait, Rest...>();
+			return Trait<tFirst, tSecond>{}();
+		}
+		cElse
+		{
+			return Trait<tFirst, tSecond>{}()
+				and binaryTraitAre_impl<Trait, tRest...>();
 		}
 	}
 
-	tpl<tpl<typ First, typ Second> typ Trait, typ First, typ Second, typ... Rest>
-		cexp bool
-		binaryTraitOr_impl()
+	tpl<tpl<typ tFirst, typ tSecond> class Trait, typ tFirst, typ tSecond, typ... tRest>
+	cfn
+	binaryTraitOr_impl()
+		-> bool
 	{
-		if
-			cexp(sizeof...(Rest) == 0)
-			{
-				return Trait<First, Second>{}();
-			}
-		else
+		cIf(sizeof...(tRest) == 0)
 		{
-			return Trait<First, Second>{}()
-				or binaryTraitOr_impl<Trait, Rest...>();
+			return Trait<tFirst, tSecond>{}();
+		}
+		cElse
+		{
+			return Trait<tFirst, tSecond>{}()
+				or binaryTraitOr_impl<Trait, tRest...>();
 		}
 	}
 } // namespace Rider::Faiz::detail
@@ -341,7 +342,8 @@ namespace Rider::Faiz
 	// is_class<T>::value>
 	// ```
 	tpl<typ T> struct is_object;
-	tpl<typ T> inline cexp bool is_object_v = is_object<T>::value;
+	IS_NOT_ARE_ANY(object)
+	// FIXME: error: incomplete type ‘Ride r::Faiz::is_integral<long unsigned int>’ used in nested name specifier. No good solution now. Maybe module can help me
 
 	tpl<typ T, class U> struct is_assignable;
 
@@ -497,11 +499,13 @@ namespace Rider::Faiz
 	tpl<typ T, T... Vseq> struct integer_sequence
 	{
 		using value_type = T;
-		static_assert(Faiz::is_integral<T>::value,
+		static_assert(std::is_integral_v<T>,
 			"Faiz::integer_sequence can only be instantiated with an integral "
 			"type");
-		static cexp Faiz::size_t
+
+		static cfn
 		size() noexcept
+			-> Faiz::size_t
 		{
 			return sizeof...(Vseq);
 		}
@@ -516,7 +520,7 @@ namespace Rider::Faiz
 	tpl<typ T, T V> struct make_integer_sequence_checked
 		: type_identity<make_integer_sequence_aux_unchecked<T, 0 <= V ? V : 0>>
 	{
-		static_assert(std::is_integral<T>::value,
+		static_assert(std::is_integral_v<T>,
 			"Faiz::make_integer_sequence can only be instantiated with an "
 			"integral type");
 		static_assert(0 <= V,

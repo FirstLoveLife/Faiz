@@ -3,16 +3,23 @@
 
 #define tpl template
 #define typ typename
+#define SFINAE typ
 #define cElseIf else if constexpr
 #define cIf if constexpr
+#define cElse else
 #define cexp constexpr
 #define PAIR(A, B) A, B
 #define INLINE_VARIABLE(type, name) inline cexp type name{};
 #define DEPRECATED(MSG) __attribute__((deprecated(MSG)))
 #define IMPL(...) __VA_ARGS__
 #define fn auto
+#define FN auto
 #define cval constexpr auto
 #define cfn constexpr auto
+#define cFN constexpr auto
+#define CNV
+#define cCNV constexpr
+#define cCTOR constexpr
 #define SEMICOLON ;
 #define COMMA ,
 

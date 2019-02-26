@@ -304,8 +304,8 @@ namespace Rider::Faiz
 			return Faiz::get<1>(pair);
 		}
 
-		pointer
-		get() const noexcept
+		fn
+		get() const noexcept->pointer
 		{
 			return Faiz::get<0>(pair);
 		}
