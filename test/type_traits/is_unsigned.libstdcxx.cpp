@@ -54,7 +54,10 @@ namespace
 		STATIC_REQUIRE(test_category<is_unsigned, unsigned __int128>(true));
 		STATIC_REQUIRE(test_category<is_unsigned, __int128>(false));
 
+
+#if _GLIBCXX_USE_FLOAT128
 		STATIC_REQUIRE(test_category<is_unsigned, __float128>(false));
+#endif
 		// Sanity check.
 		STATIC_REQUIRE(test_category<is_unsigned, ClassType>(false));
 	}

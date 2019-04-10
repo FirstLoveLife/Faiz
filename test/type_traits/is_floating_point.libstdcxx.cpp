@@ -26,7 +26,9 @@ namespace
 		STATIC_REQUIRE(is_floating_point<float>::value);
 		STATIC_REQUIRE(is_floating_point<double>::value);
 		STATIC_REQUIRE(is_floating_point<long double>::value);
+#if _GLIBCXX_USE_FLOAT128
 		STATIC_REQUIRE(is_floating_point<__float128>::value);
+#endif
 		STATIC_REQUIRE(!is_floating_point<__int128>::value);
 		STATIC_REQUIRE(!is_floating_point<unsigned __int128>::value);
 		STATIC_REQUIRE(!is_floating_point<ClassType>::value);

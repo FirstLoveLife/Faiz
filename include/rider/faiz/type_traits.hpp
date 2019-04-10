@@ -215,7 +215,9 @@ namespace Rider::Faiz::detail
 		: is_any<U,
 			  float,
 			  double,
+#if _GLIBCXX_USE_FLOAT128
 			  __float128, // add gcc specific
+#endif
 			  long double>
 	{};
 

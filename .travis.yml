@@ -4,40 +4,82 @@ dist: xenial
 
 matrix:
   include:
-    - compiler: gcc
+
+    - os: linux
+      compiler: g++-8
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-8', 'libboost-all-dev']
-      before_script:
-        - CXX=g++-8
-        - CXXSTD=-std=c++20
       env:
-        - CXX=g++
-
-    - compiler: clang
+        - CXX=g++-8
       before_install:
-        - sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
-        - sudo apt-get update -qq
-      install:
-        - sudo apt-get install libboost-all-dev
-        - sudo apt-get install --allow-unauthenticated -qq clang++-8
-        - export CXX="clang++"
+        - sudo unlink /usr/bin/gcc
+        - sudo unlink /usr/bin/g++
+        - sudo ln -s /usr/bin/g++-8 /usr/bin/g++
+        - sudo ln -s /usr/bin/gcc-8 /usr/bin/gcc
+
+    - os: linux
+      compiler: clang++-9
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'libboost-all-dev']
-          packages: ['g++-8', 'libboost-all-dev']
+          sources:
+            - llvm-toolchain-trusty
+            - llvm-toolchain-trusty-8
+            - ubuntu-toolchain-r-test # llvm6.0 dep
+            - libboost-all-dev
+          packages: ['g++-8', 'clang-9', 'clang-8', 'lld-9', 'libboost-all-dev']
+
+      before_install:
+        - export CXX=clang++-9
       env:
-        - CXX=clang++
-      before_script:
-        - CXX=clang++
-        - CXXSTD=-std=c++20
+        - CXX=clang++-9
+
+# XCode 10.0
+    - os: osx
+      osx_image: xcode10
+      sudo: required
+      language: cpp
+      compiler: g++-8
+      env:
+        - COMPILER=g++-8
+      before_install:
+        - brew update
+        - travis_wait 40 brew install gcc
+        - brew upgrade cmake
+        - export CXX=/usr/local/bin/g++-8
+        - export CC=/usr/local/bin/gcc-8
+# XCode 10.0
+    - os: osx
+      osx_image: xcode10
+      sudo: required
+      language: cpp
+      compiler: clang++-8
+      before_install:
+        - brew update
+        - travis_wait 40 brew install llvm
+        - brew upgrade cmake
+        - export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
+        - export LDFLAGS="-L/usr/local/opt/llvm/lib"
+        - export CPPFLAGS="-I/usr/local/opt/llvm/include"
+        - export CXX=/usr/local/opt/llvm/bin/clang++
+        - export CC=/usr/local/opt/llvm/bin/clang
+
+
+
 
 
 script:
   - cmake --version
   - clang --version
+  # - clang++-9 --version
+  # - ls -lia /usr/bin/ | grep clang
+  # - ls -lia /usr/local/bin | grep clang
+  # - ls -lia /usr/bin/ | grep g++
+  # - ls -lia /usr/local/bin | grep g++
+  # - ls -lia /usr/local/opt/llvm/bin | grep clang
   - gcc --version
+  - g++ --version
   - cmake -H. -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1
   # - sudo pip install --upgrade pip
   # - sudo pip install cmake
