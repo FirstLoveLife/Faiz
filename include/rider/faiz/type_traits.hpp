@@ -603,55 +603,53 @@ namespace Rider::Faiz
 
 		using t_no_cv = remove_cv_t<T>;
 
-		// clang-format off
 		static cfn
 		base_integer_type_impl()
 		{
-			cIf(is_signed_v<T> and
-						 is_integral_v<T> and
-						 not_any_v<t_no_cv, char, wchar_t, bool>)
+			cIf(is_signed_v<
+					T> and is_integral_v<T> and not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
 				return type_identity<T>{};
 			}
-			cElseIf  (is_integral_v<T> and
-							   not_any_v<t_no_cv, char, wchar_t, bool>)
+			cElseIf(
+				is_integral_v<T> and not_any_v<t_no_cv, char, wchar_t, bool>)
 			{
-				cIf (is_same_v<t_no_cv, unsigned char>)
+				cIf(is_same_v<t_no_cv, unsigned char>)
 				{
 					return type_identity<signed char>{};
 				}
-				cElseIf (is_same_v<t_no_cv, unsigned short>)
+				cElseIf(is_same_v<t_no_cv, unsigned short>)
 				{
-					return  type_identity<signed short>{};
+					return type_identity<signed short>{};
 				}
-				 cElseIf (is_same_v<t_no_cv, unsigned int>)
+				cElseIf(is_same_v<t_no_cv, unsigned int>)
 				{
-					return  type_identity<int>{};
+					return type_identity<int>{};
 				}
-				cElseIf (is_same_v<t_no_cv, unsigned long>)
+				cElseIf(is_same_v<t_no_cv, unsigned long>)
 				{
-					return  type_identity<long>{};
+					return type_identity<long>{};
 				}
 				else
 				{
-					return type_identity<long long> {};
+					return type_identity<long long>{};
 				}
 			}
 			else
 			{
-				cIf (sizeof(t_no_cv) == sizeof(unsigned char))
+				cIf(sizeof(t_no_cv) == sizeof(unsigned char))
 				{
 					return type_identity<signed char>{};
 				}
-				cElseIf (sizeof(t_no_cv) == sizeof(unsigned short))
+				cElseIf(sizeof(t_no_cv) == sizeof(unsigned short))
 				{
 					return type_identity<signed short>{};
 				}
-				cElseIf (sizeof(t_no_cv) == sizeof(unsigned int))
+				cElseIf(sizeof(t_no_cv) == sizeof(unsigned int))
 				{
 					return type_identity<int>{};
 				}
-				cElseIf (sizeof(t_no_cv) == sizeof(unsigned long))
+				cElseIf(sizeof(t_no_cv) == sizeof(unsigned long))
 				{
 					return type_identity<long>{};
 				}
@@ -662,8 +660,6 @@ namespace Rider::Faiz
 			}
 		}
 		using base_integer_type = _t<decltype(base_integer_type_impl())>;
-
-		// clang-format on
 
 		// Add back any const qualifier:
 		using const_base_integer_type = meta::

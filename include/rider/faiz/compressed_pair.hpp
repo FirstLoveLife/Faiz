@@ -600,7 +600,7 @@ namespace Rider::Faiz
 				Tuple1&& first_args,
 				Tuple2&& second_args)
 				: tight_pair_element<0, T1>(
-					  pc, Faiz::forward<Tuple1>(first_args)),
+					pc, Faiz::forward<Tuple1>(first_args)),
 				  tight_pair_element<1, T2>(
 					  pc, Faiz::forward<Tuple2>(second_args))
 			{}
@@ -693,17 +693,16 @@ namespace Rider::Faiz
 			tpl<typ U1, typ U2> constexpr tight_pair_storage(
 				U1&& first, U2&& second)
 				: elements{
-					  T(Faiz::forward<U1>(first)), T(Faiz::forward<U2>(second))}
+					T(Faiz::forward<U1>(first)), T(Faiz::forward<U2>(second))}
 			{}
 
 			tpl<typ Tuple1, typ Tuple2> constexpr tight_pair_storage(
 				std::piecewise_construct_t,
 				Tuple1&& first_args,
 				Tuple2&& second_args)
-				: elements{std::make_from_tuple<T>(
-							   Faiz::forward<Tuple1>(first_args)),
-					  std::make_from_tuple<T>(
-						  Faiz::forward<Tuple2>(second_args))}
+				: elements{
+					std::make_from_tuple<T>(Faiz::forward<Tuple1>(first_args)),
+					std::make_from_tuple<T>(Faiz::forward<Tuple2>(second_args))}
 			{}
 
 			tight_pair_storage&
@@ -759,17 +758,16 @@ namespace Rider::Faiz
 			tpl<typ U1, typ U2> constexpr tight_pair_storage(
 				U1&& second, U2&& first)
 				: elements{
-					  T(Faiz::forward<U2>(first)), T(Faiz::forward<U1>(second))}
+					T(Faiz::forward<U2>(first)), T(Faiz::forward<U1>(second))}
 			{}
 
 			tpl<typ Tuple1, typ Tuple2> constexpr tight_pair_storage(
 				std::piecewise_construct_t,
 				Tuple2&& second_args,
 				Tuple1&& first_args)
-				: elements{std::make_from_tuple<T>(
-							   Faiz::forward<Tuple1>(first_args)),
-					  std::make_from_tuple<T>(
-						  Faiz::forward<Tuple2>(second_args))}
+				: elements{
+					std::make_from_tuple<T>(Faiz::forward<Tuple1>(first_args)),
+					std::make_from_tuple<T>(Faiz::forward<Tuple2>(second_args))}
 			{}
 
 			tight_pair_storage&
@@ -886,7 +884,7 @@ namespace Rider::Faiz
 				return detail::adl_hook::pair_constructible<tight_pair&,
 						   Tuple>::value
 					and not detail::adl_hook::pair_convertible<Tuple,
-							tight_pair>::value;
+						tight_pair>::value;
 			}
 
 			tpl<typ Tuple> static constexpr bool
@@ -916,7 +914,6 @@ namespace Rider::Faiz
 			T2>)
 			: detail::tight_pair_storage<T1, T2>()
 		{}
-		// clang-format on
 		tpl<typ U1 = T1,
 			typ U2 = T2,
 			enable_if_t<check_args::tpl enable_explicit<U1 const&, U2 const&>(),
@@ -942,7 +939,7 @@ namespace Rider::Faiz
 			U2&& second) noexcept(is_nothrow_constructible_v<T1, U1>and
 				is_nothrow_constructible_v<T2, U2>)
 			: detail::tight_pair_storage<T1, T2>(
-				  Faiz::forward<U1>(first), Faiz::forward<U2>(second))
+				Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
 
 		tpl<typ U1 = T1,
@@ -952,7 +949,7 @@ namespace Rider::Faiz
 			U2&& second) noexcept(is_nothrow_constructible_v<T1, U1>and
 				is_nothrow_constructible_v<T2, U2>)
 			: detail::tight_pair_storage<T1, T2>(
-				  Faiz::forward<U1>(first), Faiz::forward<U2>(second))
+				Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
 
 		tpl<typ U1 = T1,
@@ -962,7 +959,7 @@ namespace Rider::Faiz
 			U2> const& pair) noexcept(is_nothrow_constructible_v<T1,
 			U1 const&>and is_nothrow_constructible_v<T2, U2 const&>)
 			: detail::tight_pair_storage<T1, T2>(
-				  pair.tpl get<0>(), pair.tpl get<1>())
+				pair.tpl get<0>(), pair.tpl get<1>())
 		{}
 
 		tpl<typ U1 = T1,
@@ -972,7 +969,7 @@ namespace Rider::Faiz
 				pair) noexcept(is_nothrow_constructible_v<T1, U1 const&>and
 				is_nothrow_constructible_v<T2, U2 const&>)
 			: detail::tight_pair_storage<T1, T2>(
-				  pair.tpl get<0>(), pair.tpl get<1>())
+				pair.tpl get<0>(), pair.tpl get<1>())
 		{}
 
 		tpl<typ U1 = T1,
@@ -982,8 +979,8 @@ namespace Rider::Faiz
 			U2>&& pair) noexcept(is_nothrow_constructible_v<T1, U1&&>and
 				is_nothrow_constructible_v<T2, U2&&>)
 			: detail::tight_pair_storage<T1, T2>(
-				  Faiz::forward<U1>(pair.tpl get<0>()),
-				  Faiz::forward<U2>(pair.tpl get<1>()))
+				Faiz::forward<U1>(pair.tpl get<0>()),
+				Faiz::forward<U2>(pair.tpl get<1>()))
 		{}
 
 		tpl<typ U1 = T1,
@@ -993,24 +990,24 @@ namespace Rider::Faiz
 				pair) noexcept(is_nothrow_constructible_v<T1, U1&&>and
 				is_nothrow_constructible_v<T2, U2&&>)
 			: detail::tight_pair_storage<T1, T2>(
-				  Faiz::forward<U1>(pair.tpl get<0>()),
-				  Faiz::forward<U2>(pair.tpl get<1>()))
+				Faiz::forward<U1>(pair.tpl get<0>()),
+				Faiz::forward<U2>(pair.tpl get<1>()))
 		{}
 
 		tpl<typ Tuple,
 			enable_if_t<check_pair_like<Tuple>::tpl enable_explicit<
 				Tuple>()>> constexpr explicit tight_pair(Tuple&& tuple)
 			: detail::tight_pair_storage<T1, T2>(
-				  Faiz::forward<T1>(get<0>(Faiz::forward<Tuple>(tuple))),
-				  Faiz::forward<T2>(get<1>(Faiz::forward<Tuple>(tuple))))
+				Faiz::forward<T1>(get<0>(Faiz::forward<Tuple>(tuple))),
+				Faiz::forward<T2>(get<1>(Faiz::forward<Tuple>(tuple))))
 		{}
 
 		tpl<typ Tuple,
 			enable_if_t<check_pair_like<Tuple>::tpl enable_implicit<
 				Tuple>()>> constexpr tight_pair(Tuple&& tuple)
 			: detail::tight_pair_storage<T1, T2>(
-				  Faiz::forward<T1>(get<0>(Faiz::forward<Tuple>(tuple))),
-				  Faiz::forward<T2>(get<1>(Faiz::forward<Tuple>(tuple))))
+				Faiz::forward<T1>(get<0>(Faiz::forward<Tuple>(tuple))),
+				Faiz::forward<T2>(get<1>(Faiz::forward<Tuple>(tuple))))
 		{}
 
 		tpl<typ Tuple1, typ Tuple2> constexpr tight_pair(
@@ -1018,8 +1015,8 @@ namespace Rider::Faiz
 			Tuple1&& first_args,
 			Tuple2&& second_args)
 			: detail::tight_pair_storage<T1, T2>(pc,
-				  Faiz::forward<Tuple1>(first_args),
-				  Faiz::forward<Tuple2>(second_args))
+				Faiz::forward<Tuple1>(first_args),
+				Faiz::forward<Tuple2>(second_args))
 		{}
 
 		////////////////////////////////////////////////////////////

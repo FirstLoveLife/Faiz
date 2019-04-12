@@ -95,8 +95,7 @@ namespace Rider::Faiz
 			return value;
 		}
 		cfn
-		operator()() const noexcept
-			-> value_type
+		operator()() const noexcept->value_type
 		{
 			return value;
 		} // since c++14
@@ -106,23 +105,21 @@ namespace Rider::Faiz
 	tpl<_t _vInt> using _n = integral_constant<_t, _vInt>;
 #define ImplDeclIntTDe(_t) ImplDeclIntT(_t##_, _t)
 
-	// clang-format off
+	ImplDeclIntTDe(bool)
+	ImplDeclIntTDe(char)
+	ImplDeclIntTDe(int)
+	ImplDeclIntT(llong_, long long)
+	ImplDeclIntTDe(long)
+	ImplDeclIntTDe(short)
+	ImplDeclIntT(ullong_, unsigned long long)
+	ImplDeclIntT(ulong_, unsigned long)
+	ImplDeclIntT(uint_, unsigned)
+	ImplDeclIntT(ushort_, unsigned short)
+	ImplDeclIntTDe(size_t)
+	ImplDeclIntTDe(ptrdiff_t)
 
-    ImplDeclIntTDe(bool)
-    ImplDeclIntTDe(char)
-    ImplDeclIntTDe(int)
-    ImplDeclIntT(llong_, long long)
-    ImplDeclIntTDe(long)
-    ImplDeclIntTDe(short)
-    ImplDeclIntT(ullong_, unsigned long long)
-    ImplDeclIntT(ulong_, unsigned long)
-    ImplDeclIntT(uint_, unsigned)
-    ImplDeclIntT(ushort_, unsigned short)
-    ImplDeclIntTDe(size_t)
-    ImplDeclIntTDe(ptrdiff_t)
-
- #undef ImplDeclIntTDe
- #undef ImplDeclIntT
+#undef ImplDeclIntTDe
+#undef ImplDeclIntT
 
 
 	using true_ = bool_<true>;
@@ -134,13 +131,15 @@ namespace Rider::Faiz
 	tpl<typ T> using sizeof_able = size_t_<sizeof(T)>;
 } // namespace Rider::Faiz
 
-		// clang-format on
 namespace Rider::Faiz::detail
 {
-	tpl<tpl<typ tFirst, typ tSecond> class Trait, typ tFirst, typ tSecond, typ... tRest>
-	cfn
-	binaryTraitAre_impl()
-		-> bool
+	tpl<tpl<typ tFirst, typ tSecond> class Trait,
+		typ tFirst,
+		typ tSecond,
+		typ... tRest>
+		cfn
+		binaryTraitAre_impl()
+			->bool
 	{
 		cIf(sizeof...(tRest) == 0)
 		{
@@ -153,10 +152,13 @@ namespace Rider::Faiz::detail
 		}
 	}
 
-	tpl<tpl<typ tFirst, typ tSecond> class Trait, typ tFirst, typ tSecond, typ... tRest>
-	cfn
-	binaryTraitOr_impl()
-		-> bool
+	tpl<tpl<typ tFirst, typ tSecond> class Trait,
+		typ tFirst,
+		typ tSecond,
+		typ... tRest>
+		cfn
+		binaryTraitOr_impl()
+			->bool
 	{
 		cIf(sizeof...(tRest) == 0)
 		{
@@ -343,7 +345,9 @@ namespace Rider::Faiz
 	// ```
 	tpl<typ T> struct is_object;
 	IS_NOT_ARE_ANY(object)
-	// FIXME: error: incomplete type ‘Ride r::Faiz::is_integral<long unsigned int>’ used in nested name specifier. No good solution now. Maybe module can help me
+	// FIXME: error: incomplete type ‘Ride r::Faiz::is_integral<long unsigned
+	// int>’ used in nested name specifier. No good solution now. Maybe module
+	// can help me
 
 	tpl<typ T, class U> struct is_assignable;
 
@@ -371,7 +375,7 @@ namespace Rider::Faiz
 
 	tpl<bool B, typ T, typ F> struct conditional;
 
-	tpl<typ T, class U> struct is_same;
+	tpl<typ T, typ U> struct is_same;
 
 	BI_IS_NOT_ARE_ANY(same)
 
@@ -504,8 +508,7 @@ namespace Rider::Faiz
 			"type");
 
 		static cfn
-		size() noexcept
-			-> Faiz::size_t
+		size() noexcept->Faiz::size_t
 		{
 			return sizeof...(Vseq);
 		}
