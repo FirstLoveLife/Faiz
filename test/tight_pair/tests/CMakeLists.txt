@@ -1,6 +1,3 @@
-
-# Define test files
-
 set(
     LIBCXX_TESTS
 
@@ -51,13 +48,14 @@ add_executable(
     ${LIBCXX_TESTS}
 )
 
+target_compile_features(tight_pair-testsuite PUBLIC cxx_std_20)
+
 target_link_libraries(tight_pair-testsuite
     PRIVATE
         Catch2::Catch2
-        tight_pair::tight_pair
+        Rider::Faiz
 )
 
-# Somewhat speed up Catch2 compile times
 target_compile_definitions(tight_pair-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(tight_pair-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 
@@ -72,14 +70,4 @@ if (UNIX AND SANITIZE)
 	set_property(TARGET tight_pair-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
 endif()
 
-
-# add_test(NAME test COMMAND tight_pair-testsuite)
-include(CTest)
-
-include_directories( ${CMAKE_SOURCE_DIR}/include )
-
-string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
-catch_discover_tests(tight_pair-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
-
-
-add_test(NAME test COMMAND tight_pair-testsuite)
+catch_discover_tests(tight_pair-testsuite)

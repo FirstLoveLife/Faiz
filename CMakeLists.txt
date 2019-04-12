@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.11)
 project(faiz LANGUAGES CXX)
+add_library(Faiz INTERFACE)
+add_library(Rider::Faiz ALIAS Faiz)
+target_include_directories(Faiz INTERFACE include/)
 
 if(NOT WIN32)
   string(ASCII 27 Esc)
@@ -22,13 +25,13 @@ if(NOT WIN32)
 endif()
 
 find_package(Mach7 QUIET)
+  message("${BoldBlue}Looking for dependency Mach7----${ColourReset}" "${BoldYellow} Functional programming style pattern-matching library for C++${ColourReset}")
+
 if(TARGET Mach7)
-  message("${BoldBlue}\nMach7 has been installed previously\n\n${ColourReset}")
+  message("${BoldGreen}Mach7 found\n${ColourReset}")
   include_directories(${Mach7_INCLUDE_DIRS})
-
 else()
-
-  message("${Green}====> Downloading Mach7 ---- Functional programming style pattern-matching library for C++${ColourReset}")
+  message("${BoldGreen}====> Fetch Mach7... ${ColourReset}")
   include(FetchContent)
   # Download and configure Mach7 for the tests
   FetchContent_Declare(
@@ -36,23 +39,17 @@ else()
     GIT_REPOSITORY https://github.com/solodon4/Mach7/
     GIT_TAG master
     )
-
   FetchContent_GetProperties(mach7)
   if (NOT mach7_POPULATED)
     FetchContent_Populate(mach7)
-
-    message(${mach7_SOURCE_DIR})
-    message(${mach7_BINARY_DIR})
+    message("${Green}DONE!${ColourReset}")
     add_subdirectory(${mach7_SOURCE_DIR}/code/test)
     list(APPEND CMAKE_MODULE_PATH ${mach7_SOURCE_DIR}/contrib)
-    message("${BoldBlue}\ngit clone Mach7 successfully!\n\n${ColourReset}")
   endif()
-
 endif()
 
-
-
-# include_directories(${root_SOURCE_DIR}/include)
-# Build tests if this is the main project
-enable_testing()
+# Include this module in the top CMakeLists.txt file of a project to enable testing with CTest and dashboard submissions to CDash:
+include(CTest)
+# The OLD behavior for this policy is to allow keyword and plain target_link_libraries signatures to be mixed. The NEW behavior for this policy is to not to allow mixing of the keyword and plain signatures.
+cmake_policy(SET CMP0023 NEW)
 add_subdirectory(test)

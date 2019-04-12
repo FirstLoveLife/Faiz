@@ -1,6 +1,3 @@
-# is_swappable is not support
-
-# Make one executable for the whole testsuite
 add_executable(
   type_traits-testsuite
 
@@ -154,30 +151,20 @@ add_executable(
 
 
 target_compile_features(type_traits-testsuite PUBLIC cxx_std_20)
-target_link_libraries(type_traits-testsuite
-  PRIVATE
-  Catch2::Catch2
-  )
 
 # Somewhat speed up Catch2 compile times
 target_compile_definitions(type_traits-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(type_traits-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
-
-
 
 # Use the gold linker if possible
 if (UNIX AND NOT APPLE)
   set_property(TARGET type_traits-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
 endif()
 
-
-
-add_test(NAME test COMMAND type_traits-testsuite)
-
-
 target_link_libraries(type_traits-testsuite
   PRIVATE
   Catch2::Catch2
+  Rider::Faiz
   )
 
 # Somewhat speed up Catch2 compile times
@@ -195,14 +182,4 @@ if (UNIX AND SANITIZE)
   set_property(TARGET type_traits-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
 endif()
 
-
-# add_test(NAME test COMMAND type_traits-testsuite)
-
-
-include_directories( ${CMAKE_SOURCE_DIR}/include )
-
-string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
-catch_discover_tests(type_traits-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
-
-
-# add_test(NAME test COMMAND type_traits-testsuite)
+catch_discover_tests(type_traits-testsuite)
