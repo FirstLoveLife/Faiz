@@ -13,11 +13,11 @@
 #ifndef FAIZ_FWD_HPP
 #define FAIZ_FWD_HPP
 #include "rider/faiz/debug.hpp"
-#include "rider/faiz/initializer_list.hpp"
 #include "rider/faiz/macros.hpp"
 #include <boost/preprocessor.hpp>
 #include <iostream>
 #include <type_traits>
+#include <initializer_list>
 
 namespace Rider
 {
@@ -1761,7 +1761,7 @@ namespace Rider::Faiz::meta
 			tpl<class UnaryFunction, class... Args> cfn
 			operator()(list<Args...>, UnaryFunction f) const->UnaryFunction
 			{
-				return (void)initializer_list<int>{((void)f(Args{}), 0)...}, f;
+				return (void)std::initializer_list<int>{((void)f(Args{}), 0)...}, f;
 			}
 		};
 	} // namespace detail

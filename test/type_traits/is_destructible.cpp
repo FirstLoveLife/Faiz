@@ -1,5 +1,7 @@
 // #include "rider/faiz/initializer_list.hpp"
 #include <catch2/catch.hpp>
+#include <initializer_list>
+using std::initializer_list;
 
 #include "rider/faiz/type_traits.hpp"
 
