@@ -255,7 +255,7 @@ namespace Rider::Faiz::range
 		tpl<typ... Args, CONCEPT_REQUIRES_(Predicate<FD&, Args...>())> cexp auto
 			operator()(Args&&... args)
 			& DECLTYPE_NOEXCEPT(
-				  !invoke(declval<FD&>(), static_cast<Args&&>(args)...))
+				!invoke(declval<FD&>(), static_cast<Args&&>(args)...))
 		{
 			return !invoke(pred_, static_cast<Args&&>(args)...);
 		}
@@ -271,7 +271,7 @@ namespace Rider::Faiz::range
 		tpl<typ... Args, CONCEPT_REQUIRES_(Predicate<FD, Args...>())> cexp auto
 			operator()(Args&&... args)
 			&& DECLTYPE_NOEXCEPT(
-				   !invoke(declval<FD>(), static_cast<Args&&>(args)...))
+				!invoke(declval<FD>(), static_cast<Args&&>(args)...))
 		{
 			return !invoke(
 				static_cast<FD&&>(pred_), static_cast<Args&&>(args)...);
@@ -382,8 +382,8 @@ namespace Rider::Faiz::range
 		overloaded() = default;
 		cexp
 		overloaded(First first, Rest... rest)
-			: overloaded::compressed_pair{detail::move(first),
-				  overloaded<Rest...>{detail::move(rest)...}}
+			: overloaded::compressed_pair{
+				detail::move(first), overloaded<Rest...>{detail::move(rest)...}}
 		{}
 		tpl<typ... Args> auto
 		operator()(Args&&... args) DECLTYPE_NOEXCEPT(
@@ -757,8 +757,8 @@ namespace Rider::Faiz::range
 	tpl<typ ImplFn> struct with_braced_init_args : ImplFn
 	{
 	private:
-		cexp ImplFn const&
-		base() const
+		cfn
+		base() const -> ImplFn const&
 		{
 			return *this;
 		}
@@ -766,7 +766,7 @@ namespace Rider::Faiz::range
 	public:
 		using ImplFn::operator();
 
-		tpl<typ V0, typ... Args> cexp auto
+		tpl<typ V0, typ... Args> cfn
 		operator()(initializer_list<V0>&& rng0, Args&&... args) const
 			-> decltype(
 				declval<ImplFn const&>()(move(rng0), declval<Args>()...))
@@ -774,10 +774,9 @@ namespace Rider::Faiz::range
 			return base()(move(rng0), static_cast<Args&&>(args)...);
 		}
 		/// \overload
-		tpl<typ Rng0, typ V1, typ... Args> cexp auto
-		operator()(
-			Rng0&& rng0, initializer_list<V1>&& rng1, Args&&... args) const
-			-> decltype(declval<ImplFn const&>()(
+		tpl<typ Rng0, typ V1, typ... Args> cfn
+		operator()(Rng0&& rng0, initializer_list<V1>&& rng1, Args&&... args)
+			const->decltype(declval<ImplFn const&>()(
 				declval<Rng0>(), move(rng1), declval<Args>()...))
 		{
 			return base()(static_cast<Rng0&&>(rng0),
@@ -785,12 +784,12 @@ namespace Rider::Faiz::range
 				static_cast<Args&&>(args)...);
 		}
 		/// \overload
-		tpl<typ V0, typ V1, typ... Args> cexp auto
+		tpl<typ V0, typ V1, typ... Args> cfn
 		operator()(initializer_list<V0> rng0,
 			initializer_list<V1>&& rng1,
-			Args&&... args) const
-			-> decltype(declval<ImplFn const&>()(
-				move(rng0), move(rng1), declval<Args>()...))
+			Args&&... args) const->decltype(declval<ImplFn const&>()(move(rng0),
+			move(rng1),
+			declval<Args>()...))
 		{
 			return base()(move(rng0), move(rng1), static_cast<Args&&>(args)...);
 		}
