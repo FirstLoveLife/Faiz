@@ -677,13 +677,13 @@ namespace Rider::Faiz
 	tpl<typ T, typ D> fn
 	operator==(const unique_ptr<T, D>& a, nullptr_t) noexcept
 	{
-		return !a;
+		return not a;
 	}
 
 	tpl<typ T, typ D> fn
 	operator==(nullptr_t, const unique_ptr<T, D>& a) noexcept
 	{
-		return !a;
+		return not a;
 	}
 
 
