@@ -101,6 +101,8 @@ add_executable(
 
   is_same.libcxx.cpp
 
+  are_same.cpp
+
   is_signed.cpp
 
   is_trivially_copy_assignable.libcxx.cpp
