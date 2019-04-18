@@ -16,6 +16,7 @@
 #define FN auto
 #define cval constexpr auto
 #define cfn constexpr auto
+#define cdfn constexpr decltype(auto)
 #define cFN constexpr auto
 #define CNV
 #define cCNV constexpr
