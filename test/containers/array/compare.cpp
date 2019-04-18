@@ -1,6 +1,6 @@
 #include "rider/faiz/container/array.hpp"
 #include <array>
-#include <experimental/array>
+// #include <experimental/array>
 
 #include <catch2/catch.hpp>
 namespace f
@@ -15,7 +15,7 @@ namespace f
 namespace s
 {
 	std::array a1{1, 2, 3, 4};
-	auto a2 = std::experimental::make_array(1, 2, 3, 4);
+	std::array a2 {1, 2, 3, 4};
 	std::array a3{1, 2, 3, 4, 5};
 	std::array a4{2, 2, 3, 4, 5};
 	std::array a5{3, 2, 3, 4};
