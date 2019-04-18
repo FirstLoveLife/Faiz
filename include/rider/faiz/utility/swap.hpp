@@ -15,7 +15,6 @@
 
 #ifndef SWAP_HPP
 #define SWAP_HPP
-#include "rider/faiz/associated_types.hpp"
 #include "rider/faiz/faiz_fwd.hpp"
 #include "rider/faiz/macros.hpp"
 #include "rider/faiz/move.hpp"
@@ -70,7 +69,7 @@ namespace Rider::Faiz::range
 		swap(T&, T&)
 			= delete;
 
-		tpl<typ T, Faiz::size_t N> void swap(T (&)[N], T (&)[N]) = delete;
+		tpl<typ T, size_t N> void swap(T (&)[N], T (&)[N]) = delete;
 
 		tpl<typ T, typ U, typ = decltype(swap(declval<T>(), declval<U>()))>
 			true_
@@ -101,13 +100,13 @@ namespace Rider::Faiz::range
 				// For arrays of instrinsicly swappable (i.e., movable)
 				// types for which a swap overload cannot be found via ADL,
 				// swap array elements by moving.
-				tpl<typ T, typ U, Faiz::size_t N> cexp
+				tpl<typ T, typ U, size_t N> cexp
 				meta::if_c<!is_adl_swappable_<T (&)[N], U (&)[N]>::value
 					&& is_swappable_with<T&, U&>::value>
 				operator()(T (&t)[N], U (&u)[N]) const
 				noexcept(is_nothrow_swappable_with<T&, U&>::value)
 			{
-				for(Faiz::size_t i = 0; i < N; ++i)
+				for(size_t i = 0; i < N; ++i)
 					(*this)(t[i], u[i]);
 			}
 
@@ -139,7 +138,7 @@ namespace Rider::Faiz::range
 			}
 
 		private:
-			tpl<typ T, typ U, Faiz::size_t... Is> cexp static void
+			tpl<typ T, typ U, size_t... Is> cexp static void
 			impl(T&& left, U&& right, index_sequence<Is...>)
 			{
 				(void)ignore_unused((swap_fn{}(std::get<Is>(move(left)),
@@ -159,7 +158,7 @@ namespace Rider::Faiz::range
 
 		tpl<typ T, typ U> struct is_nothrow_swappable_with_
 			: bool_<noexcept(swap_fn{}(declval<T>(), declval<U>()))
-				  && noexcept(swap_fn{}(declval<U>(), declval<T>()))>
+				  and noexcept(swap_fn{}(declval<U>(), declval<T>()))>
 		{};
 
 		// Q: Should std::reference_wrapper be considered a proxy wrt

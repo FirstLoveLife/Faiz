@@ -23,42 +23,29 @@ namespace Rider::Faiz
 {
 	namespace aux
 	{
-		/// \ingroup group-utility
-		struct move_fn : range::move_tag
+		struct move_fn
 		{
-			tpl<typ T, typ U = _t<remove_reference<T>>> U&&
-			operator()(T&& t) const noexcept
+			tpl<typ T, typ U = remove_reference_t<T>> fn
+			operator()(T&& t) const noexcept->U&&
 			{
 				return static_cast<U&&>(t);
 			}
 		};
 
-		/// \ingroup group-utility
-		/// \sa `move_fn`
 		inline cexp move_fn move{};
 
-		/// \ingroup group-utility
-		/// \sa `move_fn`
-		tpl<typ T> _t<remove_reference<T>>&&
-		operator|(T&& t, move_fn move) noexcept
+		tpl<typ T> fn
+		operator|(T&& t, move_fn move) noexcept->remove_reference_t<T>&&
 		{
 			return move(t);
 		}
 
-		/// \ingroup group-utility
-		/// \sa `move_fn`
 		tpl<typ R> using move_t
-			= meta::if_<is_reference<R>, _t<remove_reference<R>>&&, decay_t<R>>;
+			= meta::if_<is_reference<R>, remove_reference_t<R>&&, decay_t<R>>;
 	} // namespace aux
 
-	/// \cond
 	namespace adl_move_detail
 	{
-#if RANGES_BROKEN_CPO_LOOKUP
-		void
-		iter_move(); // unqualified name lookup block
-#endif
-
 		tpl<typ T, typ = decltype(iter_move(declval<T>()))> true_
 		try_adl_iter_move_(int);
 
@@ -86,10 +73,10 @@ namespace Rider::Faiz
 	} // namespace adl_move_detail
 	/// \endcond
 
-	inline namespace CPOs
-	{
-		inline cexp adl_move_detail::iter_move_fn iter_move{};
-	}
+	// inline namespace CPOs
+	// {
+	// 	inline cexp adl_move_detail::iter_move_fn iter_move{};
+	// }
 
 	/// \cond
 	struct indirect_move_fn
@@ -104,10 +91,10 @@ namespace Rider::Faiz
 	namespace detail
 	{
 		tpl<typ I, typ O> using is_indirectly_movable_
-			= bool_ < is_constructible<_t<Faiz::value_type<I>>,
-						  decltype(iter_move(declval<I&>()))>::value
+			= bool_ < is_constructible<_t<value_type<I>>,
+				  decltype(iter_move(declval<I&>()))>::value
 			&& is_assignable<_t<value_type<I>>&,
-				   decltype(iter_move(declval<I&>()))>::value
+				decltype(iter_move(declval<I&>()))>::value
 			&& is_assignable<reference_t<O>, _t<value_type<I>>>::value
 			&& is_assignable<reference_t<O>,
 				   decltype(iter_move(declval<I&>()))>::value
@@ -116,11 +103,11 @@ namespace Rider::Faiz
 		tpl<typ I, typ O> using is_nothrow_indirectly_movable_
 			= bool_ < noexcept(iter_move(declval<I&>()))
 			&& std::is_nothrow_constructible<_t<value_type<I>>,
-				   decltype(iter_move(declval<I&>()))>::value
+				decltype(iter_move(declval<I&>()))>::value
 			&& Rider::Faiz::is_nothrow_assignable<_t<value_type<I>>&,
-				   decltype(iter_move(declval<I&>()))>::value
+				decltype(iter_move(declval<I&>()))>::value
 			&& Rider::Faiz::is_nothrow_assignable<reference_t<O>,
-				   _t<value_type<I>>>::value
+				_t<value_type<I>>>::value
 			&& Rider::Faiz::is_nothrow_assignable<reference_t<O>,
 				   decltype(iter_move(declval<I&>()))>::value
 				> ;
