@@ -505,13 +505,13 @@ namespace Rider::Faiz
 	tpl<typ T, unsigned N> struct extent<T[], N> : extent<T, N - 1>
 	{};
 
-	tpl<typ T, Faiz::size_t I> struct extent<T[I], 0> : size_t_<I>
+	tpl<typ T, size_t I> struct extent<T[I], 0> : size_t_<I>
 	{};
 
-	tpl<typ T, Faiz::size_t I, unsigned N> struct extent<T[I], N>
+	tpl<typ T, size_t I, unsigned N> struct extent<T[I], N>
 		: extent<T, N - 1>
 	{};
-	tpl<typ T, unsigned N = 0> inline cexp Faiz::size_t extent_v
+	tpl<typ T, unsigned N = 0> inline cexp size_t extent_v
 		= extent<T, N>::value;
 
 	//  If T is an object type or a function type that has no cv- or ref-
