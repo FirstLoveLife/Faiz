@@ -25,7 +25,7 @@ TEST_CASE("compare functions")
 {
 
 	REQUIRE((f::a1 == f::a2) == (s::a1 == s::a2));
-	REQUIRE((f::a2 != f::a5) == (s::a2 == s::a5));
+	REQUIRE((f::a2 != f::a5) == (s::a2 != s::a5));
 	REQUIRE((f::a2 > f::a5) == (s::a2 > s::a5));
 	REQUIRE((f::a2 < f::a5) == (s::a2 < s::a5));
 	REQUIRE((f::a2 <= f::a5) == (s::a2 <= s::a5));
