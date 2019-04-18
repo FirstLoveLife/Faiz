@@ -10,7 +10,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-8', 'libboost-all-dev']
+          packages: ['g++-8', 'ninja-build', 'libboost-all-dev']
       env:
         - CXX=g++-8
       before_install:
@@ -28,7 +28,7 @@ matrix:
             - llvm-toolchain-trusty-8
             - ubuntu-toolchain-r-test # llvm6.0 dep
             - libboost-all-dev
-          packages: ['g++-8', 'clang-9', 'clang-8', 'lld-9', 'libboost-all-dev']
+          packages: ['g++-8', 'ninja-build', 'clang-9', 'clang-8', 'lld-9', 'libboost-all-dev']
 
       before_install:
         - export CXX=clang++-9
@@ -47,6 +47,7 @@ matrix:
         - brew update
         - travis_wait 40 brew install gcc
         - brew upgrade cmake
+        - brew install ninja
         - export CXX=/usr/local/bin/g++-8
         - export CC=/usr/local/bin/gcc-8
 # XCode 10.0
@@ -59,33 +60,14 @@ matrix:
         - brew update
         - travis_wait 40 brew install llvm
         - brew upgrade cmake
+        - brew install ninja
         - export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
         - export LDFLAGS="-L/usr/local/opt/llvm/lib"
         - export CPPFLAGS="-I/usr/local/opt/llvm/include"
         - export CXX=/usr/local/opt/llvm/bin/clang++
         - export CC=/usr/local/opt/llvm/bin/clang
 
-
-
-
-
 script:
-  - cmake --version
-  - clang --version
-  # - clang++-9 --version
-  # - ls -lia /usr/bin/ | grep clang
-  # - ls -lia /usr/local/bin | grep clang
-  # - ls -lia /usr/bin/ | grep g++
-  # - ls -lia /usr/local/bin | grep g++
-  # - ls -lia /usr/local/opt/llvm/bin | grep clang
-  - gcc --version
-  - g++ --version
-  - cmake -H. -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1
-  # - sudo pip install --upgrade pip
-  # - sudo pip install cmake
-  # - ls /usr/local/bin
-  # - /usr/local/bin/cmake --version
-  # - /usr/local/bin/cmake -H. -Bbuild
-  - cd build
-  - make -j10
-  - make test
+  - cmake -H. -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -GNinja
+  - cmake --build build
+  - cmake --build build --target test
