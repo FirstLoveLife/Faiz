@@ -1,82 +1,73 @@
-cmake_minimum_required(VERSION 3.11)
+set(
+    LIBCXX_TESTS
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-project(tight_pair VERSION 1.0.0 LANGUAGES CXX)
-
-include(CMakePackageConfigHelpers)
-include(GNUInstallDirs)
-
-# Project options
-option(BUILD_TESTING "Build the tight_pair test suite" ON)
-
-# Create tight_pair library and configure it
-add_library(tight_pair INTERFACE)
-target_include_directories(tight_pair INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
-    $<INSTALL_INTERFACE:include>
+    libcxx/assign_const_pair_U_V.cpp
+    libcxx/assign_pair.cpp
+    libcxx/assign_rv_pair.cpp
+    libcxx/assign_rv_pair_U_V.cpp
+    libcxx/assign_tuple.cpp
+    libcxx/comparison.cpp
+    libcxx/const_first_const_second.cpp
+    libcxx/const_pair_U_V.cpp
+    libcxx/copy_ctor.cpp
+    libcxx/default.cpp
+    libcxx/default_ctor.cpp
+    libcxx/default-sfinae.cpp
+    libcxx/dtor.cpp
+    libcxx/get_const.cpp
+    libcxx/get_const_rv.cpp
+    libcxx/get_non_const.cpp
+    libcxx/get_rv.cpp
+    libcxx/implicit_deduction_guides.cpp
+    libcxx/move_ctor.cpp
+    libcxx/non_member_swap.cpp
+    libcxx/pairs_by_type.cpp
+    libcxx/piecewise_construct.cpp
+    libcxx/rv_pair_U_V.cpp
+    libcxx/special_member_generation.cpp
+    libcxx/swap.cpp
+    libcxx/trivial_copy_move.cpp
+    libcxx/tuple_element.cpp
+    libcxx/tuple_size.cpp
+    libcxx/types.cpp
+    libcxx/U_V.cpp
+    libcxx/used_to_be_make_pair.cpp
 )
 
-target_compile_features(tight_pair INTERFACE cxx_std_20)
+# Make one executable for the whole testsuite
+add_executable(
+    tight_pair-testsuite
 
-add_library(tight_pair::tight_pair ALIAS tight_pair)
-
-# Install targets and files
-install(
-	TARGETS
-		tight_pair
-	EXPORT
-		tight_pair-targets
-	DESTINATION
-		${CMAKE_INSTALL_LIBDIR}
+    main.cpp
+    cppreference.cpp
+    dr-811.cpp
+    empty_base_get.cpp
+    piecewise_no_copy_move.cpp
+    reference_wrapper.cpp
+    tricky_comparisons.cpp
+    ${LIBCXX_TESTS}
 )
 
-install(
-	EXPORT
-		tight_pair-targets
-	NAMESPACE
-		tight_pair::
-	DESTINATION
-		"${CMAKE_INSTALL_LIBDIR}/cmake/tight_pair"
+target_compile_features(tight_pair-testsuite PUBLIC cxx_std_20)
+
+target_link_libraries(tight_pair-testsuite
+    PRIVATE
+        Catch2::Catch2
+        Rider::Faiz
 )
 
-install(
-	DIRECTORY
-		"include/"
-	DESTINATION
-		"${CMAKE_INSTALL_INCLUDEDIR}"
-)
+target_compile_definitions(tight_pair-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
+target_compile_definitions(tight_pair-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 
-configure_package_config_file(
-    cmake/tight_pair-config.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/tight_pair-config.cmake
-    INSTALL_DESTINATION
-		${CMAKE_INSTALL_LIBDIR}/cmake/tight_pair
-)
+# Use the gold linker if possible
+if (UNIX AND NOT APPLE)
+    set_property(TARGET tight_pair-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+endif()
 
-write_basic_package_version_file(
-    ${CMAKE_BINARY_DIR}/cmake/tight_pair-config-version.cmake
-    COMPATIBILITY
-		SameMajorVersion
-)
+# Optionally enable sanitizers
+if (UNIX AND SANITIZE)
+	target_compile_options(tight_pair-testsuite PRIVATE -fsanitize=${SANITIZE})
+	set_property(TARGET tight_pair-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
+endif()
 
-install(
-    FILES
-        ${CMAKE_BINARY_DIR}/cmake/tight_pair-config.cmake
-        ${CMAKE_BINARY_DIR}/cmake/tight_pair-config-version.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tight_pair
-)
-
-# Export target so that it can be used in subdirectories
-export(EXPORT tight_pair-targets
-    FILE
-		${CMAKE_BINARY_DIR}/cmake/tight_pair-targets.cmake
-    NAMESPACE
-		tight_pair::
-)
-
-# Build tests if this is the main project
-# if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
-    enable_testing()
-    add_subdirectory(tests)
-# endif()
+catch_discover_tests(tight_pair-testsuite)
