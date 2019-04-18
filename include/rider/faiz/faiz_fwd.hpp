@@ -15,9 +15,9 @@
 #include "rider/faiz/debug.hpp"
 #include "rider/faiz/macros.hpp"
 #include <boost/preprocessor.hpp>
+#include <initializer_list>
 #include <iostream>
 #include <type_traits>
-#include <initializer_list>
 
 namespace Rider
 {
@@ -138,8 +138,7 @@ namespace Rider::Faiz::detail
 		typ tSecond,
 		typ... tRest>
 		cfn
-		binaryTraitAre_impl()
-			->bool
+	binaryTraitAre_impl()->bool
 	{
 		cIf(sizeof...(tRest) == 0)
 		{
@@ -157,8 +156,7 @@ namespace Rider::Faiz::detail
 		typ tSecond,
 		typ... tRest>
 		cfn
-		binaryTraitOr_impl()
-			->bool
+	binaryTraitOr_impl()->bool
 	{
 		cIf(sizeof...(tRest) == 0)
 		{
@@ -377,15 +375,32 @@ namespace Rider::Faiz
 
 	tpl<typ T, typ U> struct is_same;
 
-	BI_IS_NOT_ARE_ANY(same)
+	BI_IS(same);
+	BI_NOT(same);
 
-	tpl<typ T, class... Rest> inline cexp bool is_any_v
-		= (is_same_v<T, Rest> || ...);
+	namespace detail
+	{
+		tpl<typ A0, typ... Rest> cfn
+		are_same_aux()->bool
+		{
+			return (is_same_v<Rest, A0> and ... and true);
+		}
+	} // namespace detail
+
+	tpl<typ... Types> inline cexp bool are_same_v
+		= detail::are_same_aux<Types...>();
+
+	tpl<typ... Types>
+	struct are_same : bool_<are_same_v<Types...>>
+	{};
+
+	tpl<typ T, typ... Rest> inline cexp bool is_any_v
+		= (is_same_v<T, Rest> or ...);
 
 	tpl<typ T, typ... Rest> struct is_any : bool_<is_any_v<T, Rest...>>
 	{};
 
-	tpl<typ T, class... Rest> inline cexp bool not_any_v
+	tpl<typ T, typ... Rest> inline cexp bool not_any_v
 		= (not_same_v<T, Rest> and ...);
 
 	tpl<typ T, typ... Rest> struct not_any : bool_<not_any_v<T, Rest...>>
@@ -415,8 +430,8 @@ namespace Rider::Faiz
 				= TtoIndexSeq<Tto, V...>;
 		};
 
-		tpl<typ T, Faiz::size_t... Vextra> struct repeat;
-		tpl<typ T, T... Vseq, Faiz::size_t... Vextra> struct repeat<
+		tpl<typ T, size_t... Vextra> struct repeat;
+		tpl<typ T, T... Vseq, size_t... Vextra> struct repeat<
 			integer_sequence_aux<T, Vseq...>,
 			Vextra...>
 		{
@@ -444,21 +459,20 @@ namespace Rider::Faiz
 			// clang-format on
 		};
 
-		tpl<Faiz::size_t V> struct parity;
-		tpl<Faiz::size_t V> struct make : parity<V % 39>::tpl pmake<V>
+		tpl<size_t V> struct parity;
+		tpl<size_t V> struct make : parity<V % 39>::tpl pmake<V>
 		{};
 
-		tpl<> struct make<0> : type_identity<integer_sequence_aux<Faiz::size_t>>
+		tpl<> struct make<0> : type_identity<integer_sequence_aux<size_t>>
 		{};
 #define MAKE(N, ...) \
 	tpl<> struct make<N> \
-		: type_identity<integer_sequence_aux<Faiz::size_t, __VA_ARGS__>> \
+		: type_identity<integer_sequence_aux<size_t, __VA_ARGS__>> \
 	{};
 #define PARITY(N, ...) \
 	tpl<> struct parity<N> \
 	{ \
-		tpl<Faiz::size_t V> struct pmake \
-			: repeat<_t<make<V / 39>>, __VA_ARGS__> \
+		tpl<size_t V> struct pmake : repeat<_t<make<V / 39>>, __VA_ARGS__> \
 		{}; \
 	};
 #define AppendV(z, n, data) (V - n)
@@ -508,14 +522,14 @@ namespace Rider::Faiz
 			"type");
 
 		static cfn
-		size() noexcept->Faiz::size_t
+		size() noexcept->size_t
 		{
 			return sizeof...(Vseq);
 		}
 	};
 
-	tpl<Faiz::size_t... Vseq> using index_sequence
-		= integer_sequence<Faiz::size_t, Vseq...>;
+	tpl<size_t... Vseq> using index_sequence
+		= integer_sequence<size_t, Vseq...>;
 
 	tpl<typ T, T V> using make_integer_sequence_aux_unchecked
 		= typ detail::make<V>::type::tpl convert<integer_sequence, T>;
@@ -537,8 +551,7 @@ namespace Rider::Faiz
 	tpl<typ T, T V> using make_integer_sequence
 		= make_integer_sequence_aux<T, V>;
 
-	tpl<Faiz::size_t V> using make_index_sequence
-		= make_integer_sequence<Faiz::size_t, V>;
+	tpl<size_t V> using make_index_sequence = make_integer_sequence<size_t, V>;
 
 	tpl<class... T> using index_sequence_for
 		= make_index_sequence<sizeof...(T)>;
@@ -1141,13 +1154,13 @@ namespace Rider::Faiz::meta
 			= defer<reverse_fold, List, State, Fun>;
 	} // namespace lazy
 
-	using npos = size_t_<Faiz::size_t(-1)>;
+	using npos = size_t_<size_t(-1)>;
 
 	tpl<typ... Ts> struct list
 	{
 		using type = list;
 		/// \return `sizeof...(Ts)`
-		static cexp Faiz::size_t
+		static cexp size_t
 		size() noexcept
 		{
 			return sizeof...(Ts);
@@ -1253,17 +1266,17 @@ namespace Rider::Faiz::meta
 
 	namespace detail
 	{
-		tpl<typ T, Faiz::size_t> using first_ = T;
+		tpl<typ T, size_t> using first_ = T;
 
 		tpl<typ T, typ Ints> struct repeat_n_c_
 		{};
 
-		tpl<typ T, Faiz::size_t... Is> struct repeat_n_c_<T,
-			index_sequence<Is...>> : type_identity<list<first_<T, Is>...>>
+		tpl<typ T, size_t... Is> struct repeat_n_c_<T, index_sequence<Is...>>
+			: type_identity<list<first_<T, Is>...>>
 		{};
 	} // namespace detail
 
-	tpl<Faiz::size_t N, typ T = void> using repeat_n_c
+	tpl<size_t N, typ T = void> using repeat_n_c
 		= _t<detail::repeat_n_c_<T, make_index_sequence<N>>>;
 
 	tpl<typ N, typ T = void> using repeat_n = repeat_n_c<N::type::value, T>;
@@ -1272,7 +1285,7 @@ namespace Rider::Faiz::meta
 	{
 		tpl<typ N, typ T = void> using repeat_n = defer<repeat_n, N, T>;
 
-		tpl<Faiz::size_t N, typ T = void> using repeat_n_c
+		tpl<size_t N, typ T = void> using repeat_n_c
 			= defer<repeat_n, size_t_<N>, T>;
 	} // namespace lazy
 
@@ -1289,16 +1302,16 @@ namespace Rider::Faiz::meta
 			eval(VoidPtrs..., T*, Us*...);
 		};
 
-		tpl<typ List, Faiz::size_t N> struct at_
+		tpl<typ List, size_t N> struct at_
 		{};
 
-		tpl<typ... Ts, Faiz::size_t N> struct at_<list<Ts...>, N>
+		tpl<typ... Ts, size_t N> struct at_<list<Ts...>, N>
 			: decltype(at_impl_<repeat_n_c<N, void*>>::eval(
 				  static_cast<id<Ts>*>(nullptr)...))
 		{};
 	} // namespace detail
 
-	tpl<typ List, Faiz::size_t N> using at_c = _t<detail::at_<List, N>>;
+	tpl<typ List, size_t N> using at_c = _t<detail::at_<List, N>>;
 
 	tpl<typ List, typ N> using at = at_c<List, N::type::value>;
 
@@ -1341,8 +1354,7 @@ namespace Rider::Faiz::meta
 
 	tpl<typ List, typ N> using drop = _t<detail::drop_<List, N>>;
 
-	tpl<typ List, Faiz::size_t N> using drop_c
-		= _t<detail::drop_<List, size_t_<N>>>;
+	tpl<typ List, size_t N> using drop_c = _t<detail::drop_<List, size_t_<N>>>;
 
 	namespace lazy
 	{
@@ -1476,9 +1488,9 @@ namespace Rider::Faiz::meta
 
 	namespace detail
 	{
-		cexp Faiz::size_t
+		cexp size_t
 		find_index_i_(
-			bool const* const first, bool const* const last, Faiz::size_t N = 0)
+			bool const* const first, bool const* const last, size_t N = 0)
 		{
 			return first == last ?
 				npos::value :
@@ -1507,9 +1519,9 @@ namespace Rider::Faiz::meta
 
 	namespace detail
 	{
-		cexp Faiz::size_t
+		cexp size_t
 		reverse_find_index_i_(
-			bool const* const first, bool const* const last, Faiz::size_t N)
+			bool const* const first, bool const* const last, size_t N)
 		{
 			return first == last ?
 				npos::value :
@@ -1672,8 +1684,8 @@ namespace Rider::Faiz::meta
 
 	namespace detail
 	{
-		cexp Faiz::size_t
-		count_i_(bool const* const begin, bool const* const end, Faiz::size_t n)
+		cexp size_t
+		count_i_(bool const* const begin, bool const* const end, size_t n)
 		{
 			return begin == end ? n :
 								  detail::count_i_(begin + 1, end, n + *begin);
@@ -1761,7 +1773,9 @@ namespace Rider::Faiz::meta
 			tpl<class UnaryFunction, class... Args> cfn
 			operator()(list<Args...>, UnaryFunction f) const->UnaryFunction
 			{
-				return (void)std::initializer_list<int>{((void)f(Args{}), 0)...}, f;
+				return (void)std::initializer_list<int>{
+						   ((void)f(Args{}), 0)...},
+					   f;
 			}
 		};
 	} // namespace detail
@@ -2038,7 +2052,7 @@ namespace Rider::Faiz::meta
 		tpl<typ... As> struct lambda_<list<As...>, false>
 		{
 		private:
-			static cexp Faiz::size_t arity = sizeof...(As) - 1;
+			static cexp size_t arity = sizeof...(As) - 1;
 			using Tags
 				= list<As...>; // Includes the lambda body as the last arg!
 			using F = back<Tags>;
