@@ -233,13 +233,13 @@ namespace Rider::Faiz
 	// int>’ used in nested name specifier. No good solution now. Maybe module
 	// can help me
 
-	tpl<typ T, class U> struct is_assignable;
+	tpl<typ T, typ U> struct is_assignable;
 
-	tpl<typ T, class U> struct is_nothrow_assignable;
-	tpl<typ T, class U> inline cexp bool is_assignable_v
+	tpl<typ T, typ U> struct is_nothrow_assignable;
+	tpl<typ T, typ U> inline cexp bool is_assignable_v
 		= is_assignable<T, U>::value;
 
-	tpl<typ T, class U> inline cexp bool is_nothrow_assignable_v
+	tpl<typ T, typ U> inline cexp bool is_nothrow_assignable_v
 		= is_nothrow_assignable<T, U>::value;
 	tpl<typ Base, typ Derived> struct is_base_of;
 	tpl<typ T> struct remove_reference;
@@ -250,7 +250,7 @@ namespace Rider::Faiz
 	IS_NOT_ARE_ANY(lvalue_reference);
 
 	tpl<typ T> struct remove_cvref;
-	tpl<typ T> using remove_cvref_t = typename remove_cvref<T>::type;
+	tpl<typ T> using remove_cvref_t = _t<remove_cvref<T>>;
 	tpl<typ T> struct is_integral;
 	tpl<bool B, typ T = void> struct enable_if;
 	tpl<bool B, typ T = void> using enable_if_t = _t<enable_if<B, T>>;
@@ -308,23 +308,23 @@ namespace Rider::Faiz
 	// More or fewer than 39 will be slower on my machine.
 	namespace detail
 	{
-		tpl<typ Tindex, Tindex... V> struct integer_sequence_aux
+		tpl<typ tIndex, tIndex... V> struct integer_sequence_aux
 		{
-			tpl<tpl<typ Tfrom, Tfrom...> typ TtoIndexSeq, typ Tto> using convert
-				= TtoIndexSeq<Tto, V...>;
+			tpl<tpl<typ tFrom, tFrom...> typ tToIndexSeq, typ tTo> using convert
+				= tToIndexSeq<tTo, V...>;
 		};
 
-		tpl<typ T, size_t... Vextra> struct repeat;
-		tpl<typ T, T... Vseq, size_t... Vextra> struct repeat<
-			integer_sequence_aux<T, Vseq...>,
-			Vextra...>
+		tpl<typ T, size_t... vExtra> struct repeat;
+		tpl<typ T, T... vSeq, size_t... vExtra> struct repeat<
+			integer_sequence_aux<T, vSeq...>,
+			vExtra...>
 		{
 			// clang-format off
             using type = integer_sequence_aux<
                 T,
-                Vseq...,
-                sizeof...(Vseq) + Vseq...,
- #define Aux(N)  N * sizeof...(Vseq) + Vseq...
+                vSeq...,
+                sizeof...(vSeq) + vSeq...,
+ #define Aux(N)  N * sizeof...(vSeq) + vSeq...
                 Aux(  2 ), Aux(  3 ), Aux(  4 ),
                 Aux(  5 ), Aux(  6 ), Aux(  7 ),
                 Aux(  8 ), Aux(  9 ), Aux( 10 ),
@@ -338,7 +338,7 @@ namespace Rider::Faiz
                 Aux( 32 ), Aux( 33 ), Aux( 34 ),
                 Aux( 35 ), Aux( 36 ), Aux( 37 ),
                 Aux( 38 ),
-                Vextra...>;
+                vExtra...>;
  #undef Aux
 			// clang-format on
 		};
@@ -398,7 +398,7 @@ namespace Rider::Faiz
 
 	} // namespace detail
 
-	tpl<typ T, T... Vseq> struct integer_sequence
+	tpl<typ T, T... vSeq> struct integer_sequence
 	{
 		using value_type = T;
 		static_assert(std::is_integral_v<T>,
@@ -408,12 +408,12 @@ namespace Rider::Faiz
 		static cfn
 		size() noexcept->size_t
 		{
-			return sizeof...(Vseq);
+			return sizeof...(vSeq);
 		}
 	};
 
-	tpl<size_t... Vseq> using index_sequence
-		= integer_sequence<size_t, Vseq...>;
+	tpl<size_t... vSeq> using index_sequence
+		= integer_sequence<size_t, vSeq...>;
 
 	tpl<typ T, T V> using make_integer_sequence_aux_unchecked
 		= typ detail::make<V>::type::tpl convert<integer_sequence, T>;
@@ -437,8 +437,7 @@ namespace Rider::Faiz
 
 	tpl<size_t V> using make_index_sequence = make_integer_sequence<size_t, V>;
 
-	tpl<class... T> using index_sequence_for
-		= make_index_sequence<sizeof...(T)>;
+	tpl<typ... T> using index_sequence_for = make_index_sequence<sizeof...(T)>;
 } // namespace Rider::Faiz
 
 

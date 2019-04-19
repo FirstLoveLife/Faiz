@@ -1,4 +1,4 @@
-// https://github.com/Morwenn/tight_pair
+
 /*
  * The MIT License (MIT)
  *
@@ -114,7 +114,7 @@ namespace Rider::Faiz
 		// optimization
 
 		tpl<typ T> struct is_ebco_eligible
-			: logic::and_<is_empty<T>, logic::not_<is_final<T>>>
+			: logic::and_<is_empty<T>, not_final<T>>
 		{};
 
 		IS_NOT_ARE_ANY(ebco_eligible);
@@ -122,24 +122,23 @@ namespace Rider::Faiz
 		////////////////////////////////////////////////////////////
 		// Detect whether an integer has padding bits
 
-		tpl<typ UnsignedInteger> cfn
-		has_padding_bits()
-			->bool
+		tpl<typ tUnsignedInteger> cfn
+		has_padding_bits()->bool
 		{
 #ifdef __cpp_lib_has_unique_object_representations
 			// A note in the standard mentions than unsigned integer types
 			// are guaranteed to have unique object representations when
 			// they don't have padding bits
 
-			return std::has_unique_object_representations<
-				UnsignedInteger>::value;
+			return not std::has_unique_object_representations_v<
+				tUnsignedInteger>;
 #else
 			// Algorithm partly taken from WG14 N1899, also handles unsigned
 			// integer types such as unsigned __int128 that don't have an
 			// std::numeric_limits specialization
 
 			size_t precision = 0;
-			auto num = static_cast<UnsignedInteger>(-1);
+			auto num = static_cast<tUnsignedInteger>(-1);
 			while(num != 0)
 			{
 				if(num % 2 == 1)
@@ -148,7 +147,7 @@ namespace Rider::Faiz
 				}
 				num >>= 1;
 			}
-			return precision != sizeof(UnsignedInteger) * CHAR_BIT;
+			return precision != sizeof(tUnsignedInteger) * CHAR_BIT;
 #endif
 		}
 
@@ -156,39 +155,39 @@ namespace Rider::Faiz
 		// Find an unsigned integer type twice as big as the given
 		// one, ensure all bits are used
 
-		tpl<typ UInt> constexpr decltype(auto)
+		tpl<typ tUInt> constexpr decltype(auto)
 		twice_as_big()
 		{
-			if constexpr(has_padding_bits<UInt>())
+			cIf(has_padding_bits<tUInt>())
 			{
 				return;
 			}
 
-			else if constexpr(sizeof(unsigned short) == 2 * sizeof(UInt)
+			cElseIf(sizeof(unsigned short) == 2 * sizeof(tUInt)
 				and not has_padding_bits<unsigned short>())
 			{
 				return static_cast<unsigned short>(0);
 			}
 
-			else if constexpr(sizeof(unsigned int) == 2 * sizeof(UInt)
+			cElseIf(sizeof(unsigned int) == 2 * sizeof(tUInt)
 				and not has_padding_bits<unsigned int>())
 			{
 				return static_cast<unsigned int>(0);
 			}
 
-			else if constexpr(sizeof(unsigned long) == 2 * sizeof(UInt)
+			cElseIf(sizeof(unsigned long) == 2 * sizeof(tUInt)
 				and not has_padding_bits<unsigned long>())
 			{
 				return static_cast<unsigned long>(0);
 			}
 
-			else if constexpr(sizeof(unsigned long long) == 2 * sizeof(UInt)
+			cElseIf(sizeof(unsigned long long) == 2 * sizeof(tUInt)
 				and not has_padding_bits<unsigned long long>())
 			{
 				return static_cast<unsigned long long>(0);
 			}
 
-			else if constexpr(sizeof(std::uintmax_t) == 2 * sizeof(UInt)
+			cElseIf(sizeof(std::uintmax_t) == 2 * sizeof(tUInt)
 				and not has_padding_bits<std::uintmax_t>())
 			{
 				return static_cast<std::uintmax_t>(0);
@@ -198,7 +197,7 @@ namespace Rider::Faiz
 			// Only use unsigned __int128 with compilers
 			// which are known to produce branchless code
 			// for comparisons
-			else if constexpr(sizeof(unsigned __int128) == 2 * sizeof(UInt)
+			cElseIf(sizeof(unsigned __int128) == 2 * sizeof(tUInt)
 				and not has_padding_bits<unsigned __int128>())
 			{
 				return static_cast<unsigned __int128>(0);
@@ -292,25 +291,25 @@ namespace Rider::Faiz
 			// Import a tpl get for ADL
 			using std::get;
 
-			tpl<typ To, typ From> struct pair_assignable
-				: logic::and_<is_assignable<decltype(get<0>(declval<To>())),
-								  decltype(get<0>(declval<From>()))>,
-					  is_assignable<decltype(get<1>(declval<To>())),
-						  decltype(get<1>(declval<From>()))>>
+			tpl<typ tTo, typ tFrom> struct pair_assignable
+				: logic::and_<is_assignable<decltype(get<0>(declval<tTo>())),
+								  decltype(get<0>(declval<tFrom>()))>,
+					  is_assignable<decltype(get<1>(declval<tTo>())),
+						  decltype(get<1>(declval<tFrom>()))>>
 			{};
 
-			tpl<typ To, typ From> struct pair_constructible
-				: logic::and_<is_constructible<decltype(get<0>(declval<To>())),
-								  decltype(get<0>(declval<From>()))>,
-					  is_constructible<decltype(get<1>(declval<To>())),
-						  decltype(get<1>(declval<From>()))>>
+			tpl<typ tTo, typ tFrom> struct pair_constructible
+				: logic::and_<is_constructible<decltype(get<0>(declval<tTo>())),
+								  decltype(get<0>(declval<tFrom>()))>,
+					  is_constructible<decltype(get<1>(declval<tTo>())),
+						  decltype(get<1>(declval<tFrom>()))>>
 			{};
 
-			tpl<typ From, typ To> struct pair_convertible
-				: logic::and_<is_convertible<decltype(get<0>(declval<From>())),
-								  decltype(get<0>(declval<To>()))>,
-					  is_assignable<decltype(get<1>(declval<From>())),
-						  decltype(get<1>(declval<To>()))>>
+			tpl<typ tFrom, typ tTo> struct pair_convertible
+				: logic::and_<is_convertible<decltype(get<0>(declval<tFrom>())),
+								  decltype(get<0>(declval<tTo>()))>,
+					  is_assignable<decltype(get<1>(declval<tFrom>())),
+						  decltype(get<1>(declval<tTo>()))>>
 			{};
 		} // namespace adl_hook
 
@@ -336,23 +335,23 @@ namespace Rider::Faiz
 			tight_pair_element(tight_pair_element const&) = default;
 			tight_pair_element(tight_pair_element&&) = default;
 
-			constexpr tight_pair_element() noexcept(
-				is_nothrow_default_constructible_v<T>)
+			cCTOR
+			tight_pair_element() noexcept(is_nothrow_default_constructible_v<T>)
 				: value()
 			{
 				static_assert(not_reference_v<T>,
 					"attempted to default construct a reference element");
 			}
 
-			tpl<typ U,
-				typ = enable_if_t<is_constructible_v<T,
-					U>>> constexpr explicit tight_pair_element(U&&
-					other) noexcept(is_nothrow_constructible_v<T, U>)
+			// clang-format on
+			tpl<typ U, typ = enable_if_t<is_constructible_v<T, U>>> ceCTOR
+			tight_pair_element(U&& other) noexcept(
+				is_nothrow_constructible_v<T, U>)
 				: value(Faiz::forward<U>(other))
 			{}
 
-			tpl<typ Tuple> constexpr tight_pair_element(
-				std::piecewise_construct_t, Tuple&& args)
+			tpl<typ Tuple> cCTOR
+			tight_pair_element(std::piecewise_construct_t, Tuple&& args)
 				: value(std::make_from_tuple<T>(Faiz::forward<Tuple>(args)))
 			{}
 
@@ -375,29 +374,25 @@ namespace Rider::Faiz
 			// Element access
 
 			cfn
-				do_get()
-				& noexcept->T&
+			do_get() & noexcept->T&
 			{
 				return static_cast<T&>(value);
 			}
 
 			cfn
-				do_get() const
-				& noexcept->T const&
+			do_get() const & noexcept->T const&
 			{
 				return static_cast<T const&>(value);
 			}
 
 			cfn
-				do_get()
-				&& noexcept->T&&
+			do_get() && noexcept->T&&
 			{
 				return static_cast<T&&>(value);
 			}
 
 			cfn
-				do_get() const
-				&& noexcept->T const&&
+			do_get() const && noexcept->T const&&
 			{
 				return static_cast<T const&&>(value);
 			}
@@ -415,35 +410,34 @@ namespace Rider::Faiz
 			tight_pair_element(tight_pair_element const&) = default;
 			tight_pair_element(tight_pair_element&&) = default;
 
-			constexpr tight_pair_element() noexcept(
-				is_nothrow_default_constructible_v<T>)
+			cCTOR
+			tight_pair_element() noexcept(is_nothrow_default_constructible_v<T>)
 				: value()
 			{
 				static_assert(not_reference_v<T>,
 					"attempted to default construct a reference element");
 			}
 
-			tpl<typ U,
-				typ = enable_if_t<is_constructible_v<T,
-					U>>> constexpr explicit tight_pair_element(U&&
-					other) noexcept(is_nothrow_constructible_v<T, U>)
+			tpl<typ U, typ = enable_if_t<is_constructible_v<T, U>>> ceCTOR
+			tight_pair_element(U&& other) noexcept(
+				is_nothrow_constructible_v<T, U>)
 				: value(Faiz::forward<U>(other))
 			{}
 
-			tpl<typ Tuple> constexpr tight_pair_element(
-				std::piecewise_construct_t, Tuple&& args)
+			tpl<typ Tuple> cCTOR
+			tight_pair_element(std::piecewise_construct_t, Tuple&& args)
 				: value(std::make_from_tuple<T>(Faiz::forward<Tuple>(args)))
 			{}
 
-			auto
-			operator=(tight_pair_element const& other) -> tight_pair_element&
+			cfn
+			operator=(tight_pair_element const& other)->tight_pair_element&
 			{
 				value = other.value;
 				return *this;
 			}
 
-			auto
-			operator=(tight_pair_element&& other) -> tight_pair_element&
+			cfn
+			operator=(tight_pair_element&& other)->tight_pair_element&
 			{
 				value = move(other.value);
 				return *this;
@@ -461,29 +455,25 @@ namespace Rider::Faiz
 			// Element access
 
 			cfn
-				do_get()
-				& noexcept->T&
+			do_get() & noexcept->T&
 			{
 				return static_cast<T&>(value);
 			}
 
 			cfn
-				do_get() const
-				& noexcept->T const&
+			do_get() const & noexcept->T const&
 			{
 				return static_cast<T const&>(value);
 			}
 
 			cfn
-				do_get()
-				&& noexcept->T&&
+			do_get() && noexcept->T&&
 			{
 				return static_cast<T&&>(value);
 			}
 
 			cfn
-				do_get() const
-				&& noexcept->T const&&
+			do_get() const && noexcept->T const&&
 			{
 				return static_cast<T const&&>(value);
 			}
@@ -498,19 +488,18 @@ namespace Rider::Faiz
 			tight_pair_element(tight_pair_element const&) = default;
 			tight_pair_element(tight_pair_element&&) = default;
 
-			constexpr tight_pair_element() noexcept(
-				is_nothrow_default_constructible_v<T>)
+			cCTOR
+			tight_pair_element() noexcept(is_nothrow_default_constructible_v<T>)
 			{}
 
-			tpl<typ U,
-				typ = enable_if_t<is_constructible_v<T,
-					U>>> constexpr explicit tight_pair_element(U&&
-					other) noexcept(is_nothrow_constructible_v<T, U>)
+			tpl<typ U, typ = enable_if_t<is_constructible_v<T, U>>> ceCTOR
+			tight_pair_element(U&& other) noexcept(
+				is_nothrow_constructible_v<T, U>)
 				: T(Faiz::forward<U>(other))
 			{}
 
-			tpl<typ Tuple> constexpr tight_pair_element(
-				std::piecewise_construct_t, Tuple&& args)
+			tpl<typ Tuple> cCTOR
+			tight_pair_element(std::piecewise_construct_t, Tuple&& args)
 				: T(std::make_from_tuple<T>(Faiz::forward<Tuple>(args)))
 			{}
 
@@ -525,29 +514,25 @@ namespace Rider::Faiz
 			// Element access
 
 			cfn
-				do_get()
-				& noexcept->T&
+			do_get() & noexcept->T&
 			{
 				return static_cast<T&>(*this);
 			}
 
 			cfn
-				do_get() const
-				& noexcept->T const&
+			do_get() const & noexcept->T const&
 			{
 				return static_cast<T const&>(*this);
 			}
 
 			cfn
-				do_get()
-				&& noexcept->T&&
+			do_get() && noexcept->T&&
 			{
 				return static_cast<T&&>(*this);
 			}
 
 			cfn
-				do_get() const
-				&& noexcept->T const&&
+			do_get() const && noexcept->T const&&
 			{
 				return static_cast<T const&&>(*this);
 			}
@@ -585,18 +570,19 @@ namespace Rider::Faiz
 			tight_pair_storage(tight_pair_storage const&) = default;
 			tight_pair_storage(tight_pair_storage&&) = default;
 
-			constexpr tight_pair_storage()
+			cCTOR
+			tight_pair_storage()
 				: tight_pair_element<0, T1>(), tight_pair_element<1, T2>()
 			{}
 
-			tpl<typ U1, typ U2> constexpr tight_pair_storage(
-				U1&& first, U2&& second)
+			tpl<typ U1, typ U2> cCTOR
+			tight_pair_storage(U1&& first, U2&& second)
 				: tight_pair_element<0, T1>(Faiz::forward<U1>(first)),
 				  tight_pair_element<1, T2>(Faiz::forward<U2>(second))
 			{}
 
-			tpl<typ Tuple1, typ Tuple2> constexpr tight_pair_storage(
-				std::piecewise_construct_t pc,
+			tpl<typ Tuple1, typ Tuple2> cCTOR
+			tight_pair_storage(std::piecewise_construct_t pc,
 				Tuple1&& first_args,
 				Tuple2&& second_args)
 				: tight_pair_element<0, T1>(
@@ -618,12 +604,12 @@ namespace Rider::Faiz
 			tpl<size_t N> cfn
 			do_get() &->decltype(auto)
 			{
-				if constexpr(N == 0)
+				cIf(N == 0)
 				{
 					return static_cast<tight_pair_element<0, T1>&>(*this)
 						.do_get();
 				}
-				else if constexpr(N == 1)
+				cElseIf(N == 1)
 				{
 					return static_cast<tight_pair_element<1, T2>&>(*this)
 						.do_get();
@@ -633,12 +619,12 @@ namespace Rider::Faiz
 			tpl<size_t N> cfn
 			do_get() const&->decltype(auto)
 			{
-				if constexpr(N == 0)
+				cIf(N == 0)
 				{
 					return static_cast<tight_pair_element<0, T1> const&>(*this)
 						.do_get();
 				}
-				else if constexpr(N == 1)
+				cElseIf(N == 1)
 				{
 					return static_cast<tight_pair_element<1, T2> const&>(*this)
 						.do_get();
@@ -648,12 +634,12 @@ namespace Rider::Faiz
 			tpl<size_t N> cfn
 			do_get() &&->decltype(auto)
 			{
-				if constexpr(N == 0)
+				cIf(N == 0)
 				{
 					return static_cast<tight_pair_element<0, T1>&&>(*this)
 						.do_get();
 				}
-				else if constexpr(N == 1)
+				cElseIf(N == 1)
 				{
 					return static_cast<tight_pair_element<1, T2>&&>(*this)
 						.do_get();
@@ -663,12 +649,12 @@ namespace Rider::Faiz
 			tpl<size_t N> cfn
 			do_get() const&&->decltype(auto)
 			{
-				if constexpr(N == 0)
+				cIf(N == 0)
 				{
 					return static_cast<tight_pair_element<0, T1> const&&>(*this)
 						.do_get();
 				}
-				else if constexpr(N == 1)
+				cElseIf(N == 1)
 				{
 					return static_cast<tight_pair_element<1, T2> const&&>(*this)
 						.do_get();
@@ -783,11 +769,11 @@ namespace Rider::Faiz
 			tpl<size_t N> cfn
 			do_get() &->decltype(auto)
 			{
-				if constexpr(N == 0)
+				cIf(N == 0)
 				{
 					return static_cast<T&>(elements[1]);
 				}
-				else if constexpr(N == 1)
+				cElseIf(N == 1)
 				{
 					return static_cast<T&>(elements[0]);
 				}
@@ -796,11 +782,11 @@ namespace Rider::Faiz
 			tpl<size_t N> cfn
 			do_get() const&->decltype(auto)
 			{
-				if constexpr(N == 0)
+				cIf(N == 0)
 				{
 					return static_cast<T const&>(elements[1]);
 				}
-				else if constexpr(N == 1)
+				cElseIf(N == 1)
 				{
 					return static_cast<T const&>(elements[0]);
 				}
@@ -809,11 +795,11 @@ namespace Rider::Faiz
 			tpl<size_t N> cfn
 			do_get() &&->decltype(auto)
 			{
-				if constexpr(N == 0)
+				cIf(N == 0)
 				{
 					return static_cast<T&&>(elements[1]);
 				}
-				else if constexpr(N == 1)
+				cElseIf(N == 1)
 				{
 					return static_cast<T&&>(elements[0]);
 				}
@@ -822,11 +808,11 @@ namespace Rider::Faiz
 			tpl<size_t N> cfn
 			do_get() const&&->decltype(auto)
 			{
-				if constexpr(N == 0)
+				cIf(N == 0)
 				{
 					return static_cast<T const&&>(elements[1]);
 				}
-				else if constexpr(N == 1)
+				cElseIf(N == 1)
 				{
 					return static_cast<T const&&>(elements[0]);
 				}
@@ -845,41 +831,40 @@ namespace Rider::Faiz
 	private:
 		struct check_args
 		{
-			tpl<typ U1, typ U2> static constexpr bool
-			enable_default()
+			tpl<typ U1, typ U2> static cfn
+			enable_default()->bool
 			{
 				return are_default_constructible_v<U1, U2>;
 			}
 
-			tpl<typ U1, typ U2> static constexpr bool
-			enable_explicit()
+			tpl<typ U1, typ U2> static cfn
+			enable_explicit()->bool
 			{
-				return logic::and_<is_constructible<T1, U1>,
+				return logic::and_v<is_constructible<T1, U1>,
 					is_constructible<T2, U2>,
-					logic::or_<logic::not_<is_convertible<U1, T1>>,
-						logic::not_<is_convertible<U2, T2>>>>::value;
+					logic::not_<are_convertible<PAIR(U1, T1), PAIR(U2, T2)>>>;
 			}
 
-			tpl<typ U1, typ U2> static constexpr bool
-			enable_implicit()
+			tpl<typ U1, typ U2> static cfn
+			enable_implicit()->bool
 			{
-				return logic::and_<is_constructible<T1, U1>,
+				return logic::and_v<is_constructible<T1, U1>,
 					is_constructible<T2, U2>,
-					are_convertible<PAIR(U1, T1), PAIR(U2, T2)>>::value;
+					are_convertible<PAIR(U1, T1), PAIR(U2, T2)>>;
 			}
 		};
 
 		struct check_tuple_like_constructor
 		{
-			tpl<typ Tuple> static constexpr bool
-			enable_implicit()
+			tpl<typ Tuple> static cfn
+			enable_implicit()->bool
 			{
 				return detail::adl_hook::pair_convertible<Tuple,
 					tight_pair>::value;
 			}
 
-			tpl<typ Tuple> static constexpr bool
-			enable_explicit()
+			tpl<typ Tuple> static cfn
+			enable_explicit()->bool
 			{
 				return detail::adl_hook::pair_constructible<tight_pair&,
 						   Tuple>::value
@@ -887,8 +872,8 @@ namespace Rider::Faiz
 						tight_pair>::value;
 			}
 
-			tpl<typ Tuple> static constexpr bool
-			enable_assign()
+			tpl<typ Tuple> static cfn
+			enable_assign()->bool
 			{
 				return detail::adl_hook::pair_assignable<tight_pair&,
 					Tuple>::value;
@@ -909,35 +894,39 @@ namespace Rider::Faiz
 
 		tpl<typ U1 = T1,
 			typ U2 = T2,
-			enable_if_t<check_args::tpl enable_default<U1, U2>(),
-				bool> = false> constexpr tight_pair() noexcept(are_nothrow_default_constructible_v<T1,
-			T2>)
+			enable_if_t<check_args::tpl enable_default<U1, U2>(), bool> = false>
+			cCTOR
+			tight_pair() noexcept(are_nothrow_default_constructible_v<T1, T2>)
 			: detail::tight_pair_storage<T1, T2>()
 		{}
+
 		tpl<typ U1 = T1,
 			typ U2 = T2,
 			enable_if_t<check_args::tpl enable_explicit<U1 const&, U2 const&>(),
-				bool> = false> constexpr explicit tight_pair(T1 const& first,
-			T2 const& second
-			= {}) noexcept(are_nothrow_copy_constructible_v<T1, T2>)
+				bool> = false>
+			ceCTOR
+			tight_pair(T1 const& first, T2 const& second = {}) noexcept(
+				are_nothrow_copy_constructible_v<T1, T2>)
 			: detail::tight_pair_storage<T1, T2>(first, second)
 		{}
 
 		tpl<typ U1 = T1,
 			typ U2 = T2,
 			enable_if_t<check_args::tpl enable_implicit<U1 const&, U2 const&>(),
-				bool> = false> constexpr tight_pair(T1 const& first,
-			T2 const& second
-			= {}) noexcept(are_nothrow_copy_constructible_v<T1, T2>)
+				bool> = false>
+			cCTOR
+			tight_pair(T1 const& first, T2 const& second = {}) noexcept(
+				are_nothrow_copy_constructible_v<T1, T2>)
 			: detail::tight_pair_storage<T1, T2>(first, second)
 		{}
 
 		tpl<typ U1 = T1,
 			typ U2 = T2,
-			enable_if_t<check_args::tpl enable_explicit<U1, U2>(),
-				bool> = false> constexpr explicit tight_pair(U1&& first,
-			U2&& second) noexcept(is_nothrow_constructible_v<T1, U1>and
-				is_nothrow_constructible_v<T2, U2>)
+			enable_if_t<check_args::tpl enable_explicit<U1, U2>(), bool> = false>
+			ceCTOR
+			tight_pair(U1&& first, U2&& second) noexcept(
+				is_nothrow_constructible_v<T1, U1>and
+					is_nothrow_constructible_v<T2, U2>)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
@@ -1049,8 +1038,7 @@ namespace Rider::Faiz
 			typ
 			= enable_if_t<check_pair_like<Tuple>::tpl enable_assign<Tuple>()>>
 			cfn
-			operator=(Tuple&& other)
-				->tight_pair&
+		operator=(Tuple&& other)->tight_pair&
 		{
 			using std::get;
 			get<0>(*this) = get<0>(Faiz::forward<Tuple>(other));
@@ -1077,8 +1065,7 @@ namespace Rider::Faiz
 		// class
 
 		tpl<size_t N> cfn
-			get()
-			& noexcept->std::tuple_element_t<N, tight_pair>&
+		get() & noexcept->std::tuple_element_t<N, tight_pair>&
 		{
 			using storage_t = detail::tight_pair_storage<T1, T2>;
 			return static_cast<std::tuple_element_t<N, tight_pair<T1, T2>>&>(
@@ -1086,8 +1073,7 @@ namespace Rider::Faiz
 		}
 
 		tpl<size_t N> cfn
-			get() const
-			& noexcept->std::tuple_element_t<N, tight_pair> const&
+		get() const & noexcept->std::tuple_element_t<N, tight_pair> const&
 		{
 			using storage_t = detail::tight_pair_storage<T1, T2>;
 			return static_cast<
@@ -1096,8 +1082,7 @@ namespace Rider::Faiz
 		}
 
 		tpl<size_t N> cfn
-			get()
-			&& noexcept->std::tuple_element_t<N, tight_pair>&&
+		get() && noexcept->std::tuple_element_t<N, tight_pair>&&
 		{
 			using storage_t = detail::tight_pair_storage<T1, T2>;
 			return static_cast<std::tuple_element_t<N, tight_pair<T1, T2>>&&>(
@@ -1105,8 +1090,7 @@ namespace Rider::Faiz
 		}
 
 		tpl<size_t N> cfn
-			get() const
-			&& noexcept->std::tuple_element_t<N, tight_pair> const&&
+		get() const && noexcept->std::tuple_element_t<N, tight_pair> const&&
 		{
 			using storage_t = detail::tight_pair_storage<T1, T2>;
 			return static_cast<
@@ -1116,8 +1100,7 @@ namespace Rider::Faiz
 	};
 
 	tpl<typ T, typ U> cfn
-	operator<(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs)
-		->bool
+	operator<(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs)->bool
 	{
 		if(Rider::Faiz::get<0>(lhs) < Rider::Faiz::get<0>(rhs))
 		{
@@ -1130,15 +1113,14 @@ namespace Rider::Faiz
 		return Rider::Faiz::get<1>(lhs) < Rider::Faiz::get<1>(rhs);
 	}
 	tpl<typ T, typ U> cfn
-	operator==(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs)
-		->bool
+	operator==(tight_pair<T, U> const& lhs, tight_pair<T, U> const& rhs)->bool
 	{
 		return Rider::Faiz::get<0>(lhs) == Rider::Faiz::get<0>(rhs)
 			and Rider::Faiz::get<1>(lhs) == Rider::Faiz::get<1>(rhs);
 	}
-	tpl<typ T> auto
+	tpl<typ T> cfn
 	operator<(tight_pair<T, T> const& lhs, tight_pair<T, T> const& rhs)
-		-> enable_if_t<detail::can_optimize_compare<T>::value, bool>
+		->enable_if_t<detail::can_optimize_compare<T>::value, bool>
 	{
 		auto big_lhs = detail::get_twice_as_big(lhs);
 		auto big_rhs = detail::get_twice_as_big(rhs);
