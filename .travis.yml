@@ -11,8 +11,8 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-8', 'ninja-build', 'libboost-all-dev']
       env:
-        - CXX=g++-8
         - CMAKE_GENERATOR="Ninja"
+        - CXX=g++-8
       before_install:
         - sudo unlink /usr/bin/gcc
         - sudo unlink /usr/bin/g++
@@ -22,9 +22,7 @@ matrix:
     - os: linux
       dist: xenial
       compiler: clang++-9
-      env:
-        - CXX=clang++-9
-        - CMAKE_GENERATOR="Ninja"
+
       addons:
         apt:
           sources:
@@ -33,9 +31,9 @@ matrix:
             - ubuntu-toolchain-r-test # llvm6.0 dep
             - libboost-all-dev
           packages: ['g++-8', 'ninja-build', 'clang-9', 'clang-8', 'lld-9', 'libboost-all-dev']
-
-      before_install:
-        - export CXX=clang++-9
+      env:
+        - CMAKE_GENERATOR="Ninja"
+        - CXX=clang++-9
       env:
         - CXX=clang++-9
 

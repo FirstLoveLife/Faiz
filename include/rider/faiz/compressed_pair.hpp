@@ -548,7 +548,7 @@ namespace Rider::Faiz
 
 		Tpl<Typ T, Typ U = remove_cv_t<T>> struct needs_reordering
 			: bool_<std::endian::native == std::endian::little
-				  and logic::and_<is_unsigned<U>, has_twice_as_big<U>>::value>
+				  and can_optimize_compare<T>::value>
 		{};
 
 		////////////////////////////////////////////////////////////
