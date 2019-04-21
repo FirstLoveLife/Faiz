@@ -508,8 +508,7 @@ namespace Rider::Faiz
 	tpl<typ T, size_t I> struct extent<T[I], 0> : size_t_<I>
 	{};
 
-	tpl<typ T, size_t I, unsigned N> struct extent<T[I], N>
-		: extent<T, N - 1>
+	tpl<typ T, size_t I, unsigned N> struct extent<T[I], N> : extent<T, N - 1>
 	{};
 	tpl<typ T, unsigned N = 0> inline cexp size_t extent_v
 		= extent<T, N>::value;
@@ -779,10 +778,10 @@ namespace Rider::Faiz
 	// If the imaginary function definition tTo test() { return
 	// std::declval<tFrom>(); } is well-formed, (that is, either
 	// std::declval<tFrom>() can be converted to tTo using implicit conversions,
-	// or both tFrom and tTo are possibly cv-qualified void), provides the member
-	// constant value equal to true. Otherwise value is false. For the purposes
-	// of this check, the use of std::declval in the return statement is not
-	// considered an odr-use.
+	// or both tFrom and tTo are possibly cv-qualified void), provides the
+	// member constant value equal to true. Otherwise value is false. For the
+	// purposes of this check, the use of std::declval in the return statement
+	// is not considered an odr-use.
 	//
 	//  Access checks are performed as if from a context unrelated to either
 	// type. Only the validity of the immediate context of the expression in the
@@ -791,8 +790,8 @@ namespace Rider::Faiz
 	// // using namespace logic;
 	// tpl<typ tFrom, typ tTo>
 	// cexp bool is_convertible_v = or_<
-	// 	and_<or_<is_void<tFrom>, is_function<tTo>, is_array<tTo>>, is_void<tTo>>,
-	// 	is_detected<is_convertible_helper, tFrom, tTo>>::value;
+	// 	and_<or_<is_void<tFrom>, is_function<tTo>, is_array<tTo>>,
+	// is_void<tTo>>, 	is_detected<is_convertible_helper, tFrom, tTo>>::value;
 	//
 	tpl<typ tTo1> static void test_aux(tTo1) noexcept;
 
@@ -1128,6 +1127,15 @@ namespace Rider::Faiz
 	tpl<typ T> struct is_nothrow_destructible
 		: bool_<is_nothrow_destructible_v<T>>
 	{};
+
+#ifdef _WIN32
+	enum class endian
+	{
+		little = 0,
+		big = 1,
+		native = little
+	};
+#endif
 } // namespace Rider::Faiz
 
 #endif

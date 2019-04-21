@@ -1,11 +1,10 @@
 language: cpp
-os: linux
-dist: xenial
 
 matrix:
   include:
 
     - os: linux
+      dist: xenial
       compiler: g++-8
       addons:
         apt:
@@ -13,6 +12,7 @@ matrix:
           packages: ['g++-8', 'ninja-build', 'libboost-all-dev']
       env:
         - CXX=g++-8
+        - CMAKE_GENERATOR="Ninja"
       before_install:
         - sudo unlink /usr/bin/gcc
         - sudo unlink /usr/bin/g++
@@ -20,7 +20,11 @@ matrix:
         - sudo ln -s /usr/bin/gcc-8 /usr/bin/gcc
 
     - os: linux
+      dist: xenial
       compiler: clang++-9
+      env:
+        - CXX=clang++-9
+        - CMAKE_GENERATOR="Ninja"
       addons:
         apt:
           sources:
@@ -43,6 +47,8 @@ matrix:
       compiler: g++-8
       env:
         - COMPILER=g++-8
+        - CMAKE_GENERATOR="Ninja"
+        - BUILD_TYPE=Release
       before_install:
         - brew update
         - travis_wait 40 brew install gcc
@@ -54,6 +60,8 @@ matrix:
     - os: osx
       osx_image: xcode10
       sudo: required
+      env:
+        - CMAKE_GENERATOR="Ninja"
       language: cpp
       compiler: clang++-8
       before_install:
@@ -67,7 +75,19 @@ matrix:
         - export CXX=/usr/local/opt/llvm/bin/clang++
         - export CC=/usr/local/opt/llvm/bin/clang
 
+    - os: windows
+      language: sh
+      env: BUILD_TYPE=Debug CMAKE_GENERATOR="MinGW Makefiles"
+      compiler: gcc
+
+    - os: windows
+      language: sh
+      env: BUILD_TYPE=Release CMAKE_GENERATOR="MinGW Makefiles"
+      compiler: gcc
+
 script:
-  - cmake -H. -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -GNinja
+  - cmake -H. -Bbuild
+          -G"${CMAKE_GENERATOR}"
+          -DCMAKE_SH="CMAKE_SH-NOTFOUND"
   - cmake --build build
   - cmake --build build --target test

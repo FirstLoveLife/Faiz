@@ -29,7 +29,8 @@ find_package(Mach7 QUIET)
 
 if(TARGET Mach7)
   message("${BoldGreen}Mach7 found\n${ColourReset}")
-  include_directories(${Mach7_INCLUDE_DIRS})
+  # XXX: commented
+  # include_directories(${Mach7_INCLUDE_DIRS})
 else()
   message("${BoldGreen}====> Fetch Mach7... ${ColourReset}")
   include(FetchContent)
@@ -43,10 +44,45 @@ else()
   if (NOT mach7_POPULATED)
     FetchContent_Populate(mach7)
     message("${Green}DONE!${ColourReset}")
-    add_subdirectory(${mach7_SOURCE_DIR}/code/test)
-    list(APPEND CMAKE_MODULE_PATH ${mach7_SOURCE_DIR}/contrib)
+    # add_subdirectory(${mach7_SOURCE_DIR}/code/test)
+    # list(APPEND CMAKE_MODULE_PATH ${mach7_SOURCE_DIR}/contrib)
   endif()
 endif()
+
+
+find_package(Boost QUIET)
+  message("${BoldBlue}Looking for dependency Boost---${ColourReset}" "${BoldYellow}Boost provides free peer-reviewed portable C++ source libraries.${ColourReset}")
+if(Boost_FOUND)
+  message("${BoldGreen}Boost found\n${ColourReset}")
+else()
+  message("${BoldGreen}====> Fetch Boost-predef and preprocessor... ${ColourReset}")
+  include(FetchContent)
+  FetchContent_Declare(
+    predef
+    GIT_REPOSITORY https://github.com/boostorg/predef/
+    GIT_TAG master
+    )
+  FetchContent_Declare(
+    preprocessor
+    GIT_REPOSITORY https://github.com/boostorg/preprocessor/
+    GIT_TAG master
+    )
+
+  FetchContent_GetProperties(predef)
+  FetchContent_GetProperties(preprocessor)
+  if (NOT predef_POPULATED AND NOT preprocessor_POPULATED)
+    FetchContent_Populate(predef)
+    FetchContent_Populate(preprocessor)
+    add_subdirectory(${predef_SOURCE_DIR} ${predef_BINARY_DIR})
+    add_subdirectory(${preprocessor_SOURCE_DIR} ${preprocessor_BINARY_DIR})
+    message("${Green}DONE!${ColourReset}")
+    target_link_libraries(Faiz
+      INTERFACE
+      boost_predef
+      boost_preprocessor)
+  endif()
+endif()
+
 
 # Include this module in the top CMakeLists.txt file of a project to enable testing with CTest and dashboard submissions to CDash:
 include(CTest)

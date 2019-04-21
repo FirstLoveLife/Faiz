@@ -5,7 +5,6 @@
 namespace Rider::Faiz
 {
 
-	using size_t = __SIZE_TYPE__;
 	using std::nullptr_t;
 	using std::size_t;
 
