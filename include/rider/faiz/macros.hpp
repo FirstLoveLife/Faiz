@@ -32,6 +32,14 @@
 	tpl<typ... T> struct are_##name : bool_<are_##name##_v<T...>> \
 	{};
 
+#define BI_NOT_ALL(name) \
+	tpl<typ... T> inline cexp bool not_all_##name##_v \
+		= not detail::binaryTraitAre_impl<is_##name, T...>(); \
+\
+	tpl<typ... T> struct not_all_##name : bool_<not_all_##name##_v<T...>> \
+	{};
+
+
 #define ANY(name) \
 	tpl<typ... T> inline cexp bool any_##name##_v = (is_##name##_v<T> || ...); \
 \

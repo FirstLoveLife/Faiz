@@ -292,16 +292,16 @@ namespace Rider::Faiz
 			using std::get;
 
 			tpl<typ tTo, typ tFrom> struct pair_assignable
-				: logic::and_<is_assignable<decltype(get<0>(declval<tTo>())),
-								  decltype(get<0>(declval<tFrom>()))>,
-					  is_assignable<decltype(get<1>(declval<tTo>())),
-						  decltype(get<1>(declval<tFrom>()))>>
+				: are_assignable<PAIR(decltype(get<0>(declval<tTo>())),
+									 decltype(get<0>(declval<tFrom>()))),
+					  PAIR(decltype(get<1>(declval<tTo>())),
+						  decltype(get<1>(declval<tFrom>())))>
 			{};
 
 			tpl<typ tTo, typ tFrom> struct pair_constructible
-				: logic::and_<is_constructible<decltype(get<0>(declval<tTo>())),
-								  decltype(get<0>(declval<tFrom>()))>,
-					  is_constructible<decltype(get<1>(declval<tTo>())),
+				: are_constructible<Pack<decltype(get<0>(declval<tTo>())),
+										decltype(get<0>(declval<tFrom>()))>,
+					  Pack<decltype(get<1>(declval<tTo>())),
 						  decltype(get<1>(declval<tFrom>()))>>
 			{};
 
@@ -840,17 +840,25 @@ namespace Rider::Faiz
 			tpl<typ U1, typ U2> static cfn
 			enable_explicit()->bool
 			{
-				return logic::and_v<is_constructible<T1, U1>,
-					is_constructible<T2, U2>,
-					logic::not_<are_convertible<PAIR(U1, T1), PAIR(U2, T2)>>>;
+				// clang-format off
+				return
+					are_constructible_v<Pack<T1, U1>,
+										Pack<T2, U2>>
+					and
+					not_all_convertible_v<PAIR(U1, T1),
+										  PAIR(U2, T2)>;
 			}
 
 			tpl<typ U1, typ U2> static cfn
 			enable_implicit()->bool
 			{
-				return logic::and_v<is_constructible<T1, U1>,
-					is_constructible<T2, U2>,
-					are_convertible<PAIR(U1, T1), PAIR(U2, T2)>>;
+				return
+					are_constructible_v<Pack<T1, U1>,
+										Pack<T2, U2>>
+					and
+					are_convertible_v<PAIR(U1, T1),
+									  PAIR(U2, T2)>;
+				// clang-format on
 			}
 		};
 
@@ -925,8 +933,7 @@ namespace Rider::Faiz
 			enable_if_t<check_args::tpl enable_explicit<U1, U2>(), bool> = false>
 			ceCTOR
 			tight_pair(U1&& first, U2&& second) noexcept(
-				is_nothrow_constructible_v<T1, U1>and
-					is_nothrow_constructible_v<T2, U2>)
+				are_nothrow_constructible_v<Pack<T1, U1>, Pack<T2, U2>>)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
@@ -935,8 +942,8 @@ namespace Rider::Faiz
 			typ U2 = T2,
 			enable_if_t<check_args::tpl enable_implicit<U1, U2>(),
 				bool> = false> constexpr tight_pair(U1&& first,
-			U2&& second) noexcept(is_nothrow_constructible_v<T1, U1>and
-				is_nothrow_constructible_v<T2, U2>)
+			U2&& second) noexcept(are_nothrow_constructible_v<Pack<T1, U1>,
+			Pack<T2, U2>>)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
@@ -944,9 +951,11 @@ namespace Rider::Faiz
 		tpl<typ U1 = T1,
 			typ U2 = T2,
 			enable_if_t<check_args::tpl enable_explicit<U1 const&, U2 const&>(),
-				bool> = false> constexpr explicit tight_pair(tight_pair<U1,
-			U2> const& pair) noexcept(is_nothrow_constructible_v<T1,
-			U1 const&>and is_nothrow_constructible_v<T2, U2 const&>)
+				bool> = false>
+			ceCTOR
+			tight_pair(tight_pair<U1, U2> const& pair) noexcept(
+				are_nothrow_constructible_v<Pack<T1, U1 const&>,
+					Pack<T2, U2 const&>>)
 			: detail::tight_pair_storage<T1, T2>(
 				pair.tpl get<0>(), pair.tpl get<1>())
 		{}
@@ -954,19 +963,21 @@ namespace Rider::Faiz
 		tpl<typ U1 = T1,
 			typ U2 = T2,
 			enable_if_t<check_args::tpl enable_implicit<U1 const&, U2 const&>(),
-				bool> = false> constexpr tight_pair(tight_pair<U1, U2> const&
-				pair) noexcept(is_nothrow_constructible_v<T1, U1 const&>and
-				is_nothrow_constructible_v<T2, U2 const&>)
+				bool> = false>
+			cCTOR
+			tight_pair(tight_pair<U1, U2> const& pair) noexcept(
+				are_nothrow_constructible_v<Pack<T1, U1 const&>,
+					Pack<T2, U2 const&>>)
 			: detail::tight_pair_storage<T1, T2>(
 				pair.tpl get<0>(), pair.tpl get<1>())
 		{}
 
 		tpl<typ U1 = T1,
 			typ U2 = T2,
-			enable_if_t<check_args::tpl enable_explicit<U1, U2>(),
-				bool> = false> constexpr explicit tight_pair(tight_pair<U1,
-			U2>&& pair) noexcept(is_nothrow_constructible_v<T1, U1&&>and
-				is_nothrow_constructible_v<T2, U2&&>)
+			enable_if_t<check_args::tpl enable_explicit<U1, U2>(), bool> = false>
+			ceCTOR
+			tight_pair(tight_pair<U1, U2>&& pair) noexcept(
+				are_nothrow_constructible_v<Pack<T1, U1&&>, Pack<T2, U2&&>>)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<U1>(pair.tpl get<0>()),
 				Faiz::forward<U2>(pair.tpl get<1>()))
@@ -974,10 +985,10 @@ namespace Rider::Faiz
 
 		tpl<typ U1 = T1,
 			typ U2 = T2,
-			enable_if_t<check_args::tpl enable_implicit<U1, U2>(),
-				bool> = false> constexpr tight_pair(tight_pair<U1, U2>&&
-				pair) noexcept(is_nothrow_constructible_v<T1, U1&&>and
-				is_nothrow_constructible_v<T2, U2&&>)
+			enable_if_t<check_args::tpl enable_implicit<U1, U2>(), bool> = false>
+			cCTOR
+			tight_pair(tight_pair<U1, U2>&& pair) noexcept(
+				are_nothrow_constructible_v<Pack<T1, U1&&>, Pack<T2, U2&&>>)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<U1>(pair.tpl get<0>()),
 				Faiz::forward<U2>(pair.tpl get<1>()))

@@ -77,12 +77,6 @@ namespace Rider::Faiz
 
 	tpl<bool _bCond> using enable_when = enable_if_t<_bCond, when<true>>;
 
-	struct any_constructible
-	{
-		any_constructible(...);
-	};
-
-
 } // namespace Rider::Faiz
 
 #endif

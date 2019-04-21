@@ -135,6 +135,8 @@ namespace Rider::Faiz
 	using std::has_unique_object_representations;
 	using std::is_constructible;
 	using std::is_constructible_v;
+	PACK_ARE(constructible)
+
 	using std::is_trivially_constructible;
 	using std::is_trivially_constructible_v;
 
@@ -242,6 +244,7 @@ namespace Rider::Faiz
 	tpl<typ T, typ U> struct is_nothrow_assignable;
 	tpl<typ T, typ U> inline cexp bool is_assignable_v
 		= is_assignable<T, U>::value;
+	BI_ARE(assignable);
 
 	tpl<typ T, typ U> inline cexp bool is_nothrow_assignable_v
 		= is_nothrow_assignable<T, U>::value;

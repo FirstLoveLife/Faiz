@@ -817,6 +817,7 @@ namespace Rider::Faiz
 	{};
 
 	BI_IS_NOT_ARE_ANY(convertible)
+	BI_NOT_ALL(convertible)
 
 	// TODO: use detection idiom implement is_convertible
 	// If T is an object or reference type and the variable definition T
