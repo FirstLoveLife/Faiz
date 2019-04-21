@@ -1,9 +1,11 @@
 language: cpp
 
+env:
 matrix:
   include:
 
     - os: linux
+      name: g++-8 on linux
       dist: xenial
       compiler: g++-8
       addons:
@@ -20,9 +22,9 @@ matrix:
         - sudo ln -s /usr/bin/gcc-8 /usr/bin/gcc
 
     - os: linux
+      name: clang++-9 on linux
       dist: xenial
       compiler: clang++-9
-
       addons:
         apt:
           sources:
@@ -34,12 +36,11 @@ matrix:
       env:
         - CMAKE_GENERATOR="Ninja"
         - CXX=clang++-9
-      env:
-        - CXX=clang++-9
 
 # XCode 10.0
     - os: osx
-      osx_image: xcode10
+      name: g++-8 on Mac OS
+      osx_image: xcode10.1
       sudo: required
       language: cpp
       compiler: g++-8
@@ -56,7 +57,8 @@ matrix:
         - export CC=/usr/local/bin/gcc-8
 # XCode 10.0
     - os: osx
-      osx_image: xcode10
+      name: clang++-8 on Mac OS
+      osx_image: xcode10.1
       sudo: required
       env:
         - CMAKE_GENERATOR="Ninja"
@@ -73,15 +75,44 @@ matrix:
         - export CXX=/usr/local/opt/llvm/bin/clang++
         - export CC=/usr/local/opt/llvm/bin/clang
 
-    - os: windows
-      language: sh
+    - name: "MinGW on windows - Debug"
+      os: windows
+      language: cpp
       env: BUILD_TYPE=Debug CMAKE_GENERATOR="MinGW Makefiles"
-      compiler: gcc
+      compiler: MinGW
 
-    - os: windows
-      language: sh
+    - name: "MinGW on windows - Release"
+      os: windows
+      language: cpp
       env: BUILD_TYPE=Release CMAKE_GENERATOR="MinGW Makefiles"
-      compiler: gcc
+      compiler: MinGW
+
+  allow_failures:
+    - name: "Visual Studio 15 2017 on windows - Release"
+      os: windows
+      language: cpp
+      env: BUILD_TYPE=Release CMAKE_GENERATOR="Visual Studio 15 2017"
+      compiler: MSVC
+
+    - name: "Visual Studio 15 2017 on windows - Debug"
+      os: windows
+      language: cpp
+      env: BUILD_TYPE=Debug CMAKE_GENERATOR="Visual Studio 15 2017"
+      compiler: MSVC
+
+    - name: "clang on Windows"
+      os: windows
+      env:
+        - CC="/c/Program Files/LLVM/bin/clang"
+        - CXX="/c/Program Files/LLVM/bin/clang-cl"
+      compiler: clang
+      env: BUILD_TYPE=Release CMAKE_GENERATOR="MinGW Makefiles"
+      install:
+        # MSVC is already installed on Travis, keep it here just in case we need to use it later
+        #- choco install visualstudio2017-workload-vctools -y --package-parameters "--no-includeRecommended --add Microsoft.VisualStudio.Component.VC.x86.amd64 --add Microsoft.VisualStudio.Component.Windows10SDK"
+        - choco upgrade llvm -y
+        - |-
+          "${CC}" --version
 
 script:
   - cmake -H. -Bbuild

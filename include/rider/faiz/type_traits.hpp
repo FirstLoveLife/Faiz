@@ -1082,7 +1082,7 @@ namespace Rider::Faiz
     // cexp bool is_destructible_v =
     // 	is_reference_v<T> || (!(is_void_v<T> || is_function_v<T> || is_unknown_bound_array_v<T>) and is_object_v<T> and is_detected_v<has_dtor, T>);
 
- #if BOOST_COMP_CLANG
+ #if BOOST_COMP_CLANG or BOOST_COMP_MSVC
     Tpl<Typ T>
     cexp bool is_destructible_v =
         (is_detected_v<has_dtor,

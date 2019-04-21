@@ -5,6 +5,9 @@
 #include <initializer_list>
 #include <iostream>
 #include <type_traits>
+#ifdef BOOST_COMP_MSVC
+#	include <ciso646>
+#endif
 
 
 namespace Rider

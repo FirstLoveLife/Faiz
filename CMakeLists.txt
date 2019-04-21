@@ -4,6 +4,14 @@ add_library(Faiz INTERFACE)
 add_library(Rider::Faiz ALIAS Faiz)
 target_include_directories(Faiz INTERFACE include/)
 
+# if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+# 		add_compile_options(/Za)
+# 		if(MSVC15)
+# 			add_compile_options(/permissive-)
+# 		endif()
+# 	endif()
+
+
 if(NOT WIN32)
   string(ASCII 27 Esc)
   set(ColourReset "${Esc}[m")
