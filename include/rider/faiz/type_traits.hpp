@@ -25,17 +25,17 @@ namespace Rider::Faiz
 	tpl<bool B, typ T, typ F> using conditional_t = _t<conditional<B, T, F>>;
 
 	// forward declaration
-	// If the imaginary function definition To `test() { return
-	// std::declval<From>(); }` is well-formed, (that is, either
-	// `Faiz::declval<From>()` can be converted to To using implicit
-	// conversions, or both From and To are possibly `cv-qualified void`),
+	// If the imaginary function definition tTo `test() { return
+	// std::declval<tFrom>(); }` is well-formed, (that is, either
+	// `Faiz::declval<tFrom>()` can be converted to tTo using implicit
+	// conversions, or both tFrom and tTo are possibly `cv-qualified void`),
 	// provides the member constant value equal to true. Otherwise value is
 	// false. For the purposes of this check, the use of `Faiz::declval` in the
 	// return statement is not considered an odr-use. Access checks are
 	// performed as if from a context unrelated to either type. Only the
 	// validity of the immediate context of the expression in the return
 	// statement (including conversions to the return type) is considered.
-	tpl<typ From, typ To> struct is_convertible;
+	tpl<typ tFrom, typ tTo> struct is_convertible;
 
 	namespace detail
 	{
@@ -127,13 +127,13 @@ namespace Rider::Faiz
 		= is_detected_exact<Expected, Op, Args...>::value;
 	//
 	//  The alias tpl `is_detected_convertible` checks whether
-	// `detected_t<Op, Args...>` is convertible to To.
-	tpl<typ To, tpl<typ...> class Op, typ... Args> using is_detected_convertible
-		= is_convertible<detected_t<Op, Args...>, To>;
+	// `detected_t<Op, Args...>` is convertible to tTo.
+	tpl<typ tTo, tpl<typ...> class Op, typ... Args> using is_detected_convertible
+		= is_convertible<detected_t<Op, Args...>, tTo>;
 
-	tpl<typ To, tpl<typ...> class Op, typ... Args> cexp bool
+	tpl<typ tTo, tpl<typ...> class Op, typ... Args> cexp bool
 		is_detected_convertible_v
-		= is_detected_convertible<To, Op, Args...>::value;
+		= is_detected_convertible<tTo, Op, Args...>::value;
 
 	tpl<typ T> using is_void = is_same<void, remove_cv_t<T>>;
 
@@ -776,10 +776,10 @@ namespace Rider::Faiz
 
 	NOT_ARE_ANY(array)
 
-	// If the imaginary function definition To test() { return
-	// std::declval<From>(); } is well-formed, (that is, either
-	// std::declval<From>() can be converted to To using implicit conversions,
-	// or both From and To are possibly cv-qualified void), provides the member
+	// If the imaginary function definition tTo test() { return
+	// std::declval<tFrom>(); } is well-formed, (that is, either
+	// std::declval<tFrom>() can be converted to tTo using implicit conversions,
+	// or both tFrom and tTo are possibly cv-qualified void), provides the member
 	// constant value equal to true. Otherwise value is false. For the purposes
 	// of this check, the use of std::declval in the return statement is not
 	// considered an odr-use.
@@ -789,31 +789,31 @@ namespace Rider::Faiz
 	// return statement (including conversions to the return type) is
 	// considered.
 	// // using namespace logic;
-	// tpl<typ From, typ To>
+	// tpl<typ tFrom, typ tTo>
 	// cexp bool is_convertible_v = or_<
-	// 	and_<or_<is_void<From>, is_function<To>, is_array<To>>, is_void<To>>,
-	// 	is_detected<is_convertible_helper, From, To>>::value;
+	// 	and_<or_<is_void<tFrom>, is_function<tTo>, is_array<tTo>>, is_void<tTo>>,
+	// 	is_detected<is_convertible_helper, tFrom, tTo>>::value;
 	//
-	tpl<typ To1> static void test_aux(To1) noexcept;
+	tpl<typ tTo1> static void test_aux(tTo1) noexcept;
 
-	tpl<typ From, typ To> using is_convertible_helper
-		= decltype(test_aux<To>(declval<From>()));
+	tpl<typ tFrom, typ tTo> using is_convertible_helper
+		= decltype(test_aux<tTo>(declval<tFrom>()));
 
-	tpl<typ From, typ To> cfn
+	tpl<typ tFrom, typ tTo> cfn
 	my_is_convertible()
 	{
-		cIf(disjunction_v<is_void<From>, is_function<To>, is_array<To>>)
+		cIf(disjunction_v<is_void<tFrom>, is_function<tTo>, is_array<tTo>>)
 		{
-			return is_void<To>();
+			return is_void<tTo>();
 		}
 		else
 		{
-			return is_detected<is_convertible_helper, From, To>();
+			return is_detected<is_convertible_helper, tFrom, tTo>();
 		}
 	}
 
-	tpl<typ From, typ To> struct is_convertible
-		: decltype(my_is_convertible<From, To>())
+	tpl<typ tFrom, typ tTo> struct is_convertible
+		: decltype(my_is_convertible<tFrom, tTo>())
 	{};
 
 	BI_IS_NOT_ARE_ANY(convertible)
@@ -877,7 +877,7 @@ namespace Rider::Faiz
 		{
 			return type_identity<add_pointer_t<U>>();
 		}
-		else
+		cElse
 		{
 			return type_identity<E>();
 		}

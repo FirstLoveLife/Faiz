@@ -84,6 +84,7 @@
 #define CNV
 #define cCNV constexpr
 #define cCTOR constexpr
+#define ceCTOR constexpr explicit
 #define SEMICOLON ;
 #define COMMA ,
 
@@ -149,6 +150,22 @@
 	noexcept(noexcept(decltype(__VA_ARGS__)(__VA_ARGS__))) \
 		->decltype(__VA_ARGS__) /**/
 
+#define PACK_ARE(name) \
+	namespace detail \
+	{ \
+		template<typename... Types> \
+		struct name##Helper; \
+		template<typename... Types> \
+		struct name##Helper<Pack<Types...>> \
+		{ \
+			static constexpr bool value{(is_##name##_v<Types...>)}; \
+		}; \
+	}															\
+	tpl<typ... TemplateTemplateTypes> inline cexp bool are_##name##_v		\
+	= (detail::name##Helper<TemplateTemplateTypes>::value and ... and true);	\
+																		\
+	tpl<typ... TemplateTemplateTypes> struct are_##name : bool_<are_##name##_v<TemplateTemplateTypes...>> \
+{};
 
 
 #endif

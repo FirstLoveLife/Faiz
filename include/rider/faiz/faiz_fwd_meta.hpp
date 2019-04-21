@@ -37,6 +37,8 @@ namespace Rider
 
 namespace Rider::Faiz
 {
+	tpl<typ... tTypes> struct Pack
+	{};
 	tpl<typ T, T v> struct integral_constant;
 	tpl<typ T, T v> struct integral_constant
 	{
@@ -147,6 +149,8 @@ namespace Rider::Faiz
 
 	using std::is_nothrow_constructible;
 	using std::is_nothrow_constructible_v;
+	PACK_ARE(nothrow_constructible)
+
 
 	using std::is_trivially_copy_constructible;
 	using std::is_trivially_copy_constructible_v;
@@ -168,7 +172,7 @@ namespace Rider::Faiz
 	using std::is_trivially_destructible;
 	using std::is_trivially_destructible_v;
 	using std::is_final;
-	using std::is_final_v;
+	IS_NOT_ARE_ANY(final);
 	using std::is_union;
 	using std::is_union_v;
 	using std::is_class;

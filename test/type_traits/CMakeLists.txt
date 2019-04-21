@@ -103,6 +103,8 @@ add_executable(
 
   are_same.cpp
 
+  are_nothrow_constructible.cpp
+
   is_signed.cpp
 
   is_trivially_copy_assignable.libcxx.cpp
