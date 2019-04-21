@@ -29,10 +29,10 @@ namespace Rider::Faiz
 {
 	using Math::AbstractAlgebra::RelationAlgebra::totally_ordered;
 
-	tpl<typ T> using pointer_type_aux = _p<remove_reference_t<T>>;
+	Tpl<Typ T> using pointer_type_aux = _p<remove_reference_t<T>>;
 
 
-	tpl<typ T> struct default_delete
+	Tpl<Typ T> struct default_delete
 	{
 		static_assert(not_function_v<T>,
 			"Oops, default_delete cannot be instantiated for function "
@@ -45,7 +45,7 @@ namespace Rider::Faiz
 		// default_delete object. This constructor will only
 		// participate in overload resolution if U* is implicitly
 		// convertible to T*.
-		tpl<typ U, enable_if_t<is_convertible_v<U*, T*>>* = nullptr>
+		Tpl<Typ U, enable_if_t<is_convertible_v<U*, T*>>* = nullptr>
 		default_delete(const default_delete<U>&) noexcept
 		{}
 
@@ -73,11 +73,11 @@ namespace Rider::Faiz
 	// memory for a single object.
 	// 2) A partial specialization for array
 	// types that uses delete[] is also provided.
-	tpl<typ T> struct default_delete<T[]>
+	Tpl<Typ T> struct default_delete<T[]>
 	{
 	private:
 		// helper struct for default_delete<T[]>
-		tpl<typ U> struct EnableIfConvertible
+		Tpl<Typ U> struct EnableIfConvertible
 			: enable_if<is_convertible_v<U (*)[], T (*)[]>>
 		{};
 
@@ -90,7 +90,7 @@ namespace Rider::Faiz
 		// default_delete<U[]> object. This constructor will only
 		// participate in overload resolution if U(*)[] is implicitly
 		// convertible to T(*)[].
-		tpl<typ U>
+		Tpl<Typ U>
 		default_delete(const default_delete<U[]>&,
 			_t<EnableIfConvertible<U>>* = nullptr) noexcept
 		{}
@@ -102,7 +102,7 @@ namespace Rider::Faiz
 		// in C++ if the complete class type has a nontrivial destructor or
 		// a deallocation function, as the compiler has no way of knowing
 		// whether such functions exist and must be invoked.
-		tpl<typ U> fn
+		Tpl<Typ U> fn
 		operator()(U* ptr) const noexcept->_t<EnableIfConvertible<U>>
 		{
 			static_assert(
@@ -114,7 +114,7 @@ namespace Rider::Faiz
 	};
 
 
-	tpl<typ tDeleter> struct unique_ptr_deleter_sfinae
+	Tpl<Typ tDeleter> struct unique_ptr_deleter_sfinae
 	{
 		static_assert(not_reference_v<tDeleter>, "incorrect specialization");
 		using lval_ref_type = const tDeleter&;
@@ -122,14 +122,14 @@ namespace Rider::Faiz
 		using enable_rval_overload = true_;
 	};
 
-	tpl<typ tDeleter> struct unique_ptr_deleter_sfinae<tDeleter const&>
+	Tpl<Typ tDeleter> struct unique_ptr_deleter_sfinae<tDeleter const&>
 	{
 		using lval_ref_type = const tDeleter&;
 		using bad_rval_ref_type = const tDeleter&&;
 		using enable_rval_overload = false_;
 	};
 
-	tpl<typ tDeleter> struct unique_ptr_deleter_sfinae<tDeleter&>
+	Tpl<Typ tDeleter> struct unique_ptr_deleter_sfinae<tDeleter&>
 	{
 		using lval_ref_type = tDeleter&;
 		using bad_rval_ref_type = tDeleter&&;
@@ -137,7 +137,7 @@ namespace Rider::Faiz
 	};
 
 
-	tpl<typ T, typ tDeleter = default_delete<T>> class unique_ptr
+	Tpl<Typ T, Typ tDeleter = default_delete<T>> class unique_ptr
 		: totally_ordered<unique_ptr<T, tDeleter>>,
 		  totally_ordered<nullptr_t, unique_ptr<T, tDeleter>>
 	{
@@ -145,7 +145,7 @@ namespace Rider::Faiz
 		// tDeleter, the function object or lvalue reference to function or
 		// to function object, to be called from the destructor
 		using deleter_type = tDeleter;
-		// A synonym for the tpl parameter T.
+		// A synonym for the Tpl parameter T.
 		using element_type = T;
 
 		//  A synonym for `Delete::pointer` if defined, otherwise `T *`.
@@ -164,104 +164,104 @@ namespace Rider::Faiz
 		operator=(unique_ptr&)
 			= delete;
 
-		tpl<typ uPointer, typ uDeleter> unique_ptr&
+		Tpl<Typ uPointer, Typ uDeleter> unique_ptr&
 		operator=(unique_ptr<uPointer, uDeleter>&)
 			= delete;
 
 	private:
 		using tDeleterSFINAE = unique_ptr_deleter_sfinae<tDeleter>;
 
-		tpl<bool vDummy> using tLValRef
-			= typ dependent_type<tDeleterSFINAE, vDummy>::lval_ref_type;
+		Tpl<bool vDummy> using tLValRef
+			= Typ dependent_type<tDeleterSFINAE, vDummy>::lval_ref_type;
 
-		tpl<bool vDummy> using tGoodRValRef
-			= typ dependent_type<tDeleterSFINAE, vDummy>::good_rval_ref_type;
+		Tpl<bool vDummy> using tGoodRValRef
+			= Typ dependent_type<tDeleterSFINAE, vDummy>::good_rval_ref_type;
 
-		tpl<bool vDummy> using BadRValRefType
-			= typ dependent_type<tDeleterSFINAE, vDummy>::bad_rval_ref_type;
+		Tpl<bool vDummy> using BadRValRefType
+			= Typ dependent_type<tDeleterSFINAE, vDummy>::bad_rval_ref_type;
 
 
-		tpl<bool vDummy,
-			typ uDeleter = dependent_type_t<type_identity<deleter_type>,
+		Tpl<bool vDummy,
+			Typ uDeleter = dependent_type_t<type_identity<deleter_type>,
 				vDummy>> using EnableIfDeleterDefaultConstructible
 			= enable_if_t < is_default_constructible_v<
 								uDeleter> and not_pointer_v<uDeleter>> ;
 
-		tpl<typ tArg> using EnableIfDeleterConstructible
+		Tpl<Typ tArg> using EnableIfDeleterConstructible
 			= enable_if_t<is_constructible_v<deleter_type, tArg>>;
 
-		tpl<typ yaUnique, typ uPointer> using EnableIfMoveConvertible
+		Tpl<Typ yaUnique, Typ uPointer> using EnableIfMoveConvertible
 			= enable_if_t < is_convertible_v<_p<yaUnique>,
 								pointer> and not_array_v<uPointer>> ;
 
-		tpl<typ tUDel> using EnableIfDeleterConvertible = enable_if_t
+		Tpl<Typ tUDel> using EnableIfDeleterConvertible = enable_if_t
 				< (is_reference_v<tDeleter> and is_same_v<tDeleter, tUDel>)
 			or (not_reference_v<tDeleter> and is_convertible_v<tUDel, tDeleter>)
 				> ;
 
-		tpl<typ tUDel> using EnableIfDeleterAssignable
+		Tpl<Typ tUDel> using EnableIfDeleterAssignable
 			= enable_if_t<is_assignable_v<tDeleter&, tUDel&&>>;
 
 	protected:
 		tight_pair<pointer, deleter_type> pair;
 
 	public:
-		tpl<bool vDummy = true,
+		Tpl<bool vDummy = true,
 			class = EnableIfDeleterDefaultConstructible<
 				vDummy>> constexpr unique_ptr() noexcept
 			: pair{pointer{}}
 		{
 			static_assert(not_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
-				"type or reference type, for the tpl argument D, the "
+				"type or reference type, for the Tpl argument D, the "
 				"program is ill-formed.");
 			static_assert(not_reference_v<deleter_type>,
 				"WTF, If this constructor is "
 				"instantiated with a pointer "
 				"type or reference type, for "
-				"the tpl argument D, the "
+				"the Tpl argument D, the "
 				"program is ill-formed.");
 		}
-		tpl<bool vDummy = true,
-			typ = EnableIfDeleterDefaultConstructible<
+		Tpl<bool vDummy = true,
+			Typ = EnableIfDeleterDefaultConstructible<
 				vDummy>> constexpr unique_ptr(nullptr_t) noexcept
 			: pair{}
 		{
 			static_assert(not_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
-				"type or reference type, for the tpl argument D, the "
+				"type or reference type, for the Tpl argument D, the "
 				"program is ill-formed.");
 			static_assert(not_reference_v<deleter_type>,
 				"WTF, If this constructor is "
 				"instantiated with a pointer "
 				"type or reference type, for "
-				"the tpl argument D, the "
+				"the Tpl argument D, the "
 				"program is ill-formed.");
 		}
 
-		tpl<bool vDummy = true,
-			typ = EnableIfDeleterDefaultConstructible<
+		Tpl<bool vDummy = true,
+			Typ = EnableIfDeleterDefaultConstructible<
 				vDummy>> explicit unique_ptr(pointer ptr) noexcept
 			: pair{ptr, {}}
 		{
 			static_assert(not_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
-				"type or reference type, for the tpl argument D, the "
+				"type or reference type, for the Tpl argument D, the "
 				"program is ill-formed.");
 			static_assert(not_reference_v<deleter_type>,
 				"WTF, If this constructor is "
 				"instantiated with a pointer "
 				"type or reference type, for "
-				"the tpl argument D, the "
+				"the Tpl argument D, the "
 				"program is ill-formed.");
 		}
 
-		tpl<bool vDummy = true,
+		Tpl<bool vDummy = true,
 			class = EnableIfDeleterConstructible<tLValRef<vDummy>>>
 		unique_ptr(pointer ptr, tLValRef<vDummy> d) noexcept : pair(ptr, d)
 		{}
 
-		tpl<bool vDummy = true,
+		Tpl<bool vDummy = true,
 			class = EnableIfDeleterConstructible<tGoodRValRef<vDummy>>>
 		unique_ptr(pointer ptr, tGoodRValRef<vDummy> d) noexcept
 			: pair(ptr, move(d))
@@ -270,7 +270,7 @@ namespace Rider::Faiz
 				"rvalue deleter bound to reference");
 		}
 
-		tpl<bool vDummy = true,
+		Tpl<bool vDummy = true,
 			class = EnableIfDeleterConstructible<BadRValRefType<vDummy>>>
 		unique_ptr(pointer ptr, BadRValRefType<vDummy> d) = delete;
 
@@ -279,8 +279,8 @@ namespace Rider::Faiz
 			: pair(u.release(), forward<deleter_type>(u.get_deleter()))
 		{}
 
-		tpl<typ uPointer,
-			typ uDeleter,
+		Tpl<Typ uPointer,
+			Typ uDeleter,
 			class = EnableIfMoveConvertible<unique_ptr<uPointer, uDeleter>,
 				uPointer>,
 			class = EnableIfDeleterConvertible<uDeleter>>
@@ -365,8 +365,8 @@ namespace Rider::Faiz
 			return *this;
 		}
 
-		tpl<typ uPointer,
-			typ uDeleter,
+		Tpl<Typ uPointer,
+			Typ uDeleter,
 			class = EnableIfMoveConvertible<unique_ptr<uPointer, uDeleter>,
 				uPointer>,
 			class = EnableIfDeleterAssignable<uDeleter>>
@@ -400,7 +400,7 @@ namespace Rider::Faiz
 	//   - The observers *operator** and *operator->* are not
 	//   provided.
 	//   - The indexing observer *operator[]* is provided.
-	tpl<typ T, typ tDeleter> class unique_ptr<T[], tDeleter>
+	Tpl<Typ T, Typ tDeleter> class unique_ptr<T[], tDeleter>
 	// : Math::AbstractAlgebra::RelationAlgebra::totally_ordered<
 	// unique_ptr<T[], tDeleter>>
 	{
@@ -415,17 +415,17 @@ namespace Rider::Faiz
 		unique_ptr&
 		operator=(unique_ptr&)
 			= delete;
-		tpl<typ _Up> unique_ptr&
+		Tpl<Typ _Up> unique_ptr&
 		operator=(unique_ptr<_Up>&)
 			= delete;
 
 	private:
-		tpl<typ tFrom> struct CheckArrayPointerConversion
+		Tpl<Typ tFrom> struct CheckArrayPointerConversion
 			: is_same<tFrom, pointer>
 		{};
 
 		// clang-format off
-		tpl<typ tFromElem>
+		Tpl<Typ tFromElem>
 		struct CheckArrayPointerConversion<tFromElem*>
 			: bool_<is_same_v<tFromElem*, pointer>
                     or (is_same_v<pointer, element_type*>
@@ -434,49 +434,49 @@ namespace Rider::Faiz
 
 		// clang-format on
 
-		tpl<typ From> static constexpr bool CheckArrayPointerConversion_v
+		Tpl<Typ From> static constexpr bool CheckArrayPointerConversion_v
 			= CheckArrayPointerConversion<From>::value;
 
 
 		using tDeleterSFINAE = unique_ptr_deleter_sfinae<deleter_type>;
 
-		tpl<bool vDummy> using tLValRef
-			= typ dependent_type<tDeleterSFINAE, vDummy>::lval_ref_type;
+		Tpl<bool vDummy> using tLValRef
+			= Typ dependent_type<tDeleterSFINAE, vDummy>::lval_ref_type;
 
-		tpl<bool vDummy> using tGoodRValRef
-			= typ dependent_type<tDeleterSFINAE, vDummy>::good_rval_ref_type;
+		Tpl<bool vDummy> using tGoodRValRef
+			= Typ dependent_type<tDeleterSFINAE, vDummy>::good_rval_ref_type;
 
-		tpl<bool vDummy> using BadRValRefType
-			= typ dependent_type<tDeleterSFINAE, vDummy>::bad_rval_ref_type;
+		Tpl<bool vDummy> using BadRValRefType
+			= Typ dependent_type<tDeleterSFINAE, vDummy>::bad_rval_ref_type;
 
-		tpl<bool vDummy,
-			typ uDeleter = dependent_type_t<type_identity<deleter_type>,
+		Tpl<bool vDummy,
+			Typ uDeleter = dependent_type_t<type_identity<deleter_type>,
 				vDummy>> using EnableIfDeleterDefaultConstructible
 			= enable_if_t < is_default_constructible_v<
 								uDeleter> and not_pointer_v<uDeleter>> ;
 
-		tpl<typ tArg> using EnableIfDeleterConstructible
+		Tpl<Typ tArg> using EnableIfDeleterConstructible
 			= enable_if_t<is_constructible_v<deleter_type, tArg>>;
 
-		tpl<typ tArg> using EnableIfPointerConvertible
+		Tpl<Typ tArg> using EnableIfPointerConvertible
 			= enable_if_t<CheckArrayPointerConversion_v<tArg>>;
 
 		// clang-format off
-		tpl<typ U,
-			typ uPointer,
-				 typ tElem = _e<U>>
+		Tpl<Typ U,
+			Typ uPointer,
+				 Typ tElem = _e<U>>
 		using EnableIfMoveConvertible = enable_if_t<is_array_v<uPointer>
 			and is_same_v<pointer, element_type*>
 			and is_same_v<_p<U>, tElem*>
 			and is_convertible_v<tElem (*)[], element_type (*)[]>>;
 
-		tpl<typ uDel>
+		Tpl<Typ uDel>
 		using EnableIfDeleterConvertible = enable_if_t<
 			(is_reference_v<deleter_type> and is_same_v<deleter_type, uDel>)
 			or (not_reference_v<deleter_type> and is_convertible_v<uDel, deleter_type>)>;
 		// clang-format on
 
-		tpl<typ uDel> using EnableIfDeleterAssignable
+		Tpl<Typ uDel> using EnableIfDeleterAssignable
 			= enable_if_t<is_assignable_v<deleter_type&, uDel&&>>;
 
 
@@ -484,19 +484,19 @@ namespace Rider::Faiz
 		tight_pair<pointer, deleter_type> pair;
 
 	public:
-		tpl<bool vDummy = true,
+		Tpl<bool vDummy = true,
 			class = EnableIfDeleterDefaultConstructible<
 				vDummy>> constexpr unique_ptr() noexcept
 			: pair(pointer(), {})
 		{}
 
-		tpl<bool vDummy = true,
+		Tpl<bool vDummy = true,
 			class = EnableIfDeleterDefaultConstructible<
 				vDummy>> constexpr unique_ptr(nullptr_t) noexcept
 			: pair(pointer(), {})
 		{}
 
-		tpl<typ tPointer,
+		Tpl<Typ tPointer,
 			bool vDummy = true,
 			class = EnableIfDeleterDefaultConstructible<vDummy>,
 			class = EnableIfPointerConvertible<
@@ -504,19 +504,19 @@ namespace Rider::Faiz
 			: pair(p, {})
 		{}
 
-		tpl<typ uPointer,
+		Tpl<Typ uPointer,
 			bool vDummy = true,
 			class = EnableIfDeleterConstructible<tLValRef<vDummy>>,
 			class = EnableIfPointerConvertible<uPointer>>
 		unique_ptr(uPointer p, tLValRef<vDummy> d) noexcept : pair(p, d)
 		{}
 
-		tpl<bool vDummy = true,
+		Tpl<bool vDummy = true,
 			class = EnableIfDeleterConstructible<tLValRef<vDummy>>>
 		unique_ptr(nullptr_t, tLValRef<vDummy> d) noexcept : pair(nullptr, d)
 		{}
 
-		tpl<typ tPointer,
+		Tpl<Typ tPointer,
 			bool vDummy = true,
 			class = EnableIfDeleterConstructible<tGoodRValRef<vDummy>>,
 			class = EnableIfPointerConvertible<tPointer>>
@@ -527,7 +527,7 @@ namespace Rider::Faiz
 				"rvalue deleter bound to reference");
 		}
 
-		tpl<bool vDummy = true,
+		Tpl<bool vDummy = true,
 			class = EnableIfDeleterConstructible<tGoodRValRef<vDummy>>>
 		unique_ptr(nullptr_t, tGoodRValRef<vDummy> d) noexcept
 			: pair(nullptr, move(d))
@@ -536,7 +536,7 @@ namespace Rider::Faiz
 				"rvalue deleter bound to reference");
 		}
 
-		tpl<typ uPointer,
+		Tpl<Typ uPointer,
 			bool vDummy = true,
 			class = EnableIfDeleterConstructible<BadRValRefType<vDummy>>,
 			class = EnableIfPointerConvertible<uPointer>>
@@ -554,8 +554,8 @@ namespace Rider::Faiz
 			return *this;
 		}
 
-		tpl<typ uPointer,
-			typ uDeleter,
+		Tpl<Typ uPointer,
+			Typ uDeleter,
 			class = EnableIfMoveConvertible<unique_ptr<uPointer, uDeleter>,
 				uPointer>,
 			class = EnableIfDeleterConvertible<uDeleter>>
@@ -563,8 +563,8 @@ namespace Rider::Faiz
 			: pair(u.release(), forward<uDeleter>(u.get_deleter()))
 		{}
 
-		tpl<typ uPointer,
-			typ uDeleter,
+		Tpl<Typ uPointer,
+			Typ uDeleter,
 			class = EnableIfMoveConvertible<unique_ptr<uPointer, uDeleter>,
 				uPointer>,
 			class = EnableIfDeleterAssignable<uDeleter>>
@@ -586,7 +586,7 @@ namespace Rider::Faiz
 			reset();
 		}
 
-		tpl<typ tPointer> fn
+		Tpl<Typ tPointer> fn
 		reset(tPointer p) noexcept
 			->enable_if_t<CheckArrayPointerConversion_v<tPointer>>
 		{
@@ -661,33 +661,33 @@ namespace Rider::Faiz
 	};
 
 
-	tpl<typ T, typ D> fn
+	Tpl<Typ T, Typ D> fn
 	swap(unique_ptr<T, D>& a, unique_ptr<T, D>& b) noexcept
 	{
 		a.swap(b);
 	}
 
 
-	tpl<typ T1, typ D1, typ T2, typ D2> fn
+	Tpl<Typ T1, Typ D1, Typ T2, Typ D2> fn
 	operator==(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
 	{
 		return (a.get() == b.get());
 	}
 
-	tpl<typ T, typ D> fn
+	Tpl<Typ T, Typ D> fn
 	operator==(const unique_ptr<T, D>& a, nullptr_t) noexcept
 	{
 		return not a;
 	}
 
-	tpl<typ T, typ D> fn
+	Tpl<Typ T, Typ D> fn
 	operator==(nullptr_t, const unique_ptr<T, D>& a) noexcept
 	{
 		return not a;
 	}
 
 
-	tpl<typ T1, typ D1, typ T2, typ D2> fn
+	Tpl<Typ T1, Typ D1, Typ T2, Typ D2> fn
 	operator<(const unique_ptr<T1, D1>& a, const unique_ptr<T2, D2>& b)
 	{
 		using P1 = _p<Faiz::unique_ptr<T1, D1>>;
@@ -699,14 +699,14 @@ namespace Rider::Faiz
 	}
 
 
-	tpl<typ T, typ D> fn
+	Tpl<Typ T, Typ D> fn
 	operator<(const unique_ptr<T, D>& a, nullptr_t)
 	{
 		using pointer = _p<unique_ptr<T, D>>;
 		return std::less<pointer>()(a.get(), nullptr);
 	}
 
-	tpl<typ T, typ D> fn
+	Tpl<Typ T, Typ D> fn
 	operator<(nullptr_t, const unique_ptr<T, D>& b)
 	{
 		using pointer = _p<unique_ptr<T, D>>;
@@ -715,23 +715,23 @@ namespace Rider::Faiz
 	}
 
 	// http://isocpp.org/files/papers/N3656.txt
-	tpl<typ T> struct Unique_if
+	Tpl<Typ T> struct Unique_if
 	{
 		using Single_object = unique_ptr<T>;
 	};
 
-	tpl<typ T> struct Unique_if<T[]>
+	Tpl<Typ T> struct Unique_if<T[]>
 	{
 		using Unknown_bound = unique_ptr<T[]>;
 	};
 
-	tpl<typ T, Faiz::size_t N> struct Unique_if<T[N]>
+	Tpl<Typ T, Faiz::size_t N> struct Unique_if<T[N]>
 	{
 		using Known_bound = void;
 	};
 
 	// lwg 2098
-	tpl<typ T, typ... Args> typ Unique_if<T>::Single_object
+	Tpl<Typ T, Typ... Args> Typ Unique_if<T>::Single_object
 	make_unique(Args&&... args)
 	{
 		if constexpr(is_constructible<T, Args...>())
@@ -744,18 +744,18 @@ namespace Rider::Faiz
 		}
 	}
 
-	tpl<typ T> typ Unique_if<T>::Unknown_bound
+	Tpl<Typ T> Typ Unique_if<T>::Unknown_bound
 	make_unique(size_t n)
 	{
 		using U = remove_extent_t<T>;
 		return unique_ptr<T>(new U[n]());
 	}
 
-	tpl<typ T, typ... Args> typ Unique_if<T>::Known_bound
+	Tpl<Typ T, Typ... Args> Typ Unique_if<T>::Known_bound
 	make_unique(Args&&...)
 		= delete;
 
-	tpl<typ T, typ D> enable_if_t<std::is_swappable_v<D>, void>
+	Tpl<Typ T, Typ D> enable_if_t<std::is_swappable_v<D>, void>
 	swap(unique_ptr<T, D>& x, unique_ptr<T, D>& y) noexcept
 	{
 		x.swap(y);

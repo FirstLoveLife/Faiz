@@ -7,13 +7,13 @@ namespace Rider::Faiz
 {
 	// both call_traits::param_type and this conditional check are ok, but
 	// check is more simple.
-	tpl<typ T> struct check : Faiz::conditional<is_arithmetic_v<T>, T, check<T>>
+	Tpl<Typ T> struct check : Faiz::conditional<is_arithmetic_v<T>, T, check<T>>
 	{};
 
-	tpl<typ T>
+	Tpl<Typ T>
 	using check_t = _t<check<T>>;
 
-	tpl<typ T> struct equal_to
+	Tpl<Typ T> struct equal_to
 	{
 		cexp bool
 		operator()(check_t<T> x, check_t<T> y) const
@@ -22,10 +22,10 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<> struct equal_to<void>
+	Tpl<> struct equal_to<void>
 	{
 		using is_transparent = int;
-		tpl<typ A, typ B> cexp decltype(auto)
+		Tpl<Typ A, Typ B> cexp decltype(auto)
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) == Faiz::forward<B>(b);
@@ -33,7 +33,7 @@ namespace Rider::Faiz
 	};
 
 
-	tpl<typ T> struct not_equal_to
+	Tpl<Typ T> struct not_equal_to
 	{
 		cfn
 		operator()(check_t<T> x, check_t<T> y) const->bool
@@ -42,10 +42,10 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<> struct not_equal_to<void>
+	Tpl<> struct not_equal_to<void>
 	{
 		using is_transparent = int;
-		tpl<typ T, typ U> cdfn
+		Tpl<Typ T, Typ U> cdfn
 		operator()(T&& t, U&& u) const
 			noexcept(noexcept(Faiz::forward<T>(t) != Faiz::forward<U>(u)))
 		{
@@ -53,7 +53,7 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<typ T> struct greater
+	Tpl<Typ T> struct greater
 	{
 		cfn
 		operator()(check_t<T> x, check_t<T> y) const -> bool
@@ -62,18 +62,18 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<> struct greater<void>
+	Tpl<> struct greater<void>
 	{
 		using is_transparent = void;
 
-		tpl<typ A, typ B> cdfn
+		Tpl<Typ A, Typ B> cdfn
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) > Faiz::forward<B>(b);
 		}
 	};
 
-	tpl<typ T = void> struct less
+	Tpl<Typ T = void> struct less
 	{
 		cfn
 		operator()(check_t<T> x, check_t<T> y) const->bool
@@ -87,7 +87,7 @@ namespace Rider::Faiz
 	// it accepts arguments of arbitrary types and uses perfect forwarding,
 	// which avoids unnecessary copying and conversion when the function object
 	// is used in heterogeneous context, or with rvalue arguments. In
-	// particular, tpl functions such as `std::set::find` and
+	// particular, Tpl functions such as `std::set::find` and
 	// `std::set::lower_bound` make use of this member type on their Compare
 	// types.
 	//
@@ -104,7 +104,7 @@ namespace Rider::Faiz
 	//  paragraph 13. The default comparison function objects is std::less<Key>
 	//  according to 23.4.2 [associative.map.syn] and 23.4.3
 	//  [associative.set.syn]. According to 20.10.5 [comparison] paragraph 4 the
-	//  general tpl for std::less<...> does not define a nested type
+	//  general Tpl for std::less<...> does not define a nested type
 	//  is_transparent but the std::less<void> specialization does. That is, no,
 	//  you don't get a transparent operator by default.
 	//
@@ -114,10 +114,10 @@ namespace Rider::Faiz
 	// always done, and that's still the default.
 	// * Iff you choose to use std::less<> (which is new for C++14) or another
 	// "transparent functor" type then you get the new functionality.
-	tpl<> struct less<void>
+	Tpl<> struct less<void>
 	{
 		using is_transparent = void;
-		tpl<typ A, typ B> cdfn
+		Tpl<Typ A, Typ B> cdfn
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) < Faiz::forward<B>(b);
@@ -125,7 +125,7 @@ namespace Rider::Faiz
 	};
 
 
-	tpl<typ T> struct greater_equal
+	Tpl<Typ T> struct greater_equal
 	{
 		cfn
 		operator()(check_t<T> x, check_t<T> y) const -> bool
@@ -134,10 +134,10 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<> struct greater_equal<void>
+	Tpl<> struct greater_equal<void>
 	{
 		using is_transparent = void;
-		tpl<typ A, typ B> cdfn
+		Tpl<Typ A, Typ B> cdfn
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) >= Faiz::forward<B>(b);
@@ -145,7 +145,7 @@ namespace Rider::Faiz
 	};
 
 
-	tpl<typ T> struct less_equal
+	Tpl<Typ T> struct less_equal
 	{
 		cfn
 		operator()(check_t<T> x, check_t<T> y) const -> bool
@@ -154,10 +154,10 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<> struct less_equal<void>
+	Tpl<> struct less_equal<void>
 	{
 		using is_transparent = void;
-		tpl<typ A, typ B> cdfn
+		Tpl<Typ A, Typ B> cdfn
 		operator()(A&& a, B&& b) const
 		{
 			return Faiz::forward<A>(a) <= Faiz::forward<B>(b);

@@ -9,7 +9,7 @@ namespace Rider::Faiz
 		ignore_t()
 		{}
 
-		tpl<typ T> const ignore_t&
+		Tpl<Typ T> const ignore_t&
 		operator=(const T&) const
 		{
 			return *this;

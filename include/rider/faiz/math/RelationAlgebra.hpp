@@ -10,7 +10,7 @@
 #include "rider/faiz/utility.hpp"
 
 #define TAO_OPERATORS_BASIC_OP(name, op) \
-	tpl<typ T, typ U = T> class name \
+	Tpl<Typ T, Typ U = T> class name \
 	{ \
 		friend T operator op(const T& lhs, const U& rhs) noexcept(noexcept( \
 			T(lhs), Faiz::declval<T&>() op## = rhs, T(Faiz::declval<T&>()))) \
@@ -51,7 +51,7 @@
 	}
 
 #define TAO_OPERATORS_BASIC_OP_LEFT(name, op) \
-	tpl<typ T, typ U> class name##_left \
+	Tpl<Typ T, Typ U> class name##_left \
 	{ \
 		friend T operator op(const U& lhs, const T& rhs) noexcept(noexcept( \
 			T(lhs), Faiz::declval<T&>() op## = rhs, T(Faiz::declval<T&>()))) \
@@ -93,7 +93,7 @@
 
 
 #define TAO_OPERATORS_BASIC_OP_COMMUTATIVE(name, op) \
-	tpl<typ T, typ U = T> class commutative_##name \
+	Tpl<Typ T, Typ U = T> class commutative_##name \
 	{ \
 		friend T operator op(const T& lhs, const U& rhs) noexcept(noexcept( \
 			T(lhs), Faiz::declval<T&>() op## = rhs, T(Faiz::declval<T&>()))) \
@@ -167,7 +167,7 @@
 		} \
 	}; \
 \
-	tpl<typ T> class commutative_##name<T> \
+	Tpl<Typ T> class commutative_##name<T> \
 	{ \
 		friend T operator op(const T& lhs, const T& rhs) noexcept(noexcept( \
 			T(lhs), Faiz::declval<T&>() op## = rhs, T(Faiz::declval<T&>()))) \
@@ -209,7 +209,7 @@
 // https://en.wikipedia.org/wiki/Category:Binary_operations
 namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 {
-	tpl<typ T, typ U = T> class equality_comparable
+	Tpl<Typ T, Typ U = T> class equality_comparable
 	{
 		friend cfn
 		operator!=(const T& lhs, const U& rhs)
@@ -224,14 +224,14 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 			AUTO_RETURN_NOEXCEPT(static_cast<bool>(rhs != lhs));
 	};
 
-	tpl<typ T> class equality_comparable<T>
+	Tpl<Typ T> class equality_comparable<T>
 	{
 		friend cfn
 		operator!=(const T& lhs, const T& rhs)
 			AUTO_RETURN_NOEXCEPT(!static_cast<bool>(lhs == rhs));
 	};
 
-	tpl<typ T, typ U = T> class less_than_comparable
+	Tpl<Typ T, Typ U = T> class less_than_comparable
 	{
 		friend cfn
 		operator<=(const T& lhs, const U& rhs)
@@ -258,7 +258,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 			AUTO_RETURN_NOEXCEPT(static_cast<bool>(rhs <= lhs));
 	};
 
-	tpl<typ T> class less_than_comparable<T>
+	Tpl<Typ T> class less_than_comparable<T>
 	{
 		friend cfn
 		operator>(const T& lhs, const T& rhs)
@@ -273,11 +273,11 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 			AUTO_RETURN_NOEXCEPT(!static_cast<bool>(lhs < rhs));
 	};
 
-	tpl<typ T, typ U = T> class totally_ordered : less_than_comparable<T, U>,
+	Tpl<Typ T, Typ U = T> class totally_ordered : less_than_comparable<T, U>,
 												  equality_comparable<T, U>
 	{};
 
-	tpl<typ T, typ U = T> class equivalent
+	Tpl<Typ T, Typ U = T> class equivalent
 	{
 		friend cfn
 		operator==(const T& lhs, const U& rhs) noexcept(noexcept(
@@ -288,7 +288,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 		}
 	};
 
-	tpl<typ T> class equivalent<T>
+	Tpl<Typ T> class equivalent<T>
 	{
 		friend cfn
 		operator==(const T& lhs, const T& rhs) noexcept(
@@ -299,7 +299,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 		}
 	};
 
-	tpl<typ T, typ U = T> class partially_ordered
+	Tpl<Typ T, Typ U = T> class partially_ordered
 	{
 		friend cfn
 		operator<=(const T& lhs, const U& rhs) noexcept(noexcept(
@@ -334,7 +334,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 			AUTO_RETURN_NOEXCEPT(static_cast<bool>(rhs <= lhs));
 	};
 
-	tpl<typ T> class partially_ordered<T>
+	Tpl<Typ T> class partially_ordered<T>
 	{
 		friend cfn
 		operator>(const T& lhs, const T& rhs)
@@ -374,44 +374,44 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 	TAO_OPERATORS_BASIC_OP(modable, %);
 	TAO_OPERATORS_BASIC_OP_LEFT(modable, %);
 
-	tpl<typ T, typ U = T> class ring : commutative_addable<T, U>,
+	Tpl<Typ T, Typ U = T> class ring : commutative_addable<T, U>,
 									   subtractable<T, U>,
 									   subtractable_left<T, U>,
 									   multipliable<T, U>
 	{};
 
-	tpl<typ T> class ring<T>
+	Tpl<Typ T> class ring<T>
 		: commutative_addable<T>, subtractable<T>, multipliable<T>
 	{};
 
-	tpl<typ T, typ U = T> class ordered_ring : ring<T, U>, totally_ordered<T, U>
+	Tpl<Typ T, Typ U = T> class ordered_ring : ring<T, U>, totally_ordered<T, U>
 	{};
 
-	tpl<typ T, typ U = T> class commutative_ring
+	Tpl<Typ T, Typ U = T> class commutative_ring
 		: commutative_addable<T, U>,
 		  subtractable<T, U>,
 		  subtractable_left<T, U>,
 		  commutative_multipliable<T, U>
 	{};
 
-	tpl<typ T> class commutative_ring<T>
+	Tpl<Typ T> class commutative_ring<T>
 		: commutative_addable<T>, subtractable<T>, commutative_multipliable<T>
 	{};
 
-	tpl<typ T, typ U = T> class ordered_commutative_ring
+	Tpl<Typ T, Typ U = T> class ordered_commutative_ring
 		: commutative_ring<T, U>,
 		  totally_ordered<T, U>
 	{};
 
-	tpl<typ T, typ U = T> class field : commutative_ring<T, U>,
+	Tpl<Typ T, Typ U = T> class field : commutative_ring<T, U>,
 										dividable<T, U>,
 										dividable_left<T, U>
 	{};
 
-	tpl<typ T> class field<T> : commutative_ring<T>, dividable<T>
+	Tpl<Typ T> class field<T> : commutative_ring<T>, dividable<T>
 	{};
 
-	tpl<typ T, typ U = T> class ordered_field : field<T, U>,
+	Tpl<Typ T, Typ U = T> class ordered_field : field<T, U>,
 												totally_ordered<T, U>
 	{};
 
@@ -427,17 +427,17 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 	TAO_OPERATORS_BASIC_OP_LEFT(xorable, ^);
 	TAO_OPERATORS_BASIC_OP_COMMUTATIVE(xorable, ^);
 
-	tpl<typ T, typ U = T> class bitwise : andable<T, U>,
+	Tpl<Typ T, Typ U = T> class bitwise : andable<T, U>,
 										  orable<T, U>,
 										  xorable<T, U>
 	{};
 
-	tpl<typ T, typ U> class bitwise_left : andable_left<T, U>,
+	Tpl<Typ T, Typ U> class bitwise_left : andable_left<T, U>,
 										   orable_left<T, U>,
 										   xorable_left<T, U>
 	{};
 
-	tpl<typ T, typ U = T> class commutative_bitwise : commutative_andable<T, U>,
+	Tpl<Typ T, Typ U = T> class commutative_bitwise : commutative_andable<T, U>,
 													  commutative_orable<T, U>,
 													  commutative_xorable<T, U>
 	{};
@@ -445,11 +445,11 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 	TAO_OPERATORS_BASIC_OP(left_shiftable, <<);
 	TAO_OPERATORS_BASIC_OP(right_shiftable, >>);
 
-	tpl<typ T, typ U = T> class shiftable : left_shiftable<T, U>,
+	Tpl<Typ T, Typ U = T> class shiftable : left_shiftable<T, U>,
 											right_shiftable<T, U>
 	{};
 
-	tpl<typ T> class incrementable
+	Tpl<Typ T> class incrementable
 	{
 		friend T
 		operator++(T& arg, int /*unused*/) noexcept(
@@ -461,7 +461,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 		}
 	};
 
-	tpl<typ T> class decrementable
+	Tpl<Typ T> class decrementable
 	{
 		friend T
 		operator--(T& arg, int /*unused*/) noexcept(
@@ -473,7 +473,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 		}
 	};
 
-	tpl<typ T> class unit_steppable : incrementable<T>, decrementable<T>
+	Tpl<Typ T> class unit_steppable : incrementable<T>, decrementable<T>
 	{};
 
 

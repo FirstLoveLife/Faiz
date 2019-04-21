@@ -4,7 +4,7 @@
 #include "rider/faiz/macros.hpp"
 namespace Rider::Faiz
 {
-	tpl<class StateT> class fpos
+	Tpl<class StateT> class fpos
 	{
 	private:
 		StateT st_;

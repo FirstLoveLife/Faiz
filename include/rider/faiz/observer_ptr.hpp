@@ -5,7 +5,7 @@
 #include "rider/faiz/math/RelationAlgebra.hpp"
 namespace Rider::Faiz
 {
-	tpl<typ T> class observer_ptr
+	Tpl<Typ T> class observer_ptr
 		: private totally_ordered<observer_ptr<T>>,
 		  private equality_comparable<observer_ptr<T>, nullptr_t>
 	{
@@ -27,7 +27,7 @@ namespace Rider::Faiz
 		observer_ptr(pointer p) noexcept
 			: ptr(p)
 		{}
-		tpl<typ Other> cexp
+		Tpl<Typ Other> cexp
 		observer_ptr(observer_ptr<Other> other) noexcept
 			: ptr(other.get())
 		{}

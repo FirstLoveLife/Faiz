@@ -2,55 +2,55 @@
 #define MACROS_HPP
 
 #define IS(name) \
-	tpl<typ T> inline cexp bool is_##name##_v = is_##name<T>::value;
+	Tpl<Typ T> inline cexp bool is_##name##_v = is_##name<T>::value;
 
 #define BI_IS(name) \
-	tpl<typ From, typ To> inline cexp bool is_##name##_v \
+	Tpl<Typ From, Typ To> inline cexp bool is_##name##_v \
 		= is_##name<From, To>::value;
 
 #define NOT(name) \
-	tpl<typ T> inline cexp bool not_##name##_v = not is_##name<T>::value; \
-	tpl<typ T> struct not_##name : bool_<not_##name##_v<T>> \
+	Tpl<Typ T> inline cexp bool not_##name##_v = not is_##name<T>::value; \
+	Tpl<Typ T> struct not_##name : bool_<not_##name##_v<T>> \
 	{};
 
 #define BI_NOT(name) \
-	tpl<typ From, typ To> inline cexp bool not_##name##_v \
+	Tpl<Typ From, Typ To> inline cexp bool not_##name##_v \
 		= not is_##name<From, To>::value; \
-	tpl<typ From, typ To> struct not_##name : bool_<not_##name##_v<From, To>> \
+	Tpl<Typ From, Typ To> struct not_##name : bool_<not_##name##_v<From, To>> \
 	{};
 
 #define ARE(name) \
-	tpl<typ... T> inline cexp bool are_##name##_v = (is_##name##_v<T> && ...); \
+	Tpl<Typ... T> inline cexp bool are_##name##_v = (is_##name##_v<T> && ...); \
 \
-	tpl<typ... T> struct are_##name : bool_<are_##name##_v<T...>> \
+	Tpl<Typ... T> struct are_##name : bool_<are_##name##_v<T...>> \
 	{};
 
 #define BI_ARE(name) \
-	tpl<typ... T> inline cexp bool are_##name##_v \
+	Tpl<Typ... T> inline cexp bool are_##name##_v \
 		= detail::binaryTraitAre_impl<is_##name, T...>(); \
 \
-	tpl<typ... T> struct are_##name : bool_<are_##name##_v<T...>> \
+	Tpl<Typ... T> struct are_##name : bool_<are_##name##_v<T...>> \
 	{};
 
 #define BI_NOT_ALL(name) \
-	tpl<typ... T> inline cexp bool not_all_##name##_v \
+	Tpl<Typ... T> inline cexp bool not_all_##name##_v \
 		= not detail::binaryTraitAre_impl<is_##name, T...>(); \
 \
-	tpl<typ... T> struct not_all_##name : bool_<not_all_##name##_v<T...>> \
+	Tpl<Typ... T> struct not_all_##name : bool_<not_all_##name##_v<T...>> \
 	{};
 
 
 #define ANY(name) \
-	tpl<typ... T> inline cexp bool any_##name##_v = (is_##name##_v<T> || ...); \
+	Tpl<Typ... T> inline cexp bool any_##name##_v = (is_##name##_v<T> || ...); \
 \
-	tpl<typ... T> struct any_##name : bool_<any_##name##_v<T...>> \
+	Tpl<Typ... T> struct any_##name : bool_<any_##name##_v<T...>> \
 	{};
 
 #define BI_ANY(name) \
-	tpl<typ... T> inline cexp bool any_##name##_v \
+	Tpl<Typ... T> inline cexp bool any_##name##_v \
 		= detail::binaryTraitOr_impl<is_##name, T...>(); \
 \
-	tpl<typ... T> struct any_##name : bool_<any_##name##_v<T...>> \
+	Tpl<Typ... T> struct any_##name : bool_<any_##name##_v<T...>> \
 	{};
 
 
@@ -72,9 +72,9 @@
 	BI_ANY(name)
 
 
-#define tpl template
-#define typ typename
-#define SFINAE typ
+#define Tpl template
+#define Typ typename
+#define SFINAE Typ
 #define cElseIf else if constexpr
 #define cIf if constexpr
 #define cElse else
@@ -169,10 +169,10 @@
 			static constexpr bool value{(is_##name##_v<Types...>)}; \
 		}; \
 	}															\
-	tpl<typ... TemplateTemplateTypes> inline cexp bool are_##name##_v		\
+	Tpl<Typ... TemplateTemplateTypes> inline cexp bool are_##name##_v		\
 	= (detail::name##Helper<TemplateTemplateTypes>::value and ... and true);	\
 																		\
-	tpl<typ... TemplateTemplateTypes> struct are_##name : bool_<are_##name##_v<TemplateTemplateTypes...>> \
+	Tpl<Typ... TemplateTemplateTypes> struct are_##name : bool_<are_##name##_v<TemplateTemplateTypes...>> \
 {};
 
 

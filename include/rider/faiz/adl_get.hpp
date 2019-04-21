@@ -23,14 +23,14 @@ namespace Rider::Faiz
 	{
 		namespace _adl_get_
 		{
-			tpl<class> void
+			Tpl<class> void
 			get();
 
-			tpl<std::size_t I, typ Tuple> cexp auto
+			Tpl<std::size_t I, Typ Tuple> cexp auto
 			adl_get(Tuple&& t)
 				DECLTYPE_AUTO_RETURN_NOEXCEPT(get<I>(static_cast<Tuple&&>(t)))
 
-					tpl<typ T, typ Tuple> cexp auto adl_get(Tuple&& t)
+					Tpl<Typ T, Typ Tuple> cexp auto adl_get(Tuple&& t)
 						DECLTYPE_AUTO_RETURN_NOEXCEPT(
 							get<T>(static_cast<Tuple&&>(t)))
 		} // namespace _adl_get_

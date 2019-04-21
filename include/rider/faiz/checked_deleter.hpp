@@ -21,7 +21,7 @@ namespace Rider::Faiz
 	// >
 	// > Silences a compiler warning.
 
-	tpl<class T> void
+	Tpl<class T> void
 	checked_delete(T* x)
 	{
 		// intentionally complex - simplification causes regressions
@@ -30,7 +30,7 @@ namespace Rider::Faiz
 		delete x;
 	}
 
-	tpl<class T> void
+	Tpl<class T> void
 	checked_array_delete(T* x)
 	{
 		using type_must_be_complete = char[sizeof(T) ? 1 : -1];
@@ -38,7 +38,7 @@ namespace Rider::Faiz
 		delete[] x;
 	}
 
-	tpl<class T> struct checked_deleter
+	Tpl<class T> struct checked_deleter
 	{
 		using result_type = void;
 		using argument_type = T*;
@@ -51,7 +51,7 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<class T> struct checked_array_deleter
+	Tpl<class T> struct checked_array_deleter
 	{
 		using result_type = void;
 		using argument_type = T*;

@@ -6,7 +6,7 @@
 #include "rider/faiz/macros.hpp"
 namespace Rider::Faiz
 {
-	tpl<class CharT> class char_traits;
+	Tpl<class CharT> class char_traits;
 
 	// Copies count characters from the object pointed to by src to the object
 	// pointed to by dest. Both objects are reinterpreted as arrays of unsigned
@@ -98,8 +98,8 @@ namespace Rider::Faiz
 	}
 
 
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -111,8 +111,8 @@ namespace Rider::Faiz
 				return Size(ret - p);
 		return NPos;
 	}
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -130,8 +130,8 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -148,8 +148,8 @@ namespace Rider::Faiz
 		}
 		return NPos;
 	}
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -168,8 +168,8 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -186,8 +186,8 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -207,8 +207,8 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -220,8 +220,8 @@ namespace Rider::Faiz
 				return pos;
 		return NPos;
 	}
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -235,8 +235,8 @@ namespace Rider::Faiz
 		return NPos;
 	}
 
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size
@@ -254,8 +254,8 @@ namespace Rider::Faiz
 		}
 		return NPos;
 	}
-	tpl<typ Char,
-		typ Size,
+	Tpl<Typ Char,
+		Typ Size,
 		class Traits = Faiz::char_traits<Char>,
 		Size NPos = Size(-1)>
 		cexp Size

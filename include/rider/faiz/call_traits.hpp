@@ -12,13 +12,13 @@ namespace Rider::Faiz
 {
 	namespace detail
 	{
-		tpl<char Chs> cexp int
+		Tpl<char Chs> cexp int
 		toDecImpl()
 		{
 			return Chs > '9' ? Chs - 'A' + 10 : Chs - '0';
 		}
 	} // namespace detail
-	tpl<int from, char... Chs> cexp int
+	Tpl<int from, char... Chs> cexp int
 	toDec()
 	{
 		int ret{};
@@ -27,11 +27,11 @@ namespace Rider::Faiz
 	}
 	inline namespace literals
 	{
-		tpl<char... Chs> cexp int operator"" _B()
+		Tpl<char... Chs> cexp int operator"" _B()
 		{
 			return toDec<2, Chs...>();
 		}
-		tpl<char... Chs> cexp int operator"" _O()
+		Tpl<char... Chs> cexp int operator"" _O()
 		{
 			return toDec<8, Chs...>();
 		}
@@ -45,7 +45,7 @@ namespace Rider::Faiz
 {
 	// use pandoc convert doc from
 	// https://www.boost.org/doc/libs/1_51_0/libs/utility/call_traits.htm
-	// The tpl class call_traits<T> encapsulates the "best" method to
+	// The Tpl class call_traits<T> encapsulates the "best" method to
 	// pass a parameter of some type T to or from a function, and consists
 	// of a collection of typedefs defined as in the table below. The
 	// purpose of call_traits is to ensure that problems like "[references
@@ -57,7 +57,7 @@ namespace Rider::Faiz
 	// specialization or member tpls, no benefit will occur from using
 	// call_traits: the call_traits defined types will always be the same as
 	// the existing practice in this case. In addition if only member
-	// tpls and not partial tpl specialisation is support by the
+	// tpls and not partial Tpl specialisation is support by the
 	// compiler (for example Visual C++ 6) then call_traits can not be used
 	// with array types (although it can be used to solve the reference to
 	// reference problem).
@@ -120,7 +120,7 @@ namespace Rider::Faiz
 	//     of the function if they depend upon the passed parameter, the
 	//     semantics of the passed parameter is otherwise unchanged
 	//     (requires partial specialization).
-	tpl<typ T> struct call_traits
+	Tpl<Typ T> struct call_traits
 	{
 	public:
 		using value_type = T;
@@ -138,7 +138,7 @@ namespace Rider::Faiz
 				const T&>>;
 	};
 
-	tpl<typ T> struct call_traits<T&>
+	Tpl<Typ T> struct call_traits<T&>
 	{
 		using value_type = T&;
 		using reference = T&;
@@ -146,7 +146,7 @@ namespace Rider::Faiz
 		using param_type = T&;
 	};
 
-	tpl<typ T, size_t N> struct call_traits<T[N]>
+	Tpl<Typ T, size_t N> struct call_traits<T[N]>
 	{
 	private:
 		using array_type = T[N];
@@ -158,7 +158,7 @@ namespace Rider::Faiz
 		using param_type = const T* const;
 	};
 
-	tpl<typ T, size_t N> struct call_traits<const T[N]>
+	Tpl<Typ T, size_t N> struct call_traits<const T[N]>
 	{
 	private:
 		using array_type = const T[N];

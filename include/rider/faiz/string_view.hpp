@@ -12,7 +12,7 @@
 
 namespace Rider::Faiz
 {
-	tpl<typ Char, class Traits = std::char_traits<Char>> class basic_string_view
+	Tpl<Typ Char, class Traits = std::char_traits<Char>> class basic_string_view
 		: private totally_ordered<basic_string_view<Char, Traits>>
 	{
 	public:
@@ -387,48 +387,48 @@ namespace Rider::Faiz
 
 	//! \relates basic_string_view
 	//@{
-	tpl<typ Char, class Traits> cexp bool
+	Tpl<Typ Char, class Traits> cexp bool
 	operator==(basic_string_view<Char, Traits> x,
 		basic_string_view<Char, Traits> y) noexcept
 	{
 		return x.compare(y) == 0;
 	}
-	tpl<typ Char, class Traits> cexp bool
+	Tpl<Typ Char, class Traits> cexp bool
 	operator==(basic_string_view<Char, Traits> x,
 		IMPL(decay_t<basic_string_view<Char, Traits>>) y) noexcept
 	{
 		return x.compare(y) == 0;
 	}
 	//! \since build 642
-	tpl<typ Char, class Traits> cexp bool
+	Tpl<Typ Char, class Traits> cexp bool
 	operator==(IMPL(decay_t<basic_string_view<Char, Traits>>) x,
 		basic_string_view<Char, Traits> y) noexcept
 	{
 		return x.compare(y) == 0;
 	}
 
-	tpl<typ Char, class Traits> cexp bool
+	Tpl<Typ Char, class Traits> cexp bool
 	operator<(basic_string_view<Char, Traits> x,
 		basic_string_view<Char, Traits> y) noexcept
 	{
 		return x.compare(y) < 0;
 	}
 	//! \since build 642
-	tpl<typ Char, class Traits> cexp bool
+	Tpl<Typ Char, class Traits> cexp bool
 	operator<(basic_string_view<Char, Traits> x,
 		IMPL(decay_t<basic_string_view<Char, Traits>>) y) noexcept
 	{
 		return x.compare(y) < 0;
 	}
 	//! \since build 642
-	tpl<typ Char, class Traits> cexp bool
+	Tpl<Typ Char, class Traits> cexp bool
 	operator<(IMPL(decay_t<basic_string_view<Char, Traits>>) x,
 		basic_string_view<Char, Traits> y) noexcept
 	{
 		return x.compare(y) < 0;
 	}
 
-	tpl<typ Char, class Traits> std::basic_ostream<Char, Traits>&
+	Tpl<Typ Char, class Traits> std::basic_ostream<Char, Traits>&
 	operator<<(std::basic_ostream<Char, Traits>& os,
 		basic_string_view<Char, Traits> str)
 	{
@@ -442,8 +442,8 @@ namespace Rider::Faiz
 	using u32string_view = basic_string_view<char32_t>;
 	using wstring_view = basic_string_view<wchar_t>;
 
-	tpl<class _tString> using string_view_t
-		= basic_string_view<typ _tString::value_type>;
+	Tpl<class _tString> using string_view_t
+		= basic_string_view<Typ _tString::value_type>;
 
 } // namespace Rider::Faiz
 

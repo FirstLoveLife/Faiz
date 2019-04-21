@@ -9,7 +9,7 @@
 #include <ios>
 namespace Rider::Faiz
 {
-	tpl<class CharT> struct char_traits
+	Tpl<class CharT> struct char_traits
 	{
 		typedef CharT char_type;
 		typedef int int_type;
@@ -75,7 +75,7 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<class CharT> cexp int
+	Tpl<class CharT> cexp int
 	char_traits<CharT>::compare(
 		const char_type* s1, const char_type* s2, size_t n)
 	{
@@ -89,7 +89,7 @@ namespace Rider::Faiz
 		return 0;
 	}
 
-	tpl<class CharT> cexp size_t
+	Tpl<class CharT> cexp size_t
 	char_traits<CharT>::length(const char_type* s)
 	{
 		size_t len = 0;
@@ -98,7 +98,7 @@ namespace Rider::Faiz
 		return len;
 	}
 
-	tpl<class CharT> cexp const CharT*
+	Tpl<class CharT> cexp const CharT*
 	char_traits<CharT>::find(const char_type* s, size_t n, const char_type& a)
 	{
 		for(; n; --n)
@@ -110,7 +110,7 @@ namespace Rider::Faiz
 		return 0;
 	}
 
-	tpl<class CharT> CharT*
+	Tpl<class CharT> CharT*
 	char_traits<CharT>::move(char_type* s1, const char_type* s2, size_t n)
 	{
 		char_type* r = s1;
@@ -129,7 +129,7 @@ namespace Rider::Faiz
 		return r;
 	}
 
-	tpl<class CharT> inline CharT*
+	Tpl<class CharT> inline CharT*
 	char_traits<CharT>::copy(char_type* s1, const char_type* s2, size_t n)
 	{
 		assertWithLog(
@@ -140,7 +140,7 @@ namespace Rider::Faiz
 		return r;
 	}
 
-	tpl<class CharT> inline CharT*
+	Tpl<class CharT> inline CharT*
 	char_traits<CharT>::assign(char_type* s, size_t n, char_type a)
 	{
 		char_type* r = s;
@@ -151,7 +151,7 @@ namespace Rider::Faiz
 
 	// char_traits<char>
 
-	tpl<> struct char_traits<char>
+	Tpl<> struct char_traits<char>
 	{
 		typedef char char_type;
 		typedef int int_type;
@@ -260,7 +260,7 @@ namespace Rider::Faiz
 	}
 
 
-	tpl<> struct char_traits<wchar_t>
+	Tpl<> struct char_traits<wchar_t>
 	{
 		typedef wchar_t char_type;
 		typedef wint_t int_type;
@@ -375,7 +375,7 @@ namespace Rider::Faiz
 	}
 
 
-	tpl<> struct char_traits<char16_t>
+	Tpl<> struct char_traits<char16_t>
 	{
 		typedef char16_t char_type;
 		typedef uint_least16_t int_type;
@@ -518,7 +518,7 @@ namespace Rider::Faiz
 		return r;
 	}
 
-	tpl<> struct char_traits<char32_t>
+	Tpl<> struct char_traits<char32_t>
 	{
 		typedef char32_t char_type;
 		typedef uint_least32_t int_type;

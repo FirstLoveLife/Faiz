@@ -17,12 +17,12 @@
 namespace Rider::Faiz
 {
 
-	tpl<typ T> struct static_const
+	Tpl<Typ T> struct static_const
 	{
 		static cexp T value{};
 	};
 
-	tpl<typ T> cexp T static_const<T>::value;
+	Tpl<Typ T> cexp T static_const<T>::value;
 } // namespace Rider::Faiz
 
 #endif

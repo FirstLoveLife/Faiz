@@ -9,13 +9,13 @@ namespace Rider::Faiz
 {
 	namespace detail
 	{
-		tpl<char Chs> cexp int
+		Tpl<char Chs> cexp int
 		toDecImpl()
 		{
 			return Chs > '9' ? Chs - 'A' + 10 : Chs - '0';
 		}
 	} // namespace detail
-	tpl<int from, char... Chs> cexp int
+	Tpl<int from, char... Chs> cexp int
 	toDec()
 	{
 		int ret{};
@@ -24,11 +24,11 @@ namespace Rider::Faiz
 	}
 	inline namespace literals
 	{
-		tpl<char... Chs> cexp int operator"" _B()
+		Tpl<char... Chs> cexp int operator"" _B()
 		{
 			return toDec<2, Chs...>();
 		}
-		tpl<char... Chs> cexp int operator"" _O()
+		Tpl<char... Chs> cexp int operator"" _O()
 		{
 			return toDec<8, Chs...>();
 		}

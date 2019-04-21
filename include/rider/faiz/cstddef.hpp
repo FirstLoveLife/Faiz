@@ -35,13 +35,13 @@ namespace Rider::Faiz
 	// 			return 0;
 	// 		}
 
-	// 		tpl<class T>
+	// 		Tpl<class T>
 	// 		cexp operator T*() const
 	// 		{
 	// 			return 0;
 	// 		}
 
-	// 		tpl<class T, class U>
+	// 		Tpl<class T, class U>
 	// 		operator T U::*() const
 	// 		{
 	// 			return 0;

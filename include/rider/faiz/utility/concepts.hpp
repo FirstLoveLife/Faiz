@@ -32,64 +32,64 @@ namespace Rider::Faiz::range
 
 		cexp struct valid_expr_t
 		{
-			tpl<typ... T> void
+			Tpl<Typ... T> void
 			operator()(T&&...) const;
 		} valid_expr{};
 
 		cexp struct same_type_t
 		{
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			operator()(T&&, U&&) const -> meta::if_<is_same<T, U>, int>;
 		} same_type{};
 
 		cexp struct is_true_t
 		{
-			tpl<typ Bool_> auto
+			Tpl<Typ Bool_> auto
 			operator()(Bool_) const -> meta::if_c<Bool_::value, int>;
 		} is_true{};
 
 		cexp struct is_false_t
 		{
-			tpl<typ Bool_> auto
+			Tpl<Typ Bool_> auto
 			operator()(Bool_) const -> meta::if_c<!Bool_::value, int>;
 		} is_false{};
 
-		tpl<typ Concept> struct base_concept : type_identity<Concept>
+		Tpl<Typ Concept> struct base_concept : type_identity<Concept>
 		{};
 
-		tpl<typ Concept, typ... Args> struct base_concept<Concept(Args...)>
+		Tpl<Typ Concept, Typ... Args> struct base_concept<Concept(Args...)>
 			: type_identity<Concept>
 		{};
 
-		tpl<typ Concept> using base_concept_t = typ base_concept<Concept>::type;
+		Tpl<Typ Concept> using base_concept_t = Typ base_concept<Concept>::type;
 
-		tpl<typ Concept, typ Enable = void> struct base_concepts_of
+		Tpl<Typ Concept, Typ Enable = void> struct base_concepts_of
 			: type_identity<meta::list<>>
 		{};
 
-		tpl<typ Concept> struct base_concepts_of<Concept,
-			void_t<typ Concept::base_concepts_t>>
-			: type_identity<typ Concept::base_concepts_t>
+		Tpl<Typ Concept> struct base_concepts_of<Concept,
+			void_t<Typ Concept::base_concepts_t>>
+			: type_identity<Typ Concept::base_concepts_t>
 		{};
 
-		tpl<typ Concept> using base_concepts_of_t
+		Tpl<Typ Concept> using base_concepts_of_t
 			= _t<base_concepts_of<Concept>>;
 
-		tpl<typ... Ts> auto models_(range::detail::any) -> false_;
+		Tpl<Typ... Ts> auto models_(range::detail::any) -> false_;
 
 
-		tpl<typ... Ts,
-			typ Concept,
-			typ = decltype(&Concept::tpl requires_<Ts...>)> auto
+		Tpl<Typ... Ts,
+			Typ Concept,
+			Typ = decltype(&Concept::Tpl requires_<Ts...>)> auto
 		models_(Concept*) -> meta::apply<meta::quote<meta::lazy::strict_and>,
 			meta::transform<base_concepts_of_t<Concept>,
 				meta::bind_back<meta::quote<range::concepts::models>, Ts...>>>;
 
-		tpl<typ List> struct most_refined_
+		Tpl<Typ List> struct most_refined_
 		{};
 
-		tpl<typ Head,
-			typ... Tail> struct most_refined_<meta::list<Head, Tail...>>
+		Tpl<Typ Head,
+			Typ... Tail> struct most_refined_<meta::list<Head, Tail...>>
 			: type_identity<Head>
 		{
 			cexp operator Head*() const
@@ -121,18 +121,18 @@ namespace Rider::Faiz::range
 		using _8 = integral_constant<int, 7>;
 		using _9 = integral_constant<int, 8>;
 
-		tpl<typ Ret, typ T> Ret
+		Tpl<Typ Ret, Typ T> Ret
 		returns_(T const&);
 
-		tpl<typ T, typ U> auto
+		Tpl<Typ T, Typ U> auto
 		convertible_to(U&& u)
 			-> decltype(concepts::returns_<int>(static_cast<T>((U &&) u)));
 
-		tpl<typ T, typ U> auto has_type(U &&) -> meta::if_<is_same<T, U>, int>;
+		Tpl<Typ T, Typ U> auto has_type(U &&) -> meta::if_<is_same<T, U>, int>;
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// refines
-		tpl<typ... Concepts> struct refines
+		Tpl<Typ... Concepts> struct refines
 			: virtual detail::base_concept_t<Concepts>...
 		{
 			// So that we don't create these by accident, since it's
@@ -142,35 +142,35 @@ namespace Rider::Faiz::range
 
 			using base_concepts_t = meta::list<Concepts...>;
 
-			tpl<typ... Ts> void
+			Tpl<Typ... Ts> void
 			requires_();
 		};
 
-		tpl<typ Concept, typ... Ts> struct models
+		Tpl<Typ Concept, Typ... Ts> struct models
 			: bool_<_t<decltype(detail::models_<Ts...>(
 				  meta::detail::_nullptr_v<Concept>()))>::value>
 		{};
 
-		tpl<typ Concept, typ... Args, typ... Ts> struct models<Concept(Args...),
+		Tpl<Typ Concept, Typ... Args, Typ... Ts> struct models<Concept(Args...),
 			Ts...> : models<Concept, meta::at<meta::list<Ts...>, Args>...>
 		{};
 
-		tpl<typ Concept, typ... Ts> auto
+		Tpl<Typ Concept, Typ... Ts> auto
 		model_of(Ts&&...)
 			-> meta::if_c<concepts::models<Concept, Ts...>::value, int>;
 
-		tpl<typ Concept, typ... Ts> auto
+		Tpl<Typ Concept, Typ... Ts> auto
 		model_of() -> meta::if_c<concepts::models<Concept, Ts...>::value, int>;
 
 		// most_refined
 		// Find the first concept in a list of concepts that is modeled by
 		// the Args
-		tpl<typ Concepts, typ... Ts> struct most_refined
+		Tpl<Typ Concepts, Typ... Ts> struct most_refined
 			: detail::most_refined_<meta::find_if<Concepts,
 				  meta::bind_back<meta::quote<models>, Ts...>>>
 		{};
 
-		tpl<typ Concepts, typ... Ts> using most_refined_t
+		Tpl<Typ Concepts, Typ... Ts> using most_refined_t
 			= _t<most_refined<Concepts, Ts...>>;
 
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,35 +179,35 @@ namespace Rider::Faiz::range
 
 		struct Satisfies
 		{
-			tpl<typ T, typ Trait, typ... Ts> auto
+			Tpl<Typ T, Typ Trait, Typ... Ts> auto
 			requires_() -> decltype(concepts::valid_expr(
 				concepts::is_true(meta::invoke<Trait, T, Ts...>{})));
 		};
 
 		struct Same
 		{
-			tpl<typ... Ts> struct same : true_
+			Tpl<Typ... Ts> struct same : true_
 			{};
-			tpl<typ T, typ... Us> struct same<T, Us...>
+			Tpl<Typ T, Typ... Us> struct same<T, Us...>
 				: meta::and_c<is_same<T, Us>::value...>
 			{};
-			tpl<typ... Ts> using same_t = _t<same<Ts...>>;
+			Tpl<Typ... Ts> using same_t = _t<same<Ts...>>;
 
-			tpl<typ... Ts> auto
+			Tpl<Typ... Ts> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::is_true(same_t<Ts...>{})));
 		};
 
 		struct ImplicitlyConvertibleTo
 		{
-			tpl<typ From, typ To> auto
+			Tpl<Typ From, Typ To> auto
 			requires_() -> decltype(concepts::valid_expr(
 				concepts::is_true(is_convertible<From, To>{})));
 		};
 
 		struct ExplicitlyConvertibleTo
 		{
-			tpl<typ From, typ To> auto requires_(From (&from)()) -> decltype(
+			Tpl<Typ From, Typ To> auto requires_(From (&from)()) -> decltype(
 				concepts::valid_expr(((void)static_cast<To>(from()), 42)));
 		};
 
@@ -217,7 +217,7 @@ namespace Rider::Faiz::range
 
 		struct DerivedFrom
 		{
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_() -> decltype(concepts::valid_expr(
 				concepts::is_true(is_base_of<U, T>{}),
 				concepts::is_true(
@@ -226,19 +226,19 @@ namespace Rider::Faiz::range
 
 		struct CommonReference
 		{
-			tpl<typ T, typ U, typ... Rest> using reference_t
+			Tpl<Typ T, Typ U, Typ... Rest> using reference_t
 				= common_reference_t<T, U, Rest...>;
 
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_() -> decltype(concepts::valid_expr(
 				concepts::model_of<Same, reference_t<T, U>, reference_t<U, T>>(),
 				concepts::model_of<ConvertibleTo, T, reference_t<T, U>>(),
 				concepts::model_of<ConvertibleTo, U, reference_t<T, U>>()));
 
-			tpl<typ T,
-				typ U,
-				typ... Rest,
-				typ CommonReference_ = CommonReference> auto
+			Tpl<Typ T,
+				Typ U,
+				Typ... Rest,
+				Typ CommonReference_ = CommonReference> auto
 			requires_() -> decltype(concepts::valid_expr(
 				concepts::model_of<CommonReference_, T, U>(),
 				concepts::
@@ -247,14 +247,14 @@ namespace Rider::Faiz::range
 
 		struct Common
 		{
-			tpl<typ T, typ U, typ... Rest> using value_t
+			Tpl<Typ T, Typ U, Typ... Rest> using value_t
 				= common_type_t<T, U, Rest...>;
 
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_() -> decltype(concepts::valid_expr(concepts::is_true(
 				is_same<remove_cvref_t<T>, remove_cvref_t<U>>{})));
 
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_() -> decltype(concepts::valid_expr(
 				concepts::is_false(
 					is_same<remove_cvref_t<T>, remove_cvref_t<U>>{}),
@@ -269,7 +269,7 @@ namespace Rider::Faiz::range
 					common_reference_t<range::detail::as_cref_t<T>,
 						range::detail::as_cref_t<U>>>()));
 
-			tpl<typ T, typ U, typ... Rest, typ Common_ = Common> auto
+			Tpl<Typ T, Typ U, Typ... Rest, Typ Common_ = Common> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::model_of<Common_, T, U>(),
 					concepts::model_of<Common_, value_t<T, U>, Rest...>()));
@@ -277,28 +277,28 @@ namespace Rider::Faiz::range
 
 		struct Integral
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::is_true(is_integral<T>{})));
 		};
 
 		struct SignedIntegral : refines<Integral>
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::is_true(is_signed<T>{})));
 		};
 
 		struct UnsignedIntegral : refines<Integral>
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::is_false(is_signed<T>{})));
 		};
 
 		struct Assignable
 		{
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_(T&& t, U&& u) -> decltype(concepts::valid_expr(
 				concepts::is_true(is_lvalue_reference<T>{}),
 				concepts::model_of<CommonReference,
@@ -309,11 +309,11 @@ namespace Rider::Faiz::range
 
 		struct Swappable
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_(T&& t) -> decltype(concepts::valid_expr(
 				((void)range::swap((T &&) t, (T &&) t), 42)));
 
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_(T&& t, U&& u) -> decltype(
 				concepts::valid_expr(concepts::model_of<Swappable, T>(),
 					concepts::model_of<Swappable, U>(),
@@ -329,7 +329,7 @@ namespace Rider::Faiz::range
 		////////////////////////////////////////////////////////////////////////////////////////////
 		struct WeaklyEqualityComparable
 		{
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_(
 				range::detail::as_cref_t<T> t, range::detail::as_cref_t<U> u)
 				-> decltype(
@@ -342,21 +342,21 @@ namespace Rider::Faiz::range
 
 		struct EqualityComparable
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_(range::detail::as_cref_t<T> t) -> decltype(
 				concepts::valid_expr(concepts::convertible_to<bool>(t == t),
 					concepts::convertible_to<bool>(t != t)));
 
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::is_true(is_same<T, U>{}),
 					concepts::model_of<EqualityComparable, T>()));
 
 			// Cross-type equality comparison from N3351:
 			// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3351.pdf
-			tpl<typ T,
-				typ U,
-				typ C = common_reference_t<range::detail::as_cref_t<T>,
+			Tpl<Typ T,
+				Typ U,
+				Typ C = common_reference_t<range::detail::as_cref_t<T>,
 					range::detail::as_cref_t<U>>> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::is_false(is_same<T, U>{}),
@@ -371,16 +371,16 @@ namespace Rider::Faiz::range
 
 		struct WeaklyOrdered
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_(T&& t) -> decltype(
 				concepts::valid_expr(concepts::convertible_to<bool>(t < t),
 					concepts::convertible_to<bool>(t > t),
 					concepts::convertible_to<bool>(t <= t),
 					concepts::convertible_to<bool>(t >= t)));
 
-			tpl<typ T,
-				typ U,
-				typ C = common_reference_t<range::detail::as_cref_t<T>,
+			Tpl<Typ T,
+				Typ U,
+				Typ C = common_reference_t<range::detail::as_cref_t<T>,
 					range::detail::as_cref_t<U>>> auto
 			requires_(
 				range::detail::as_cref_t<T> t, range::detail::as_cref_t<U> u)
@@ -403,10 +403,10 @@ namespace Rider::Faiz::range
 
 		struct TotallyOrdered : refines<EqualityComparable, WeaklyOrdered>
 		{
-			tpl<typ T> void
+			Tpl<Typ T> void
 			requires_();
 
-			tpl<typ T, typ U> auto
+			Tpl<Typ T, Typ U> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::model_of<TotallyOrdered, T>(),
 					concepts::model_of<TotallyOrdered, U>()));
@@ -415,27 +415,27 @@ namespace Rider::Faiz::range
 		// TODO: implement is_nothrow_destructible
 		struct Destructible
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_() -> decltype(concepts::valid_expr(
 				concepts::is_true(std::is_nothrow_destructible<T>())));
 		};
 
 		struct Constructible : refines<Destructible(_1)>
 		{
-			tpl<typ T, typ... Args> auto
+			Tpl<Typ T, Typ... Args> auto
 			requires_() -> decltype(concepts::valid_expr(
 				concepts::is_true(is_constructible<T, Args...>{})));
 		};
 
 		struct DefaultConstructible : refines<Constructible>
 		{
-			tpl<typ T> void
+			Tpl<Typ T> void
 			requires_();
 		};
 
 		struct MoveConstructible
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::model_of<Constructible, T, T>(),
 					concepts::model_of<ConvertibleTo, T, T>()));
@@ -443,7 +443,7 @@ namespace Rider::Faiz::range
 
 		struct CopyConstructible : refines<MoveConstructible>
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::model_of<Constructible, T, T&>(),
 					concepts::model_of<Constructible, T, T const&>(),
@@ -455,7 +455,7 @@ namespace Rider::Faiz::range
 
 		struct Movable : refines<MoveConstructible>
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_() -> decltype(
 				concepts::valid_expr(concepts::is_true(is_object<T>{}),
 					concepts::model_of<Assignable, T&, T>(),
@@ -464,7 +464,7 @@ namespace Rider::Faiz::range
 
 		struct Copyable : refines<Movable, CopyConstructible>
 		{
-			tpl<typ T> auto
+			Tpl<Typ T> auto
 			requires_() -> decltype(concepts::valid_expr(
 				// Spec requires this to be validated
 				concepts::model_of<Assignable, T&, T const&>(),
@@ -483,77 +483,77 @@ namespace Rider::Faiz::range
 		{};
 	} // namespace concepts
 
-	tpl<typ T, tpl<typ...> class Trait, typ... Ts> using Satisfies
+	Tpl<Typ T, Tpl<Typ...> class Trait, Typ... Ts> using Satisfies
 		= concepts::models<concepts::Satisfies, T, meta::quote<Trait>, Ts...>;
 
-	tpl<typ... Ts> using Same
+	Tpl<Typ... Ts> using Same
 		= concepts::Same::same_t<Ts...>; // This handles void better than
 										 // using the Same concept
 
-	tpl<typ T, typ U> using ImplicitlyConvertibleTo
+	Tpl<Typ T, Typ U> using ImplicitlyConvertibleTo
 		= concepts::models<concepts::ImplicitlyConvertibleTo, T, U>;
 
-	tpl<typ T, typ U> using ExplicitlyConvertibleTo
+	Tpl<Typ T, Typ U> using ExplicitlyConvertibleTo
 		= concepts::models<concepts::ExplicitlyConvertibleTo, T, U>;
 
-	tpl<typ T, typ U> using ConvertibleTo
+	Tpl<Typ T, Typ U> using ConvertibleTo
 		= concepts::models<concepts::ConvertibleTo, T, U>;
 
-	tpl<typ T, typ U> using DerivedFrom
+	Tpl<Typ T, Typ U> using DerivedFrom
 		= concepts::models<concepts::DerivedFrom, T, U>;
 
-	tpl<typ T, typ U, typ... Rest> using CommonReference
+	Tpl<Typ T, Typ U, Typ... Rest> using CommonReference
 		= concepts::models<concepts::CommonReference, T, U, Rest...>;
 
-	tpl<typ T, typ U, typ... Rest> using Common
+	Tpl<Typ T, Typ U, Typ... Rest> using Common
 		= concepts::models<concepts::Common, T, U, Rest...>;
 
-	tpl<typ T> using Integral = concepts::models<concepts::Integral, T>;
+	Tpl<Typ T> using Integral = concepts::models<concepts::Integral, T>;
 
-	tpl<typ T> using SignedIntegral
+	Tpl<Typ T> using SignedIntegral
 		= concepts::models<concepts::SignedIntegral, T>;
 
-	tpl<typ T> using UnsignedIntegral
+	Tpl<Typ T> using UnsignedIntegral
 		= concepts::models<concepts::UnsignedIntegral, T>;
 
-	tpl<typ T> using Destructible = concepts::models<concepts::Destructible, T>;
+	Tpl<Typ T> using Destructible = concepts::models<concepts::Destructible, T>;
 
-	tpl<typ T, typ... Args> using Constructible
+	Tpl<Typ T, Typ... Args> using Constructible
 		= concepts::models<concepts::Constructible, T, Args...>;
 
-	tpl<typ T> using DefaultConstructible
+	Tpl<Typ T> using DefaultConstructible
 		= concepts::models<concepts::DefaultConstructible, T>;
 
-	tpl<typ T> using MoveConstructible
+	Tpl<Typ T> using MoveConstructible
 		= concepts::models<concepts::MoveConstructible, T>;
 
-	tpl<typ T> using CopyConstructible
+	Tpl<Typ T> using CopyConstructible
 		= concepts::models<concepts::CopyConstructible, T>;
 
-	tpl<typ T, typ U> using Assignable
+	Tpl<Typ T, Typ U> using Assignable
 		= concepts::models<concepts::Assignable, T, U>;
 
-	tpl<typ T> using Movable = concepts::models<concepts::Movable, T>;
+	Tpl<Typ T> using Movable = concepts::models<concepts::Movable, T>;
 
-	tpl<typ T> using Copyable = concepts::models<concepts::Copyable, T>;
+	Tpl<Typ T> using Copyable = concepts::models<concepts::Copyable, T>;
 
-	tpl<typ T, typ U> using WeaklyEqualityComparable
+	Tpl<Typ T, Typ U> using WeaklyEqualityComparable
 		= concepts::models<concepts::WeaklyEqualityComparable, T, U>;
 
-	tpl<typ T, typ U = T> using EqualityComparable
+	Tpl<Typ T, Typ U = T> using EqualityComparable
 		= concepts::models<concepts::EqualityComparable, T, U>;
 
-	tpl<typ T, typ U = T> using WeaklyOrdered
+	Tpl<Typ T, Typ U = T> using WeaklyOrdered
 		= concepts::models<concepts::WeaklyOrdered, T, U>;
 
-	tpl<typ T, typ U = T> using TotallyOrdered
+	Tpl<Typ T, Typ U = T> using TotallyOrdered
 		= concepts::models<concepts::TotallyOrdered, T, U>;
 
-	tpl<typ T> using SemiRegular = concepts::models<concepts::SemiRegular, T>;
+	Tpl<Typ T> using SemiRegular = concepts::models<concepts::SemiRegular, T>;
 
-	tpl<typ T> using Regular = concepts::models<concepts::Regular, T>;
+	Tpl<Typ T> using Regular = concepts::models<concepts::Regular, T>;
 
-	tpl<typ T, typ U = T> using Swappable
+	Tpl<Typ T, Typ U = T> using Swappable
 		= concepts::models<concepts::Swappable, T, U>;
 } // namespace Rider::Faiz::range
 
@@ -563,10 +563,10 @@ namespace Rider::Faiz::range
 #define CONCEPT_REQUIRES_(...) \
 	bool CONCEPT_PP_CAT(_concept_requires_, __LINE__) \
 		= false, \
-		typ enable_if < CONCEPT_PP_CAT(_concept_requires_, __LINE__) \
+		Typ enable_if < CONCEPT_PP_CAT(_concept_requires_, __LINE__) \
 		|| (__VA_ARGS__) > ::type * = nullptr /**/
 
-#define CONCEPT_REQUIRES(...) tpl<CONCEPT_REQUIRES_(__VA_ARGS__)> /**/
+#define CONCEPT_REQUIRES(...) Tpl<CONCEPT_REQUIRES_(__VA_ARGS__)> /**/
 
 #define CONCEPT_ASSERT(...) \
 	static_assert((__VA_ARGS__), "Concept check failed: " #__VA_ARGS__)

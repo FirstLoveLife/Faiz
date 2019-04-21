@@ -4,23 +4,23 @@
 #include <iostream>
 namespace Rider::Faiz
 {
-	tpl<typ T> cexp const T&
+	Tpl<Typ T> cexp const T&
 	min(const T& a, const T& b)
 	{
 		return (b < a) ? b : a;
 	}
-	tpl<typ T> cexp const T&
+	Tpl<Typ T> cexp const T&
 	max(const T& a, const T& b)
 	{
 		return (b < a) ? a : b;
 	}
 
-	tpl<typ T, typ Cmp> cexp const T&
+	Tpl<Typ T, Typ Cmp> cexp const T&
 	min(const T& a, const T& b, Cmp less)
 	{
 		return less(b, a) ? b : a;
 	}
-	tpl<typ T, typ Cmp> cexp const T&
+	Tpl<Typ T, Typ Cmp> cexp const T&
 	max(const T& a, const T& b, Cmp less)
 	{
 		return less(b, a) ? a : b;
@@ -39,7 +39,7 @@ namespace Rider::Faiz
 	// ```
 	// Output:
 	// 1234
-	tpl<typ tInputIt, typ Size, typ OutputIt> cfn
+	Tpl<Typ tInputIt, Typ Size, Typ OutputIt> cfn
 	copy_n(tInputIt first, Size count, OutputIt result)->OutputIt
 	{
 		if(count > 0)
@@ -53,7 +53,7 @@ namespace Rider::Faiz
 		return result;
 	}
 
-	tpl<unsigned N, typ T> cfn
+	Tpl<unsigned N, Typ T> cfn
 	power(T x)->T
 	{
 		if(N == 0u)
@@ -64,7 +64,7 @@ namespace Rider::Faiz
 			return x * power<N - 1>(x);
 	}
 
-	tpl<typ tInputIt1, typ tInputIt2> cfn
+	Tpl<Typ tInputIt1, Typ tInputIt2> cfn
 	lexicographical_compare(
 		tInputIt1 first1, tInputIt1 last1, tInputIt2 first2, tInputIt2 last2)
 		->bool
@@ -82,7 +82,7 @@ namespace Rider::Faiz
 		}
 		return first1 == last1 && first2 != last2;
 	}
-	tpl<typ tInputIt1, typ tInputIt2, typ tCompare> cfn
+	Tpl<Typ tInputIt1, Typ tInputIt2, Typ tCompare> cfn
 	lexicographical_compare(tInputIt1 first1,
 		tInputIt1 last1,
 		tInputIt2 first2,
@@ -104,7 +104,7 @@ namespace Rider::Faiz
 		return first1 == last1 && first2 != last2;
 	}
 
-	tpl<typ tInputIt1, typ tInputIt2> cfn
+	Tpl<Typ tInputIt1, Typ tInputIt2> cfn
 	equal(tInputIt1 first1, tInputIt1 last1, tInputIt2 first2)->bool
 	{
 		for(; first1 != last1; first1++, first2++)
@@ -117,7 +117,7 @@ namespace Rider::Faiz
 		return true;
 	}
 
-	tpl<typ tInputIt1, typ tInputIt2, typ tBinaryPredicate> cfn
+	Tpl<Typ tInputIt1, Typ tInputIt2, Typ tBinaryPredicate> cfn
 	equal(tInputIt1 first1,
 		tInputIt1 last1,
 		tInputIt2 first2,
@@ -134,7 +134,7 @@ namespace Rider::Faiz
 		return true;
 	}
 
-	tpl<typ tInputIt1, typ tInputIt2> cfn
+	Tpl<Typ tInputIt1, Typ tInputIt2> cfn
 	equal(tInputIt1 first1, tInputIt1 last1, tInputIt2 first2, tInputIt2 last2)
 		->bool
 	{
@@ -149,7 +149,7 @@ namespace Rider::Faiz
 	}
 
 
-	tpl<typ tInputIt1, typ tInputIt2, typ tBinaryPredicate> cfn
+	Tpl<Typ tInputIt1, Typ tInputIt2, Typ tBinaryPredicate> cfn
 	equal(tInputIt1 first1,
 		tInputIt1 last1,
 		tInputIt2 first2,

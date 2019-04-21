@@ -10,25 +10,25 @@
 namespace Rider
 {
 
-	tpl<typ T> using _t = typ T::type;
+	Tpl<Typ T> using _t = Typ T::type;
 
-	tpl<typ T> using _p = typ T::pointer;
+	Tpl<Typ T> using _p = Typ T::pointer;
 
-	tpl<typ T> using _e = typ T::element_type;
+	Tpl<Typ T> using _e = Typ T::element_type;
 
-	tpl<typ T> using _p = typ T::pointer;
+	Tpl<Typ T> using _p = Typ T::pointer;
 
-	tpl<typ T, bool b> struct dependent_type : public T
+	Tpl<Typ T, bool b> struct dependent_type : public T
 	{};
 
-	tpl<typ T, bool b> using dependent_type_t = _t<dependent_type<T, b>>;
+	Tpl<Typ T, bool b> using dependent_type_t = _t<dependent_type<T, b>>;
 
-	tpl<typ...> using void_t = void;
-	tpl<typ T> struct type_identity
+	Tpl<Typ...> using void_t = void;
+	Tpl<Typ T> struct type_identity
 	{
 		using type = T;
 	};
-	tpl<typ T> using type_identity_t = _t<type_identity<T>>;
+	Tpl<Typ T> using type_identity_t = _t<type_identity<T>>;
 
 	using index = std::ptrdiff_t;
 
@@ -37,10 +37,10 @@ namespace Rider
 
 namespace Rider::Faiz
 {
-	tpl<typ... tTypes> struct Pack
+	Tpl<Typ... tTypes> struct Pack
 	{};
-	tpl<typ T, T v> struct integral_constant;
-	tpl<typ T, T v> struct integral_constant
+	Tpl<Typ T, T v> struct integral_constant;
+	Tpl<Typ T, T v> struct integral_constant
 	{
 		static cexp T value = v;
 		using value_type = T;
@@ -57,7 +57,7 @@ namespace Rider::Faiz
 	};
 
 #define ImplDeclIntT(_n, _t) \
-	tpl<_t _vInt> using _n = integral_constant<_t, _vInt>;
+	Tpl<_t _vInt> using _n = integral_constant<_t, _vInt>;
 #define ImplDeclIntTDe(_t) ImplDeclIntT(_t##_, _t)
 
 	ImplDeclIntTDe(bool)
@@ -79,19 +79,19 @@ namespace Rider::Faiz
 
 	using true_ = bool_<true>;
 	using false_ = bool_<false>;
-	tpl<bool B> using bool_constant = bool_<B>;
+	Tpl<bool B> using bool_constant = bool_<B>;
 	using true_type = true_;
 	using false_type = false_;
 
-	tpl<typ T> using sizeof_able = size_t_<sizeof(T)>;
+	Tpl<Typ T> using sizeof_able = size_t_<sizeof(T)>;
 } // namespace Rider::Faiz
 
 namespace Rider::Faiz::detail
 {
-	tpl<tpl<typ tFirst, typ tSecond> class Trait,
-		typ tFirst,
-		typ tSecond,
-		typ... tRest>
+	Tpl<Tpl<Typ tFirst, Typ tSecond> class Trait,
+		Typ tFirst,
+		Typ tSecond,
+		Typ... tRest>
 		cfn
 	binaryTraitAre_impl()->bool
 	{
@@ -106,10 +106,10 @@ namespace Rider::Faiz::detail
 		}
 	}
 
-	tpl<tpl<typ tFirst, typ tSecond> class Trait,
-		typ tFirst,
-		typ tSecond,
-		typ... tRest>
+	Tpl<Tpl<Typ tFirst, Typ tSecond> class Trait,
+		Typ tFirst,
+		Typ tSecond,
+		Typ... tRest>
 		cfn
 	binaryTraitOr_impl()->bool
 	{
@@ -184,40 +184,40 @@ namespace Rider::Faiz
 	using std::is_enum;
 	IS_NOT_ARE_ANY(enum);
 
-	tpl<typ T> struct reference_wrapper;
+	Tpl<Typ T> struct reference_wrapper;
 
-	tpl<typ> struct is_reference_wrapper;
+	Tpl<Typ> struct is_reference_wrapper;
 
-	tpl<typ T> struct add_cv;
-	tpl<typ T> struct add_const;
-	tpl<typ T> struct add_volatile;
+	Tpl<Typ T> struct add_cv;
+	Tpl<Typ T> struct add_const;
+	Tpl<Typ T> struct add_volatile;
 
-	tpl<typ T> using add_cv_t = _t<add_cv<T>>;
-	tpl<typ T> using add_const_t = _t<add_const<T>>;
-	tpl<typ T> using add_volatile_t = _t<add_volatile<T>>;
+	Tpl<Typ T> using add_cv_t = _t<add_cv<T>>;
+	Tpl<Typ T> using add_const_t = _t<add_const<T>>;
+	Tpl<Typ T> using add_volatile_t = _t<add_volatile<T>>;
 
-	tpl<typ T> struct remove_const;
-	tpl<typ T> struct remove_volatile;
+	Tpl<Typ T> struct remove_const;
+	Tpl<Typ T> struct remove_volatile;
 
-	tpl<typ T> struct is_destructible;
+	Tpl<Typ T> struct is_destructible;
 
 
-	tpl<typ T> struct is_nothrow_destructible;
+	Tpl<Typ T> struct is_nothrow_destructible;
 
-	tpl<typ T> using remove_const_t = _t<remove_const<T>>;
+	Tpl<Typ T> using remove_const_t = _t<remove_const<T>>;
 
-	tpl<typ T> using remove_volatile_t = _t<remove_volatile<T>>;
+	Tpl<Typ T> using remove_volatile_t = _t<remove_volatile<T>>;
 
-	tpl<typ T> using remove_cv = remove_volatile<remove_const_t<T>>;
+	Tpl<Typ T> using remove_cv = remove_volatile<remove_const_t<T>>;
 
-	tpl<typ T> using remove_cv_t = _t<remove_cv<T>>;
+	Tpl<Typ T> using remove_cv_t = _t<remove_cv<T>>;
 
-	tpl<typ T> struct add_lvalue_reference;
-	tpl<typ T> struct add_rvalue_reference;
-	tpl<typ T> using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
-	tpl<typ T> using add_rvalue_reference_t = _t<add_rvalue_reference<T>>;
+	Tpl<Typ T> struct add_lvalue_reference;
+	Tpl<Typ T> struct add_rvalue_reference;
+	Tpl<Typ T> using add_lvalue_reference_t = _t<add_lvalue_reference<T>>;
+	Tpl<Typ T> using add_rvalue_reference_t = _t<add_rvalue_reference<T>>;
 
-	tpl<typ T> add_rvalue_reference_t<T>
+	Tpl<Typ T> add_rvalue_reference_t<T>
 	declval() noexcept;
 
 	//  If T is an object type (that is any possibly cv-qualified type other
@@ -232,69 +232,69 @@ namespace Rider::Faiz
 	// is_scalar<T>::value || is_array<T>::value  || is_union<T>::value  ||
 	// is_class<T>::value>
 	// ```
-	tpl<typ T> struct is_object;
+	Tpl<Typ T> struct is_object;
 	IS_NOT_ARE_ANY(object)
 	// FIXME: error: incomplete type ‘Ride r::Faiz::is_integral<long unsigned
 	// int>’ used in nested name specifier. No good solution now. Maybe module
 	// can help me
 
-	tpl<typ T, typ U> struct is_assignable;
+	Tpl<Typ T, Typ U> struct is_assignable;
 
-	tpl<typ T, typ U> struct is_nothrow_assignable;
-	tpl<typ T, typ U> inline cexp bool is_assignable_v
+	Tpl<Typ T, Typ U> struct is_nothrow_assignable;
+	Tpl<Typ T, Typ U> inline cexp bool is_assignable_v
 		= is_assignable<T, U>::value;
 	BI_ARE(assignable);
 
-	tpl<typ T, typ U> inline cexp bool is_nothrow_assignable_v
+	Tpl<Typ T, Typ U> inline cexp bool is_nothrow_assignable_v
 		= is_nothrow_assignable<T, U>::value;
-	tpl<typ Base, typ Derived> struct is_base_of;
-	tpl<typ T> struct remove_reference;
-	tpl<typ T> using remove_reference_t = _t<remove_reference<T>>;
+	Tpl<Typ Base, Typ Derived> struct is_base_of;
+	Tpl<Typ T> struct remove_reference;
+	Tpl<Typ T> using remove_reference_t = _t<remove_reference<T>>;
 
-	tpl<typ T> struct is_lvalue_reference;
+	Tpl<Typ T> struct is_lvalue_reference;
 
 	IS_NOT_ARE_ANY(lvalue_reference);
 
-	tpl<typ T> struct remove_cvref;
-	tpl<typ T> using remove_cvref_t = _t<remove_cvref<T>>;
-	tpl<typ T> struct is_integral;
-	tpl<bool B, typ T = void> struct enable_if;
-	tpl<bool B, typ T = void> using enable_if_t = _t<enable_if<B, T>>;
+	Tpl<Typ T> struct remove_cvref;
+	Tpl<Typ T> using remove_cvref_t = _t<remove_cvref<T>>;
+	Tpl<Typ T> struct is_integral;
+	Tpl<bool B, Typ T = void> struct enable_if;
+	Tpl<bool B, Typ T = void> using enable_if_t = _t<enable_if<B, T>>;
 
-	tpl<bool B, typ T = void> using disable_if = enable_if<not B, T>;
+	Tpl<bool B, Typ T = void> using disable_if = enable_if<not B, T>;
 
-	tpl<bool B, typ T, typ F> struct conditional;
+	Tpl<bool B, Typ T, Typ F> struct conditional;
 
-	tpl<typ T, typ U> struct is_same;
+	Tpl<Typ T, Typ U> struct is_same;
 
 	BI_IS(same);
 	BI_NOT(same);
 
 	namespace detail
 	{
-		tpl<typ A0, typ... Rest> cfn
+		Tpl<Typ A0, Typ... Rest> cfn
 		are_same_aux()->bool
 		{
 			return (is_same_v<Rest, A0> and ... and true);
 		}
 	} // namespace detail
 
-	tpl<typ... Types> inline cexp bool are_same_v
+	Tpl<Typ... Types> inline cexp bool are_same_v
 		= detail::are_same_aux<Types...>();
 
-	tpl<typ... Types> struct are_same : bool_<are_same_v<Types...>>
+	Tpl<Typ... Types> struct are_same : bool_<are_same_v<Types...>>
 	{};
 
-	tpl<typ T, typ... Rest> inline cexp bool is_any_v
+	Tpl<Typ T, Typ... Rest> inline cexp bool is_any_v
 		= (is_same_v<T, Rest> or ...);
 
-	tpl<typ T, typ... Rest> struct is_any : bool_<is_any_v<T, Rest...>>
+	Tpl<Typ T, Typ... Rest> struct is_any : bool_<is_any_v<T, Rest...>>
 	{};
 
-	tpl<typ T, typ... Rest> inline cexp bool not_any_v
+	Tpl<Typ T, Typ... Rest> inline cexp bool not_any_v
 		= (not_same_v<T, Rest> and ...);
 
-	tpl<typ T, typ... Rest> struct not_any : bool_<not_any_v<T, Rest...>>
+	Tpl<Typ T, Typ... Rest> struct not_any : bool_<not_any_v<T, Rest...>>
 	{};
 
 
@@ -314,14 +314,14 @@ namespace Rider::Faiz
 	// More or fewer than 39 will be slower on my machine.
 	namespace detail
 	{
-		tpl<typ tIndex, tIndex... V> struct integer_sequence_aux
+		Tpl<Typ tIndex, tIndex... V> struct integer_sequence_aux
 		{
-			tpl<tpl<typ tFrom, tFrom...> typ tToIndexSeq, typ tTo> using convert
+			Tpl<Tpl<Typ tFrom, tFrom...> Typ tToIndexSeq, Typ tTo> using convert
 				= tToIndexSeq<tTo, V...>;
 		};
 
-		tpl<typ T, size_t... vExtra> struct repeat;
-		tpl<typ T, T... vSeq, size_t... vExtra> struct repeat<
+		Tpl<Typ T, size_t... vExtra> struct repeat;
+		Tpl<Typ T, T... vSeq, size_t... vExtra> struct repeat<
 			integer_sequence_aux<T, vSeq...>,
 			vExtra...>
 		{
@@ -349,20 +349,20 @@ namespace Rider::Faiz
 			// clang-format on
 		};
 
-		tpl<size_t V> struct parity;
-		tpl<size_t V> struct make : parity<V % 39>::tpl pmake<V>
+		Tpl<size_t V> struct parity;
+		Tpl<size_t V> struct make : parity<V % 39>::Tpl pmake<V>
 		{};
 
-		tpl<> struct make<0> : type_identity<integer_sequence_aux<size_t>>
+		Tpl<> struct make<0> : type_identity<integer_sequence_aux<size_t>>
 		{};
 #define MAKE(N, ...) \
-	tpl<> struct make<N> \
+	Tpl<> struct make<N> \
 		: type_identity<integer_sequence_aux<size_t, __VA_ARGS__>> \
 	{};
 #define PARITY(N, ...) \
-	tpl<> struct parity<N> \
+	Tpl<> struct parity<N> \
 	{ \
-		tpl<size_t V> struct pmake : repeat<_t<make<V / 39>>, __VA_ARGS__> \
+		Tpl<size_t V> struct pmake : repeat<_t<make<V / 39>>, __VA_ARGS__> \
 		{}; \
 	};
 #define AppendV(z, n, data) (V - n)
@@ -404,7 +404,7 @@ namespace Rider::Faiz
 
 	} // namespace detail
 
-	tpl<typ T, T... vSeq> struct integer_sequence
+	Tpl<Typ T, T... vSeq> struct integer_sequence
 	{
 		using value_type = T;
 		static_assert(std::is_integral_v<T>,
@@ -418,13 +418,13 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<size_t... vSeq> using index_sequence
+	Tpl<size_t... vSeq> using index_sequence
 		= integer_sequence<size_t, vSeq...>;
 
-	tpl<typ T, T V> using make_integer_sequence_aux_unchecked
-		= typ detail::make<V>::type::tpl convert<integer_sequence, T>;
+	Tpl<Typ T, T V> using make_integer_sequence_aux_unchecked
+		= Typ detail::make<V>::type::Tpl convert<integer_sequence, T>;
 
-	tpl<typ T, T V> struct make_integer_sequence_checked
+	Tpl<Typ T, T V> struct make_integer_sequence_checked
 		: type_identity<make_integer_sequence_aux_unchecked<T, 0 <= V ? V : 0>>
 	{
 		static_assert(std::is_integral_v<T>,
@@ -435,15 +435,15 @@ namespace Rider::Faiz
 			"length");
 	};
 
-	tpl<typ T, T V> using make_integer_sequence_aux
+	Tpl<Typ T, T V> using make_integer_sequence_aux
 		= _t<make_integer_sequence_checked<T, V>>;
 
-	tpl<typ T, T V> using make_integer_sequence
+	Tpl<Typ T, T V> using make_integer_sequence
 		= make_integer_sequence_aux<T, V>;
 
-	tpl<size_t V> using make_index_sequence = make_integer_sequence<size_t, V>;
+	Tpl<size_t V> using make_index_sequence = make_integer_sequence<size_t, V>;
 
-	tpl<typ... T> using index_sequence_for = make_index_sequence<sizeof...(T)>;
+	Tpl<Typ... T> using index_sequence_for = make_index_sequence<sizeof...(T)>;
 } // namespace Rider::Faiz
 
 

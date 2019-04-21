@@ -25,7 +25,7 @@ namespace Rider::Faiz
 	{
 		struct move_fn
 		{
-			tpl<typ T, typ U = remove_reference_t<T>> fn
+			Tpl<Typ T, Typ U = remove_reference_t<T>> fn
 			operator()(T&& t) const noexcept->U&&
 			{
 				return static_cast<U&&>(t);
@@ -34,25 +34,25 @@ namespace Rider::Faiz
 
 		inline cexp move_fn move{};
 
-		tpl<typ T> fn
+		Tpl<Typ T> fn
 		operator|(T&& t, move_fn move) noexcept->remove_reference_t<T>&&
 		{
 			return move(t);
 		}
 
-		tpl<typ R> using move_t
+		Tpl<Typ R> using move_t
 			= meta::if_<is_reference<R>, remove_reference_t<R>&&, decay_t<R>>;
 	} // namespace aux
 
 	namespace adl_move_detail
 	{
-		tpl<typ T, typ = decltype(iter_move(declval<T>()))> true_
+		Tpl<Typ T, Typ = decltype(iter_move(declval<T>()))> true_
 		try_adl_iter_move_(int);
 
-		tpl<typ T> false_
+		Tpl<Typ T> false_
 		try_adl_iter_move_(long);
 
-		tpl<typ T> struct is_adl_indirectly_movable_
+		Tpl<Typ T> struct is_adl_indirectly_movable_
 			: meta::id_t<decltype(adl_move_detail::try_adl_iter_move_<T>(42))>
 		{};
 
@@ -60,13 +60,13 @@ namespace Rider::Faiz
 		// (Results in ODR-use of projected_readable::operator*)
 		struct iter_move_fn
 		{
-			tpl<typ I,
-				typ = meta::if_c<is_adl_indirectly_movable_<I&>::value>> auto
+			Tpl<Typ I,
+				Typ = meta::if_c<is_adl_indirectly_movable_<I&>::value>> auto
 			operator()(I&& i) const DECLTYPE_AUTO_RETURN_NOEXCEPT(iter_move(i))
 
-				tpl<typ I,
-					typ = meta::if_c<!is_adl_indirectly_movable_<I&>::value>,
-					typ R = reference_t<I>> auto
+				Tpl<Typ I,
+					Typ = meta::if_c<!is_adl_indirectly_movable_<I&>::value>,
+					Typ R = reference_t<I>> auto
 				operator()(I&& i) const DECLTYPE_AUTO_RETURN_NOEXCEPT(
 					static_cast<aux::move_t<R>>(aux::move(*i)))
 		};
@@ -81,7 +81,7 @@ namespace Rider::Faiz
 	/// \cond
 	struct indirect_move_fn
 	{
-		tpl<typ I> DEPRECATED("Please replace uses of ranges::indirect_move "
+		Tpl<Typ I> DEPRECATED("Please replace uses of ranges::indirect_move "
 							  "with ranges::iter_move.") void
 		operator()(I&& i) const AUTO_RETURN_NOEXCEPT(iter_move((I &&) i))
 	};
@@ -90,7 +90,7 @@ namespace Rider::Faiz
 
 	namespace detail
 	{
-		tpl<typ I, typ O> using is_indirectly_movable_
+		Tpl<Typ I, Typ O> using is_indirectly_movable_
 			= bool_ < is_constructible<_t<value_type<I>>,
 				  decltype(iter_move(declval<I&>()))>::value
 			&& is_assignable<_t<value_type<I>>&,
@@ -100,7 +100,7 @@ namespace Rider::Faiz
 				   decltype(iter_move(declval<I&>()))>::value
 				> ;
 
-		tpl<typ I, typ O> using is_nothrow_indirectly_movable_
+		Tpl<Typ I, Typ O> using is_nothrow_indirectly_movable_
 			= bool_ < noexcept(iter_move(declval<I&>()))
 			&& std::is_nothrow_constructible<_t<value_type<I>>,
 				decltype(iter_move(declval<I&>()))>::value
@@ -114,14 +114,14 @@ namespace Rider::Faiz
 	} // namespace detail
 	/// \endcond
 
-	tpl<typ I, typ O> struct is_indirectly_movable
+	Tpl<Typ I, Typ O> struct is_indirectly_movable
 		: _t<meta::if_<
 			  meta::is_trait<meta::defer<detail::is_indirectly_movable_, I, O>>,
 			  meta::defer<detail::is_indirectly_movable_, I, O>,
 			  false_>>
 	{};
 
-	tpl<typ I, typ O> struct is_nothrow_indirectly_movable
+	Tpl<Typ I, Typ O> struct is_nothrow_indirectly_movable
 		: _t<meta::if_<
 			  meta::is_trait<
 				  meta::defer<detail::is_nothrow_indirectly_movable_, I, O>>,

@@ -4,8 +4,8 @@
 #include "rider/faiz/string_view.hpp"
 namespace Rider::Faiz
 {
-	tpl<typ charT,
-		typ traits = std::char_traits<charT>> class basic_zstring_view
+	Tpl<Typ charT,
+		Typ traits = std::char_traits<charT>> class basic_zstring_view
 		: private basic_string_view<charT, traits>
 	{
 	public:
@@ -23,7 +23,7 @@ namespace Rider::Faiz
 		using base_view_type::const_reverse_iterator;
 		using base_view_type::reverse_iterator;
 
-		using typ base_view_type::size_type;
+		using Typ base_view_type::size_type;
 		using base_view_type::difference_type;
 
 		using base_view_type::npos;
@@ -77,7 +77,7 @@ namespace Rider::Faiz
 
 		using base_view_type::swap;
 
-		tpl<class Allocator = std::allocator<charT>>
+		Tpl<class Allocator = std::allocator<charT>>
 			std::basic_string<charT, traits, Allocator>
 			to_string(const Allocator& a = Allocator()) const
 		{

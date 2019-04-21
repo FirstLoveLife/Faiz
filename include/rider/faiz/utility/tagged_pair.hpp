@@ -25,34 +25,34 @@ namespace Rider::Faiz
 {
 	namespace detail
 	{
-		tpl<typ T> using tag_spec = meta::front<meta::as_list<T>>;
+		Tpl<Typ T> using tag_spec = meta::front<meta::as_list<T>>;
 
-		tpl<typ T> using tag_elem = meta::back<meta::as_list<T>>;
+		Tpl<Typ T> using tag_elem = meta::back<meta::as_list<T>>;
 	} // namespace detail
 
 	namespace _tagged_
 	{
-		tpl<typ Base, std::size_t, typ...> struct chain
+		Tpl<Typ Base, std::size_t, Typ...> struct chain
 		{
 			using type = Base;
 		};
-		tpl<typ Base, std::size_t I, typ First, typ... Rest> struct chain<Base,
+		Tpl<Typ Base, std::size_t I, Typ First, Typ... Rest> struct chain<Base,
 			I,
 			First,
 			Rest...>
 		{
-			using type = typ First::tpl
+			using type = Typ First::Tpl
 				getter<Base, I, _t<chain<Base, I + 1, Rest...>>>;
 		};
 
 #if RANGES_BROKEN_CPO_LOOKUP
-		tpl<typ> struct adl_hook
+		Tpl<Typ> struct adl_hook
 		{};
 #endif
 	} // namespace _tagged_
 	/// \endcond
 
-	tpl<typ Base, typ... Tags> class tagged
+	Tpl<Typ Base, Typ... Tags> class tagged
 		: public _t<_tagged_::chain<Base, 0, Tags...>>
 #if RANGES_BROKEN_CPO_LOOKUP
 		,
@@ -62,7 +62,7 @@ namespace Rider::Faiz
 		CONCEPT_ASSERT(range::Same<Base, remove_cvref_t<Base>>());
 		using base_t = _t<_tagged_::chain<Base, 0, Tags...>>;
 
-		tpl<typ Other> using can_convert
+		Tpl<Typ Other> using can_convert
 			= bool_ < !std::is_same<Other, Base>::value
 			&& std::is_convertible<Other, Base>::value > ;
 
@@ -81,33 +81,33 @@ namespace Rider::Faiz
 			std::is_nothrow_copy_constructible<Base>::value)
 			: base_t(that)
 		{}
-		tpl<typ Other, typ = meta::if_<can_convert<Other>>> cexp
+		Tpl<Typ Other, Typ = meta::if_<can_convert<Other>>> cexp
 		tagged(tagged<Other, Tags...>&& that) noexcept(
 			std::is_nothrow_constructible<Base, Other>::value)
 			: base_t(static_cast<Other&&>(that))
 		{}
-		tpl<typ Other, typ = meta::if_<can_convert<Other>>> cexp
+		Tpl<Typ Other, Typ = meta::if_<can_convert<Other>>> cexp
 		tagged(tagged<Other, Tags...> const& that) noexcept(
 			std::is_nothrow_constructible<Base, Other const&>::value)
 			: base_t(static_cast<Other const&>(that))
 		{}
-		tpl<typ Other, typ = meta::if_<can_convert<Other>>> cexp tagged&
+		Tpl<Typ Other, Typ = meta::if_<can_convert<Other>>> cexp tagged&
 		operator=(tagged<Other, Tags...>&& that) noexcept(
 			noexcept(std::declval<Base&>() = static_cast<Other&&>(that)))
 		{
 			static_cast<Base&>(*this) = static_cast<Other&&>(that);
 			return *this;
 		}
-		tpl<typ Other, typ = meta::if_<can_convert<Other>>> cexp tagged&
+		Tpl<Typ Other, Typ = meta::if_<can_convert<Other>>> cexp tagged&
 		operator=(tagged<Other, Tags...> const& that) noexcept(
 			noexcept(std::declval<Base&>() = static_cast<Other const&>(that)))
 		{
 			static_cast<Base&>(*this) = static_cast<Other const&>(that);
 			return *this;
 		}
-		tpl<typ U,
-			typ = meta::if_c<!std::is_same<tagged, decay_t<U>>::value>,
-			typ = decltype(std::declval<Base&>() = std::declval<U>())>
+		Tpl<Typ U,
+			Typ = meta::if_c<!std::is_same<tagged, decay_t<U>>::value>,
+			Typ = decltype(std::declval<Base&>() = std::declval<U>())>
 			cexp tagged&
 			operator=(U&& u) noexcept(
 				noexcept(std::declval<Base&>() = static_cast<U&&>(u)))
@@ -115,13 +115,13 @@ namespace Rider::Faiz
 			static_cast<Base&>(*this) = static_cast<U&&>(u);
 			return *this;
 		}
-		tpl<typ B = Base> cexp meta::if_c<range::is_swappable<B>::value>
+		Tpl<Typ B = Base> cexp meta::if_c<range::is_swappable<B>::value>
 		swap(tagged& that) noexcept(range::is_nothrow_swappable<B>::value)
 		{
 			range::swap(static_cast<Base&>(*this), static_cast<Base&>(that));
 		}
 #if !RANGES_BROKEN_CPO_LOOKUP
-		tpl<typ B = Base> friend cexp meta::if_c<range::is_swappable<B>::value>
+		Tpl<Typ B = Base> friend cexp meta::if_c<range::is_swappable<B>::value>
 		swap(tagged& x, tagged& y) noexcept(
 			range::is_nothrow_swappable<B>::value)
 		{
@@ -130,46 +130,46 @@ namespace Rider::Faiz
 #endif
 	};
 
-	tpl<std::size_t I, typ Base, typ... Tags> auto
+	Tpl<std::size_t I, Typ Base, Typ... Tags> auto
 	get(tagged<Base, Tags...>& t)
 		DECLTYPE_AUTO_RETURN_NOEXCEPT(detail::adl_get<I>(static_cast<Base&>(t)))
-			tpl<std::size_t I, typ Base, typ... Tags> auto get(
+			Tpl<std::size_t I, Typ Base, Typ... Tags> auto get(
 				tagged<Base, Tags...> const& t)
 				DECLTYPE_AUTO_RETURN_NOEXCEPT(
 					detail::adl_get<I>(static_cast<Base const&>(t)))
-					tpl<std::size_t I, typ Base, typ... Tags> auto get(
+					Tpl<std::size_t I, Typ Base, Typ... Tags> auto get(
 						tagged<Base, Tags...>&& t)
 						DECLTYPE_AUTO_RETURN_NOEXCEPT(
 							detail::adl_get<I>(static_cast<Base&&>(t)))
-							tpl<std::size_t I, typ Base, typ... Tags> void get(
+							Tpl<std::size_t I, Typ Base, Typ... Tags> void get(
 								tagged<Base, Tags...> const&&)
 		= delete;
 
-	tpl<typ T, typ Base, typ... Tags> auto
+	Tpl<Typ T, Typ Base, Typ... Tags> auto
 	get(tagged<Base, Tags...>& t)
 		DECLTYPE_AUTO_RETURN_NOEXCEPT(detail::adl_get<T>(static_cast<Base&>(t)))
-			tpl<typ T, typ Base, typ... Tags> auto get(
+			Tpl<Typ T, Typ Base, Typ... Tags> auto get(
 				tagged<Base, Tags...> const& t)
 				DECLTYPE_AUTO_RETURN_NOEXCEPT(
 					detail::adl_get<T>(static_cast<Base const&>(t)))
-					tpl<typ T, typ Base, typ... Tags> auto get(
+					Tpl<Typ T, Typ Base, Typ... Tags> auto get(
 						tagged<Base, Tags...>&& t)
 						DECLTYPE_AUTO_RETURN_NOEXCEPT(
 							detail::adl_get<T>(static_cast<Base&&>(t)))
-							tpl<typ T, typ Base, typ... Tags> void get(
+							Tpl<Typ T, Typ Base, Typ... Tags> void get(
 								tagged<Base, Tags...> const&&)
 		= delete;
 
-	tpl<typ F, typ S> using tagged_pair
+	Tpl<Typ F, Typ S> using tagged_pair
 		= tagged<std::pair<detail::tag_elem<F>, detail::tag_elem<S>>,
 			detail::tag_spec<F>,
 			detail::tag_spec<S>>;
 
-	tpl<typ Tag1,
-		typ Tag2,
-		typ T1,
-		typ T2,
-		typ R = tagged_pair<Tag1(range::bind_element_t<T1>),
+	Tpl<Typ Tag1,
+		Typ Tag2,
+		Typ T1,
+		Typ T2,
+		Typ R = tagged_pair<Tag1(range::bind_element_t<T1>),
 			Tag2(range::bind_element_t<T2>)>>
 		cexp R
 		make_tagged_pair(T1&& t1, T2&& t2) noexcept(
@@ -184,7 +184,7 @@ namespace Rider::Faiz
 	{ \
 		struct NAME \
 		{ \
-			tpl<typ Untagged, std::size_t I, typ Next> class getter \
+			Tpl<Typ Untagged, std::size_t I, Typ Next> class getter \
 				: public Next \
 			{ \
 			protected: \

@@ -22,7 +22,7 @@
 
 namespace Rider::Faiz
 {
-	tpl<typ T> struct mutable_
+	Tpl<Typ T> struct mutable_
 	{
 		mutable T value;
 		CONCEPT_REQUIRES(std::is_default_constructible<T>::value)
@@ -52,7 +52,7 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<typ T, T v> struct constant
+	Tpl<Typ T, T v> struct constant
 	{
 		constant() = default;
 		cexp explicit constant(T const&)
@@ -100,17 +100,17 @@ namespace Rider::Faiz
 		// - aggregates             ([expr.prim.lambda]/4)
 		// - default constructible  ([expr.prim.lambda]/p21)
 		// - copy assignable        ([expr.prim.lambda]/p21)
-		tpl<typ Fn> using could_be_lambda
+		Tpl<Typ Fn> using could_be_lambda
 			= bool_ < !std::is_default_constructible<Fn>::value
 			&& !std::is_copy_assignable<Fn>::value > ;
 
-		tpl<typ> cexp box_compress
+		Tpl<Typ> cexp box_compress
 		box_compression_(...)
 		{
 			return box_compress::none;
 		}
-		tpl<typ T,
-			typ = meta::if_<meta::strict_and<std::is_empty<T>,
+		Tpl<Typ T,
+			Typ = meta::if_<meta::strict_and<std::is_empty<T>,
 				meta::not_<is_final<T>>
 #if defined(__GNUC__) && !defined(__clang__) && __GNUC__ == 6 \
 	&& __GNUC_MINOR__ < 2
@@ -130,8 +130,8 @@ namespace Rider::Faiz
 #ifndef RANGES_WORKAROUND_MSVC_249830
 		// MSVC pukes passing non-constant-expression objects to cexp
 		// functions, so do not coalesce.
-		tpl<typ T,
-			typ = meta::if_<meta::strict_and<std::is_empty<T>,
+		Tpl<Typ T,
+			Typ = meta::if_<meta::strict_and<std::is_empty<T>,
 				std::is_trivial<T>,
 				std::is_default_constructible<T>>>>
 			cexp box_compress
@@ -140,7 +140,7 @@ namespace Rider::Faiz
 			return box_compress::coalesce;
 		}
 #endif
-		tpl<typ T> cexp box_compress
+		Tpl<Typ T> cexp box_compress
 		box_compression()
 		{
 			return box_compression_<T>(0);
@@ -148,8 +148,8 @@ namespace Rider::Faiz
 	} // namespace detail
 	/// \endcond
 
-	tpl<typ Element,
-		typ Tag = void,
+	Tpl<Typ Element,
+		Typ Tag = void,
 		detail::box_compress = detail::box_compression<Element>()> class box
 	{
 		Element value;
@@ -160,7 +160,7 @@ namespace Rider::Faiz
 		box() noexcept(std::is_nothrow_default_constructible<Element>::value)
 			: value{}
 		{}
-		tpl<typ E,
+		Tpl<Typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value&&
 					std::is_convertible<E, Element>::value)>
 			cexp
@@ -168,7 +168,7 @@ namespace Rider::Faiz
 				std::is_nothrow_constructible<Element, E>::value)
 			: value(static_cast<E&&>(e))
 		{}
-		tpl<typ E,
+		Tpl<Typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value
 				&& !std::is_convertible<E, Element>::value)>
 			cexp explicit box(E&& e) noexcept(
@@ -195,7 +195,7 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<typ Element, typ Tag> class box<Element, Tag, detail::box_compress::ebo>
+	Tpl<Typ Element, Typ Tag> class box<Element, Tag, detail::box_compress::ebo>
 		: Element
 	{
 	public:
@@ -204,7 +204,7 @@ namespace Rider::Faiz
 		box() noexcept(std::is_nothrow_default_constructible<Element>::value)
 			: Element{}
 		{}
-		tpl<typ E,
+		Tpl<Typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value&&
 					std::is_convertible<E, Element>::value)>
 			cexp
@@ -212,7 +212,7 @@ namespace Rider::Faiz
 				std::is_nothrow_constructible<Element, E>::value)
 			: Element(static_cast<E&&>(e))
 		{}
-		tpl<typ E,
+		Tpl<Typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value
 				&& !std::is_convertible<E, Element>::value)>
 			cexp explicit box(E&& e) noexcept(
@@ -239,8 +239,8 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<typ Element,
-		typ Tag> class box<Element, Tag, detail::box_compress::coalesce>
+	Tpl<Typ Element,
+		Typ Tag> class box<Element, Tag, detail::box_compress::coalesce>
 	{
 		static Element value;
 
@@ -248,13 +248,13 @@ namespace Rider::Faiz
 		cexp
 		box() noexcept
 		{}
-		tpl<typ E,
+		Tpl<Typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value&&
 					std::is_convertible<E, Element>::value)>
 			cexp
 			box(E&&) noexcept
 		{}
-		tpl<typ E,
+		Tpl<Typ E,
 			CONCEPT_REQUIRES_(std::is_constructible<Element, E>::value
 				&& !std::is_convertible<E, Element>::value)>
 			cexp explicit box(E&&) noexcept
@@ -279,42 +279,42 @@ namespace Rider::Faiz
 		}
 	};
 
-	tpl<typ Element, typ Tag> Element
+	Tpl<Typ Element, Typ Tag> Element
 		box<Element, Tag, detail::box_compress::coalesce>::value;
 
 	// Get by tag type
-	tpl<typ Tag, typ Element, detail::box_compress BC> cexp Element&
+	Tpl<Typ Tag, Typ Element, detail::box_compress BC> cexp Element&
 	get(box<Element, Tag, BC>& b) noexcept
 	{
 		return b.get();
 	}
 
-	tpl<typ Tag, typ Element, detail::box_compress BC> cexp Element const&
+	Tpl<Typ Tag, Typ Element, detail::box_compress BC> cexp Element const&
 	get(box<Element, Tag, BC> const& b) noexcept
 	{
 		return b.get();
 	}
 
-	tpl<typ Tag, typ Element, detail::box_compress BC> cexp Element&&
+	Tpl<Typ Tag, Typ Element, detail::box_compress BC> cexp Element&&
 	get(box<Element, Tag, BC>&& b) noexcept
 	{
 		return move(b).get();
 	}
 
 	// Get by index
-	tpl<std::size_t I, typ Element, detail::box_compress BC> cexp Element&
+	Tpl<std::size_t I, Typ Element, detail::box_compress BC> cexp Element&
 	get(box<Element, size_t_<I>, BC>& b) noexcept
 	{
 		return b.get();
 	}
 
-	tpl<std::size_t I, typ Element, detail::box_compress BC> cexp Element const&
+	Tpl<std::size_t I, Typ Element, detail::box_compress BC> cexp Element const&
 	get(box<Element, size_t_<I>, BC> const& b) noexcept
 	{
 		return b.get();
 	}
 
-	tpl<std::size_t I, typ Element, detail::box_compress BC> cexp Element&&
+	Tpl<std::size_t I, Typ Element, detail::box_compress BC> cexp Element&&
 	get(box<Element, size_t_<I>, BC>&& b) noexcept
 	{
 		return move(b).get();

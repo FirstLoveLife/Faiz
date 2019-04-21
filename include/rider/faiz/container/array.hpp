@@ -8,7 +8,7 @@
 #include <iterator>
 #include <stdexcept>
 // TODO:
-// tpl<typ T, typ... U>
+// Tpl<Typ T, Typ... U>
 // array(totally_ordered<
 // 		  array<enable_if_t<(is_same_v<T, U> and ...), T>,
 // 	  1 + sizeof...(U)>>, std::initializer_list<T>(T, U...))
@@ -24,7 +24,7 @@
 
 namespace Rider::Faiz
 {
-	tpl<typ T, size_t N> struct array
+	Tpl<Typ T, size_t N> struct array
 	{
 		using value_type = T;
 		using size_type = size_t;
@@ -200,36 +200,36 @@ namespace Rider::Faiz
 	};
 	// array a{1, 2, 3, 5, x}; // OK, creates std::array<int, 5>
 	// array b{1, 2u}; // Error, all arguments must have same type
-	tpl<typ T, typ... U>
+	Tpl<Typ T, Typ... U>
 	array(T, U...)
 		->array<enable_if_t<(are_same_v<T, U...>), T>, 1 + sizeof...(U)>;
 
 
 	namespace details
 	{
-		tpl<typ> struct is_ref_wrapper : false_
+		Tpl<Typ> struct is_ref_wrapper : false_
 		{};
-		tpl<typ T> struct is_ref_wrapper<std::reference_wrapper<T>> : true_
+		Tpl<Typ T> struct is_ref_wrapper<std::reference_wrapper<T>> : true_
 		{};
 
-		tpl<typ T> using not_ref_wrapper
+		Tpl<Typ T> using not_ref_wrapper
 			= negation<is_ref_wrapper<std::decay_t<T>>>;
 
-		tpl<typ D, typ...> struct return_type_helper : type_identity<D>
+		Tpl<Typ D, Typ...> struct return_type_helper : type_identity<D>
 		{};
 
-		tpl<typ... Types> struct return_type_helper<void, Types...>
+		Tpl<Typ... Types> struct return_type_helper<void, Types...>
 			: std::common_type<Types...>
 		{
 			static_assert(conjunction_v<not_ref_wrapper<Types>...>,
 				"Types cannot contain reference_wrappers when D is void");
 		};
 
-		tpl<typ D, typ... Types> using return_type
+		Tpl<Typ D, Typ... Types> using return_type
 			= array<_t<return_type_helper<D, Types...>>, sizeof...(Types)>;
 	} // namespace details
 
-	tpl<typ D = void, typ... Types> cfn
+	Tpl<Typ D = void, Typ... Types> cfn
 	make_array(Types&&... t)->details::return_type<D, Types...>
 	{
 		return {Faiz::forward<Types>(t)...};
@@ -240,13 +240,13 @@ namespace Rider::Faiz
 	// - For all values of a, a == a yields true.
 	// - If a == b, then b == a
 	// - If a == b and b == c, then a == c
-	tpl<typ T, size_t N> cfn
+	Tpl<Typ T, size_t N> cfn
 	operator==(const array<T, N>& lhs, const array<T, N>& rhs)->bool
 	{
 		return equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
-	tpl<typ T, size_t N> cfn
+	Tpl<Typ T, size_t N> cfn
 	operator!=(const array<T, N>& lhs, const array<T, N>& rhs)->bool
 	{
 		return not(lhs == rhs);
@@ -261,26 +261,26 @@ namespace Rider::Faiz
 	// equiv(b, c), then equiv(a, c)
 	//
 	// The ordering relation must establish total order.
-	tpl<typ T, size_t N> cfn
+	Tpl<Typ T, size_t N> cfn
 	operator<(const array<T, N>& lhs, const array<T, N>& rhs)->bool
 	{
 		return lexicographical_compare(
 			lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
-	tpl<typ T, size_t N> cfn
+	Tpl<Typ T, size_t N> cfn
 	operator>(const array<T, N>& lhs, const array<T, N>& rhs)->bool
 	{
 		return lhs != rhs and not(lhs < rhs);
 	}
 
-	tpl<typ T, size_t N> cfn
+	Tpl<Typ T, size_t N> cfn
 	operator>=(const array<T, N>& lhs, const array<T, N>& rhs)->bool
 	{
 		return not(lhs < rhs);
 	}
 
-	tpl<typ T, size_t N> cfn
+	Tpl<Typ T, size_t N> cfn
 	operator<=(const array<T, N>& lhs, const array<T, N>& rhs)->bool
 	{
 		return not(lhs > rhs);

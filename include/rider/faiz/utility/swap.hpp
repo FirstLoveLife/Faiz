@@ -24,31 +24,31 @@ namespace Rider::Faiz::range
 	/// \cond
 	namespace detail
 	{
-		tpl<typ T> struct is_movable_
+		Tpl<Typ T> struct is_movable_
 			: bool_<is_object_v<T> && std::is_move_constructible<T>::value
 				  && std::is_move_assignable<T>::value>
 		{};
 	} // namespace detail
 	/// \endcond
 
-	tpl<typ T> struct is_swappable;
-	tpl<typ T> inline cexp bool is_swappable_v = is_swappable<T>::value;
+	Tpl<Typ T> struct is_swappable;
+	Tpl<Typ T> inline cexp bool is_swappable_v = is_swappable<T>::value;
 
 	ARE(swappable);
 
-	tpl<typ T> struct is_nothrow_swappable;
+	Tpl<Typ T> struct is_nothrow_swappable;
 
 	IS_NOT_ARE_ANY(nothrow_swappable);
 
-	tpl<typ T, typ U> struct is_swappable_with;
+	Tpl<Typ T, Typ U> struct is_swappable_with;
 
-	tpl<typ T, typ U> struct is_nothrow_swappable_with;
+	Tpl<Typ T, Typ U> struct is_nothrow_swappable_with;
 
-	tpl<typ T, typ U = T> struct is_indirectly_swappable;
+	Tpl<Typ T, Typ U = T> struct is_indirectly_swappable;
 
-	tpl<typ T, typ U = T> struct is_nothrow_indirectly_swappable;
+	Tpl<Typ T, Typ U = T> struct is_nothrow_indirectly_swappable;
 
-	tpl<typ T, typ U = T> cexp meta::if_c<std::is_move_constructible<T>::value
+	Tpl<Typ T, Typ U = T> cexp meta::if_c<std::is_move_constructible<T>::value
 			&& is_assignable<T&, U>::value,
 		T>
 	exchange(T& t, U&& u) noexcept(
@@ -65,34 +65,34 @@ namespace Rider::Faiz::range
 	{
 		// Intentionally create an ambiguity with std::swap, which is
 		// (possibly) unconstrained.
-		tpl<typ T> void
+		Tpl<Typ T> void
 		swap(T&, T&)
 			= delete;
 
-		tpl<typ T, size_t N> void swap(T (&)[N], T (&)[N]) = delete;
+		Tpl<Typ T, size_t N> void swap(T (&)[N], T (&)[N]) = delete;
 
-		tpl<typ T, typ U, typ = decltype(swap(declval<T>(), declval<U>()))>
+		Tpl<Typ T, Typ U, Typ = decltype(swap(declval<T>(), declval<U>()))>
 			true_
 			try_adl_swap_(int);
 
-		tpl<typ T, typ U> false_
+		Tpl<Typ T, Typ U> false_
 		try_adl_swap_(long);
 
-		tpl<typ T, typ U = T> struct is_adl_swappable_
+		Tpl<Typ T, Typ U = T> struct is_adl_swappable_
 			: meta::id_t<decltype(adl_swap_detail::try_adl_swap_<T, U>(42))>
 		{};
 
 		struct swap_fn
 		{
 			// Dispatch to user-defined swap found via ADL:
-			tpl<typ T, typ U> cexp meta::if_c<is_adl_swappable_<T, U>::value>
+			Tpl<Typ T, Typ U> cexp meta::if_c<is_adl_swappable_<T, U>::value>
 			operator()(T&& t, U&& u) const
 				AUTO_RETURN_NOEXCEPT((void)swap((T &&) t, (U &&) u))
 
 				// For instrinsicly swappable (i.e., movable) types for
 				// which a swap overload cannot be found via ADL, swap by
 				// moving.
-				tpl<typ T> cexp meta::if_c<!is_adl_swappable_<T&>::value
+				Tpl<Typ T> cexp meta::if_c<!is_adl_swappable_<T&>::value
 					&& detail::is_movable_<T>::value>
 				operator()(T& a, T& b) const
 				AUTO_RETURN_NOEXCEPT((void)(b = range::exchange(a, (T &&) b)))
@@ -100,7 +100,7 @@ namespace Rider::Faiz::range
 				// For arrays of instrinsicly swappable (i.e., movable)
 				// types for which a swap overload cannot be found via ADL,
 				// swap array elements by moving.
-				tpl<typ T, typ U, size_t N> cexp
+				Tpl<Typ T, Typ U, size_t N> cexp
 				meta::if_c<!is_adl_swappable_<T (&)[N], U (&)[N]>::value
 					&& is_swappable_with<T&, U&>::value>
 				operator()(T (&t)[N], U (&u)[N]) const
@@ -113,7 +113,7 @@ namespace Rider::Faiz::range
 			// For rvalue pairs and tuples of swappable types, swap the
 			// members. This permits code like:
 			//   ranges::swap(std::tie(a,b,c), std::tie(d,e,f));
-			tpl<typ F0, typ S0, typ F1, typ S1>
+			Tpl<Typ F0, Typ S0, Typ F1, Typ S1>
 				cexp meta::if_c<is_swappable_with<F0, F1>::value
 					&& is_swappable_with<S0, S1>::value>
 				operator()(
@@ -125,7 +125,7 @@ namespace Rider::Faiz::range
 				swap_fn{}(move(left).second, move(right).second);
 			}
 
-			tpl<typ... Ts, typ... Us> cexp meta::if_c<
+			Tpl<Typ... Ts, Typ... Us> cexp meta::if_c<
 				meta::and_c<is_swappable_with<Ts, Us>::value...>::value>
 			operator()(
 				std::tuple<Ts...>&& left, std::tuple<Us...>&& right) const
@@ -138,7 +138,7 @@ namespace Rider::Faiz::range
 			}
 
 		private:
-			tpl<typ T, typ U, size_t... Is> cexp static void
+			Tpl<Typ T, Typ U, size_t... Is> cexp static void
 			impl(T&& left, U&& right, index_sequence<Is...>)
 			{
 				(void)ignore_unused((swap_fn{}(std::get<Is>(move(left)),
@@ -147,16 +147,16 @@ namespace Rider::Faiz::range
 			}
 		};
 
-		tpl<typ T, typ U, typ = void> struct is_swappable_with_ : false_
+		Tpl<Typ T, Typ U, Typ = void> struct is_swappable_with_ : false_
 		{};
 
-		tpl<typ T, typ U> struct is_swappable_with_<T,
+		Tpl<Typ T, Typ U> struct is_swappable_with_<T,
 			U,
 			void_t<decltype(swap_fn{}(declval<T>(), declval<U>())),
 				decltype(swap_fn{}(declval<U>(), declval<T>()))>> : true_
 		{};
 
-		tpl<typ T, typ U> struct is_nothrow_swappable_with_
+		Tpl<Typ T, Typ U> struct is_nothrow_swappable_with_
 			: bool_<noexcept(swap_fn{}(declval<T>(), declval<U>()))
 				  and noexcept(swap_fn{}(declval<U>(), declval<T>()))>
 		{};
@@ -183,18 +183,18 @@ namespace Rider::Faiz::range
 
 		// Intentionally create an ambiguity with std::iter_swap, which is
 		// (possibly) unconstrained.
-		tpl<typ T> void iter_swap(T, T) = delete;
+		Tpl<Typ T> void iter_swap(T, T) = delete;
 
 #ifdef RANGES_WORKAROUND_MSVC_620035
 		void
 		iter_swap();
 #endif
 
-		tpl<typ T, typ U, typ = decltype(iter_swap(declval<T>(), declval<U>()))>
+		Tpl<Typ T, Typ U, Typ = decltype(iter_swap(declval<T>(), declval<U>()))>
 			true_
 			try_adl_iter_swap_(int);
 
-		tpl<typ T, typ U> false_
+		Tpl<Typ T, Typ U> false_
 		try_adl_iter_swap_(long);
 
 		// Test whether an overload of iter_swap for a T and a U can be
@@ -202,7 +202,7 @@ namespace Rider::Faiz::range
 		// the overload set. This depends on user-defined iter_swap
 		// overloads being a better match than the overload in namespace
 		// std.
-		tpl<typ T, typ U> struct is_adl_indirectly_swappable_
+		Tpl<Typ T, Typ U> struct is_adl_indirectly_swappable_
 			: meta::id_t<decltype(
 				  adl_swap_detail::try_adl_iter_swap_<T, U>(42))>
 		{};
@@ -210,14 +210,14 @@ namespace Rider::Faiz::range
 		struct iter_swap_fn
 		{
 			// *If* a user-defined iter_swap is found via ADL, call that:
-			tpl<typ T, typ U>
+			Tpl<Typ T, Typ U>
 				cexp meta::if_c<is_adl_indirectly_swappable_<T, U>::value>
 				operator()(T&& t, U&& u) const
 				AUTO_RETURN_NOEXCEPT((void)iter_swap((T &&) t, (U &&) u))
 
 				// *Otherwise*, for Readable types with swappable reference
 				// types, call ranges::swap(*a, *b)
-				tpl<typ I0, typ I1> cexp
+				Tpl<Typ I0, Typ I1> cexp
 				meta::if_c<!is_adl_indirectly_swappable_<I0, I1>::value
 					&& is_swappable_with<reference_t<I0>,
 						   reference_t<I1>>::value>
@@ -229,7 +229,7 @@ namespace Rider::Faiz::range
 				//      value_type_t<T0> tmp = iter_move(a);
 				//      *a = iter_move(b);
 				//      *b = std::move(tmp);
-				tpl<typ I0, typ I1> cexp
+				Tpl<Typ I0, Typ I1> cexp
 				meta::if_c<!is_adl_indirectly_swappable_<I0, I1>::value
 					&& !is_swappable_with<reference_t<I0>,
 						   reference_t<I1>>::value
@@ -245,48 +245,48 @@ namespace Rider::Faiz::range
 			}
 		};
 
-		tpl<typ T, typ U, typ Enable = void> struct is_indirectly_swappable_
+		Tpl<Typ T, Typ U, Typ Enable = void> struct is_indirectly_swappable_
 			: false_
 		{};
 
-		tpl<typ T, typ U> struct is_indirectly_swappable_<T,
+		Tpl<Typ T, Typ U> struct is_indirectly_swappable_<T,
 			U,
 			void_t<decltype(iter_swap_fn{}(declval<T>(), declval<U>()))>>
 			: true_
 		{};
 
-		tpl<typ T, typ U> struct is_nothrow_indirectly_swappable_
+		Tpl<Typ T, Typ U> struct is_nothrow_indirectly_swappable_
 			: bool_<noexcept(iter_swap_fn{}(declval<T>(), declval<U>()))>
 		{};
 	} // namespace adl_swap_detail
 	/// \endcond
 
 	/// \ingroup group-utility
-	tpl<typ T, typ U> struct is_swappable_with
+	Tpl<Typ T, Typ U> struct is_swappable_with
 		: adl_swap_detail::is_swappable_with_<T, U>
 	{};
 
 	/// \ingroup group-utility
-	tpl<typ T, typ U> struct is_nothrow_swappable_with
+	Tpl<Typ T, Typ U> struct is_nothrow_swappable_with
 		: meta::and_<is_swappable_with<T, U>,
 			  adl_swap_detail::is_nothrow_swappable_with_<T, U>>
 	{};
 
 	/// \ingroup group-utility
-	tpl<typ T> struct is_swappable : is_swappable_with<T&, T&>
+	Tpl<Typ T> struct is_swappable : is_swappable_with<T&, T&>
 	{};
 
 	/// \ingroup group-utility
-	tpl<typ T> struct is_nothrow_swappable : is_nothrow_swappable_with<T&, T&>
+	Tpl<Typ T> struct is_nothrow_swappable : is_nothrow_swappable_with<T&, T&>
 	{};
 
 	/// \ingroup group-utility
-	tpl<typ T, typ U> struct is_indirectly_swappable
+	Tpl<Typ T, Typ U> struct is_indirectly_swappable
 		: adl_swap_detail::is_indirectly_swappable_<T, U>
 	{};
 
 	/// \ingroup group-utility
-	tpl<typ T, typ U> struct is_nothrow_indirectly_swappable
+	Tpl<Typ T, Typ U> struct is_nothrow_indirectly_swappable
 		: meta::and_<is_indirectly_swappable<T, U>,
 			  adl_swap_detail::is_nothrow_indirectly_swappable_<T, U>>
 	{};
@@ -302,7 +302,7 @@ namespace Rider::Faiz::range
 	/// \cond
 	struct indirect_swap_fn
 	{
-		tpl<typ I0, typ I1>
+		Tpl<Typ I0, Typ I1>
 			DEPRECATED("Please replace uses of ranges::indirect_swap "
 					   "with ranges::iter_swap.") void
 			operator()(I0&& i0, I1&& i1) const
