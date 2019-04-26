@@ -5,14 +5,14 @@
 
 auto cmp = [](auto x, auto y) { return x + 1 == y; };
 
-Rider::Faiz::array a1{1, 2, 3, 4};
-auto a2 = Rider::Faiz::make_array(1, 2, 3, 4);
-Rider::Faiz::array a3{1, 2, 3, 4, 5};
-Rider::Faiz::array a4{2, 2, 3, 4, 5};
-Rider::Faiz::array a5{3, 2, 3, 4};
-Rider::Faiz::array a6{7};
+Rider::Faiz::FixedArray a1{1, 2, 3, 4};
+auto a2 = Rider::Faiz::MakeFixedArray(1, 2, 3, 4);
+Rider::Faiz::FixedArray a3{1, 2, 3, 4, 5};
+Rider::Faiz::FixedArray a4{2, 2, 3, 4, 5};
+Rider::Faiz::FixedArray a5{3, 2, 3, 4};
+Rider::Faiz::FixedArray a6{7};
 
-TEST_CASE("lexicographical_compare, array", "[lexicographical][array]", )
+TEST_CASE("lexicographical_compare, FixedArray", "[lexicographical][FixedArray]", )
 {
 	CHECK(not Rider::Faiz::lexicographical_compare(
 		a1.begin(), a1.end(), a2.begin(), a2.end()));
@@ -30,16 +30,16 @@ TEST_CASE("lexicographical_compare, array", "[lexicographical][array]", )
 		a3.begin(), a3.end(), a6.begin(), a6.end()));
 }
 
-TEST_CASE("equal", "[equal][array]", )
+TEST_CASE("equal", "[equal][FixedArray]", )
 {
-	Rider::Faiz::array a1{1, 2, 3, 4};
-	auto a2 = Rider::Faiz::make_array(1, 2, 3, 4);
-	Rider::Faiz::array a3{1, 2, 3, 4, 5};
-	Rider::Faiz::array a4{2, 2, 3, 4, 5};
-	Rider::Faiz::array a5{3, 2, 3, 4};
-	Rider::Faiz::array a6{7};
-	Rider::Faiz::array a7{2, 3, 4, 5};
-	Rider::Faiz::array a8{2, 3, 4, 5, 6};
+	Rider::Faiz::FixedArray a1{1, 2, 3, 4};
+	auto a2 = Rider::Faiz::MakeFixedArray(1, 2, 3, 4);
+	Rider::Faiz::FixedArray a3{1, 2, 3, 4, 5};
+	Rider::Faiz::FixedArray a4{2, 2, 3, 4, 5};
+	Rider::Faiz::FixedArray a5{3, 2, 3, 4};
+	Rider::Faiz::FixedArray a6{7};
+	Rider::Faiz::FixedArray a7{2, 3, 4, 5};
+	Rider::Faiz::FixedArray a8{2, 3, 4, 5, 6};
 	REQUIRE(Rider::Faiz::equal(a1.begin(), a1.end(), a2.begin(), a2.end()));
 	REQUIRE(
 		Rider::Faiz::equal(a1.begin(), a1.end(), a7.begin(), a7.end(), cmp));

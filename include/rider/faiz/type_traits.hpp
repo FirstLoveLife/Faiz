@@ -1128,6 +1128,11 @@ namespace Rider::Faiz
 		: bool_<is_nothrow_destructible_v<T>>
 	{};
 
+
+	Tpl<Typ T>
+	struct alignment_of : size_t_<alignof(T)>
+	{};
+
 #ifdef _WIN32
 	enum class endian
 	{

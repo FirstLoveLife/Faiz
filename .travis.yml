@@ -87,32 +87,32 @@ matrix:
       env: BUILD_TYPE=Release CMAKE_GENERATOR="MinGW Makefiles"
       compiler: MinGW
 
-  allow_failures:
-    - name: "Visual Studio 15 2017 on windows - Release"
-      os: windows
-      language: cpp
-      env: BUILD_TYPE=Release CMAKE_GENERATOR="Visual Studio 15 2017"
-      compiler: MSVC
+  # allow_failures:
+  #   - name: "Visual Studio 15 2017 on windows - Release"
+  #     os: windows
+  #     language: cpp
+  #     env: BUILD_TYPE=Release CMAKE_GENERATOR="Visual Studio 15 2017"
+  #     compiler: MSVC
 
-    - name: "Visual Studio 15 2017 on windows - Debug"
-      os: windows
-      language: cpp
-      env: BUILD_TYPE=Debug CMAKE_GENERATOR="Visual Studio 15 2017"
-      compiler: MSVC
+  #   - name: "Visual Studio 15 2017 on windows - Debug"
+  #     os: windows
+  #     language: cpp
+  #     env: BUILD_TYPE=Debug CMAKE_GENERATOR="Visual Studio 15 2017"
+  #     compiler: MSVC
 
-    - name: "clang on Windows"
-      os: windows
-      env:
-        - CC="/c/Program Files/LLVM/bin/clang"
-        - CXX="/c/Program Files/LLVM/bin/clang-cl"
-      compiler: clang
-      env: BUILD_TYPE=Release CMAKE_GENERATOR="MinGW Makefiles"
-      install:
-        # MSVC is already installed on Travis, keep it here just in case we need to use it later
-        #- choco install visualstudio2017-workload-vctools -y --package-parameters "--no-includeRecommended --add Microsoft.VisualStudio.Component.VC.x86.amd64 --add Microsoft.VisualStudio.Component.Windows10SDK"
-        - choco upgrade llvm -y
-        - |-
-          "${CC}" --version
+  #   - name: "clang on Windows"
+  #     os: windows
+  #     env:
+  #       - CC="/c/Program Files/LLVM/bin/clang"
+  #       - CXX="/c/Program Files/LLVM/bin/clang-cl"
+  #     compiler: clang
+  #     env: BUILD_TYPE=Release CMAKE_GENERATOR="MinGW Makefiles"
+  #     install:
+  #       # MSVC is already installed on Travis, keep it here just in case we need to use it later
+  #       #- choco install visualstudio2017-workload-vctools -y --package-parameters "--no-includeRecommended --add Microsoft.VisualStudio.Component.VC.x86.amd64 --add Microsoft.VisualStudio.Component.Windows10SDK"
+  #       - choco upgrade llvm -y
+  #       - |-
+  #         "${CC}" --version
 
 script:
   - cmake -H. -Bbuild

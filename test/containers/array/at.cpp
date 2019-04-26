@@ -13,10 +13,10 @@ TEMPLATE_TEST_CASE("array.at(pos) should throw exception if out of bounds",
 	REQUIRE_NOTHROW(a.at(9));
 }
 
-// TEST_CASE("fill value")
-// {
-// 	Rider::Faiz::array<int, 10> a{1, 2, 3, 4, 5, 6};
-// 	a.fill(-10);
-	// REQUIRE(
-		// a == Rider::Faiz::array<int, 10>{-10, -10, -10, -10, -10, -10, -10});
-// }
+TEST_CASE("fill value")
+{
+	Rider::Faiz::array<int, 10> a{1, 2, 3, 4, 5, 6};
+	a.fill(-10);
+	REQUIRE(
+		a == Rider::Faiz::array<int, 10>{-10, -10, -10, -10, -10, -10, -10, -10, -10, -10});
+}

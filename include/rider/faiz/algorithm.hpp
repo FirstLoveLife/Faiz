@@ -1,7 +1,6 @@
 #ifndef ALGORITHM
 #define ALGORITHM
 #include "rider/faiz/macros.hpp"
-#include <iostream>
 namespace Rider::Faiz
 {
 	Tpl<Typ T> cexp const T&
@@ -167,5 +166,14 @@ namespace Rider::Faiz
 		return first1 == last1 and first2 == last2;
 	}
 
+	Tpl<Typ tOutputIt, Typ tSize, Typ T> tOutputIt
+	fill_n(tOutputIt first, tSize count, const T& value)
+	{
+		for(tSize i = 0; i < count; i++)
+		{
+			*first++ = value;
+		}
+		return first;
+	}
 } // namespace Rider::Faiz
 #endif

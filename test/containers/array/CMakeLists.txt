@@ -1,9 +1,9 @@
 # Make one executable for the whole testsuite
 add_executable(
   array-testsuite
-  # at.cpp
+  at.cpp
   compare.cpp
-  # cppreference-operator[].cpp
+  index.cpp
   main.cpp
   )
 
