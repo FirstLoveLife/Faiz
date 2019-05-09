@@ -1,40 +1,41 @@
 #include <type_traits>
 #include "rider/faiz/type_traits.hpp"
 #include "../test_macros.h"
+#include <catch2/catch.hpp>
 
 template <class T>
 void test_is_nothrow_constructible()
 {
-    static_assert(( Rider::Faiz::is_nothrow_constructible<T>::value), "");
-    static_assert(( Rider::Faiz::is_nothrow_constructible_v<T>), "");
+    STATIC_REQUIRE(( Rider::Faiz::is_nothrow_constructible<T>::value));
+    STATIC_REQUIRE(( Rider::Faiz::is_nothrow_constructible_v<T>));
 }
 
 template <class T, class A0>
 void test_is_nothrow_constructible()
 {
-    static_assert(( Rider::Faiz::is_nothrow_constructible<T, A0>::value), "");
-    static_assert(( Rider::Faiz::is_nothrow_constructible_v<T, A0>), "");
+    STATIC_REQUIRE(( Rider::Faiz::is_nothrow_constructible<T, A0>::value));
+    STATIC_REQUIRE(( Rider::Faiz::is_nothrow_constructible_v<T, A0>));
 }
 
 template <class T>
 void test_is_not_nothrow_constructible()
 {
-    static_assert((!Rider::Faiz::is_nothrow_constructible<T>::value), "");
-    static_assert((!Rider::Faiz::is_nothrow_constructible_v<T>), "");
+    STATIC_REQUIRE((!Rider::Faiz::is_nothrow_constructible<T>::value));
+    STATIC_REQUIRE((!Rider::Faiz::is_nothrow_constructible_v<T>));
 }
 
 template <class T, class A0>
 void test_is_not_nothrow_constructible()
 {
-    static_assert((!Rider::Faiz::is_nothrow_constructible<T, A0>::value), "");
-    static_assert((!Rider::Faiz::is_nothrow_constructible_v<T, A0>), "");
+    STATIC_REQUIRE((!Rider::Faiz::is_nothrow_constructible<T, A0>::value));
+    STATIC_REQUIRE((!Rider::Faiz::is_nothrow_constructible_v<T, A0>));
 }
 
 template <class T, class A0, class A1>
 void test_is_not_nothrow_constructible()
 {
-    static_assert((!Rider::Faiz::is_nothrow_constructible<T, A0, A1>::value), "");
-    static_assert((!Rider::Faiz::is_nothrow_constructible_v<T, A0, A1>), "");
+    STATIC_REQUIRE((!Rider::Faiz::is_nothrow_constructible<T, A0, A1>::value));
+    STATIC_REQUIRE((!Rider::Faiz::is_nothrow_constructible_v<T, A0, A1>));
 }
 
 class Empty
@@ -73,7 +74,7 @@ struct Tuple {
     Tuple(Empty&&) noexcept {}
 };
 
-int main()
+TEST_CASE("is_nothrow_constructible: ")
 {
     test_is_nothrow_constructible<int> ();
     test_is_nothrow_constructible<int, const int&> ();
@@ -86,6 +87,6 @@ int main()
     test_is_not_nothrow_constructible<C> ();
     test_is_nothrow_constructible<Tuple &&, Empty> (); // See bug #19616.
 
-    static_assert(!Rider::Faiz::is_constructible<Tuple&, Empty>::value, "");
+    STATIC_REQUIRE(!Rider::Faiz::is_constructible<Tuple&, Empty>::value);
     test_is_not_nothrow_constructible<Tuple &, Empty> (); // See bug #19616.
 }
