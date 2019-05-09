@@ -43,8 +43,9 @@ namespace Rider::Faiz
 		using result_type = void;
 		using argument_type = T*;
 
-		void
-		operator()(T* x) const
+
+		cfn
+		operator()(T* x) const->void
 		{
 			// adl is shit.
 			Faiz::checked_delete(x);
@@ -56,8 +57,8 @@ namespace Rider::Faiz
 		using result_type = void;
 		using argument_type = T*;
 
-		void
-		operator()(T* x) const
+		cfn
+		operator()(T* x) const->void
 		{
 			Faiz::checked_array_delete(x);
 		}

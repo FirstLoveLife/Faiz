@@ -213,7 +213,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 	{
 		friend cfn
 		operator!=(const T& lhs, const U& rhs)
-			AUTO_RETURN_NOEXCEPT(!static_cast<bool>(lhs == rhs));
+			AUTO_RETURN_NOEXCEPT(not static_cast<bool>(lhs == rhs));
 
 		friend cfn
 		operator==(const U& lhs, const T& rhs)
@@ -228,18 +228,18 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 	{
 		friend cfn
 		operator!=(const T& lhs, const T& rhs)
-			AUTO_RETURN_NOEXCEPT(!static_cast<bool>(lhs == rhs));
+			AUTO_RETURN_NOEXCEPT(not static_cast<bool>(lhs == rhs));
 	};
 
 	Tpl<Typ T, Typ U = T> class less_than_comparable
 	{
 		friend cfn
 		operator<=(const T& lhs, const U& rhs)
-			AUTO_RETURN_NOEXCEPT(!static_cast<bool>(lhs > rhs));
+			AUTO_RETURN_NOEXCEPT(not static_cast<bool>(lhs > rhs));
 
 		friend cfn
 		operator>=(const T& lhs, const U& rhs)
-			AUTO_RETURN_NOEXCEPT(!static_cast<bool>(lhs < rhs));
+			AUTO_RETURN_NOEXCEPT(not static_cast<bool>(lhs < rhs));
 
 		friend cfn
 		operator<(const U& lhs, const T& rhs)
@@ -266,11 +266,11 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 
 		friend cfn
 		operator<=(const T& lhs, const T& rhs)
-			AUTO_RETURN_NOEXCEPT(!static_cast<bool>(rhs < lhs));
+			AUTO_RETURN_NOEXCEPT(not static_cast<bool>(rhs < lhs));
 
 		friend cfn
 		operator>=(const T& lhs, const T& rhs)
-			AUTO_RETURN_NOEXCEPT(!static_cast<bool>(lhs < rhs));
+			AUTO_RETURN_NOEXCEPT(not static_cast<bool>(lhs < rhs));
 	};
 
 	Tpl<Typ T, Typ U = T> class totally_ordered : less_than_comparable<T, U>,
@@ -283,8 +283,8 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 		operator==(const T& lhs, const U& rhs) noexcept(noexcept(
 			static_cast<bool>(lhs < rhs), static_cast<bool>(lhs > rhs)))
 		{
-			return !static_cast<bool>(lhs < rhs)
-				&& !static_cast<bool>(lhs > rhs);
+			return not static_cast<bool>(lhs < rhs)
+				and not static_cast<bool>(lhs > rhs);
 		}
 	};
 
@@ -294,8 +294,8 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 		operator==(const T& lhs, const T& rhs) noexcept(
 			noexcept(static_cast<bool>(lhs < rhs)))
 		{
-			return !static_cast<bool>(lhs < rhs)
-				&& !static_cast<bool>(rhs < lhs);
+			return not static_cast<bool>(lhs < rhs)
+				and not static_cast<bool>(rhs < lhs);
 		}
 	};
 
@@ -306,7 +306,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 			static_cast<bool>(lhs < rhs), static_cast<bool>(lhs == rhs)))
 		{
 			return static_cast<bool>(lhs < rhs)
-				|| static_cast<bool>(lhs == rhs);
+				or static_cast<bool>(lhs == rhs);
 		}
 
 		friend cfn
@@ -314,7 +314,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 			static_cast<bool>(lhs > rhs), static_cast<bool>(lhs == rhs)))
 		{
 			return static_cast<bool>(lhs > rhs)
-				|| static_cast<bool>(lhs == rhs);
+				or static_cast<bool>(lhs == rhs);
 		}
 
 		friend cfn
@@ -345,7 +345,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 			static_cast<bool>(lhs < rhs), static_cast<bool>(lhs == rhs)))
 		{
 			return static_cast<bool>(lhs < rhs)
-				|| static_cast<bool>(lhs == rhs);
+				or static_cast<bool>(lhs == rhs);
 		}
 
 		friend cfn
@@ -353,7 +353,7 @@ namespace Rider::Math::AbstractAlgebra::RelationAlgebra
 			static_cast<bool>(rhs < lhs), static_cast<bool>(lhs == rhs)))
 		{
 			return static_cast<bool>(rhs < lhs)
-				|| static_cast<bool>(lhs == rhs);
+				or static_cast<bool>(lhs == rhs);
 		}
 	};
 

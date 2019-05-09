@@ -206,7 +206,7 @@ namespace Rider::Faiz
 		}
 
 		Tpl<Typ T> struct has_twice_as_big
-			: logic::not_<is_void<decltype(twice_as_big<T>())>>
+			: not_void<decltype(twice_as_big<T>())>
 		{};
 
 		Tpl<Typ T> constexpr decltype(twice_as_big<T>())
@@ -904,7 +904,7 @@ namespace Rider::Faiz
 			Typ U2 = T2,
 			enable_if_t<check_args::Tpl enable_default<U1, U2>(), bool> = false>
 			cCTOR
-			tight_pair() noexcept(are_nothrow_default_constructible_v<T1, T2>)
+		tight_pair() noexcept(are_nothrow_default_constructible_v<T1, T2>)
 			: detail::tight_pair_storage<T1, T2>()
 		{}
 
@@ -913,8 +913,8 @@ namespace Rider::Faiz
 			enable_if_t<check_args::Tpl enable_explicit<U1 const&, U2 const&>(),
 				bool> = false>
 			ceCTOR
-			tight_pair(T1 const& first, T2 const& second = {}) noexcept(
-				are_nothrow_copy_constructible_v<T1, T2>)
+		tight_pair(T1 const& first, T2 const& second = {}) noexcept(
+			are_nothrow_copy_constructible_v<T1, T2>)
 			: detail::tight_pair_storage<T1, T2>(first, second)
 		{}
 
@@ -923,8 +923,8 @@ namespace Rider::Faiz
 			enable_if_t<check_args::Tpl enable_implicit<U1 const&, U2 const&>(),
 				bool> = false>
 			cCTOR
-			tight_pair(T1 const& first, T2 const& second = {}) noexcept(
-				are_nothrow_copy_constructible_v<T1, T2>)
+		tight_pair(T1 const& first, T2 const& second = {}) noexcept(
+			are_nothrow_copy_constructible_v<T1, T2>)
 			: detail::tight_pair_storage<T1, T2>(first, second)
 		{}
 
@@ -932,8 +932,8 @@ namespace Rider::Faiz
 			Typ U2 = T2,
 			enable_if_t<check_args::Tpl enable_explicit<U1, U2>(), bool> = false>
 			ceCTOR
-			tight_pair(U1&& first, U2&& second) noexcept(
-				are_nothrow_constructible_v<Pack<T1, U1>, Pack<T2, U2>>)
+		tight_pair(U1&& first, U2&& second) noexcept(
+			are_nothrow_constructible_v<Pack<T1, U1>, Pack<T2, U2>>)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<U1>(first), Faiz::forward<U2>(second))
 		{}
@@ -953,9 +953,9 @@ namespace Rider::Faiz
 			enable_if_t<check_args::Tpl enable_explicit<U1 const&, U2 const&>(),
 				bool> = false>
 			ceCTOR
-			tight_pair(tight_pair<U1, U2> const& pair) noexcept(
-				are_nothrow_constructible_v<Pack<T1, U1 const&>,
-					Pack<T2, U2 const&>>)
+		tight_pair(tight_pair<U1, U2> const& pair) noexcept(
+			are_nothrow_constructible_v<Pack<T1, U1 const&>,
+				Pack<T2, U2 const&>>)
 			: detail::tight_pair_storage<T1, T2>(
 				pair.Tpl get<0>(), pair.Tpl get<1>())
 		{}
@@ -965,9 +965,9 @@ namespace Rider::Faiz
 			enable_if_t<check_args::Tpl enable_implicit<U1 const&, U2 const&>(),
 				bool> = false>
 			cCTOR
-			tight_pair(tight_pair<U1, U2> const& pair) noexcept(
-				are_nothrow_constructible_v<Pack<T1, U1 const&>,
-					Pack<T2, U2 const&>>)
+		tight_pair(tight_pair<U1, U2> const& pair) noexcept(
+			are_nothrow_constructible_v<Pack<T1, U1 const&>,
+				Pack<T2, U2 const&>>)
 			: detail::tight_pair_storage<T1, T2>(
 				pair.Tpl get<0>(), pair.Tpl get<1>())
 		{}
@@ -976,8 +976,8 @@ namespace Rider::Faiz
 			Typ U2 = T2,
 			enable_if_t<check_args::Tpl enable_explicit<U1, U2>(), bool> = false>
 			ceCTOR
-			tight_pair(tight_pair<U1, U2>&& pair) noexcept(
-				are_nothrow_constructible_v<Pack<T1, U1&&>, Pack<T2, U2&&>>)
+		tight_pair(tight_pair<U1, U2>&& pair) noexcept(
+			are_nothrow_constructible_v<Pack<T1, U1&&>, Pack<T2, U2&&>>)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<U1>(pair.Tpl get<0>()),
 				Faiz::forward<U2>(pair.Tpl get<1>()))
@@ -987,31 +987,33 @@ namespace Rider::Faiz
 			Typ U2 = T2,
 			enable_if_t<check_args::Tpl enable_implicit<U1, U2>(), bool> = false>
 			cCTOR
-			tight_pair(tight_pair<U1, U2>&& pair) noexcept(
-				are_nothrow_constructible_v<Pack<T1, U1&&>, Pack<T2, U2&&>>)
+		tight_pair(tight_pair<U1, U2>&& pair) noexcept(
+			are_nothrow_constructible_v<Pack<T1, U1&&>, Pack<T2, U2&&>>)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<U1>(pair.Tpl get<0>()),
 				Faiz::forward<U2>(pair.Tpl get<1>()))
 		{}
 
 		Tpl<Typ Tuple,
-			enable_if_t<check_pair_like<Tuple>::Tpl enable_explicit<
-				Tuple>()>> constexpr explicit tight_pair(Tuple&& tuple)
+			enable_if_t<check_pair_like<Tuple>::Tpl enable_explicit<Tuple>()>>
+			ceCTOR
+		tight_pair(Tuple&& tuple)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<T1>(get<0>(Faiz::forward<Tuple>(tuple))),
 				Faiz::forward<T2>(get<1>(Faiz::forward<Tuple>(tuple))))
 		{}
 
 		Tpl<Typ Tuple,
-			enable_if_t<check_pair_like<Tuple>::Tpl enable_implicit<
-				Tuple>()>> constexpr tight_pair(Tuple&& tuple)
+			enable_if_t<check_pair_like<Tuple>::Tpl enable_implicit<Tuple>()>>
+			cCTOR
+		tight_pair(Tuple&& tuple)
 			: detail::tight_pair_storage<T1, T2>(
 				Faiz::forward<T1>(get<0>(Faiz::forward<Tuple>(tuple))),
 				Faiz::forward<T2>(get<1>(Faiz::forward<Tuple>(tuple))))
 		{}
 
-		Tpl<Typ Tuple1, Typ Tuple2> constexpr tight_pair(
-			std::piecewise_construct_t pc,
+		Tpl<Typ Tuple1, Typ Tuple2> cCTOR
+		tight_pair(std::piecewise_construct_t pc,
 			Tuple1&& first_args,
 			Tuple2&& second_args)
 			: detail::tight_pair_storage<T1, T2>(pc,

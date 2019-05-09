@@ -43,7 +43,7 @@ namespace Rider::Faiz::FixedDetail
 		T elem[N];
 	};
 
-} // namespace Rider::Faiz::detail
+} // namespace Rider::Faiz::FixedDetail
 namespace Rider::Faiz
 {
 	// # FixedArray-CRTP based array
@@ -259,7 +259,7 @@ namespace Rider::Faiz
 
 		Tpl<Typ D, Typ... Types> using return_type
 			= FixedArray<_t<return_type_helper<D, Types...>>, sizeof...(Types)>;
-	} // namespace details
+	} // namespace Fixed::details
 
 	Tpl<Typ D = void, Typ... Types> cfn
 	MakeFixedArray(Types&&... t)->Fixed::details::return_type<D, Types...>
@@ -471,8 +471,7 @@ namespace Rider::Faiz
 		Tpl<Typ T> struct is_ref_wrapper<std::reference_wrapper<T>> : true_
 		{};
 
-		Tpl<Typ T> using not_ref_wrapper
-			= negation<is_ref_wrapper<decay_t<T>>>;
+		Tpl<Typ T> using not_ref_wrapper = negation<is_ref_wrapper<decay_t<T>>>;
 
 		Tpl<Typ D, Typ...> struct return_type_helper : type_identity<D>
 		{};

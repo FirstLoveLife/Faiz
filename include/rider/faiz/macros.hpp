@@ -92,6 +92,7 @@
 #define CNV
 #define cCNV constexpr
 #define cCTOR constexpr
+#define eCTOR explicit
 #define ceCTOR constexpr explicit
 #define SEMICOLON ;
 #define COMMA ,

@@ -58,7 +58,9 @@ set(specialized_algorithms
 # Make one executable for the whole testsuite
 add_executable(
   unique_ptr-testsuite
+  # pimpl/Fridge.cpp
 
+  size.cpp
   main.cpp
   # 54351.cc https://wandbox.org/permlink/A3PJ2NwXVjhRBsCT clang cannot pass this test file
   dr2228.cc
