@@ -76,6 +76,7 @@ add_executable(
   is_move_assignable.libcxx.cpp
 
   is_nothrow_assignable.libcxx.cpp
+  is_nothrow_constructible.cpp
 
   is_nothrow_copy_assignable.libcxx.cpp
 
