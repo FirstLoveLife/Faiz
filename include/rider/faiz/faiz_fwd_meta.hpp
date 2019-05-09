@@ -176,7 +176,7 @@ namespace Rider::Faiz
 	using std::is_trivially_destructible;
 	using std::is_trivially_destructible_v;
 	using std::is_final;
-	IS_NOT_ARE_ANY(final);
+	IS_NOT_ARE_ANY(final)
 	using std::is_union;
 	using std::is_union_v;
 	using std::is_class;
@@ -185,7 +185,7 @@ namespace Rider::Faiz
 	using std::is_trivially_assignable;
 	using std::is_trivially_assignable_v;
 	using std::is_enum;
-	IS_NOT_ARE_ANY(enum);
+	IS_NOT_ARE_ANY(enum)
 
 	Tpl<Typ T> struct reference_wrapper;
 
@@ -246,7 +246,7 @@ namespace Rider::Faiz
 	Tpl<Typ T, Typ U> struct is_nothrow_assignable;
 	Tpl<Typ T, Typ U> inline cexp bool is_assignable_v
 		= is_assignable<T, U>::value;
-	BI_ARE(assignable);
+	BI_ARE(assignable)
 
 	Tpl<Typ T, Typ U> inline cexp bool is_nothrow_assignable_v
 		= is_nothrow_assignable<T, U>::value;
@@ -256,7 +256,7 @@ namespace Rider::Faiz
 
 	Tpl<Typ T> struct is_lvalue_reference;
 
-	IS_NOT_ARE_ANY(lvalue_reference);
+	IS_NOT_ARE_ANY(lvalue_reference)
 
 	Tpl<Typ T> struct remove_cvref;
 	Tpl<Typ T> using remove_cvref_t = _t<remove_cvref<T>>;
@@ -270,8 +270,8 @@ namespace Rider::Faiz
 
 	Tpl<Typ T, Typ U> struct is_same;
 
-	BI_IS(same);
-	BI_NOT(same);
+	BI_IS(same)
+	BI_NOT(same)
 
 	namespace detail
 	{

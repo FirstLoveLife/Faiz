@@ -185,14 +185,14 @@ namespace Rider::Faiz
 			Typ uDeleter = dependent_type_t<type_identity<deleter_type>,
 				vDummy>> using EnableIfDeleterDefaultConstructible
 			= enable_if_t < is_default_constructible_v<
-								uDeleter> and not_pointer_v<uDeleter>> ;
+				  uDeleter> and not_pointer_v<uDeleter>> ;
 
 		Tpl<Typ tArg> using EnableIfDeleterConstructible
 			= enable_if_t<is_constructible_v<deleter_type, tArg>>;
 
 		Tpl<Typ yaUnique, Typ uPointer> using EnableIfMoveConvertible
 			= enable_if_t < is_convertible_v<_p<yaUnique>,
-								pointer> and not_array_v<uPointer>> ;
+				  pointer> and not_array_v<uPointer>> ;
 
 		Tpl<Typ tUDel> using EnableIfDeleterConvertible = enable_if_t
 				< (is_reference_v<tDeleter> and is_same_v<tDeleter, tUDel>)
@@ -207,9 +207,9 @@ namespace Rider::Faiz
 
 	public:
 		Tpl<bool vDummy = true,
-			class = EnableIfDeleterDefaultConstructible<
-				vDummy>> constexpr unique_ptr() noexcept
-			: pair{pointer{}}
+			class = EnableIfDeleterDefaultConstructible<vDummy>>
+			cCTOR
+		unique_ptr() noexcept : pair{pointer{}}
 		{
 			static_assert(not_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
@@ -223,9 +223,9 @@ namespace Rider::Faiz
 				"program is ill-formed.");
 		}
 		Tpl<bool vDummy = true,
-			Typ = EnableIfDeleterDefaultConstructible<
-				vDummy>> constexpr unique_ptr(nullptr_t) noexcept
-			: pair{}
+			Typ = EnableIfDeleterDefaultConstructible<vDummy>>
+			cCTOR
+		unique_ptr(nullptr_t) noexcept : pair{}
 		{
 			static_assert(not_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
@@ -240,9 +240,9 @@ namespace Rider::Faiz
 		}
 
 		Tpl<bool vDummy = true,
-			Typ = EnableIfDeleterDefaultConstructible<
-				vDummy>> explicit unique_ptr(pointer ptr) noexcept
-			: pair{ptr, {}}
+			Typ = EnableIfDeleterDefaultConstructible<vDummy>>
+			eCTOR
+		unique_ptr(pointer ptr) noexcept : pair{ptr, {}}
 		{
 			static_assert(not_pointer_v<deleter_type>,
 				"WTF, If this constructor is instantiated with a pointer "
@@ -347,12 +347,14 @@ namespace Rider::Faiz
 
 
 		// may throw, e.g. if pointer defines a throwing operator*
-		fn operator*() const->add_lvalue_reference_t<T>
+		fn
+		operator*() const->add_lvalue_reference_t<T>
 		{
 			return *Faiz::get<0>(pair);
 		}
 
-		fn operator->() const noexcept->pointer
+		fn
+		operator->() const noexcept->pointer
 		{
 			return Faiz::get<0>(pair);
 		}
@@ -371,7 +373,7 @@ namespace Rider::Faiz
 				uPointer>,
 			class = EnableIfDeleterAssignable<uDeleter>>
 			fn
-			operator=(unique_ptr<uPointer, uDeleter>&& u) noexcept->unique_ptr&
+		operator=(unique_ptr<uPointer, uDeleter>&& u) noexcept->unique_ptr&
 		{
 			reset(u.release());
 			Faiz::get<1>(pair) = forward<uDeleter>(u.get_deleter());
@@ -453,7 +455,7 @@ namespace Rider::Faiz
 			Typ uDeleter = dependent_type_t<type_identity<deleter_type>,
 				vDummy>> using EnableIfDeleterDefaultConstructible
 			= enable_if_t < is_default_constructible_v<
-								uDeleter> and not_pointer_v<uDeleter>> ;
+				  uDeleter> and not_pointer_v<uDeleter>> ;
 
 		Tpl<Typ tArg> using EnableIfDeleterConstructible
 			= enable_if_t<is_constructible_v<deleter_type, tArg>>;
@@ -499,9 +501,9 @@ namespace Rider::Faiz
 		Tpl<Typ tPointer,
 			bool vDummy = true,
 			class = EnableIfDeleterDefaultConstructible<vDummy>,
-			class = EnableIfPointerConvertible<
-				tPointer>> explicit unique_ptr(tPointer p) noexcept
-			: pair(p, {})
+			class = EnableIfPointerConvertible<tPointer>>
+			eCTOR
+		unique_ptr(tPointer p) noexcept : pair(p, {})
 		{}
 
 		Tpl<Typ uPointer,
@@ -576,7 +578,8 @@ namespace Rider::Faiz
 			return *this;
 		}
 
-		fn operator=(nullptr_t) noexcept->unique_ptr&
+		fn
+		operator=(nullptr_t) noexcept->unique_ptr&
 		{
 			reset();
 			return *this;
@@ -599,7 +602,8 @@ namespace Rider::Faiz
 		}
 
 
-		fn reset(nullptr_t = nullptr) noexcept->void
+		fn
+		reset(nullptr_t = nullptr) noexcept->void
 		{
 			pointer tmp = Faiz::get<0>(pair);
 			Faiz::get<0>(pair) = nullptr;
@@ -731,8 +735,8 @@ namespace Rider::Faiz
 	};
 
 	// lwg 2098
-	Tpl<Typ T, Typ... Args> Typ Unique_if<T>::Single_object
-	make_unique(Args&&... args)
+	Tpl<Typ T, Typ... Args> fn
+	make_unique(Args&&... args)->Typ Unique_if<T>::Single_object
 	{
 		if constexpr(is_constructible<T, Args...>())
 		{
@@ -744,8 +748,8 @@ namespace Rider::Faiz
 		}
 	}
 
-	Tpl<Typ T> Typ Unique_if<T>::Unknown_bound
-	make_unique(size_t n)
+	Tpl<Typ T> fn
+	make_unique(size_t n)->Typ Unique_if<T>::Unknown_bound
 	{
 		using U = remove_extent_t<T>;
 		return unique_ptr<T>(new U[n]());
@@ -755,8 +759,9 @@ namespace Rider::Faiz
 	make_unique(Args&&...)
 		= delete;
 
-	Tpl<Typ T, Typ D> enable_if_t<std::is_swappable_v<D>, void>
-	swap(unique_ptr<T, D>& x, unique_ptr<T, D>& y) noexcept
+	Tpl<Typ T, Typ D> fn
+	swap(unique_ptr<T, D>& x,
+		unique_ptr<T, D>& y) noexcept->enable_if_t<std::is_swappable_v<D>, void>
 	{
 		x.swap(y);
 	}

@@ -446,7 +446,7 @@ namespace Rider::Faiz
 	{};
 
 
-	IS_NOT_ARE_ANY(floating_point);
+	IS_NOT_ARE_ANY(floating_point)
 
 	// Checks whether T is an integral type. Provides the member constant
 	// value which is equal to true, if T is the type bool, char, char16_t,
@@ -1064,7 +1064,7 @@ namespace Rider::Faiz
 	{};
 
 
-	IS_NOT_ARE_ANY(nothrow_copy_assignable);
+	IS_NOT_ARE_ANY(nothrow_copy_assignable)
 
 	Tpl<Typ T> struct is_unknown_bound_array : false_
 	{};
