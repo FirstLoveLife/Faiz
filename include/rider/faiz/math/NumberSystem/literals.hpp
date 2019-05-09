@@ -24,13 +24,13 @@ namespace Rider::Faiz
 {
 	namespace detail
 	{
-		Tpl<char Chs> cexp int
+		Tpl<char Chs> cfn
 		toDecImpl()
 		{
 			return Chs > '9' ? Chs - 'A' + 10 : Chs - '0';
 		}
 	} // namespace detail
-	Tpl<int from, char... Chs> cexp int
+	Tpl<int from, char... Chs> cfn
 	toDec()
 	{
 		int ret{};
@@ -39,16 +39,26 @@ namespace Rider::Faiz
 	}
 	inline namespace literals
 	{
-		Tpl<char... Chs> cexp int operator"" _B()
+		Tpl<char... Chs> cfn
+		operator"" _B()
 		{
 			return toDec<2, Chs...>();
 		}
-		Tpl<char... Chs> cexp int operator"" _O()
+		Tpl<char... Chs> cfn
+		operator"" _O()
 		{
 			return toDec<8, Chs...>();
 		}
 
-		// I decide not to provide heximal, too ugly
+		Tpl<char... Chs> cfn
+		operator"" _H()
+		{
+			return toDec<16, Chs...>();
+		}
+
+		// <del>I decide not to provide heximal, too ugly</del>
+		// https://stackoverflow.com/questions/56053939/universal-number-system-conversion-to-decimal-with-udl?noredirect=1#comment98749517_56053939
+		// TODO:operator ""_H(const char*, std::size_t)
 
 	} // namespace literals
 } // namespace Rider::Faiz

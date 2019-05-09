@@ -40,7 +40,7 @@ matrix:
 # XCode 10.0
     - os: osx
       name: g++-8 on Mac OS
-      osx_image: xcode10.1
+      osx_image: xcode10.0
       sudo: required
       language: cpp
       compiler: g++-8
@@ -53,8 +53,16 @@ matrix:
         - travis_wait 40 brew install gcc
         - brew upgrade cmake
         - brew install ninja
-        - export CXX=/usr/local/bin/g++-8
-        - export CC=/usr/local/bin/gcc-8
+        - sudo rm /usr/bin/gcc
+        - sudo rm /usr/bin/g++
+        - sudo ln -s /usr/local/bin/g++-8 /usr/bin/g++
+        - sudo ln -s /usr/local/bin/gcc-8 /usr/bin/gcc
+        - export CXX=/usr/bin/g++
+        - export CC=/usr/bin/gcc
+        # - export CMAKE_CXX_COMPILER=g++
+        # - echo $CMAKE_CXX_COMPILER
+        # - echo $CXX
+        # - echo $CC
 # XCode 10.0
     - os: osx
       name: clang++-8 on Mac OS

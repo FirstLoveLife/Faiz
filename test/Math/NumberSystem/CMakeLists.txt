@@ -25,14 +25,14 @@ target_compile_definitions(binary-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(binary-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 
 # Use lld or the gold linker if possible
-if (UNIX AND NOT APPLE)
-    set_property(TARGET binary-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
-    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set_property(TARGET binary-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
-    else()
-        set_property(TARGET binary-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
-    endif()
-endif()
+# if (UNIX AND NOT APPLE)
+#     set_property(TARGET binary-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+#     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+#         set_property(TARGET binary-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
+#     else()
+#         set_property(TARGET binary-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+#     endif()
+# endif()
 
 
 target_link_libraries(binary-testsuite
