@@ -84,6 +84,8 @@ add_executable(
 
   is_nothrow_move_assignable.libcxx.cpp
 
+  is_nothrow_move_constructible.cpp
+
   is_null_pointer.libcxx.cpp
 
   is_null_pointer.libstdcxx.cpp

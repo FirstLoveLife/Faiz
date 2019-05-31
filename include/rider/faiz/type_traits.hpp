@@ -296,6 +296,17 @@ namespace Rider::Faiz::detail
 		: type_identity<T (*)(Args..., ...)>
 	{};
 
+	Tpl<Typ T, Typ... _Args> struct is_nt_constructible_impl
+		: bool_<noexcept(T(declval<_Args>()...))>
+	{};
+
+	Tpl<Typ T, Typ _Arg> struct is_nt_constructible_impl<T, _Arg>
+		: bool_<noexcept(static_cast<T>(declval<_Arg>()))>
+	{};
+
+	Tpl<Typ T> struct is_nt_constructible_impl<T>
+		: is_nothrow_default_constructible<T>
+	{};
 
 } // namespace Rider::Faiz::detail
 
@@ -1129,8 +1140,7 @@ namespace Rider::Faiz
 	{};
 
 
-	Tpl<Typ T>
-	struct alignment_of : size_t_<alignof(T)>
+	Tpl<Typ T> struct alignment_of : size_t_<alignof(T)>
 	{};
 
 #ifdef _WIN32
@@ -1141,6 +1151,55 @@ namespace Rider::Faiz
 		native = little
 	};
 #endif
+
+
+	/// is_nothrow_constructible
+	Tpl<Typ T, Typ... _Args> struct is_nothrow_constructible
+		: logic::and_<is_constructible<T, _Args...>,
+			  detail::is_nt_constructible_impl<T, _Args...>>
+	{};
+
+	Tpl<Typ T,
+		bool = is_referenceable_v<T>> struct is_nothrow_copy_constructible_impl;
+
+	Tpl<Typ T> struct is_nothrow_copy_constructible_impl<T, false> : false_
+	{};
+
+	Tpl<Typ T> struct is_nothrow_copy_constructible_impl<T, true>
+		: is_nothrow_constructible<T, const T&>
+	{};
+
+	/// is_nothrow_copy_constructible
+	Tpl<Typ T> struct is_nothrow_copy_constructible
+		: is_nothrow_copy_constructible_impl<T>
+	{};
+
+
+	IS_NOT_ARE_ANY(nothrow_copy_constructible)
+
+	namespace detail
+	{
+		Tpl<Typ T,
+			bool
+			= is_referenceable_v<T>> struct is_nothrow_move_constructible_impl;
+
+		Tpl<Typ T> struct is_nothrow_move_constructible_impl<T, false> : false_
+		{};
+
+		Tpl<Typ T> struct is_nothrow_move_constructible_impl<T, true>
+			: is_nothrow_constructible<T, T&&>
+		{};
+	} // namespace detail
+
+	Tpl<Typ T, Typ... _Args> constexpr bool is_nothrow_constructible_v
+		= is_nothrow_constructible<T, _Args...>::value;
+
+	PACK_ARE(nothrow_constructible)
+
+	Tpl<Typ T> struct is_nothrow_move_constructible
+		: detail::is_nothrow_move_constructible_impl<T>
+	{};
+	IS_NOT_ARE_ANY(nothrow_move_constructible)
 } // namespace Rider::Faiz
 
 #endif

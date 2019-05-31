@@ -151,17 +151,17 @@ namespace Rider::Faiz
 	using std::is_nothrow_default_constructible;
 	IS_NOT_ARE_ANY(nothrow_default_constructible)
 
-	using std::is_nothrow_constructible;
-	using std::is_nothrow_constructible_v;
-	PACK_ARE(nothrow_constructible)
+	// using std::is_nothrow_constructible;
+	// using std::is_nothrow_constructible_v;
+	// PACK_ARE(nothrow_constructible)
 
 
 	using std::is_trivially_copy_constructible;
 	using std::is_trivially_copy_constructible_v;
 
-	using std::is_nothrow_copy_constructible;
+	// using std::is_nothrow_copy_constructible;
 
-	IS_NOT_ARE_ANY(nothrow_copy_constructible)
+	// IS_NOT_ARE_ANY(nothrow_copy_constructible)
 
 	//  using std::is_nothrow_copy_assignable;
 	// using std::is_nothrow_copy_assignable_v;

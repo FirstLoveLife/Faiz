@@ -3,7 +3,6 @@ language: cpp
 env:
 matrix:
   include:
-
     - os: linux
       name: g++-8 on linux
       dist: xenial
@@ -37,32 +36,7 @@ matrix:
         - CMAKE_GENERATOR="Ninja"
         - CXX=clang++-9
 
-# XCode 10.0
-    - os: osx
-      name: g++-8 on Mac OS
-      osx_image: xcode10.0
-      sudo: required
-      language: cpp
-      compiler: g++-8
-      env:
-        - COMPILER=g++-8
-        - CMAKE_GENERATOR="Ninja"
-        - BUILD_TYPE=Release
-      before_install:
-        - brew update
-        - travis_wait 40 brew install gcc
-        - brew upgrade cmake
-        - brew install ninja
-        - sudo rm /usr/bin/gcc
-        - sudo rm /usr/bin/g++
-        - sudo ln -s /usr/local/bin/g++-8 /usr/bin/g++
-        - sudo ln -s /usr/local/bin/gcc-8 /usr/bin/gcc
-        - export CXX=/usr/bin/g++
-        - export CC=/usr/bin/gcc
-        # - export CMAKE_CXX_COMPILER=g++
-        # - echo $CMAKE_CXX_COMPILER
-        # - echo $CXX
-        # - echo $CC
+
 # XCode 10.0
     - os: osx
       name: clang++-8 on Mac OS
@@ -95,6 +69,33 @@ matrix:
       env: BUILD_TYPE=Release CMAKE_GENERATOR="MinGW Makefiles"
       compiler: MinGW
 
+# XCode 10.0
+  allow_failures:
+    - os: osx
+      name: g++-8 on Mac OS
+      osx_image: xcode10.0
+      sudo: required
+      language: cpp
+      compiler: g++-8
+      env:
+        - COMPILER=g++-8
+        - CMAKE_GENERATOR="Ninja"
+        - BUILD_TYPE=Release
+      before_install:
+        - brew update
+        - travis_wait 40 brew install gcc
+        - brew upgrade cmake
+        - brew install ninja
+        - sudo rm /usr/bin/gcc
+        - sudo rm /usr/bin/g++
+        - sudo ln -s /usr/local/bin/g++-8 /usr/bin/g++
+        - sudo ln -s /usr/local/bin/gcc-8 /usr/bin/gcc
+        - export CXX=/usr/bin/g++
+        - export CC=/usr/bin/gcc
+        # - export CMAKE_CXX_COMPILER=g++
+        # - echo $CMAKE_CXX_COMPILER
+        # - echo $CXX
+        # - echo $CC
   # allow_failures:
   #   - name: "Visual Studio 15 2017 on windows - Release"
   #     os: windows

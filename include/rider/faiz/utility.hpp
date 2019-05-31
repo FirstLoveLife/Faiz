@@ -136,5 +136,20 @@ namespace Rider::Faiz
 	addressof(const T&&)
 		= delete;
 
+	namespace detail
+	{
+		Tpl<Typ T> struct move_if_noexcept_cond
+			: logic::and_<not_nothrow_move_constructible<T>,
+				  is_copy_constructible<T>>
+		{};
+	} // namespace detail
+
+	Tpl<Typ T> cfn
+	move_if_noexcept(T& x) noexcept
+		->meta::if_<detail::move_if_noexcept_cond<T>, const T&, T&&>
+	{
+		return move(x);
+	}
+
 } // namespace Rider::Faiz
 #endif
