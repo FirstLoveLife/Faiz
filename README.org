@@ -41,8 +41,14 @@ http://blog.nuggetwheat.org/index.php/2015/09/01/why-pointer_traits-was-introduc
 - Prefer ~enable_if~ in function's template parameter variable.
 , see also https://github.com/isocpp/CppCoreGuidelines/pull/1115
 * Travis-CI
-- g++-8 + libstdcxx + linux
-- clang++-7 + libstdcxx + linux
+   | os                    | compiler  |
+   |-----------------------+-----------|
+   | Linux                 | g++-8     |
+   | Linux                 | clang++-9 |
+   | osx                   | g++-8     |
+   | osx                   | Clang++-8 |
+   | windows               | MinGw     |
+  
 * Acknowledgements
 I can't finish a project without stealing code around, so here are the main sources of the code that can be found in this projects when I didn't write it by myself:
 - A great deal of code originally comes from the libcxx/libstdcxx/cppreference implementation of
