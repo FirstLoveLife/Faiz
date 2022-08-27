@@ -11,7 +11,7 @@ else()
   FetchContent_Declare(
     catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2
-    GIT_TAG master
+    GIT_TAG v2.13.9
     )
 
   FetchContent_GetProperties(catch2)
@@ -41,7 +41,7 @@ target_link_libraries(faiz_test
 
 set_target_properties(faiz_test PROPERTIES CXX_STANDARD 20)
 
-ParseAndAddCatchTests(faiz_test)
+catch_discover_tests(faiz_test)
 
 enable_testing()
 add_subdirectory(tight_pair)

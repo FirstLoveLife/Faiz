@@ -35,4 +35,4 @@ if (UNIX AND SANITIZE)
   set_property(TARGET operator-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
 endif()
 
-ParseAndAddCatchTests(operator-testsuite)
+catch_discover_tests(operator-testsuite)
